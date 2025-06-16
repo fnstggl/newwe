@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Search, Home } from "lucide-react";
+import { Search } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -10,9 +10,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors">
-            <Home className="h-6 w-6" />
-            <span className="text-xl font-semibold tracking-tight">Realer Estate</span>
+          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <img 
+              src="/lovable-uploads/a6fe229c-4441-4de6-9f2d-2953b380f517.png" 
+              alt="Realer Estate Logo" 
+              className="h-8 w-auto"
+            />
           </Link>
 
           {/* Navigation Links */}

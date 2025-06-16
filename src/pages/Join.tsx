@@ -43,7 +43,7 @@ const Join = () => {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 transition-all duration-300 shadow-xl animate-pulse-glow"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300 shadow-xl"
             >
               Give me the deals.
             </button>

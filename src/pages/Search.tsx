@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import { Search as SearchIcon } from "lucide-react";
+import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
+  const [isRent, setIsRent] = useState(false);
 
   // Placeholder data
   const mockListings = [
@@ -36,6 +38,7 @@ const Search = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
+      <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -48,7 +51,24 @@ const Search = () => {
         </div>
 
         {/* Search Filters */}
-        <div className="bg-gray-900/50 rounded-2xl p-6 mb-8 backdrop-blur-sm border border-gray-800">
+        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8">
+          {/* Rent/Buy Toggle */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center space-x-4">
+              <span className={`text-sm font-medium tracking-tight transition-colors ${!isRent ? 'text-white' : 'text-gray-400'}`}>
+                Buy
+              </span>
+              <Toggle 
+                checked={isRent} 
+                onCheckedChange={setIsRent} 
+                variant="default"
+              />
+              <span className={`text-sm font-medium tracking-tight transition-colors ${isRent ? 'text-white' : 'text-gray-400'}`}>
+                Rent
+              </span>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-5 gap-4">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
@@ -79,13 +99,13 @@ const Search = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Max $/sqft
+                Max {isRent ? '/month' : '$/sqft'}
               </label>
               <input
                 type="text"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="$1,500"
+                placeholder={isRent ? "$4,000" : "$1,500"}
                 className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               />
             </div>
@@ -131,7 +151,7 @@ const Search = () => {
                 style={{ backgroundImage: `url('${listing.image}')` }}
               >
                 <div className="h-full bg-black/30 flex items-start justify-end p-4">
-                  <div className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-bold tracking-tight">
+                  <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold tracking-tight">
                     Deal Score: {listing.dealScore}
                   </div>
                 </div>

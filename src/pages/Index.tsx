@@ -11,7 +11,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/lovable-uploads/5e42fa10-5e18-49d7-9f0c-e0a532d07973.png')`,
+            backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
           }}
         >
           <div className="absolute inset-0 bg-black/40"></div>
@@ -55,18 +55,18 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 tracking-tighter">
-            Using advanced algorithms to find you the BEST home.
+            Using advanced algorithms to find you the <em>best</em> home.
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">We analyze the data</h3>
               <p className="text-gray-400 tracking-tight">Real-time scraping of listings with price history and market trends.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">We flag the real deals</h3>
               <p className="text-gray-400 tracking-tight">Advanced algorithms identify undervalued properties you'd never find.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">You buy smarter</h3>
               <p className="text-gray-400 tracking-tight">Skip overpriced listings and focus on real opportunities.</p>
             </div>
@@ -99,6 +99,85 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="py-20 px-4 bg-gray-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+              Real estate is all about speed.
+            </h2>
+            <p className="text-xl text-gray-400 tracking-tight">
+              The best deals disappear in minutes. Get notified first.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <div className="bg-black/50 rounded-2xl p-8 border border-gray-800">
+              <h3 className="text-2xl font-bold mb-4 tracking-tight">Free</h3>
+              <p className="text-4xl font-bold mb-6 tracking-tight">$0</p>
+              <ul className="space-y-3 mb-8 text-gray-300">
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  See all listings
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Basic deal scores
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Neighborhood data
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Search and filter
+                </li>
+              </ul>
+              <button className="w-full bg-gray-800 text-white py-3 rounded-xl font-medium tracking-tight hover:bg-gray-700 transition-all">
+                Get Started
+              </button>
+            </div>
+
+            {/* Early Bird Plan */}
+            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/30 relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium tracking-tight">
+                  Most Popular
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4 tracking-tight">Early Bird</h3>
+              <p className="text-4xl font-bold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
+              <ul className="space-y-3 mb-8 text-gray-300">
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Everything in Free
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  <strong className="text-white">INSTANT email alerts</strong>
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  New deals within 60 seconds
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Advanced deal analysis
+                </li>
+                <li className="flex items-center tracking-tight">
+                  <span className="text-green-400 mr-3">•</span>
+                  Priority support
+                </li>
+              </ul>
+              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-medium tracking-tight hover:from-blue-500 hover:to-purple-500 transition-all">
+                Start Early Access
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
         <div className="max-w-4xl mx-auto text-center">
@@ -110,9 +189,9 @@ const Index = () => {
           </p>
           <Link 
             to="/join"
-            className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl animate-pulse-glow"
+            className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl"
           >
-            Join the Waitlist
+            Join now.
           </Link>
         </div>
       </section>
