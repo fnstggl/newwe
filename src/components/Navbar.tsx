@@ -23,40 +23,40 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`px-3 py-2 rounded-md text-xs tracking-tight font-playfair ${
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
                 isActivePage('/search') 
-                  ? 'text-white italic font-normal' 
-                  : 'text-gray-300 font-light hover:text-white hover:italic'
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
             >
               Search
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md text-xs tracking-tight font-playfair ${
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
                 isActivePage('/neighborhoods') 
-                  ? 'text-white italic font-normal' 
-                  : 'text-gray-300 font-light hover:text-white hover:italic'
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
             >
               Neighborhoods
             </Link>
             <Link 
               to="/pricing" 
-              className={`px-3 py-2 rounded-md text-xs tracking-tight font-playfair ${
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
                 isActivePage('/pricing') 
-                  ? 'text-white italic font-normal' 
-                  : 'text-gray-300 font-light hover:text-white hover:italic'
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
             >
               Pricing
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md text-xs tracking-tight font-playfair ${
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
                 isActivePage('/manifesto') 
-                  ? 'text-white italic font-normal' 
-                  : 'text-gray-300 font-light hover:text-white hover:italic'
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
             >
               Manifesto
