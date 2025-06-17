@@ -13,7 +13,7 @@ const Pricing = () => {
               Real estate is all about speed.
             </h1>
             <p className="text-xl text-gray-400 tracking-tight">
-              The best deals disappear in minutes. Get notified first.
+              The best deals disappear in days. Get notified first.
             </p>
           </div>
           
