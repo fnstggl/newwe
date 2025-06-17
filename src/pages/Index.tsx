@@ -22,7 +22,7 @@ const Index = () => {
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-tighter text-white transform translate-y-10">
                 You're unfair advantage.
               </h1>
-              <p className="text-xl md:text-2xl mb-16 text-white opacity-80 font-inter font-medium tracking-tighter transform translate-y-10">
+              <p className="text-xl md:text-2xl mb-16 text-white opacity-80 font-inter font-medium tracking-tighter transform translate-y-[80px]">
                 Know you're getting the best deal in the city—always.
               </p>
               <Link 
