@@ -4,6 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 const Navbar = () => {
   const location = useLocation();
 
+  const isActivePage = (path: string) => location.pathname === path;
+
   return (
     <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,45 +23,41 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
-                location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
+                isActivePage('/search') 
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
-              style={{
-                textShadow: location.pathname === '/search' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
-              }}
             >
               Search
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
-                location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
+                isActivePage('/neighborhoods') 
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
-              style={{
-                textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
-              }}
             >
               Neighborhoods
             </Link>
             <Link 
               to="/pricing" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
-                location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
+                isActivePage('/pricing') 
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
-              style={{
-                textShadow: location.pathname === '/pricing' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
-              }}
             >
               Pricing
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
-                location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
+              className={`px-3 py-2 rounded-md transition-all text-xs tracking-tight ${
+                isActivePage('/manifesto') 
+                  ? 'text-white font-playfair italic' 
+                  : 'text-gray-300 hover:text-white hover:font-playfair hover:italic'
               }`}
-              style={{
-                textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
-              }}
             >
               Manifesto
             </Link>
