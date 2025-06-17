@@ -1,6 +1,6 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 const Index = () => {
   return (
@@ -91,8 +91,10 @@ const Index = () => {
               <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690</p>
             </div>
           </div>
-          <Link to="/neighborhoods" className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 transition-all duration-300 shadow-xl">
-            Explore Neighborhoods
+          <Link to="/neighborhoods">
+            <RainbowButton className="font-semibold tracking-tight">
+              Explore Neighborhoods
+            </RainbowButton>
           </Link>
         </div>
       </section>
