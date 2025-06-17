@@ -24,19 +24,19 @@ const Pricing = () => {
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
               <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   See all listings
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Basic deal scores
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Neighborhood data
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Search and filter
                 </li>
               </ul>
@@ -56,23 +56,23 @@ const Pricing = () => {
               <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
               <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Everything in Free
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   <strong className="text-white">INSTANT email alerts</strong>
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   New deals within 60 seconds
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Advanced deal analysis
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-green-400 mr-3">•</span>
+                  <span className="text-blue-400 mr-3">•</span>
                   Priority support
                 </li>
               </ul>
