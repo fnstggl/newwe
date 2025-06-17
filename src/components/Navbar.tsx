@@ -21,7 +21,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
                 location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -32,7 +32,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
                 location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -43,7 +43,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/pricing" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
                 location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -54,7 +54,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -69,7 +69,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <Link 
               to="/login" 
-              className="text-gray-300 hover:text-white transition-colors text-sm tracking-tight"
+              className="text-gray-300 hover:text-white transition-colors text-xs tracking-tight"
               style={{
                 textShadow: '0 0 8px rgba(59, 130, 246, 0.6)'
               }}
@@ -78,7 +78,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/join" 
-              className="bg-white text-black px-6 py-2 rounded-full font-medium text-sm tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="bg-white text-black px-6 py-2 rounded-full font-medium text-xs tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Join
             </Link>
