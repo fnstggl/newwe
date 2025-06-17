@@ -19,7 +19,7 @@ const Index = () => {
               <p className="text-4xl md:text-5xl mb-16 text-white font-playfair italic font-medium tracking-tighter">
                 actually.
               </p>
-              <Link to="/search" className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold text-base -bottom-40 hover:-bottom-40 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+              <Link to="/search" className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold-bottom-40 hover:-bottom-40 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
                 Start Searching
               </Link>
             </div>
