@@ -1,6 +1,5 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Search } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -22,26 +21,34 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
                 location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
               }`}
+              style={{
+                textShadow: location.pathname === '/search' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
             >
-              <Search className="h-4 w-4" />
-              <span className="tracking-tight">Search</span>
+              Search
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
                 location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
               }`}
+              style={{
+                textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
             >
               Neighborhoods
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
               }`}
+              style={{
+                textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
             >
               Manifesto
             </Link>
@@ -51,13 +58,16 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <Link 
               to="/login" 
-              className="text-gray-300 hover:text-white transition-colors tracking-tight"
+              className="text-gray-300 hover:text-white transition-colors text-sm tracking-tight"
+              style={{
+                textShadow: '0 0 8px rgba(59, 130, 246, 0.6)'
+              }}
             >
               Log in
             </Link>
             <Link 
               to="/join" 
-              className="bg-white text-black px-6 py-2 rounded-full font-medium tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="bg-white text-black px-6 py-2 rounded-full font-medium text-sm tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Join
             </Link>

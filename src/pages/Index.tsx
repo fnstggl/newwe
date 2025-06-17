@@ -6,31 +6,33 @@ const Index = () => {
   return (
     <div className="font-inter">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-          }}
-        >
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
-        
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">
-            Your unfair advantage.
-          </h1>
-          <p className="text-xl md:text-2xl mb-12 text-gray-200 tracking-tight">
-            Know you're getting the best deal in the city—always.
-          </p>
-          <Link 
-            to="/search"
-            className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-8">
+        {/* Background Image with Rounded Border */}
+        <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
+          <div 
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center"
+            style={{
+              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+            }}
           >
-            Start Searching
-          </Link>
+            <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
+            
+            {/* Hero Content */}
+            <div className="relative z-10 text-left px-12 py-20 max-w-4xl">
+              <h1 className="text-5xl md:text-6xl font-semibold mb-4 tracking-tighter text-white">
+                get the best deal in the city.
+              </h1>
+              <p className="text-4xl md:text-5xl mb-16 text-white font-playfair italic font-medium tracking-tighter">
+                actually.
+              </p>
+              <Link 
+                to="/search"
+                className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold text-base tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              >
+                Start Searching
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Scroll Indicator */}
@@ -42,7 +44,7 @@ const Index = () => {
       {/* Problem Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             It shouln't be this hard to find a home in New York.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
@@ -54,7 +56,7 @@ const Index = () => {
       {/* How It Works */}
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
             Using comprehensive data to find you the <em>best </em> home. 
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -77,7 +79,7 @@ const Index = () => {
       {/* Featured Neighborhoods */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Stop overpaying in every neighborhood.
           </h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
@@ -103,7 +105,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+            <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
               Real estate is all about speed.
             </h2>
             <p className="text-xl text-gray-400 tracking-tight">
@@ -114,8 +116,8 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Plan */}
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800">
-              <h3 className="text-2xl font-bold mb-4 tracking-tight">Free</h3>
-              <p className="text-4xl font-bold mb-6 tracking-tight">$0</p>
+              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
+              <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
               <ul className="space-y-3 mb-8 text-gray-300">
                 <li className="flex items-center tracking-tight">
                   <span className="text-green-400 mr-3">•</span>
@@ -146,8 +148,8 @@ const Index = () => {
                   Most Popular
                 </span>
               </div>
-              <h3 className="text-2xl font-bold mb-4 tracking-tight">Early Bird</h3>
-              <p className="text-4xl font-bold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
+              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
+              <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
               <ul className="space-y-3 mb-8 text-gray-300">
                 <li className="flex items-center tracking-tight">
                   <span className="text-green-400 mr-3">•</span>
@@ -181,7 +183,7 @@ const Index = () => {
       {/* Final CTA */}
       <section className="py-20 px-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Don't overpay. Ever again.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
