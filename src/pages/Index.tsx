@@ -23,7 +23,7 @@ const Index = () => {
             Your unfair advantage.
           </h1>
           <p className="text-xl md:text-2xl mb-12 text-gray-200 tracking-tight">
-            know you're getting the best deal in the city—always.
+            Know you're getting the best deal in the city—always.
           </p>
           <Link 
             to="/search"
@@ -43,10 +43,10 @@ const Index = () => {
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
-            Stop wasting countless hours searching Streeteasy for the best deal.
+            It shouln't be this hard to find a home in New York.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-            We use advanced algorithms based on market data to find you the hidden gems. Save your time, money and get peace of mind.
+            We use advanced algorithms based on market data to find you the hidden gems. Save your time, money and peace of mind.
           </p>
         </div>
       </section>
@@ -55,7 +55,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 tracking-tighter">
-            Using advanced algorithms to find you the <em>best</em> home.
+            Using comprehensive data to find you the <em>best</em> home.
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 hover:shadow-xl border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:ring-2 hover:ring-blue-500/30">
