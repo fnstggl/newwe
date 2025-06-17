@@ -19,10 +19,10 @@ const Index = () => {
             
             {/* Hero Content - Centered */}
             <div className="relative z-10 text-center px-12 py-20 max-w-4xl">
-              <h1 className="text-5xl md:text-6xl font-semibold mb-4 tracking-tighter text-white translate-y-10">
+              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-tighter text-white translate-y-10">
                 You're unfair advantage.
               </h1>
-              <p className="text-xl md:text-2xl mb-16 text-white font-medium tracking-tighter translate-y-10">
+              <p className="text-xl md:text-2xl mb-16 text-gray-600 font-inter font-medium tracking-tighter translate-y-10">
                 Know you're getting the best deal in the city—always.
               </p>
               <Link 
