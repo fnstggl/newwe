@@ -20,7 +20,7 @@ const Index = () => {
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">
-            your unfair advantage.
+            Your unfair advantage.
           </h1>
           <p className="text-xl md:text-2xl mb-12 text-gray-200 tracking-tight">
             know you're getting the best deal in the city—always.
@@ -43,10 +43,10 @@ const Index = () => {
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
-            New York is broken.
+            Stop wasting countless hours searching Streeteasy for the best deal.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-            We scrape it, rank it, and show you what's actually a deal.
+            We use advanced algorithms based on market data to find you the hidden gems. Save your time, money and get peace of mind.
           </p>
         </div>
       </section>
