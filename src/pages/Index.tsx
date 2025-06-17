@@ -48,7 +48,7 @@ const Index = () => {
             It shouln't be this hard to find a home in New York.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using advanced algorithms based on market data to find you the best undervalued properties in the city. Beat the game.
+          Using advanced algorithms based on market data to find you the best undervalued properties in the city.
           </p>
         </div>
       </section>
