@@ -1,34 +1,25 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
-
 const Index = () => {
-  return (
-    <div className="font-inter">
+  return <div className="font-inter">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-8">
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
-          <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center"
-            style={{
-              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-            }}
-          >
+          <div className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center" style={{
+          backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`
+        }}>
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
             
             {/* Hero Content */}
             <div className="relative z-10 text-left px-12 py-20 max-w-4xl">
-              <h1 className="text-5xl md:text-6xl font-semibold mb-4 tracking-tighter text-white">
+              <h1 className="text-5xl md:text-6xl font-semibold mb-4 tracking-tighter text-white my-0 -bottom-40 ">
                 get the best deal in the city.
               </h1>
               <p className="text-4xl md:text-5xl mb-16 text-white font-playfair italic font-medium tracking-tighter">
                 actually.
               </p>
-              <Link 
-                to="/search"
-                className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold text-base tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
-              >
+              <Link to="/search" className="inline-block bg-white text-black px-6 py-3 rounded-full font-semibold text-base -bottom-40 hover:-bottom-40 hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
                 Start Searching
               </Link>
             </div>
@@ -92,10 +83,7 @@ const Index = () => {
               <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690</p>
             </div>
           </div>
-          <Link 
-            to="/neighborhoods"
-            className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 transition-all duration-300 shadow-xl"
-          >
+          <Link to="/neighborhoods" className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full font-semibold tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 transition-all duration-300 shadow-xl">
             Explore Neighborhoods
           </Link>
         </div>
@@ -189,16 +177,11 @@ const Index = () => {
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
             Join the platform that actually works for buyers.
           </p>
-          <Link 
-            to="/join"
-            className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl"
-          >
+          <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl">
             Join now.
           </Link>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
