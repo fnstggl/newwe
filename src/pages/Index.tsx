@@ -20,15 +20,15 @@ const Index = () => {
             
             {/* Hero Content - Centered */}
             <div className="relative z-10 text-center px-12 py-20 max-w-4xl">
-              <h1 className="text-5xl md:text-6xl font-inter font-medium mb-4 tracking-[-0.1em] transform translate-y-[150px] text-white">
+              <h1 className="text-5xl md:text-6xl font-inter font-medium mb-4 tracking-[-0.075em] transform translate-y-[165px] text-white">
                 Find the best deal in the city.
               </h1>
-              <p className="text-xl md:text-5xl mb-16 text-white opacity-80 font-playfair font-medium italic transform translate-y-[150px] tracking-[-0.1em]">
+              <p className="text-xl md:text-5xl mb-16 text-white opacity-80 font-playfair font-medium italic transform translate-y-[150px] tracking-[-0.075em]">
                 actually.
               </p>
               <Link 
                 to="/search" 
-                className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-medium tracking-[-0.1em] transform translate-y-[130px] hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-medium tracking-[-0.075em] transform translate-y-[130px] hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
                 Start Searching
               </Link>
             </div>
