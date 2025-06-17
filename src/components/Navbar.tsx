@@ -42,6 +42,17 @@ const Navbar = () => {
               Neighborhoods
             </Link>
             <Link 
+              to="/pricing" 
+              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
+                location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
+              }`}
+              style={{
+                textShadow: location.pathname === '/pricing' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
+            >
+              Pricing
+            </Link>
+            <Link 
               to="/manifesto" 
               className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-sm tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'

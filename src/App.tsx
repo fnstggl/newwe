@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Search from "./pages/Search";
 import Neighborhoods from "./pages/Neighborhoods";
 import Manifesto from "./pages/Manifesto";
+import Pricing from "./pages/Pricing";
 import Join from "./pages/Join";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/search" element={<Search />} />
             <Route path="/neighborhoods" element={<Neighborhoods />} />
             <Route path="/manifesto" element={<Manifesto />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/join" element={<Join />} />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
