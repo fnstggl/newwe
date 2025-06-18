@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { RainbowButton } from "@/components/ui/rainbow-button";
@@ -57,20 +56,8 @@ const Index = () => {
           </p>
         </div>
         
-        {/* Glowing Blue Separator */}
-        <div className="relative w-full max-w-xl mx-auto py-8">
-          <Separator className="h-[2px] bg-transparent" />
-          <div className="relative">
-            <GlowEffect 
-              colors={['#3b82f6', '#60a5fa', '#93c5fd', '#3b82f6']} 
-              className="w-full h-[2px]" 
-              blur="soft" 
-              mode="flowHorizontal"
-              scale={1.1} 
-              duration={3}
-            />
-          </div>
-        </div>
+        {/* Clean Blue Gradient Line - matching manifesto style */}
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
       </section>
 
       {/* How It Works */}
