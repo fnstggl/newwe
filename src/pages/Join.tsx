@@ -70,19 +70,19 @@ const Join = () => {
           </h3>
           <div className="space-y-3 text-gray-400">
             <div className="flex items-center justify-center space-x-3">
-              <span className="text-green-400">•</span>
+              <span className="text-blue-400">•</span>
               <span className="tracking-tight">First access to undervalued listings</span>
             </div>
             <div className="flex items-center justify-center space-x-3">
-              <span className="text-green-400">•</span>
+              <span className="text-blue-400">•</span>
               <span className="tracking-tight">Real-time deal alerts</span>
             </div>
             <div className="flex items-center justify-center space-x-3">
-              <span className="text-green-400">•</span>
+              <span className="text-blue-400">•</span>
               <span className="tracking-tight">Market insights and data</span>
             </div>
             <div className="flex items-center justify-center space-x-3">
-              <span className="text-green-400">•</span>
+              <span className="text-blue-400">•</span>
               <span className="tracking-tight">No broker fees or commissions</span>
             </div>
           </div>
