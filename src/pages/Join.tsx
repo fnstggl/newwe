@@ -43,7 +43,7 @@ const Join = () => {
 
             <HoverButton
               type="submit"
-              className="w-full py-4 text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
+              className="w-full py-4 text-lg font-semibold tracking-tight text-white"
             >
               Give me the deals.
             </HoverButton>
