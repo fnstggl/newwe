@@ -22,10 +22,10 @@ const Navbar = () => {
             <Link 
               to="/search" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
+                location.pathname === '/search' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/search' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+                textShadow: location.pathname === '/search' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (location.pathname !== '/search') {
@@ -43,10 +43,10 @@ const Navbar = () => {
             <Link 
               to="/neighborhoods" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
+                location.pathname === '/neighborhoods' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+                textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (location.pathname !== '/neighborhoods') {
@@ -64,10 +64,10 @@ const Navbar = () => {
             <Link 
               to="/pricing" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
+                location.pathname === '/pricing' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/pricing' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+                textShadow: location.pathname === '/pricing' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (location.pathname !== '/pricing') {
@@ -85,10 +85,10 @@ const Navbar = () => {
             <Link 
               to="/manifesto" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
+                location.pathname === '/manifesto' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+                textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (location.pathname !== '/manifesto') {
