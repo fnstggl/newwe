@@ -21,7 +21,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
                 location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -42,7 +42,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
                 location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -63,7 +63,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/pricing" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
                 location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
@@ -84,7 +84,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
