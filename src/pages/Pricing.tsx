@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 
@@ -46,14 +47,8 @@ const Pricing = () => {
 
             {/* Early Bird Plan */}
             <div className="relative flex flex-col">
-              {/* Glow border container */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px]">
-                <GlowEffect 
-                  colors={['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6']}
-                  mode="rotate"
-                  blur="medium"
-                  duration={6}
-                />
+              {/* Card with animated border */}
+              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 via-indigo-500 via-purple-500 to-red-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   {/* Header with title and badge */}
