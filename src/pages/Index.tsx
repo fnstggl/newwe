@@ -104,7 +104,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Don't overpay. Ever again.
+            Let the house hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
             Join the platform that actually works for buyers.
