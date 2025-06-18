@@ -21,44 +21,84 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               to="/search" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
                 location.pathname === '/search' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
                 textShadow: location.pathname === '/search' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/search') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/search') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
               }}
             >
               Search
             </Link>
             <Link 
               to="/neighborhoods" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
                 location.pathname === '/neighborhoods' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
                 textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/neighborhoods') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/neighborhoods') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
               }}
             >
               Neighborhoods
             </Link>
             <Link 
               to="/pricing" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
                 location.pathname === '/pricing' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
                 textShadow: location.pathname === '/pricing' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/pricing') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/pricing') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
               }}
             >
               Pricing
             </Link>
             <Link 
               to="/manifesto" 
-              className={`px-3 py-2 rounded-md transition-all hover:text-blue-400 hover:bg-blue-500/10 text-xs tracking-tight ${
+              className={`px-3 py-2 rounded-md transition-all hover:text-white hover:bg-white/10 text-xs tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-blue-400' : 'text-gray-300'
               }`}
               style={{
                 textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(59, 130, 246, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/manifesto') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/manifesto') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
               }}
             >
               Manifesto
