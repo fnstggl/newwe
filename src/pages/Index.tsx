@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { RainbowButton } from "@/components/ui/rainbow-button";
@@ -10,12 +11,12 @@ const Index = () => {
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center opacity-0 animate-fade-in" 
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" 
             style={{
               backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
               animationDuration: '3.5s',
-              animationFillMode: 'forwards',
-              animationTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              animationDelay: '0.5s',
+              animationFillMode: 'both'
             }}
           >
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
