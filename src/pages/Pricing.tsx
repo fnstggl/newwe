@@ -10,7 +10,7 @@ const Pricing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-              Real estate is all about speed.
+              Real estate is all about being early.
             </h1>
             <p className="text-xl text-gray-400 tracking-tight">
               The best deals disappear in days. Get notified first.
