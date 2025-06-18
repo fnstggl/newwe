@@ -46,39 +46,49 @@ const Pricing = () => {
             </div>
 
             {/* Early Bird Plan */}
-            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/30 relative flex flex-col">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium tracking-tight">
-                  Most Popular
+            <div className="relative flex flex-col">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span className="bg-blue-100 text-blue-600 px-6 py-2 rounded-full text-sm font-medium tracking-tight border border-blue-200">
+                  Most popular
                 </span>
               </div>
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
-              <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
-              <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
-                <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-3">•</span>
-                  Everything in Free
-                </li>
-                <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-3">•</span>
-                  <strong className="text-white">INSTANT email alerts</strong>
-                </li>
-                <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-3">•</span>
-                  New deals within 60 seconds
-                </li>
-                <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-3">•</span>
-                  Advanced deal analysis
-                </li>
-                <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-3">•</span>
-                  Priority support
-                </li>
-              </ul>
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-medium tracking-tight hover:from-blue-500 hover:to-purple-500 transition-all mt-auto">
-                Join Pro
-              </button>
+              <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col relative overflow-hidden">
+                {/* Rainbow glow border */}
+                <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%] opacity-60">
+                  <div className="bg-black/50 rounded-2xl h-full w-full"></div>
+                </div>
+                
+                {/* Content */}
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
+                  <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
+                  <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-3">•</span>
+                      Everything in Free
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-3">•</span>
+                      <strong className="text-white">INSTANT email alerts</strong>
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-3">•</span>
+                      New deals within 60 seconds
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-3">•</span>
+                      Advanced deal analysis
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-3">•</span>
+                      Priority support
+                    </li>
+                  </ul>
+                  <button className="w-full bg-white text-black py-3 rounded-xl font-medium tracking-tight transition-all mt-auto hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:border hover:border-blue-400">
+                    Join Pro
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
