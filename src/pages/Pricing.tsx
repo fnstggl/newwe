@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import { GlowEffect } from "@/components/ui/glow-effect";
 
 const Pricing = () => {
   return (
@@ -53,9 +54,14 @@ const Pricing = () => {
                 </span>
               </div>
               
-              {/* Rainbow border container with slower animation and more colors */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 bg-[length:300%] animate-[rainbow_6s_infinite_linear]">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 bg-[length:300%] animate-[rainbow_6s_infinite_linear] blur-md opacity-70"></div>
+              {/* Glow border container */}
+              <div className="relative overflow-hidden rounded-2xl p-[3px]">
+                <GlowEffect 
+                  colors={['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6']}
+                  mode="rotate"
+                  blur="medium"
+                  duration={6}
+                />
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
