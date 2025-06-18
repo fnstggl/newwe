@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { GlowEffect } from "@/components/ui/glow-effect";
+import { HoverButton } from "@/components/ui/hover-button";
 
 const Pricing = () => {
   return (
@@ -107,20 +106,9 @@ const Pricing = () => {
             Join the platform that actually works for buyers.
           </p>
           <Link to="/join">
-            <div className="relative inline-block overflow-visible p-[3px]">
-              <div className="absolute inset-0 -z-10 blur-xl">
-                <GlowEffect 
-                  colors={['#4ADE80', '#3B82F6']}
-                  mode="flowHorizontal"
-                  blur="strongest"
-                  scale={1.5}
-                  duration={8}
-                />
-              </div>
-              <button className="relative bg-black text-white px-8 py-3 rounded-full font-semibold tracking-tight hover:bg-gray-900 transition-all border border-white/20">
-                Join now.
-              </button>
-            </div>
+            <HoverButton className="text-white font-semibold tracking-tight">
+              Join now.
+            </HoverButton>
           </Link>
         </div>
       </section>
