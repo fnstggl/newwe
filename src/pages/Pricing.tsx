@@ -52,14 +52,14 @@ const Pricing = () => {
                   Most popular
                 </span>
               </div>
-              <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col relative overflow-hidden">
-                {/* Rainbow glow border */}
-                <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%] opacity-60">
-                  <div className="bg-black/50 rounded-2xl h-full w-full"></div>
+              <div className="relative overflow-hidden rounded-2xl">
+                {/* Rainbow border */}
+                <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%]">
+                  <div className="bg-black rounded-2xl h-full w-full"></div>
                 </div>
                 
                 {/* Content */}
-                <div className="relative z-10">
+                <div className="relative z-10 bg-black rounded-2xl p-8 flex flex-col">
                   <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
