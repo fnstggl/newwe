@@ -41,7 +41,7 @@ const Pricing = () => {
                   Search and filter
                 </li>
               </ul>
-              <button className="w-full bg-gray-800 text-white py-3 rounded-xl font-medium tracking-tight hover:bg-gray-700 transition-all mt-auto">
+              <button className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight hover:bg-gray-700 transition-all mt-auto">
                 Current Plan
               </button>
             </div>
@@ -88,8 +88,8 @@ const Pricing = () => {
                       Priority support
                     </li>
                   </ul>
-                  <button className="w-full bg-white text-black py-3 rounded-xl font-medium tracking-tight transition-all mt-auto hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:border hover:border-blue-400">
-                    Join Pro
+                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:border hover:border-blue-400">
+                    Coming Soon
                   </button>
                 </div>
               </div>
