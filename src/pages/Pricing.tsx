@@ -61,7 +61,7 @@ const Pricing = () => {
                   {/* Header with title and badge */}
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-2xl font-semibold tracking-tight">Early Bird</h3>
-                    <span className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium tracking-tight">
+                    <span className="border border-white/60 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight bg-transparent">
                       Most popular
                     </span>
                   </div>
