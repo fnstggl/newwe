@@ -20,10 +20,10 @@ const Index = () => {
               animationFillMode: 'both'
             }}
           >
-            <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
             
             {/* Hero Content - Centered */}
-            <div className="relative z-10 text-center px-12 py-20 max-w-4xl">
+            <div className="relative z-10 text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
                 Your unfair advantage in real estate.
               </h1>
