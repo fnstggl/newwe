@@ -1,4 +1,5 @@
 
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { RainbowButton } from "@/components/ui/rainbow-button";
@@ -104,8 +105,13 @@ const Index = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-20 px-4 relative overflow-hidden">
+        {/* Blue Gradient Blob Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Let the house hunt end here.
           </h2>
@@ -122,3 +128,4 @@ const Index = () => {
 };
 
 export default Index;
+
