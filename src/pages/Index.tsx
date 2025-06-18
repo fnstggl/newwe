@@ -27,8 +27,8 @@ const Index = () => {
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
                 Your unfair advantage in real estate.
               </h1>
-              <p className="text-xl md:text-2xl mb-16 text-white opacity-80 font-inter font-semibold italic transform translate-y-[150px] tracking-[-0.075em]">
-                Know you're getting the best deal in the city. Actually.
+              <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
+                Know you're getting the best deal in the city—always.
               </p>
               <Link 
                 to="/search" 
