@@ -1,6 +1,6 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
-import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Separator } from "@/components/ui/separator";
 import { GlowEffect } from "@/components/ui/glow-effect";
 
@@ -100,9 +100,17 @@ const Index = () => {
             </div>
           </div>
           <Link to="/neighborhoods">
-            <RainbowButton className="font-semibold tracking-tight">
-              Explore Neighborhoods
-            </RainbowButton>
+            <div className="relative inline-block overflow-hidden rounded-full p-[3px]">
+              <GlowEffect 
+                colors={['#FF5733', '#33FF57', '#3357FF', '#F1C40F']}
+                mode="rotate"
+                blur="medium"
+                duration={5}
+              />
+              <button className="relative bg-black text-white px-8 py-3 rounded-full font-semibold tracking-tight hover:bg-gray-900 transition-all">
+                Explore Neighborhoods
+              </button>
+            </div>
           </Link>
         </div>
       </section>
