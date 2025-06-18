@@ -80,7 +80,7 @@ const Login = () => {
             No account yet?{" "}
             <Link 
               to="/join" 
-              className="text-blue-400 hover:text-blue-300 transition-colors"
+              className="text-white hover:text-white transition-colors"
               style={{
                 textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
               }}
