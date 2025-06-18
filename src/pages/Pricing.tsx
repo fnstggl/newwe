@@ -48,18 +48,15 @@ const Pricing = () => {
             {/* Early Bird Plan */}
             <div className="relative flex flex-col">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                <span className="bg-blue-100 text-blue-600 px-6 py-2 rounded-full text-sm font-medium tracking-tight border border-blue-200">
+                <span className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight">
                   Most popular
                 </span>
               </div>
-              <div className="relative overflow-hidden rounded-2xl">
-                {/* Rainbow border */}
-                <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%]">
-                  <div className="bg-black rounded-2xl h-full w-full"></div>
-                </div>
-                
-                {/* Content */}
-                <div className="relative z-10 bg-black rounded-2xl p-8 flex flex-col">
+              
+              {/* Rainbow border container */}
+              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%]">
+                {/* Card content with black background */}
+                <div className="bg-black rounded-2xl p-8 flex flex-col h-full">
                   <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
