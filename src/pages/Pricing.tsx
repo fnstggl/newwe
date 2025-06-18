@@ -107,14 +107,17 @@ const Pricing = () => {
             Join the platform that actually works for buyers.
           </p>
           <Link to="/join">
-            <div className="relative inline-block overflow-hidden rounded-full p-[3px]">
-              <GlowEffect 
-                colors={['#FF5733', '#33FF57', '#3357FF', '#F1C40F']}
-                mode="rotate"
-                blur="medium"
-                duration={5}
-              />
-              <button className="relative bg-black text-white px-8 py-3 rounded-full font-semibold tracking-tight hover:bg-gray-900 transition-all">
+            <div className="relative inline-block overflow-visible p-[3px]">
+              <div className="absolute inset-0 -z-10 blur-xl">
+                <GlowEffect 
+                  colors={['#4ADE80', '#3B82F6']}
+                  mode="flowHorizontal"
+                  blur="strongest"
+                  scale={1.5}
+                  duration={8}
+                />
+              </div>
+              <button className="relative bg-black text-white px-8 py-3 rounded-full font-semibold tracking-tight hover:bg-gray-900 transition-all border border-white/20">
                 Join now.
               </button>
             </div>
