@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { HoverButton } from "../components/ui/hover-button";
 
 const Join = () => {
   const [email, setEmail] = useState("");
@@ -37,16 +37,16 @@ const Join = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your.email@domain.com"
-                className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+                className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
               />
             </div>
 
-            <button
+            <HoverButton
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg tracking-tight hover:from-blue-500 hover:to-purple-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300 shadow-xl"
+              className="w-full py-4 text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
             >
               Give me the deals.
-            </button>
+            </HoverButton>
 
             <p className="text-center text-gray-500 text-sm tracking-tight">
               Early access. Zero spam. Unsubscribe anytime.
