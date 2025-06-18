@@ -11,7 +11,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
             <img 
-              src="/lovable-uploads/a6fe229c-4441-4de6-9f2d-2953b380f517.png" 
+              src="/lovable-uploads/d10f4f5b-6ff4-4d31-b3be-53683101c65f.png" 
               alt="Realer Estate Logo" 
               className="h-8 w-auto"
             />
