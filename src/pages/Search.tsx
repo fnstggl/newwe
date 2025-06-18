@@ -144,30 +144,36 @@ const Search = () => {
           {mockListings.map((listing) => (
             <div 
               key={listing.id}
-              className="bg-gray-900/50 rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500/50 hover:scale-105 transition-all duration-300 hover:shadow-2xl cursor-pointer"
+              className="relative rounded-3xl overflow-hidden border-2 border-gray-700/50 hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm"
             >
+              {/* Score badge - top right */}
+              <div className="absolute top-4 right-4 z-10 bg-blue-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-full text-lg font-bold tracking-tight shadow-lg">
+                {listing.dealScore}
+              </div>
+              
+              {/* Image container */}
               <div 
-                className="h-48 bg-cover bg-center"
+                className="h-56 bg-cover bg-center relative"
                 style={{ backgroundImage: `url('${listing.image}')` }}
               >
-                <div className="h-full bg-black/30 flex items-start justify-end p-4">
-                  <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold tracking-tight">
-                    Deal Score: {listing.dealScore}
-                  </div>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold mb-2 tracking-tight">
+              
+              {/* Content */}
+              <div className="p-6 space-y-4">
+                <h3 className="text-lg font-semibold tracking-tight text-white group-hover:text-blue-300 transition-colors">
                   {listing.address}
                 </h3>
-                <div className="flex justify-between items-center mb-4">
+                
+                <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-green-400 tracking-tight">
                     {listing.price}
                   </span>
-                  <span className="text-gray-400 tracking-tight">
+                  <span className="text-gray-300 tracking-tight font-medium">
                     {listing.pricePerSqft}/sqft
                   </span>
                 </div>
+                
                 <div className="flex justify-between text-sm text-gray-400">
                   <span className="tracking-tight">{listing.bedrooms} bed, {listing.bathrooms} bath</span>
                   <span className="tracking-tight">{listing.sqft} sqft</span>
