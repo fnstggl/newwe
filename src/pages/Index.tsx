@@ -28,7 +28,7 @@ const Index = () => {
                 Find the best deal in the city.
               </h1>
               <p className="text-5xl md:text-5xl mb-16 text-white opacity-100 font-playfair font-medium italic transform translate-y-[150px] tracking-tighter text-left">
-                actually.
+                Actually.
               </p>
               <Link 
                 to="/search" 
