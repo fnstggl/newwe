@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -26,7 +27,7 @@ const Index = () => {
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-tighter transform translate-y-[150px] text-white">
                 Find the best deal in the city.
               </h1>
-              <p className="text-5xl md:text-5xl mb-16 text-white opacity-100 font-playfair font-medium italic transform translate-y-[150px] tracking-tighter">
+              <p className="text-5xl md:text-5xl mb-16 text-white opacity-100 font-playfair font-medium italic transform translate-y-[150px] tracking-tighter text-left">
                 actually.
               </p>
               <Link 
