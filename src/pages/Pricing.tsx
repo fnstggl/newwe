@@ -53,10 +53,11 @@ const Pricing = () => {
                 </span>
               </div>
               
-              {/* Rainbow border container with slower animation */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 bg-[length:200%] animate-[rainbow_6s_infinite_linear]">
+              {/* Rainbow border container with slower animation and more colors */}
+              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 bg-[length:300%] animate-[rainbow_6s_infinite_linear] blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 via-purple-500 to-red-500 bg-[length:300%] animate-[rainbow_6s_infinite_linear] blur-md opacity-70"></div>
                 {/* Card content with black background */}
-                <div className="bg-black rounded-2xl p-8 flex flex-col h-full">
+                <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
