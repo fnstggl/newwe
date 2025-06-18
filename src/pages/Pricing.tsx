@@ -48,12 +48,6 @@ const Pricing = () => {
 
             {/* Early Bird Plan */}
             <div className="relative flex flex-col">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight">
-                  Most popular
-                </span>
-              </div>
-              
               {/* Glow border container */}
               <div className="relative overflow-hidden rounded-2xl p-[3px]">
                 <GlowEffect 
@@ -64,7 +58,13 @@ const Pricing = () => {
                 />
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
-                  <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
+                  {/* Header with title and badge */}
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-2xl font-semibold tracking-tight">Early Bird</h3>
+                    <span className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium tracking-tight">
+                      Most popular
+                    </span>
+                  </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
