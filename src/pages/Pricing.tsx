@@ -53,8 +53,8 @@ const Pricing = () => {
                 </span>
               </div>
               
-              {/* Rainbow border container */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 animate-rainbow bg-[length:200%]">
+              {/* Rainbow border container with slower animation */}
+              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-cyan-500 to-green-500 bg-[length:200%] animate-[rainbow_6s_infinite_linear]">
                 {/* Card content with black background */}
                 <div className="bg-black rounded-2xl p-8 flex flex-col h-full">
                   <h3 className="text-2xl font-semibold mb-4 tracking-tight">Early Bird</h3>
