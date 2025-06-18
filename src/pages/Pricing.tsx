@@ -58,7 +58,7 @@ const Pricing = () => {
                       Most popular
                     </span>
                   </div>
-                  <p className="text-4xl font-semibold mb-6 tracking-tight">$29<span className="text-lg text-gray-400">/mo</span></p>
+                  <p className="text-4xl font-semibold mb-6 tracking-tight">$3<span className="text-lg text-gray-400">/mo</span></p>
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
