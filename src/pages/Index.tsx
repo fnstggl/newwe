@@ -11,9 +11,10 @@ const Index = () => {
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center" 
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" 
             style={{
-              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`
+              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+              animationDuration: '2s'
             }}
           >
             <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
