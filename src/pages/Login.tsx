@@ -1,10 +1,13 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { HoverButton } from "../components/ui/hover-button";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +39,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your.email@domain.com"
-              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
             />
           </div>
 
@@ -44,29 +47,44 @@ const Login = () => {
             <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="w-full px-4 py-4 pr-12 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
-          <button
+          <HoverButton
             type="submit"
-            className="w-full bg-white text-black py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl"
+            className="w-full py-4 text-lg font-semibold tracking-tight text-white"
           >
             Log In
-          </button>
+          </HoverButton>
         </form>
 
         <div className="mt-8 text-center">
           <p className="text-gray-400 tracking-tight">
             No account yet?{" "}
-            <Link to="/join" className="text-blue-400 hover:text-blue-300 transition-colors">
+            <Link 
+              to="/join" 
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+              style={{
+                textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+              }}
+            >
               Join now →
             </Link>
           </p>
