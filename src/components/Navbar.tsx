@@ -17,10 +17,12 @@ const Navbar = () => {
 
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
-      isScrolled ? 'mx-4 mt-4 rounded-full border border-gray-800' : ''
+      isScrolled ? 'mx-6 mt-3 rounded-full border border-gray-800' : ''
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className={`flex items-center justify-between transition-all duration-300 ${
+          isScrolled ? 'h-12' : 'h-16'
+        }`}>
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
             <img 
