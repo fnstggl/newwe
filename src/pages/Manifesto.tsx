@@ -83,7 +83,7 @@ const Manifesto = () => {
             </p>
             <a 
               href="/join"
-              className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl"
+              className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all duration-300 shadow-xl hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]"
             >
               Join the Movement
             </a>
