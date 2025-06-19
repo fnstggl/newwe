@@ -1,10 +1,12 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, userProfile, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,6 +16,10 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
@@ -120,23 +126,39 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Auth Buttons */}
+          {/* Auth Section */}
           <div className="flex items-center space-x-4">
-            <Link 
-              to="/login" 
-              className="text-gray-300 hover:text-white transition-colors text-xs tracking-tight"
-              style={{
-                textShadow: '0 0 8px rgba(59, 130, 246, 0.6)'
-              }}
-            >
-              Log in
-            </Link>
-            <Link 
-              to="/join" 
-              className="bg-white text-black px-6 py-2 rounded-full font-medium text-xs tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              Join
-            </Link>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-white text-xs tracking-tight">
+                  Welcome, {userProfile?.name || 'User'}
+                </span>
+                <button 
+                  onClick={handleSignOut}
+                  className="text-gray-300 hover:text-white transition-colors text-xs tracking-tight"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link 
+                  to="/login" 
+                  className="text-gray-300 hover:text-white transition-colors text-xs tracking-tight"
+                  style={{
+                    textShadow: '0 0 8px rgba(59, 130, 246, 0.6)'
+                  }}
+                >
+                  Log in
+                </Link>
+                <Link 
+                  to="/join" 
+                  className="bg-white text-black px-6 py-2 rounded-full font-medium text-xs tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                >
+                  Join
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

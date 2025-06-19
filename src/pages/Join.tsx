@@ -1,15 +1,51 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { HoverButton } from "../components/ui/hover-button";
+import { useAuth } from "../contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Join = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Email submitted:", email);
-    setIsSubmitted(true);
+    setIsLoading(true);
+
+    try {
+      const { error } = await signUp(email, password, name);
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome!",
+          description: "Your account has been created successfully.",
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -24,45 +60,73 @@ const Join = () => {
           </p>
         </div>
 
-        {!isSubmitted ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="your.email@domain.com"
-                className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
-              />
-            </div>
-
-            <HoverButton
-              type="submit"
-              className="w-full py-4 text-lg font-semibold tracking-tight bg-white text-black hover:bg-gray-100"
-            >
-              Give me the deals.
-            </HoverButton>
-
-            <p className="text-center text-gray-500 text-sm tracking-tight">
-              Early access. Zero spam. Unsubscribe anytime.
-            </p>
-          </form>
-        ) : (
-          <div className="text-center bg-gray-900/50 rounded-2xl p-8 border border-green-500/20">
-            <div className="text-6xl mb-4">✅</div>
-            <h2 className="text-2xl font-bold mb-4 text-green-400 tracking-tight">
-              You're on the list!
-            </h2>
-            <p className="text-gray-400 tracking-tight">
-              We'll notify you when the platform launches with exclusive deals.
-            </p>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              placeholder="Your full name"
+              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+            />
           </div>
-        )}
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="your.email@domain.com"
+              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="w-full px-4 py-4 pr-12 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          <HoverButton
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-4 text-lg font-semibold tracking-tight bg-white text-black hover:bg-gray-100"
+          >
+            {isLoading ? "Creating Account..." : "Join Now"}
+          </HoverButton>
+
+          <p className="text-center text-gray-500 text-sm tracking-tight">
+            Early access. Zero spam. Unsubscribe anytime.
+          </p>
+        </form>
 
         <div className="mt-12 text-center">
           <h3 className="text-xl font-semibold mb-4 tracking-tight">
