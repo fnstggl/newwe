@@ -1,5 +1,4 @@
 
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -8,7 +7,7 @@ import { HoverButton } from "@/components/ui/hover-button";
 const Index = () => {
   return <div className="font-inter">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-2">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-4">
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
           <div className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" style={{
@@ -20,14 +19,14 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
             
             {/* Hero Content - Centered */}
-            <div className="relative z-10 text-center px-4 py-12 max-w-5xl">
-              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] text-white">
+            <div className="relative z-10 text-center px-4 py-20 max-w-5xl">
+              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
                 Your unfair advantage in real estate.
               </h1>
-              <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium tracking-[-0.075em]">
+              <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 The best deals in the city—found for you.
               </p>
-              <Link to="/search" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
+              <Link to="/search" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
               </Link>
             </div>
@@ -125,4 +124,3 @@ const Index = () => {
 };
 
 export default Index;
-
