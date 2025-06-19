@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 const Navbar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user, userProfile, signOut } = useAuth();
+  const { user, userProfile } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,10 +16,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
@@ -129,17 +125,12 @@ const Navbar = () => {
           {/* Auth Section */}
           <div className="flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-white text-xs tracking-tight">
-                  Welcome, {userProfile?.name || 'User'}
-                </span>
-                <button 
-                  onClick={handleSignOut}
-                  className="text-gray-300 hover:text-white transition-colors text-xs tracking-tight"
-                >
-                  Sign Out
-                </button>
-              </div>
+              <Link 
+                to="/profile"
+                className="text-white hover:text-gray-300 transition-colors text-xs tracking-tight"
+              >
+                {userProfile?.name || 'Profile'}
+              </Link>
             ) : (
               <>
                 <Link 

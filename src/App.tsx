@@ -12,6 +12,7 @@ import Manifesto from "./pages/Manifesto";
 import Pricing from "./pages/Pricing";
 import Join from "./pages/Join";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/join" element={<Join />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
