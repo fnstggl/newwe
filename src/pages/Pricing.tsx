@@ -63,7 +63,7 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white">Access all deals</strong>
+                      <strong className="text-white">Access to ALL deals</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
