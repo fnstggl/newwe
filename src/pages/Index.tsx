@@ -19,7 +19,7 @@ const Index = () => {
               animationFillMode: 'both'
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/20 rounded-3xl"></div>
           </div>
           
           {/* Hero Content - Always Visible */}
