@@ -7,7 +7,7 @@ import { HoverButton } from "@/components/ui/hover-button";
 const Index = () => {
   return <div className="font-inter">
       {/* Hero Section */}
-<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0 md:pt-0">        {/* Background Image with Rounded Border */}
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0 md:pt-2">        {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
           {/* Background Image with Fade-in Effect */}
           <div 
