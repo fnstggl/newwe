@@ -25,7 +25,7 @@ const Index = () => {
                 Your unfair advantage in real estate.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
-                Know you're getting the best deal in the city—always.
+                The best deals in the city—found for you.
               </p>
               <Link to="/search" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
