@@ -10,16 +10,22 @@ const Index = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-4">
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
-          <div className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" style={{
-          backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-          animationDuration: '3s',
-          animationDelay: '0s',
-          animationFillMode: 'both'
-        }}>
+          {/* Background Image with Fade-in Effect */}
+          <div 
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in rounded-3xl"
+            style={{
+              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+              animationDuration: '3s',
+              animationDelay: '0s',
+              animationFillMode: 'both'
+            }}
+          >
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
-            
-            {/* Hero Content - Centered */}
-            <div className="relative z-10 text-center px-4 py-20 max-w-5xl">
+          </div>
+          
+          {/* Hero Content - Always Visible */}
+          <div className="relative z-10 min-h-[600px] flex items-center justify-center">
+            <div className="text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
                 Your unfair advantage in real estate.
               </h1>
