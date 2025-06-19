@@ -25,7 +25,7 @@ const Pricing = () => {
               <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  See all listings
+                  See up to 3 deals per day
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -45,7 +45,7 @@ const Pricing = () => {
               </button>
             </div>
 
-            {/* Early Bird Plan */}
+            {/* Unlimited Plan */}
             <div className="relative flex flex-col">
               {/* Card with animated border */}
               <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
@@ -53,7 +53,7 @@ const Pricing = () => {
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   {/* Header with title and badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-2xl font-semibold tracking-tight">Early Bird</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
                     <span className="border-2 border-white/60 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight bg-transparent">
                       Most popular
                     </span>
@@ -62,15 +62,15 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Everything in Free
+                      Access to all undervalued listings
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white">INSTANT email alerts</strong>
+                      <strong className="text-white">INSTANT email notifications for new deals</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      New deals within 60 seconds
+                      Select the areas you want to be notified for new deals in 
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
@@ -78,7 +78,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Priority support
+                      Your competitive edge in the NYC real estate market
                     </li>
                   </ul>
                   <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:bg-gray-200">
