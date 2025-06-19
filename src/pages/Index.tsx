@@ -94,7 +94,7 @@ const Index = () => {
             </div>
           </div>
           <Link to="/neighborhoods">
-            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300">
+            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
               Explore Neighborhoods
             </HoverButton>
           </Link>
