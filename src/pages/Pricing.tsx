@@ -81,7 +81,7 @@ const Pricing = () => {
                       Priority support
                     </li>
                   </ul>
-                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto">
+                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:bg-gray-200">
                     Coming Soon
                   </button>
                 </div>
