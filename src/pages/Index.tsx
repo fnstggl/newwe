@@ -1,4 +1,5 @@
 
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -93,7 +94,7 @@ const Index = () => {
             </div>
           </div>
           <Link to="/neighborhoods">
-            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_40px_rgba(255,255,255,0.8)] transition-all duration-300">
+            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] transition-all duration-300">
               Explore Neighborhoods
             </HoverButton>
           </Link>
@@ -122,3 +123,4 @@ const Index = () => {
     </div>;
 };
 export default Index;
+
