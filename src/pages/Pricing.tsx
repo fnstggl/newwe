@@ -48,13 +48,13 @@ const Pricing = () => {
             {/* Early Bird Plan */}
             <div className="relative flex flex-col">
               {/* Card with animated border */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 via-indigo-500 via-purple-500 to-red-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
+              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   {/* Header with title and badge */}
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-2xl font-semibold tracking-tight">Early Bird</h3>
-                    <span className="border border-white/60 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight bg-transparent">
+                    <span className="border-2 border-white/60 text-white px-6 py-2 rounded-full text-sm font-medium tracking-tight bg-transparent">
                       Most popular
                     </span>
                   </div>
@@ -81,7 +81,7 @@ const Pricing = () => {
                       Priority support
                     </li>
                   </ul>
-                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:shadow-[0_0_0px_rgba(59,130,246,0.5)] hover:border hover:border-blue-400">
+                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto">
                     Coming Soon
                   </button>
                 </div>
