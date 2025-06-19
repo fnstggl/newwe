@@ -1,20 +1,18 @@
-
-
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
+
 const Index = () => {
   return <div className="font-inter">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-8">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-4">
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
           <div className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" style={{
           backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-          animationDuration: '3.5s',
-          animationDelay: '0.5s',
+          animationDuration: '3s',
+          animationDelay: '0s',
           animationFillMode: 'both'
         }}>
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
@@ -123,6 +121,5 @@ const Index = () => {
       </section>
     </div>;
 };
+
 export default Index;
-
-

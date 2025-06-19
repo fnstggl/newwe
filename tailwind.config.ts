@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -103,6 +102,16 @@ export default {
 						boxShadow: '0 0 40px rgba(59, 130, 246, 0.8)'
 					}
 				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						filter: 'brightness(0)'
+					},
+					'100%': {
+						opacity: '1',
+						filter: 'brightness(1)'
+					}
+				},
 				rainbow: {
 					"0%": { "background-position": "0%" },
 					"100%": { "background-position": "200%" },
@@ -112,6 +121,7 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'fade-in': 'fade-in 3s ease-out',
 				rainbow: "rainbow var(--speed, 2s) infinite linear",
 			}
 		}
