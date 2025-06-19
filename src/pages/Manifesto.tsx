@@ -13,7 +13,7 @@ const Manifesto = () => {
             </span>
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
-            NYC real estate is rigged. Now you can win.
+            Don't overpay for your home in NYC ever again.
           </p>
         </div>
 
