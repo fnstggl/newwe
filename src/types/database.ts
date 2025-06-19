@@ -14,10 +14,10 @@ export interface UndervaluedSales {
   grade: string;
   discount_percent: number;
   reasoning?: string;
-  images: any[];
+  images: string[] | any[];
   image_count?: number;
-  videos: any[];
-  floorplans: any[];
+  videos: string[] | any[];
+  floorplans: string[] | any[];
   description?: string;
   amenities: string[];
   property_type?: string;
@@ -50,10 +50,10 @@ export interface UndervaluedRentals {
   grade: string;
   discount_percent: number;
   reasoning?: string;
-  images: any[];
+  images: string[] | any[];
   image_count?: number;
-  videos: any[];
-  floorplans: any[];
+  videos: string[] | any[];
+  floorplans: string[] | any[];
   description?: string;
   amenities: string[];
   property_type?: string;
@@ -76,6 +76,15 @@ export interface UndervaluedRentals {
   created_at: string;
   potential_monthly_savings?: number;
   annual_savings?: number;
+}
+
+export interface UserProfile {
+  id: string;
+  name?: string;
+  email_address?: string;
+  subscription_plan: 'free' | 'unlimited';
+  subscription_renewal: 'monthly' | 'annual';
+  created_at: string;
 }
 
 export type PropertyListing = UndervaluedSales | UndervaluedRentals;

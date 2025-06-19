@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +14,24 @@ interface PropertyDetailProps {
 const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const images = property.images || [];
+  // Process images to handle different formats
+  const processImages = () => {
+    if (!property.images || property.images.length === 0) {
+      return [];
+    }
+
+    return property.images.map((img: any) => {
+      if (typeof img === 'string') {
+        return img;
+      }
+      if (typeof img === 'object' && img !== null) {
+        return img.url || img.image_url || '/placeholder.svg';
+      }
+      return '/placeholder.svg';
+    });
+  };
+
+  const images = processImages();
   const hasImages = images.length > 0;
 
   const formatPrice = (price: number) => {
@@ -69,8 +85,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  const currentImage = hasImages ? images[currentImageIndex] : null;
-  const imageUrl = currentImage?.url || currentImage?.image_url || '/placeholder.svg';
+  const currentImageUrl = hasImages ? images[currentImageIndex] : '/placeholder.svg';
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
@@ -95,9 +110,12 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               <div className="relative mb-8">
                 <div className="aspect-video rounded-2xl overflow-hidden bg-gray-800">
                   <img
-                    src={imageUrl}
+                    src={currentImageUrl}
                     alt={property.address}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
                   />
                 </div>
                 

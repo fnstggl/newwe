@@ -47,8 +47,28 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     return discountMatch ? `${discountMatch[1]}% below market` : `${Math.round(property.discount_percent)}% below market`;
   };
 
-  const mainImage = property.images && property.images.length > 0 ? property.images[0] : null;
-  const imageUrl = mainImage?.url || mainImage?.image_url || '/placeholder.svg';
+  // Handle image URL extraction properly
+  const getImageUrl = () => {
+    if (!property.images || property.images.length === 0) {
+      return '/placeholder.svg';
+    }
+
+    const firstImage = property.images[0];
+    
+    // If it's already a string URL, use it directly
+    if (typeof firstImage === 'string') {
+      return firstImage;
+    }
+    
+    // If it's an object with url or image_url property
+    if (typeof firstImage === 'object' && firstImage !== null) {
+      return firstImage.url || firstImage.image_url || '/placeholder.svg';
+    }
+
+    return '/placeholder.svg';
+  };
+
+  const imageUrl = getImageUrl();
 
   const price = isRental 
     ? (property as UndervaluedRentals).monthly_rent 
@@ -71,10 +91,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
       </div>
       
       {/* Image container */}
-      <div 
-        className="h-56 bg-cover bg-center relative"
-        style={{ backgroundImage: `url('${imageUrl}')` }}
-      >
+      <div className="h-56 bg-gray-800 relative overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={property.address}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = '/placeholder.svg';
+          }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </div>
       

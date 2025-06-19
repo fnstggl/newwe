@@ -71,11 +71,21 @@ const Search = () => {
         return;
       }
 
+      // Transform data to ensure proper typing
+      const transformedData = (data || []).map(item => ({
+        ...item,
+        images: Array.isArray(item.images) ? item.images : [],
+        videos: Array.isArray(item.videos) ? item.videos : [],
+        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
+        agents: Array.isArray(item.agents) ? item.agents : [],
+        amenities: Array.isArray(item.amenities) ? item.amenities : [],
+      })) as (UndervaluedSales | UndervaluedRentals)[];
+
       if (reset) {
-        setProperties(data || []);
+        setProperties(transformedData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...(data || [])]);
+        setProperties(prev => [...prev, ...transformedData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
