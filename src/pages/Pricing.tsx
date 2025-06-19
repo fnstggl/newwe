@@ -1,4 +1,5 @@
 
+
 import { Link } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 
@@ -62,11 +63,11 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Access all deals
+                      <strong className="text-white">Access all deals</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white">Email alerts for new deals</strong>
+                      Email alerts for new deals
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
@@ -75,10 +76,6 @@ const Pricing = () => {
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
                       Advanced deal analysis
-                    </li>
-                    <li className="flex items-center tracking-tight">
-                      <span className="text-blue-400 mr-3">•</span>
-                      Your competitive edge
                     </li>
                   </ul>
                   <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:bg-gray-200">
@@ -112,3 +109,4 @@ const Pricing = () => {
 };
 
 export default Pricing;
+
