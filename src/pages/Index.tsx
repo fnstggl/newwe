@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -59,15 +60,15 @@ const Index = () => {
             The real estate game is rigged. Now you can win. 
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:ring-2 hover:ring-blue-500/30">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_40px_rgba(59,130,246,0.8)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">We analyze the data</h3>
               <p className="text-gray-400 tracking-tight">Real-time scraping of listings with price history and market trends.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:ring-2 hover:ring-blue-500/30">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_40px_rgba(59,130,246,0.8)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">We flag the real deals</h3>
               <p className="text-gray-400 tracking-tight">Advanced algorithms identify undervalued properties you'd never find.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:ring-2 hover:ring-blue-500/30">
+            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_40px_rgba(59,130,246,0.8)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">You buy smarter</h3>
               <p className="text-gray-400 tracking-tight">Skip overpriced listings and focus on real opportunities.</p>
             </div>
@@ -92,7 +93,7 @@ const Index = () => {
             </div>
           </div>
           <Link to="/neighborhoods">
-            <HoverButton className="text-white font-semibold tracking-tight">
+            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_40px_rgba(255,255,255,0.8)] transition-all duration-300">
               Explore Neighborhoods
             </HoverButton>
           </Link>
