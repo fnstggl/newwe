@@ -79,7 +79,7 @@ const Pricing = () => {
                     </li>
                   </ul>
                   <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-auto hover:bg-gray-200">
-                    Coming Soon
+                    Beat the System
                   </button>
                 </div>
               </div>
