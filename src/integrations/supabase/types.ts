@@ -75,6 +75,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email_address: string | null
+          id: string
+          name: string | null
+          subscription_plan: string
+          subscription_renewal: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_address?: string | null
+          id: string
+          name?: string | null
+          subscription_plan?: string
+          subscription_renewal?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_address?: string | null
+          id?: string
+          name?: string | null
+          subscription_plan?: string
+          subscription_renewal?: string | null
+        }
+        Relationships: []
+      }
       rental_market_cache: {
         Row: {
           address: string | null
