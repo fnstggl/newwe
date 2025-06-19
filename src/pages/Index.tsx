@@ -39,12 +39,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="h-6 w-6 text-white/60" />
-        </div>
-      </section>
-
       {/* Problem Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
