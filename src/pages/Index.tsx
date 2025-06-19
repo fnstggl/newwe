@@ -1,25 +1,19 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
-
 const Index = () => {
-  return (
-    <div className="font-inter">
+  return <div className="font-inter">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden p-8">
         {/* Background Image with Rounded Border */}
         <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
-          <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" 
-            style={{
-              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-              animationDuration: '3.5s',
-              animationDelay: '0.5s',
-              animationFillMode: 'both'
-            }}
-          >
+          <div className="bg-cover bg-center bg-no-repeat min-h-[600px] flex items-center justify-center animate-fade-in" style={{
+          backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+          animationDuration: '3.5s',
+          animationDelay: '0.5s',
+          animationFillMode: 'both'
+        }}>
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/50 rounded-3xl"></div>
             
             {/* Hero Content - Centered */}
@@ -30,9 +24,7 @@ const Index = () => {
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 Know you're getting the best deal in the city—always.
               </p>
-              <Link 
-                to="/search" 
-                className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+              <Link to="/search" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
                 Start Searching
               </Link>
             </div>
@@ -41,7 +33,7 @@ const Index = () => {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="h-6 w-6 text-white/60" />
+          
         </div>
       </section>
 
@@ -126,8 +118,6 @@ const Index = () => {
           </Link>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
