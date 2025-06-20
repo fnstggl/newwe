@@ -90,15 +90,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   const displayGrade = property.grade || 'N/A';
   const displayScore = property.score || 0;
 
-  console.log('Property data:', {
-    id: property.id,
-    address: property.address,
-    grade: property.grade,
-    score: property.score,
-    displayGrade,
-    displayScore
-  });
-
   return (
     <div 
       className="relative rounded-3xl overflow-hidden border border-gray-700/50 hover:border-blue-500/70 transition-all duration-300 hover:scale-[1.02] cursor-pointer group bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-sm"

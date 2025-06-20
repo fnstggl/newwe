@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -71,23 +70,41 @@ const Search = () => {
         return;
       }
 
-      console.log('Fetched properties:', data);
-      console.log('Sample property grades and scores:', data?.slice(0, 3).map(p => ({
+      console.log('Raw data from Supabase:', data?.slice(0, 3).map(p => ({
         id: p.id,
         address: p.address,
         grade: p.grade,
-        score: p.score
+        score: p.score,
+        discount_percent: p.discount_percent
       })));
 
-      // Transform data to ensure proper typing
-      const transformedData = (data || []).map(item => ({
-        ...item,
-        images: Array.isArray(item.images) ? item.images : [],
-        videos: Array.isArray(item.videos) ? item.videos : [],
-        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
-        agents: Array.isArray(item.agents) ? item.agents : [],
-        amenities: Array.isArray(item.amenities) ? item.amenities : [],
-      })) as (UndervaluedSales | UndervaluedRentals)[];
+      // Transform data to ensure proper typing while preserving all original values
+      const transformedData = (data || []).map(item => {
+        // Create the transformed object while explicitly preserving grade and score
+        const transformed = {
+          ...item, // Keep all original properties first
+          images: Array.isArray(item.images) ? item.images : [],
+          videos: Array.isArray(item.videos) ? item.videos : [],
+          floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
+          agents: Array.isArray(item.agents) ? item.agents : [],
+          amenities: Array.isArray(item.amenities) ? item.amenities : [],
+          // Explicitly ensure grade and score are preserved
+          grade: item.grade,
+          score: item.score,
+          discount_percent: item.discount_percent
+        };
+        
+        console.log('Transformed item:', {
+          id: transformed.id,
+          address: transformed.address,
+          originalGrade: item.grade,
+          transformedGrade: transformed.grade,
+          originalScore: item.score,
+          transformedScore: transformed.score
+        });
+        
+        return transformed;
+      }) as (UndervaluedSales | UndervaluedRentals)[];
 
       if (reset) {
         setProperties(transformedData);
