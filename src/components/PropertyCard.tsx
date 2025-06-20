@@ -10,13 +10,15 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
-  console.log('🃏 PROPERTY CARD RECEIVED:', {
-    id: property.id,
-    address: property.address,
-    grade: property.grade,
-    score: property.score,
-    gradeType: typeof property.grade,
-    scoreType: typeof property.score
+  console.log('🃏 PROPERTY CARD RECEIVED - DETAILED:', {
+    id: property?.id,
+    address: property?.address,
+    grade: property?.grade,
+    score: property?.score,
+    gradeType: typeof property?.grade,
+    scoreType: typeof property?.score,
+    propertyKeys: Object.keys(property || {}),
+    fullProperty: property
   });
 
   const getGradeColor = (grade: string) => {
@@ -95,16 +97,18 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  // Use EXACT values from database - NO fallbacks or defaults
-  const displayGrade = property.grade;
-  const displayScore = property.score;
+  // Direct access to grade and score from property - no fallbacks
+  const actualGrade = property.grade;
+  const actualScore = property.score;
 
-  console.log('🃏 PROPERTY CARD FINAL VALUES:', {
+  console.log('🃏 FINAL VALUES BEING DISPLAYED:', {
     address: property.address,
-    displayGrade,
-    displayScore,
-    gradeIsNull: displayGrade === null,
-    scoreIsNull: displayScore === null
+    actualGrade,
+    actualScore,
+    gradeIsNull: actualGrade === null,
+    scoreIsNull: actualScore === null,
+    gradeIsUndefined: actualGrade === undefined,
+    scoreIsUndefined: actualScore === undefined
   });
 
   return (
@@ -114,8 +118,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     >
       {/* Score badge - top right with glassmorphic effect */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${getGradeColor(displayGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
-          {displayGrade || 'N/A'}
+        <div className={`${getGradeColor(actualGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
+          {actualGrade || 'N/A'}
         </div>
       </div>
       
@@ -163,7 +167,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
-            Score: {displayScore || 'N/A'}
+            Score: {actualScore || 'N/A'}
           </Badge>
         </div>
 

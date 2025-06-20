@@ -242,18 +242,19 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} PASSED TO CARD:`, {
-              id: property.id,
-              address: property.address,
-              grade: property.grade,
-              score: property.score,
-              gradeType: typeof property.grade,
-              scoreType: typeof property.score
+            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD:`, {
+              id: property?.id,
+              address: property?.address,
+              grade: property?.grade,
+              score: property?.score,
+              gradeType: typeof property?.grade,
+              scoreType: typeof property?.score,
+              fullPropertyObject: property
             });
             
             return (
               <PropertyCard
-                key={property.id}
+                key={`${property.id}-${index}`}
                 property={property}
                 isRental={isRent}
                 onClick={() => setSelectedProperty(property)}
