@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
+import Buy from "./pages/Buy";
+import Rent from "./pages/Rent";
 import Neighborhoods from "./pages/Neighborhoods";
 import Manifesto from "./pages/Manifesto";
 import Pricing from "./pages/Pricing";
@@ -30,6 +32,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/search" element={<Search />} />
+              <Route path="/buy" element={<Buy />} />
+              <Route path="/rent" element={<Rent />} />
               <Route path="/neighborhoods" element={<Neighborhoods />} />
               <Route path="/manifesto" element={<Manifesto />} />
               <Route path="/pricing" element={<Pricing />} />

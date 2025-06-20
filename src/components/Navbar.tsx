@@ -37,25 +37,46 @@ const Navbar = () => {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
-              to="/search" 
+              to="/buy" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/search' ? 'text-white' : 'text-gray-300'
+                location.pathname === '/buy' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/search' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+                textShadow: location.pathname === '/buy' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
-                if (location.pathname !== '/search') {
+                if (location.pathname !== '/buy') {
                   e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (location.pathname !== '/search') {
+                if (location.pathname !== '/buy') {
                   e.currentTarget.style.textShadow = 'none';
                 }
               }}
             >
-              Search
+              Buy
+            </Link>
+            <Link 
+              to="/rent" 
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
+                location.pathname === '/rent' ? 'text-white' : 'text-gray-300'
+              }`}
+              style={{
+                textShadow: location.pathname === '/rent' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/rent') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/rent') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
+              }}
+            >
+              Rent
             </Link>
             <Link 
               to="/neighborhoods" 
