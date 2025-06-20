@@ -47,23 +47,10 @@ const Search = () => {
       
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
-      // Define base columns that exist in both tables
-      const baseColumns = [
-        'id', 'address', 'grade', 'score', 'bedrooms', 'bathrooms', 'sqft',
-        'neighborhood', 'borough', 'zipcode', 'discount_percent', 'reasoning',
-        'images', 'image_count', 'videos', 'floorplans', 'description', 'amenities',
-        'property_type', 'listed_at', 'days_on_market', 'built_in', 'agents',
-        'building_info', 'status', 'last_seen_in_search', 'analysis_date', 'created_at'
-      ];
-
-      // Add table-specific columns
-      const selectColumns = isRent 
-        ? [...baseColumns, 'monthly_rent', 'rent_per_sqft', 'likely_rented']
-        : [...baseColumns, 'price', 'price_per_sqft', 'monthly_hoa', 'monthly_tax', 'likely_sold'];
-
+      // Start with a simple query to get all columns using *
       let query = supabase
         .from(tableName)
-        .select(selectColumns.join(', '))
+        .select('*')
         .eq('status', 'active')
         .order('score', { ascending: false });
 
@@ -109,6 +96,7 @@ const Search = () => {
 
       if (error) {
         console.error('❌ SUPABASE ERROR:', error);
+        setProperties([]);
         return;
       }
 
@@ -122,16 +110,16 @@ const Search = () => {
       console.log('✅ QUERY SUCCESS - RAW DATA:', {
         totalReturned: data.length,
         firstThreeRaw: data.slice(0, 3).map(item => ({
-          id: item.id,
-          address: item.address,
-          grade: item.grade,
-          score: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
+          id: item?.id,
+          address: item?.address,
+          grade: item?.grade,
+          score: item?.score,
+          gradeType: typeof item?.grade,
+          scoreType: typeof item?.score
         }))
       });
 
-      // Use the data directly without additional validation since all properties have grades and scores
+      // Use the data directly since we're now selecting all columns with *
       if (reset) {
         setProperties(data);
         setOffset(ITEMS_PER_PAGE);
@@ -143,6 +131,7 @@ const Search = () => {
       setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
+      setProperties([]);
     } finally {
       setLoading(false);
     }
