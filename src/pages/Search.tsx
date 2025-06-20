@@ -41,12 +41,11 @@ const Search = () => {
     try {
       console.log(`🔍 STARTING FRESH FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
-      // Use the EXACT same query structure as the working raw test query
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
       let query = supabase
         .from(tableName)
-        .select('*') // Use select all like the working raw query
+        .select('*')
         .eq('status', 'active')
         .order('score', { ascending: false });
 
@@ -71,7 +70,7 @@ const Search = () => {
       // Apply pagination
       const finalQuery = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      console.log('🚀 EXECUTING QUERY WITH SELECT ALL...');
+      console.log('🚀 EXECUTING QUERY...');
       const { data, error } = await finalQuery;
 
       if (error) {
@@ -79,7 +78,7 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ QUERY SUCCESS WITH SELECT ALL:', {
+      console.log('✅ QUERY SUCCESS:', {
         dataLength: data?.length,
         rawDataSample: data?.slice(0, 3).map(item => ({
           id: item.id,
@@ -87,15 +86,22 @@ const Search = () => {
           rawGrade: item.grade,
           rawScore: item.score,
           gradeType: typeof item.grade,
-          scoreType: typeof item.score,
-          fullItem: item
+          scoreType: typeof item.score
         }))
       });
 
-      // NO TRANSFORMATION - use data exactly as returned from database
-      const propertiesData = data || [];
+      // Type cast the raw data to our interfaces
+      const propertiesData = (data || []).map(item => ({
+        ...item,
+        images: Array.isArray(item.images) ? item.images : [],
+        videos: Array.isArray(item.videos) ? item.videos : [],
+        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
+        amenities: Array.isArray(item.amenities) ? item.amenities : [],
+        agents: item.agents || [],
+        building_info: item.building_info || {}
+      })) as (UndervaluedSales | UndervaluedRentals)[];
 
-      console.log('🎯 FINAL DATA BEING SET:', {
+      console.log('🎯 FINAL TYPED DATA:', {
         length: propertiesData.length,
         firstThreeGradesScores: propertiesData.slice(0, 3).map(item => ({
           id: item.id,
