@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -224,13 +223,6 @@ const Search = () => {
                 <option value="4">4+</option>
               </select>
             </div>
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="text-sm text-gray-500">
-            Showing {properties.length} {isRent ? 'rental' : 'sale'} properties
           </div>
         </div>
 
