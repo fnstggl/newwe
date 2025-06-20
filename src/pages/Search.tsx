@@ -86,8 +86,15 @@ const Search = () => {
 
       // Transform data with explicit preservation of critical fields
       const transformedData = (data || []).map((item, index) => {
+        // Store the original grade and score before transformation
+        const originalGrade = item.grade;
+        const originalScore = item.score;
+        
         const transformed = {
           ...item,
+          // Explicitly preserve the grade and score
+          grade: originalGrade,
+          score: originalScore,
           images: Array.isArray(item.images) ? item.images : [],
           videos: Array.isArray(item.videos) ? item.videos : [],
           floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
@@ -100,12 +107,12 @@ const Search = () => {
           console.log(`TRANSFORMED Item ${index + 1}:`, {
             id: transformed.id,
             address: transformed.address,
-            originalGrade: item.grade,
+            originalGrade: originalGrade,
             transformedGrade: transformed.grade,
-            originalScore: item.score,
+            originalScore: originalScore,
             transformedScore: transformed.score,
-            gradeEqual: item.grade === transformed.grade,
-            scoreEqual: item.score === transformed.score
+            gradeEqual: originalGrade === transformed.grade,
+            scoreEqual: originalScore === transformed.score
           });
         }
         
