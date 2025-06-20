@@ -47,9 +47,47 @@ const Search = () => {
       
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
+      // Explicitly select all the fields we need, especially grade and score
       let query = supabase
         .from(tableName)
-        .select('*')
+        .select(`
+          id,
+          address,
+          grade,
+          score,
+          price,
+          monthly_rent,
+          price_per_sqft,
+          rent_per_sqft,
+          bedrooms,
+          bathrooms,
+          sqft,
+          neighborhood,
+          borough,
+          zipcode,
+          discount_percent,
+          reasoning,
+          images,
+          image_count,
+          videos,
+          floorplans,
+          description,
+          amenities,
+          property_type,
+          listed_at,
+          days_on_market,
+          built_in,
+          monthly_hoa,
+          monthly_tax,
+          agents,
+          building_info,
+          status,
+          likely_sold,
+          likely_rented,
+          last_seen_in_search,
+          analysis_date,
+          created_at
+        `)
         .eq('status', 'active')
         .order('score', { ascending: false });
 
@@ -105,22 +143,9 @@ const Search = () => {
         return;
       }
 
-      // Check if the data has the required fields (grade and score) and they're not null
-      const validProperties = data.filter(item => 
-        item && 
-        typeof item === 'object' && 
-        item.grade !== null && 
-        item.grade !== undefined && 
-        item.score !== null && 
-        item.score !== undefined &&
-        item.address && 
-        item.id
-      );
-
-      console.log('✅ QUERY SUCCESS - VALIDATED DATA:', {
+      console.log('✅ QUERY SUCCESS - RAW DATA:', {
         totalReturned: data.length,
-        validProperties: validProperties.length,
-        firstThreeValid: validProperties.slice(0, 3).map(item => ({
+        firstThreeRaw: data.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
@@ -130,30 +155,12 @@ const Search = () => {
         }))
       });
 
-      // Only proceed if we have valid properties with grades and scores
-      if (validProperties.length === 0) {
-        console.warn('⚠️ NO VALID PROPERTIES WITH GRADES/SCORES FOUND');
-        setProperties([]);
-        return;
-      }
-
-      console.log('🎯 FINAL VALID DATA BEING SET:', {
-        length: validProperties.length,
-        firstThreeFinal: validProperties.slice(0, 3).map(item => ({
-          id: item.id,
-          address: item.address,
-          grade: item.grade,
-          score: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
-        }))
-      });
-
+      // Use the data directly without additional validation since all properties have grades and scores
       if (reset) {
-        setProperties(validProperties);
+        setProperties(data);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...validProperties]);
+        setProperties(prev => [...prev, ...data]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -274,15 +281,13 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (VALIDATED):`, {
+            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD:`, {
               id: property?.id,
               address: property?.address,
               grade: property?.grade,
               score: property?.score,
               gradeType: typeof property?.grade,
-              scoreType: typeof property?.score,
-              gradeValue: property?.grade,
-              scoreValue: property?.score
+              scoreType: typeof property?.score
             });
             
             return (
