@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -81,7 +82,7 @@ const Buy = () => {
         .from('undervalued_sales')
         .select('*')
         .eq('status', 'active')
-        .order('score', { ascending: false });
+        .order('created_at', { ascending: false }); // Random-ish order instead of by score
 
       if (searchTerm.trim()) {
         query = query.ilike('address', `%${searchTerm.trim()}%`);
@@ -131,11 +132,14 @@ const Buy = () => {
         return;
       }
 
+      // Shuffle the results to make them appear random
+      const shuffledData = data.sort(() => Math.random() - 0.5);
+
       if (reset) {
-        setProperties(data);
+        setProperties(shuffledData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...data]);
+        setProperties(prev => [...prev, ...shuffledData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -230,7 +234,7 @@ const Buy = () => {
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
-                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
@@ -313,7 +317,7 @@ const Buy = () => {
               >
                 <option value="">Any Grade</option>
                 {gradeOptions.map((grade) => (
-                  <option key={grade} value={grade}>{grade}+</option>
+                  <option key={grade} value={grade}>{grade}</option>
                 ))}
               </select>
             </div>
