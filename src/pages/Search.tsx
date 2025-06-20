@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -18,11 +17,11 @@ const Search = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [isRent, setIsRent] = useState(false);
-  const [properties, setProperties] = useState<(SupabaseUndervaluedSales | SupabaseUndervaluedRentals)[]>([]);
+  const [properties, setProperties] = useState<any[]>([]); // Use flexible any[] type
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<(SupabaseUndervaluedSales | SupabaseUndervaluedRentals) | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null); // Use flexible any type
 
   const ITEMS_PER_PAGE = 50;
 
@@ -105,9 +104,8 @@ const Search = () => {
         return;
       }
 
-      // DIRECT USE OF SUPABASE DATA - NO CASTING OR FILTERING
-      // Using auto-generated types from Supabase
-      const propertiesData = data as (SupabaseUndervaluedSales | SupabaseUndervaluedRentals)[];
+      // Use data directly without strict typing - let it be flexible
+      const propertiesData = data;
 
       console.log('🎯 FINAL DATA BEING SET:', {
         length: propertiesData.length,
@@ -250,7 +248,7 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (SUPABASE TYPES):`, {
+            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (FLEXIBLE TYPES):`, {
               id: property?.id,
               address: property?.address,
               grade: property?.grade,
@@ -265,7 +263,7 @@ const Search = () => {
             return (
               <PropertyCard
                 key={`${property.id}-${index}`}
-                property={property as any}
+                property={property}
                 isRental={isRent}
                 onClick={() => setSelectedProperty(property)}
               />
@@ -308,7 +306,7 @@ const Search = () => {
       {/* Property Detail Modal */}
       {selectedProperty && (
         <PropertyDetail
-          property={selectedProperty as any}
+          property={selectedProperty}
           isRental={isRent}
           onClose={() => setSelectedProperty(null)}
         />

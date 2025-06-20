@@ -1,14 +1,29 @@
 
 import React from 'react';
-import { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 
-// Use the auto-generated Supabase types directly
-type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
-type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
+// Use flexible types that can handle any data structure from Supabase
+interface FlexibleProperty {
+  id: string;
+  address: string;
+  grade: any; // Allow any type for grade
+  score: any; // Allow any type for score
+  price?: number;
+  monthly_rent?: number;
+  price_per_sqft?: number;
+  rent_per_sqft?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  sqft?: number;
+  neighborhood?: string;
+  discount_percent?: number;
+  reasoning?: string;
+  images: any; // Allow any type for images
+  [key: string]: any; // Allow any additional properties
+}
 
 interface PropertyCardProps {
-  property: SupabaseUndervaluedSales | SupabaseUndervaluedRentals;
+  property: FlexibleProperty;
   isRental?: boolean;
   onClick: () => void;
 }
@@ -25,10 +40,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     fullProperty: property
   });
 
-  const getGradeColor = (grade: string) => {
+  const getGradeColor = (grade: any) => {
     if (!grade) return 'bg-gray-600/90';
     
-    switch (grade.toUpperCase()) {
+    const gradeStr = String(grade).toUpperCase();
+    switch (gradeStr) {
       case 'A+':
       case 'A':
         return 'bg-green-600/90';
@@ -70,28 +86,30 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     return discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
   };
 
-  // Handle image URL extraction properly with Supabase types
+  // Handle image URL extraction with flexible typing
   const getImageUrl = () => {
-    // Handle the Supabase Json type properly
     const images = property.images;
     
-    if (!images || (Array.isArray(images) && images.length === 0)) {
+    if (!images) {
       return '/placeholder.svg';
     }
 
-    if (Array.isArray(images)) {
+    // Handle any possible structure for images
+    if (Array.isArray(images) && images.length > 0) {
       const firstImage = images[0];
       
-      // If it's already a string URL, use it directly
       if (typeof firstImage === 'string') {
         return firstImage;
       }
       
-      // If it's an object with url or image_url property
       if (typeof firstImage === 'object' && firstImage !== null) {
-        const imageObj = firstImage as any;
-        return imageObj.url || imageObj.image_url || '/placeholder.svg';
+        return firstImage.url || firstImage.image_url || '/placeholder.svg';
       }
+    }
+
+    // If images is a string, use it directly
+    if (typeof images === 'string') {
+      return images;
     }
 
     return '/placeholder.svg';
@@ -100,25 +118,27 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   const imageUrl = getImageUrl();
 
   const price = isRental 
-    ? (property as SupabaseUndervaluedRentals).monthly_rent 
-    : (property as SupabaseUndervaluedSales).price;
+    ? property.monthly_rent 
+    : property.price;
 
   const pricePerSqft = isRental
-    ? (property as SupabaseUndervaluedRentals).rent_per_sqft
-    : (property as SupabaseUndervaluedSales).price_per_sqft;
+    ? property.rent_per_sqft
+    : property.price_per_sqft;
 
-  // Direct access to grade and score from property - using Supabase types
-  const actualGrade = property.grade;
-  const actualScore = property.score;
+  // Use flexible access to grade and score - convert to string/number as needed
+  const displayGrade = property.grade ? String(property.grade) : 'N/A';
+  const displayScore = property.score ? String(property.score) : 'N/A';
 
   console.log('🃏 FINAL VALUES BEING DISPLAYED:', {
     address: property.address,
-    actualGrade,
-    actualScore,
-    gradeIsNull: actualGrade === null,
-    scoreIsNull: actualScore === null,
-    gradeIsUndefined: actualGrade === undefined,
-    scoreIsUndefined: actualScore === undefined
+    displayGrade,
+    displayScore,
+    rawGrade: property.grade,
+    rawScore: property.score,
+    gradeIsNull: property.grade === null,
+    scoreIsNull: property.score === null,
+    gradeIsUndefined: property.grade === undefined,
+    scoreIsUndefined: property.score === undefined
   });
 
   return (
@@ -128,8 +148,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     >
       {/* Score badge - top right with glassmorphic effect */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${getGradeColor(actualGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
-          {actualGrade || 'N/A'}
+        <div className={`${getGradeColor(displayGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
+          {displayGrade}
         </div>
       </div>
       
@@ -177,7 +197,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
-            Score: {actualScore || 'N/A'}
+            Score: {displayScore}
           </Badge>
         </div>
 
