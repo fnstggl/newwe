@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PropertyImageProps {
@@ -11,6 +11,7 @@ interface PropertyImageProps {
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [preloadedThumbnails, setPreloadedThumbnails] = useState<string[]>([]);
 
   // Process images to handle different formats
   const processedImages = React.useMemo(() => {
@@ -35,6 +36,30 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
+  // Create thumbnail URL (smaller, optimized version)
+  const getThumbnailUrl = useCallback((url: string) => {
+    if (url === '/placeholder.svg') return url;
+    // Add thumbnail parameters for smaller, faster loading images
+    return url.includes('?') ? `${url}&w=300&h=200&q=80` : `${url}?w=300&h=200&q=80`;
+  }, []);
+
+  // Preload thumbnail versions of all images for instant switching
+  useEffect(() => {
+    if (hasMultipleImages) {
+      const thumbnailPromises = processedImages.map((imageUrl) => {
+        return new Promise<string>((resolve) => {
+          const img = new Image();
+          const thumbnailUrl = getThumbnailUrl(imageUrl);
+          img.onload = () => resolve(thumbnailUrl);
+          img.onerror = () => resolve('/placeholder.svg');
+          img.src = thumbnailUrl;
+        });
+      });
+
+      Promise.all(thumbnailPromises).then(setPreloadedThumbnails);
+    }
+  }, [processedImages, hasMultipleImages, getThumbnailUrl]);
+
   // Navigation functions with event.stopPropagation()
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -56,7 +81,15 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages]);
 
-  const currentImageUrl = processedImages[currentImageIndex] || '/placeholder.svg';
+  // Use full resolution for first image, thumbnails for others when navigating
+  const getCurrentImageUrl = () => {
+    if (currentImageIndex === 0) {
+      return processedImages[0] || '/placeholder.svg';
+    }
+    
+    // Use preloaded thumbnail if available, otherwise fallback to full image
+    return preloadedThumbnails[currentImageIndex] || processedImages[currentImageIndex] || '/placeholder.svg';
+  };
 
   return (
     <div 
@@ -65,9 +98,9 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseLeave={() => setIsHovered(false)}
     >
       <img
-        src={currentImageUrl}
+        src={getCurrentImageUrl()}
         alt={address}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover transition-opacity duration-150"
         onError={(e) => {
           e.currentTarget.src = '/placeholder.svg';
         }}
