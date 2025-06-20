@@ -10,36 +10,13 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
-  console.log('🃏 PROPERTY CARD START - Raw property object:', property);
-  console.log('🃏 PROPERTY CARD - Direct field access:', {
+  console.log('🃏 PROPERTY CARD RECEIVED:', {
     id: property.id,
     address: property.address,
-    gradeField: property.grade,
-    scoreField: property.score,
+    grade: property.grade,
+    score: property.score,
     gradeType: typeof property.grade,
-    scoreType: typeof property.score,
-    objectKeys: Object.keys(property),
-    hasGrade: 'grade' in property,
-    hasScore: 'score' in property
-  });
-
-  // Let's try different ways to access the grade and score
-  const gradeAccess = {
-    direct: property.grade,
-    bracket: property['grade'],
-    destructured: (() => { const { grade } = property; return grade; })(),
-  };
-
-  const scoreAccess = {
-    direct: property.score,
-    bracket: property['score'],
-    destructured: (() => { const { score } = property; return score; })(),
-  };
-
-  console.log('🃏 PROPERTY CARD - Different access methods:', {
-    gradeAccess,
-    scoreAccess,
-    allSame: gradeAccess.direct === gradeAccess.bracket && gradeAccess.bracket === gradeAccess.destructured
+    scoreType: typeof property.score
   });
 
   const getGradeColor = (grade: string) => {
@@ -118,16 +95,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  // Use direct field access without any processing
+  // Use the actual values from the database - NO FALLBACKS
   const displayGrade = property.grade;
   const displayScore = property.score;
 
-  console.log('🃏 PROPERTY CARD - Final display values:', {
+  console.log('🃏 PROPERTY CARD FINAL VALUES:', {
     address: property.address,
     displayGrade,
-    displayScore,
-    displayGradeType: typeof displayGrade,
-    displayScoreType: typeof displayScore
+    displayScore
   });
 
   return (

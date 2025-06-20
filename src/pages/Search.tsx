@@ -39,9 +39,9 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      console.log(`🔍 DIRECT DATABASE TEST: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
+      console.log(`🔍 STARTING FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
-      // Let's do a super simple query first to see raw data
+      // First, let's do a simple test query to verify the raw data
       const testQuery = isRent 
         ? supabase.from('undervalued_rentals').select('id, grade, score').limit(3)
         : supabase.from('undervalued_sales').select('id, grade, score').limit(3);
@@ -51,32 +51,30 @@ const Search = () => {
       console.log('🧪 RAW TEST QUERY RESULT:', {
         data: testData,
         error: testError,
-        firstItemGrade: testData?.[0]?.grade,
-        firstItemScore: testData?.[0]?.score,
-        allGrades: testData?.map(item => item.grade),
-        allScores: testData?.map(item => item.score)
+        grades: testData?.map(item => item.grade),
+        scores: testData?.map(item => item.score)
       });
 
-      // Now do the full query
+      // Now let's build the full query step by step
       let query;
       
       if (isRent) {
         query = supabase
           .from('undervalued_rentals')
-          .select('id, address, grade, score, discount_percent, monthly_rent, rent_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
+          .select('*')
           .eq('status', 'active')
           .order('score', { ascending: false })
           .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
       } else {
         query = supabase
           .from('undervalued_sales')
-          .select('id, address, grade, score, discount_percent, price, price_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
+          .select('*')
           .eq('status', 'active')
           .order('score', { ascending: false })
           .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
       }
 
-      // Apply filters
+      // Apply filters only if they exist
       if (searchTerm) {
         query = query.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
       }
@@ -102,61 +100,33 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ FULL QUERY RESPONSE:', {
+      console.log('✅ FULL QUERY SUCCESS:', {
         dataLength: data?.length,
-        firstThreeItems: data?.slice(0, 3)?.map(item => ({
-          id: item.id,
-          address: item.address,
-          rawGrade: item.grade,
-          rawScore: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
+        firstItemGradeScore: data?.[0] ? { grade: data[0].grade, score: data[0].score } : 'NO FIRST ITEM',
+        allGradesAndScores: data?.slice(0, 3).map(item => ({ 
+          id: item.id, 
+          grade: item.grade, 
+          score: item.score 
         }))
       });
 
-      // Check if data is already corrupted here
-      const corruptedItems = data?.filter(item => item.grade === 'A+' && item.score === 100);
-      console.log('🚨 ITEMS WITH A+/100 FROM DATABASE:', {
-        count: corruptedItems?.length,
-        totalItems: data?.length,
-        percentage: corruptedItems?.length && data?.length ? (corruptedItems.length / data.length * 100).toFixed(1) + '%' : 'N/A'
-      });
+      // Simple transformation - just ensure arrays exist, DON'T touch grade/score AT ALL
+      const transformedData = (data || []).map((item) => ({
+        ...item,
+        images: Array.isArray(item.images) ? item.images : [],
+        videos: Array.isArray(item.videos) ? item.videos : [],
+        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
+        agents: Array.isArray(item.agents) ? item.agents : [],
+        amenities: Array.isArray(item.amenities) ? item.amenities : [],
+        // Explicitly preserve the original grade and score without any fallbacks
+      })) as (UndervaluedSales | UndervaluedRentals)[];
 
-      // Minimal transformation - just ensure arrays exist, DON'T TOUCH grade/score
-      const transformedData = (data || []).map((item) => {
-        const beforeTransform = { grade: item.grade, score: item.score };
-        
-        const result = {
-          ...item,
-          images: Array.isArray(item.images) ? item.images : [],
-          videos: Array.isArray(item.videos) ? item.videos : [],
-          floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
-          agents: Array.isArray(item.agents) ? item.agents : [],
-          amenities: Array.isArray(item.amenities) ? item.amenities : [],
-          // Explicitly preserve grade and score without any processing
+      console.log('🎯 AFTER TRANSFORMATION:', {
+        length: transformedData.length,
+        firstThreeGradesScores: transformedData.slice(0, 3).map(item => ({
+          id: item.id,
           grade: item.grade,
           score: item.score
-        };
-
-        const afterTransform = { grade: result.grade, score: result.score };
-        
-        if (beforeTransform.grade !== afterTransform.grade || beforeTransform.score !== afterTransform.score) {
-          console.log('🚨 TRANSFORMATION CHANGED VALUES:', {
-            id: item.id,
-            before: beforeTransform,
-            after: afterTransform
-          });
-        }
-
-        return result;
-      }) as (UndervaluedSales | UndervaluedRentals)[];
-
-      console.log('🎯 FINAL TRANSFORMED DATA CHECK:', {
-        length: transformedData.length,
-        firstThreeGradesAndScores: transformedData.slice(0, 3).map(item => ({
-          id: item.id,
-          finalGrade: item.grade,
-          finalScore: item.score
         }))
       });
 
@@ -287,13 +257,11 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 BEFORE PASSING TO CARD ${index + 1}:`, {
+            console.log(`🏠 PROPERTY ${index + 1} PASSED TO CARD:`, {
               id: property.id,
               address: property.address,
-              gradeBeforeCard: property.grade,
-              scoreBeforeCard: property.score,
-              gradeType: typeof property.grade,
-              scoreType: typeof property.score
+              grade: property.grade,
+              score: property.score
             });
             
             return (
