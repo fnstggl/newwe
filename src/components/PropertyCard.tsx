@@ -100,20 +100,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // Fixed grade and score handling - use the actual values from Supabase
-  const displayGrade = property.grade !== null && property.grade !== undefined ? String(property.grade) : 'N/A';
-  const displayScore = property.score !== null && property.score !== undefined ? String(property.score) : 'N/A';
+  // Use the raw values directly from Supabase without any conversion or null checks
+  const displayGrade = property.grade;
+  const displayScore = property.score;
 
   console.log('🃏 FINAL VALUES BEING DISPLAYED:', {
     address: property.address,
     displayGrade,
     displayScore,
     rawGrade: property.grade,
-    rawScore: property.score,
-    gradeIsNull: property.grade === null,
-    scoreIsNull: property.score === null,
-    gradeIsUndefined: property.grade === undefined,
-    scoreIsUndefined: property.score === undefined
+    rawScore: property.score
   });
 
   return (
