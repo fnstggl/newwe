@@ -1,10 +1,14 @@
 
 import React from 'react';
-import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
+import { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 
+// Use the auto-generated Supabase types directly
+type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
+type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
+
 interface PropertyCardProps {
-  property: UndervaluedSales | UndervaluedRentals;
+  property: SupabaseUndervaluedSales | SupabaseUndervaluedRentals;
   isRental?: boolean;
   onClick: () => void;
 }
@@ -90,14 +94,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   const imageUrl = getImageUrl();
 
   const price = isRental 
-    ? (property as UndervaluedRentals).monthly_rent 
-    : (property as UndervaluedSales).price;
+    ? (property as SupabaseUndervaluedRentals).monthly_rent 
+    : (property as SupabaseUndervaluedSales).price;
 
   const pricePerSqft = isRental
-    ? (property as UndervaluedRentals).rent_per_sqft
-    : (property as UndervaluedSales).price_per_sqft;
+    ? (property as SupabaseUndervaluedRentals).rent_per_sqft
+    : (property as SupabaseUndervaluedSales).price_per_sqft;
 
-  // Direct access to grade and score from property - no fallbacks
+  // Direct access to grade and score from property - using Supabase types
   const actualGrade = property.grade;
   const actualScore = property.score;
 
