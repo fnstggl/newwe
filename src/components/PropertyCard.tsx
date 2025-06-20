@@ -100,9 +100,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // Use flexible access to grade and score - convert to string/number as needed
-  const displayGrade = property.grade ? String(property.grade) : 'N/A';
-  const displayScore = property.score ? String(property.score) : 'N/A';
+  // Fixed grade and score handling - use the actual values from Supabase
+  const displayGrade = property.grade !== null && property.grade !== undefined ? String(property.grade) : 'N/A';
+  const displayScore = property.score !== null && property.score !== undefined ? String(property.score) : 'N/A';
 
   console.log('🃏 FINAL VALUES BEING DISPLAYED:', {
     address: property.address,
