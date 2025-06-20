@@ -95,7 +95,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  // Use the raw values directly from the database - NO processing
+  // Use EXACT values from database - NO fallbacks or defaults
   const displayGrade = property.grade;
   const displayScore = property.score;
 

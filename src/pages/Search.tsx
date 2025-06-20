@@ -41,120 +41,37 @@ const Search = () => {
     try {
       console.log(`🔍 STARTING FRESH FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
-      // Build the base query with explicit column selection
-      let baseQuery;
+      // Use the EXACT same query structure as the working raw test query
+      const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
-      if (isRent) {
-        baseQuery = supabase
-          .from('undervalued_rentals')
-          .select(`
-            id,
-            address,
-            monthly_rent,
-            rent_per_sqft,
-            bedrooms,
-            bathrooms,
-            sqft,
-            neighborhood,
-            borough,
-            zipcode,
-            score,
-            grade,
-            discount_percent,
-            reasoning,
-            images,
-            image_count,
-            videos,
-            floorplans,
-            description,
-            amenities,
-            property_type,
-            listed_at,
-            days_on_market,
-            built_in,
-            no_fee,
-            pet_friendly,
-            laundry_available,
-            gym_available,
-            doorman_building,
-            elevator_building,
-            rooftop_access,
-            agents,
-            building_info,
-            status,
-            likely_rented,
-            last_seen_in_search,
-            analysis_date,
-            created_at,
-            potential_monthly_savings,
-            annual_savings
-          `)
-          .eq('status', 'active')
-          .order('score', { ascending: false });
-      } else {
-        baseQuery = supabase
-          .from('undervalued_sales')
-          .select(`
-            id,
-            address,
-            price,
-            price_per_sqft,
-            bedrooms,
-            bathrooms,
-            sqft,
-            neighborhood,
-            borough,
-            zipcode,
-            score,
-            grade,
-            discount_percent,
-            reasoning,
-            images,
-            image_count,
-            videos,
-            floorplans,
-            description,
-            amenities,
-            property_type,
-            listed_at,
-            days_on_market,
-            built_in,
-            monthly_hoa,
-            monthly_tax,
-            agents,
-            building_info,
-            status,
-            likely_sold,
-            last_seen_in_search,
-            analysis_date,
-            created_at
-          `)
-          .eq('status', 'active')
-          .order('score', { ascending: false });
-      }
+      let query = supabase
+        .from(tableName)
+        .select('*') // Use select all like the working raw query
+        .eq('status', 'active')
+        .order('score', { ascending: false });
 
       // Apply filters
       if (searchTerm) {
-        baseQuery = baseQuery.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
+        query = query.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
       }
 
       if (zipCode) {
-        baseQuery = baseQuery.ilike('zipcode', `%${zipCode}%`);
+        query = query.ilike('zipcode', `%${zipCode}%`);
       }
 
       if (maxPrice) {
         const priceField = isRent ? 'monthly_rent' : 'price';
-        baseQuery = baseQuery.lte(priceField, parseInt(maxPrice));
+        query = query.lte(priceField, parseInt(maxPrice));
       }
 
       if (bedrooms) {
-        baseQuery = baseQuery.gte('bedrooms', parseInt(bedrooms));
+        query = query.gte('bedrooms', parseInt(bedrooms));
       }
 
       // Apply pagination
-      const finalQuery = baseQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      const finalQuery = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      console.log('🚀 EXECUTING REBUILT QUERY...');
+      console.log('🚀 EXECUTING QUERY WITH SELECT ALL...');
       const { data, error } = await finalQuery;
 
       if (error) {
@@ -162,9 +79,25 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ REBUILT QUERY SUCCESS:', {
+      console.log('✅ QUERY SUCCESS WITH SELECT ALL:', {
         dataLength: data?.length,
-        firstThreeItems: data?.slice(0, 3).map(item => ({
+        rawDataSample: data?.slice(0, 3).map(item => ({
+          id: item.id,
+          address: item.address,
+          rawGrade: item.grade,
+          rawScore: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score,
+          fullItem: item
+        }))
+      });
+
+      // NO TRANSFORMATION - use data exactly as returned from database
+      const propertiesData = data || [];
+
+      console.log('🎯 FINAL DATA BEING SET:', {
+        length: propertiesData.length,
+        firstThreeGradesScores: propertiesData.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
@@ -174,41 +107,11 @@ const Search = () => {
         }))
       });
 
-      // Minimal transformation - only ensure arrays exist
-      const cleanedData = (data || []).map((item) => {
-        console.log(`🏠 PROCESSING ITEM ${item.id}:`, {
-          address: item.address,
-          rawGrade: item.grade,
-          rawScore: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
-        });
-
-        return {
-          ...item,
-          images: Array.isArray(item.images) ? item.images : [],
-          videos: Array.isArray(item.videos) ? item.videos : [],
-          floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
-          agents: Array.isArray(item.agents) ? item.agents : [],
-          amenities: Array.isArray(item.amenities) ? item.amenities : []
-        };
-      }) as (UndervaluedSales | UndervaluedRentals)[];
-
-      console.log('🎯 FINAL CLEANED DATA:', {
-        length: cleanedData.length,
-        firstThreeGradesScores: cleanedData.slice(0, 3).map(item => ({
-          id: item.id,
-          address: item.address,
-          grade: item.grade,
-          score: item.score
-        }))
-      });
-
       if (reset) {
-        setProperties(cleanedData);
+        setProperties(propertiesData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...cleanedData]);
+        setProperties(prev => [...prev, ...propertiesData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -335,7 +238,9 @@ const Search = () => {
               id: property.id,
               address: property.address,
               grade: property.grade,
-              score: property.score
+              score: property.score,
+              gradeType: typeof property.grade,
+              scoreType: typeof property.score
             });
             
             return (
