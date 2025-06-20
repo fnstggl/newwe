@@ -71,6 +71,14 @@ const Search = () => {
         return;
       }
 
+      console.log('Fetched properties:', data);
+      console.log('Sample property grades and scores:', data?.slice(0, 3).map(p => ({
+        id: p.id,
+        address: p.address,
+        grade: p.grade,
+        score: p.score
+      })));
+
       // Transform data to ensure proper typing
       const transformedData = (data || []).map(item => ({
         ...item,

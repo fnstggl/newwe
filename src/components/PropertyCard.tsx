@@ -11,6 +11,8 @@ interface PropertyCardProps {
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
   const getGradeColor = (grade: string) => {
+    if (!grade) return 'bg-gray-600/90';
+    
     switch (grade.toUpperCase()) {
       case 'A+':
       case 'A':
@@ -42,9 +44,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   };
 
   const getDiscountPercentage = () => {
+    // First try to get from discount_percent field
+    if (property.discount_percent && property.discount_percent > 0) {
+      return `${Math.round(property.discount_percent)}% below market`;
+    }
+    
+    // Fallback to parsing from reasoning
     const reasoningText = property.reasoning || '';
     const discountMatch = reasoningText.match(/(\d+)%\s*below/i);
-    return discountMatch ? `${discountMatch[1]}% below market` : `${Math.round(property.discount_percent)}% below market`;
+    return discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
   };
 
   // Handle image URL extraction properly
@@ -78,6 +86,19 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
+  // Get the actual grade and score from the property data
+  const displayGrade = property.grade || 'N/A';
+  const displayScore = property.score || 0;
+
+  console.log('Property data:', {
+    id: property.id,
+    address: property.address,
+    grade: property.grade,
+    score: property.score,
+    displayGrade,
+    displayScore
+  });
+
   return (
     <div 
       className="relative rounded-3xl overflow-hidden border border-gray-700/50 hover:border-blue-500/70 transition-all duration-300 hover:scale-[1.02] cursor-pointer group bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-sm"
@@ -85,8 +106,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     >
       {/* Score badge - top right with glassmorphic effect */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${getGradeColor(property.grade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
-          {property.grade}
+        <div className={`${getGradeColor(displayGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
+          {displayGrade}
         </div>
       </div>
       
@@ -134,7 +155,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
-            Score: {property.score}
+            Score: {displayScore}
           </Badge>
         </div>
 
