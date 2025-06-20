@@ -39,9 +39,13 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
+      // Let's test with a very specific query to see raw data
+      const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
+      console.log(`🔍 QUERYING TABLE: ${tableName}`);
+      
       let query = supabase
-        .from(isRent ? 'undervalued_rentals' : 'undervalued_sales')
-        .select('*')
+        .from(tableName)
+        .select('id, address, grade, score, discount_percent, price, monthly_rent, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
         .eq('status', 'active')
         .order('score', { ascending: false })
         .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
@@ -64,37 +68,44 @@ const Search = () => {
         query = query.gte('bedrooms', parseInt(bedrooms));
       }
 
+      console.log('🚀 EXECUTING QUERY...');
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching properties:', error);
+        console.error('❌ SUPABASE ERROR:', error);
         return;
       }
 
-      console.log('RAW SUPABASE DATA (first 3 items):');
+      console.log('✅ RAW SUPABASE RESPONSE:', {
+        dataLength: data?.length,
+        firstItem: data?.[0],
+        gradeValues: data?.slice(0, 5).map(item => ({ id: item.id, grade: item.grade, score: item.score }))
+      });
+
+      // Log each individual property directly from Supabase
       data?.slice(0, 3).forEach((item, index) => {
-        console.log(`Item ${index + 1}:`, {
+        console.log(`📄 RAW ITEM ${index + 1} FROM SUPABASE:`, {
           id: item.id,
           address: item.address,
           grade: item.grade,
           score: item.score,
           gradeType: typeof item.grade,
           scoreType: typeof item.score,
-          discount_percent: item.discount_percent
+          gradeValue: JSON.stringify(item.grade),
+          scoreValue: JSON.stringify(item.score)
         });
       });
 
-      // Transform data with explicit preservation of critical fields
-      const transformedData = (data || []).map((item, index) => {
-        // Store the original grade and score before transformation
-        const originalGrade = item.grade;
-        const originalScore = item.score;
-        
-        const transformed = {
+      // Minimal transformation - just ensure arrays exist
+      const transformedData = (data || []).map((item) => {
+        console.log(`🔄 TRANSFORMING ITEM:`, {
+          originalGrade: item.grade,
+          originalScore: item.score,
+          beforeTransform: { grade: item.grade, score: item.score }
+        });
+
+        const result = {
           ...item,
-          // Explicitly preserve the grade and score
-          grade: originalGrade,
-          score: originalScore,
           images: Array.isArray(item.images) ? item.images : [],
           videos: Array.isArray(item.videos) ? item.videos : [],
           floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
@@ -102,33 +113,21 @@ const Search = () => {
           amenities: Array.isArray(item.amenities) ? item.amenities : [],
         };
 
-        // Log the first few transformations
-        if (index < 3) {
-          console.log(`TRANSFORMED Item ${index + 1}:`, {
-            id: transformed.id,
-            address: transformed.address,
-            originalGrade: originalGrade,
-            transformedGrade: transformed.grade,
-            originalScore: originalScore,
-            transformedScore: transformed.score,
-            gradeEqual: originalGrade === transformed.grade,
-            scoreEqual: originalScore === transformed.score
-          });
-        }
-        
-        return transformed;
+        console.log(`✨ AFTER TRANSFORM:`, {
+          resultGrade: result.grade,
+          resultScore: result.score,
+          gradeChanged: item.grade !== result.grade,
+          scoreChanged: item.score !== result.score
+        });
+
+        return result;
       }) as (UndervaluedSales | UndervaluedRentals)[];
 
-      console.log('FINAL TRANSFORMED DATA (first 3 items):');
-      transformedData.slice(0, 3).forEach((item, index) => {
-        console.log(`Final Item ${index + 1}:`, {
-          id: item.id,
-          address: item.address,
-          grade: item.grade,
-          score: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
-        });
+      console.log('🎯 FINAL DATA BEFORE STATE UPDATE:', {
+        length: transformedData.length,
+        firstItem: transformedData[0],
+        grades: transformedData.slice(0, 3).map(item => item.grade),
+        scores: transformedData.slice(0, 3).map(item => item.score)
       });
 
       if (reset) {
@@ -141,7 +140,7 @@ const Search = () => {
 
       setHasMore((data || []).length === ITEMS_PER_PAGE);
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error('💥 CATCH ERROR:', error);
     } finally {
       setLoading(false);
     }
@@ -258,17 +257,16 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            // Log data being passed to PropertyCard
-            if (index < 3) {
-              console.log(`PASSING TO PROPERTY CARD ${index + 1}:`, {
-                id: property.id,
-                address: property.address,
-                grade: property.grade,
-                score: property.score,
-                gradeType: typeof property.grade,
-                scoreType: typeof property.score
-              });
-            }
+            console.log(`🏠 RENDERING PROPERTY ${index + 1}:`, {
+              id: property.id,
+              address: property.address,
+              grade: property.grade,
+              score: property.score,
+              directAccess: {
+                gradeViaProperty: property.grade,
+                scoreViaProperty: property.score
+              }
+            });
             
             return (
               <PropertyCard
