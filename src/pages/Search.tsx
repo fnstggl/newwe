@@ -4,9 +4,13 @@ import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { UndervaluedSales, UndervaluedRentals } from "@/types/database";
+import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
+
+// Use the auto-generated Supabase types directly
+type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
+type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,11 +18,11 @@ const Search = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [isRent, setIsRent] = useState(false);
-  const [properties, setProperties] = useState<(UndervaluedSales | UndervaluedRentals)[]>([]);
+  const [properties, setProperties] = useState<(SupabaseUndervaluedSales | SupabaseUndervaluedRentals)[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<(UndervaluedSales | UndervaluedRentals) | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<(SupabaseUndervaluedSales | SupabaseUndervaluedRentals) | null>(null);
 
   const ITEMS_PER_PAGE = 50;
 
@@ -89,6 +93,8 @@ const Search = () => {
           score: item?.score,
           gradeType: typeof item?.grade,
           scoreType: typeof item?.score,
+          gradeValue: item?.grade,
+          scoreValue: item?.score,
           allKeys: Object.keys(item || {})
         }))
       });
@@ -99,9 +105,9 @@ const Search = () => {
         return;
       }
 
-      // DIRECT CAST - NO FILTERING OR VALIDATION
-      // Since you confirmed ALL properties have grades and scores
-      const propertiesData = data as (UndervaluedSales | UndervaluedRentals)[];
+      // DIRECT USE OF SUPABASE DATA - NO CASTING OR FILTERING
+      // Using auto-generated types from Supabase
+      const propertiesData = data as (SupabaseUndervaluedSales | SupabaseUndervaluedRentals)[];
 
       console.log('🎯 FINAL DATA BEING SET:', {
         length: propertiesData.length,
@@ -111,7 +117,9 @@ const Search = () => {
           grade: item.grade,
           score: item.score,
           gradeType: typeof item.grade,
-          scoreType: typeof item.score
+          scoreType: typeof item.score,
+          rawGradeValue: item.grade,
+          rawScoreValue: item.score
         }))
       });
 
@@ -242,20 +250,22 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD:`, {
+            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (SUPABASE TYPES):`, {
               id: property?.id,
               address: property?.address,
               grade: property?.grade,
               score: property?.score,
               gradeType: typeof property?.grade,
               scoreType: typeof property?.score,
+              gradeValue: property?.grade,
+              scoreValue: property?.score,
               fullPropertyObject: property
             });
             
             return (
               <PropertyCard
                 key={`${property.id}-${index}`}
-                property={property}
+                property={property as any}
                 isRental={isRent}
                 onClick={() => setSelectedProperty(property)}
               />
@@ -298,7 +308,7 @@ const Search = () => {
       {/* Property Detail Modal */}
       {selectedProperty && (
         <PropertyDetail
-          property={selectedProperty}
+          property={selectedProperty as any}
           isRental={isRent}
           onClose={() => setSelectedProperty(null)}
         />
