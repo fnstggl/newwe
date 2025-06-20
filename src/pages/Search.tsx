@@ -18,11 +18,11 @@ const Search = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [isRent, setIsRent] = useState(false);
-  const [properties, setProperties] = useState<any[]>([]); // Use flexible any[] type
+  const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<any | null>(null); // Use flexible any type
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
 
   const ITEMS_PER_PAGE = 50;
 
@@ -98,51 +98,62 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ QUERY SUCCESS - RAW DATA:', {
-        dataLength: data?.length,
-        dataType: typeof data,
-        isArray: Array.isArray(data),
-        firstThreeRaw: data?.slice(0, 3).map(item => ({
-          id: item?.id,
-          address: item?.address,
-          grade: item?.grade,
-          score: item?.score,
-          gradeType: typeof item?.grade,
-          scoreType: typeof item?.score,
-          gradeValue: item?.grade,
-          scoreValue: item?.score,
-          allKeys: Object.keys(item || {})
-        }))
-      });
-
+      // Validate that we actually have meaningful data before considering this a success
       if (!data || !Array.isArray(data)) {
         console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
         setProperties([]);
         return;
       }
 
-      // Use data directly without strict typing - let it be flexible
-      const propertiesData = data;
+      // Check if the data has the required fields (grade and score) and they're not null
+      const validProperties = data.filter(item => 
+        item && 
+        typeof item === 'object' && 
+        item.grade !== null && 
+        item.grade !== undefined && 
+        item.score !== null && 
+        item.score !== undefined &&
+        item.address && 
+        item.id
+      );
 
-      console.log('🎯 FINAL DATA BEING SET:', {
-        length: propertiesData.length,
-        firstThreeFinal: propertiesData.slice(0, 3).map(item => ({
+      console.log('✅ QUERY SUCCESS - VALIDATED DATA:', {
+        totalReturned: data.length,
+        validProperties: validProperties.length,
+        firstThreeValid: validProperties.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
           score: item.score,
           gradeType: typeof item.grade,
-          scoreType: typeof item.score,
-          rawGradeValue: item.grade,
-          rawScoreValue: item.score
+          scoreType: typeof item.score
+        }))
+      });
+
+      // Only proceed if we have valid properties with grades and scores
+      if (validProperties.length === 0) {
+        console.warn('⚠️ NO VALID PROPERTIES WITH GRADES/SCORES FOUND');
+        setProperties([]);
+        return;
+      }
+
+      console.log('🎯 FINAL VALID DATA BEING SET:', {
+        length: validProperties.length,
+        firstThreeFinal: validProperties.slice(0, 3).map(item => ({
+          id: item.id,
+          address: item.address,
+          grade: item.grade,
+          score: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score
         }))
       });
 
       if (reset) {
-        setProperties(propertiesData);
+        setProperties(validProperties);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...propertiesData]);
+        setProperties(prev => [...prev, ...validProperties]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -263,7 +274,7 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (FLEXIBLE TYPES):`, {
+            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD (VALIDATED):`, {
               id: property?.id,
               address: property?.address,
               grade: property?.grade,
@@ -271,8 +282,7 @@ const Search = () => {
               gradeType: typeof property?.grade,
               scoreType: typeof property?.score,
               gradeValue: property?.grade,
-              scoreValue: property?.score,
-              fullPropertyObject: property
+              scoreValue: property?.score
             });
             
             return (

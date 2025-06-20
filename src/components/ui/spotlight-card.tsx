@@ -23,13 +23,9 @@ export default function SpotlightCard({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const style = target.style as CSSProperties & {
-      '--mouse-x': string;
-      '--mouse-y': string;
-    };
-
-    style.setProperty('--mouse-x', `${x}px`);
-    style.setProperty('--mouse-y', `${y}px`);
+    // Use the actual DOM style property to set CSS variables
+    target.style.setProperty('--mouse-x', `${x}px`);
+    target.style.setProperty('--mouse-y', `${y}px`);
   }, []);
 
   const cardStyle: CSSProperties & {
