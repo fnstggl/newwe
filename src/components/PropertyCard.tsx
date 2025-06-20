@@ -10,6 +10,16 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
+  console.log('PropertyCard received property:', {
+    id: property.id,
+    address: property.address,
+    grade: property.grade,
+    score: property.score,
+    gradeType: typeof property.grade,
+    scoreType: typeof property.score,
+    discount_percent: property.discount_percent
+  });
+
   const getGradeColor = (grade: string) => {
     if (!grade) return 'bg-gray-600/90';
     
@@ -86,9 +96,17 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  // Get the actual grade and score from the property data
+  // Use the actual grade and score from the property data
   const displayGrade = property.grade || 'N/A';
   const displayScore = property.score || 0;
+
+  console.log('PropertyCard displaying:', {
+    address: property.address,
+    displayGrade,
+    displayScore,
+    originalGrade: property.grade,
+    originalScore: property.score
+  });
 
   return (
     <div 

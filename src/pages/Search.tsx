@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -70,41 +71,58 @@ const Search = () => {
         return;
       }
 
-      console.log('Raw data from Supabase:', data?.slice(0, 3).map(p => ({
-        id: p.id,
-        address: p.address,
-        grade: p.grade,
-        score: p.score,
-        discount_percent: p.discount_percent
-      })));
+      console.log('RAW SUPABASE DATA (first 3 items):');
+      data?.slice(0, 3).forEach((item, index) => {
+        console.log(`Item ${index + 1}:`, {
+          id: item.id,
+          address: item.address,
+          grade: item.grade,
+          score: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score,
+          discount_percent: item.discount_percent
+        });
+      });
 
-      // Transform data to ensure proper typing while preserving all original values
-      const transformedData = (data || []).map(item => {
-        // Create the transformed object while explicitly preserving grade and score
+      // Transform data with explicit preservation of critical fields
+      const transformedData = (data || []).map((item, index) => {
         const transformed = {
-          ...item, // Keep all original properties first
+          ...item,
           images: Array.isArray(item.images) ? item.images : [],
           videos: Array.isArray(item.videos) ? item.videos : [],
           floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
           agents: Array.isArray(item.agents) ? item.agents : [],
           amenities: Array.isArray(item.amenities) ? item.amenities : [],
-          // Explicitly ensure grade and score are preserved
-          grade: item.grade,
-          score: item.score,
-          discount_percent: item.discount_percent
         };
-        
-        console.log('Transformed item:', {
-          id: transformed.id,
-          address: transformed.address,
-          originalGrade: item.grade,
-          transformedGrade: transformed.grade,
-          originalScore: item.score,
-          transformedScore: transformed.score
-        });
+
+        // Log the first few transformations
+        if (index < 3) {
+          console.log(`TRANSFORMED Item ${index + 1}:`, {
+            id: transformed.id,
+            address: transformed.address,
+            originalGrade: item.grade,
+            transformedGrade: transformed.grade,
+            originalScore: item.score,
+            transformedScore: transformed.score,
+            gradeEqual: item.grade === transformed.grade,
+            scoreEqual: item.score === transformed.score
+          });
+        }
         
         return transformed;
       }) as (UndervaluedSales | UndervaluedRentals)[];
+
+      console.log('FINAL TRANSFORMED DATA (first 3 items):');
+      transformedData.slice(0, 3).forEach((item, index) => {
+        console.log(`Final Item ${index + 1}:`, {
+          id: item.id,
+          address: item.address,
+          grade: item.grade,
+          score: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score
+        });
+      });
 
       if (reset) {
         setProperties(transformedData);
@@ -232,14 +250,28 @@ const Search = () => {
 
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              property={property}
-              isRental={isRent}
-              onClick={() => setSelectedProperty(property)}
-            />
-          ))}
+          {properties.map((property, index) => {
+            // Log data being passed to PropertyCard
+            if (index < 3) {
+              console.log(`PASSING TO PROPERTY CARD ${index + 1}:`, {
+                id: property.id,
+                address: property.address,
+                grade: property.grade,
+                score: property.score,
+                gradeType: typeof property.grade,
+                scoreType: typeof property.score
+              });
+            }
+            
+            return (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                isRental={isRent}
+                onClick={() => setSelectedProperty(property)}
+              />
+            );
+          })}
         </div>
 
         {/* Loading state */}
