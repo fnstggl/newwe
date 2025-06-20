@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { GlowCard } from '@/components/ui/spotlight-card';
 
 // Use flexible types that can handle any data structure from Supabase
 interface FlexibleProperty {
@@ -39,31 +40,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     propertyKeys: Object.keys(property || {}),
     fullProperty: property
   });
-
-  const getGradeColor = (grade: any) => {
-    if (!grade) return 'bg-gray-600/90';
-    
-    const gradeStr = String(grade).toUpperCase();
-    switch (gradeStr) {
-      case 'A+':
-      case 'A':
-        return 'bg-green-600/90';
-      case 'A-':
-      case 'B+':
-        return 'bg-green-500/90';
-      case 'B':
-      case 'B-':
-        return 'bg-yellow-500/90';
-      case 'C+':
-      case 'C':
-        return 'bg-orange-500/90';
-      case 'C-':
-      case 'D':
-        return 'bg-red-600/90';
-      default:
-        return 'bg-gray-600/90';
-    }
-  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -142,19 +118,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   });
 
   return (
-    <div 
-      className="relative rounded-3xl overflow-hidden border border-gray-700/50 hover:border-blue-500/70 transition-all duration-300 hover:scale-[1.02] cursor-pointer group bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-sm"
+    <GlowCard
+      customSize={true}
+      glowColor="blue"
+      className="cursor-pointer"
       onClick={onClick}
     >
-      {/* Score badge - top right with glassmorphic effect */}
+      {/* Grade badge - top right with glassmorphic effect */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${getGradeColor(displayGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
+        <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
           {displayGrade}
         </div>
       </div>
       
       {/* Image container */}
-      <div className="h-56 bg-gray-800 relative overflow-hidden">
+      <div className="h-56 bg-gray-800 relative overflow-hidden rounded-xl">
         <img
           src={imageUrl}
           alt={property.address}
@@ -168,12 +146,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
       
       {/* Content */}
       <div className="p-6 space-y-4">
-        <h3 className="text-lg font-semibold tracking-tight text-white group-hover:text-blue-300 transition-colors line-clamp-2">
+        <h3 className="text-lg font-semibold tracking-tight text-white line-clamp-2">
           {property.address}
         </h3>
         
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold text-green-400 tracking-tight">
+          <span className="text-2xl font-bold text-white tracking-tight">
             {formatPrice(price)}{isRental ? '/mo' : ''}
           </span>
           {pricePerSqft && (
@@ -193,7 +171,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-blue-400 font-medium">
+          <span className="text-sm text-gray-300 italic">
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
@@ -207,7 +185,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           </div>
         )}
       </div>
-    </div>
+    </GlowCard>
   );
 };
 
