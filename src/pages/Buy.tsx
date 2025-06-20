@@ -209,7 +209,7 @@ const Buy = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            All the best deals for sale in NYC. Found for you.
+            The best deals for sale in NYC. Found for you.
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
             Stop wasting time on overpriced listings.
