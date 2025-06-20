@@ -39,102 +39,176 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      console.log(`🔍 STARTING FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
+      console.log(`🔍 STARTING FRESH FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
-      // First, let's do a simple test query to verify the raw data
-      const testQuery = isRent 
-        ? supabase.from('undervalued_rentals').select('id, grade, score').limit(3)
-        : supabase.from('undervalued_sales').select('id, grade, score').limit(3);
-      
-      const { data: testData, error: testError } = await testQuery;
-      
-      console.log('🧪 RAW TEST QUERY RESULT:', {
-        data: testData,
-        error: testError,
-        grades: testData?.map(item => item.grade),
-        scores: testData?.map(item => item.score)
-      });
-
-      // Now let's build the full query step by step
-      let query;
+      // Build the base query with explicit column selection
+      let baseQuery;
       
       if (isRent) {
-        query = supabase
+        baseQuery = supabase
           .from('undervalued_rentals')
-          .select('*')
+          .select(`
+            id,
+            address,
+            monthly_rent,
+            rent_per_sqft,
+            bedrooms,
+            bathrooms,
+            sqft,
+            neighborhood,
+            borough,
+            zipcode,
+            score,
+            grade,
+            discount_percent,
+            reasoning,
+            images,
+            image_count,
+            videos,
+            floorplans,
+            description,
+            amenities,
+            property_type,
+            listed_at,
+            days_on_market,
+            built_in,
+            no_fee,
+            pet_friendly,
+            laundry_available,
+            gym_available,
+            doorman_building,
+            elevator_building,
+            rooftop_access,
+            agents,
+            building_info,
+            status,
+            likely_rented,
+            last_seen_in_search,
+            analysis_date,
+            created_at,
+            potential_monthly_savings,
+            annual_savings
+          `)
           .eq('status', 'active')
-          .order('score', { ascending: false })
-          .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+          .order('score', { ascending: false });
       } else {
-        query = supabase
+        baseQuery = supabase
           .from('undervalued_sales')
-          .select('*')
+          .select(`
+            id,
+            address,
+            price,
+            price_per_sqft,
+            bedrooms,
+            bathrooms,
+            sqft,
+            neighborhood,
+            borough,
+            zipcode,
+            score,
+            grade,
+            discount_percent,
+            reasoning,
+            images,
+            image_count,
+            videos,
+            floorplans,
+            description,
+            amenities,
+            property_type,
+            listed_at,
+            days_on_market,
+            built_in,
+            monthly_hoa,
+            monthly_tax,
+            agents,
+            building_info,
+            status,
+            likely_sold,
+            last_seen_in_search,
+            analysis_date,
+            created_at
+          `)
           .eq('status', 'active')
-          .order('score', { ascending: false })
-          .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+          .order('score', { ascending: false });
       }
 
-      // Apply filters only if they exist
+      // Apply filters
       if (searchTerm) {
-        query = query.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
+        baseQuery = baseQuery.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
       }
 
       if (zipCode) {
-        query = query.ilike('zipcode', `%${zipCode}%`);
+        baseQuery = baseQuery.ilike('zipcode', `%${zipCode}%`);
       }
 
       if (maxPrice) {
         const priceField = isRent ? 'monthly_rent' : 'price';
-        query = query.lte(priceField, parseInt(maxPrice));
+        baseQuery = baseQuery.lte(priceField, parseInt(maxPrice));
       }
 
       if (bedrooms) {
-        query = query.gte('bedrooms', parseInt(bedrooms));
+        baseQuery = baseQuery.gte('bedrooms', parseInt(bedrooms));
       }
 
-      console.log('🚀 EXECUTING FULL QUERY...');
-      const { data, error } = await query;
+      // Apply pagination
+      const finalQuery = baseQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+
+      console.log('🚀 EXECUTING REBUILT QUERY...');
+      const { data, error } = await finalQuery;
 
       if (error) {
         console.error('❌ SUPABASE ERROR:', error);
         return;
       }
 
-      console.log('✅ FULL QUERY SUCCESS:', {
+      console.log('✅ REBUILT QUERY SUCCESS:', {
         dataLength: data?.length,
-        firstItemGradeScore: data?.[0] ? { grade: data[0].grade, score: data[0].score } : 'NO FIRST ITEM',
-        allGradesAndScores: data?.slice(0, 3).map(item => ({ 
-          id: item.id, 
-          grade: item.grade, 
-          score: item.score 
+        firstThreeItems: data?.slice(0, 3).map(item => ({
+          id: item.id,
+          address: item.address,
+          grade: item.grade,
+          score: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score
         }))
       });
 
-      // Simple transformation - just ensure arrays exist, DON'T touch grade/score AT ALL
-      const transformedData = (data || []).map((item) => ({
-        ...item,
-        images: Array.isArray(item.images) ? item.images : [],
-        videos: Array.isArray(item.videos) ? item.videos : [],
-        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
-        agents: Array.isArray(item.agents) ? item.agents : [],
-        amenities: Array.isArray(item.amenities) ? item.amenities : [],
-        // Explicitly preserve the original grade and score without any fallbacks
-      })) as (UndervaluedSales | UndervaluedRentals)[];
+      // Minimal transformation - only ensure arrays exist
+      const cleanedData = (data || []).map((item) => {
+        console.log(`🏠 PROCESSING ITEM ${item.id}:`, {
+          address: item.address,
+          rawGrade: item.grade,
+          rawScore: item.score,
+          gradeType: typeof item.grade,
+          scoreType: typeof item.score
+        });
 
-      console.log('🎯 AFTER TRANSFORMATION:', {
-        length: transformedData.length,
-        firstThreeGradesScores: transformedData.slice(0, 3).map(item => ({
+        return {
+          ...item,
+          images: Array.isArray(item.images) ? item.images : [],
+          videos: Array.isArray(item.videos) ? item.videos : [],
+          floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
+          agents: Array.isArray(item.agents) ? item.agents : [],
+          amenities: Array.isArray(item.amenities) ? item.amenities : []
+        };
+      }) as (UndervaluedSales | UndervaluedRentals)[];
+
+      console.log('🎯 FINAL CLEANED DATA:', {
+        length: cleanedData.length,
+        firstThreeGradesScores: cleanedData.slice(0, 3).map(item => ({
           id: item.id,
+          address: item.address,
           grade: item.grade,
           score: item.score
         }))
       });
 
       if (reset) {
-        setProperties(transformedData);
+        setProperties(cleanedData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...transformedData]);
+        setProperties(prev => [...prev, ...cleanedData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 

@@ -95,14 +95,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  // Use the actual values from the database - NO FALLBACKS
+  // Use the raw values directly from the database - NO processing
   const displayGrade = property.grade;
   const displayScore = property.score;
 
   console.log('🃏 PROPERTY CARD FINAL VALUES:', {
     address: property.address,
     displayGrade,
-    displayScore
+    displayScore,
+    gradeIsNull: displayGrade === null,
+    scoreIsNull: displayScore === null
   });
 
   return (
@@ -113,7 +115,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
       {/* Score badge - top right with glassmorphic effect */}
       <div className="absolute top-4 right-4 z-10">
         <div className={`${getGradeColor(displayGrade)} backdrop-blur-md border border-white/20 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
-          {displayGrade}
+          {displayGrade || 'N/A'}
         </div>
       </div>
       
@@ -161,7 +163,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
-            Score: {displayScore}
+            Score: {displayScore || 'N/A'}
           </Badge>
         </div>
 
