@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -80,41 +79,83 @@ const Search = () => {
 
       console.log('✅ QUERY SUCCESS:', {
         dataLength: data?.length,
-        rawDataSample: data?.slice(0, 3).map(item => ({
-          id: item.id,
-          address: item.address,
-          rawGrade: item.grade,
-          rawScore: item.score,
-          gradeType: typeof item.grade,
-          scoreType: typeof item.score
-        }))
+        dataType: typeof data,
+        isArray: Array.isArray(data),
+        firstItemKeys: data && data.length > 0 ? Object.keys(data[0]) : 'no data',
+        rawDataSample: data?.slice(0, 3).map(item => {
+          console.log('🔍 DETAILED ITEM ANALYSIS:', {
+            item: item,
+            itemKeys: Object.keys(item || {}),
+            gradeValue: item?.grade,
+            scoreValue: item?.score,
+            gradeExists: 'grade' in (item || {}),
+            scoreExists: 'score' in (item || {}),
+            itemType: typeof item
+          });
+          return {
+            id: item?.id,
+            address: item?.address,
+            rawGrade: item?.grade,
+            rawScore: item?.score,
+            gradeType: typeof item?.grade,
+            scoreType: typeof item?.score,
+            allKeys: Object.keys(item || {})
+          };
+        })
       });
 
-      // DIRECT ASSIGNMENT - NO TRANSFORMATION AT ALL
-      // Cast directly to our types without any mapping or transformation
-      const propertiesData = data as (UndervaluedSales | UndervaluedRentals)[];
+      // Check if data exists and has the expected structure
+      if (!data || !Array.isArray(data)) {
+        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+        setProperties([]);
+        return;
+      }
 
-      console.log('🎯 DIRECT ASSIGNMENT DATA:', {
-        length: propertiesData?.length || 0,
-        firstThreeGradesScores: propertiesData?.slice(0, 3).map(item => ({
+      // Validate each item has the required properties
+      const validatedData = data.filter(item => {
+        if (!item || typeof item !== 'object') {
+          console.warn('⚠️ INVALID ITEM (not an object):', item);
+          return false;
+        }
+        
+        if (!('grade' in item) || !('score' in item)) {
+          console.warn('⚠️ MISSING GRADE OR SCORE:', {
+            id: item.id,
+            hasGrade: 'grade' in item,
+            hasScore: 'score' in item,
+            keys: Object.keys(item)
+          });
+          return false;
+        }
+        
+        return true;
+      });
+
+      console.log('🎯 VALIDATED DATA:', {
+        originalLength: data.length,
+        validatedLength: validatedData.length,
+        firstThreeValidated: validatedData.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
           score: item.score,
           gradeType: typeof item.grade,
           scoreType: typeof item.score
-        })) || []
+        }))
       });
 
+      // Cast to our types
+      const propertiesData = validatedData as (UndervaluedSales | UndervaluedRentals)[];
+
       if (reset) {
-        setProperties(propertiesData || []);
+        setProperties(propertiesData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...(propertiesData || [])]);
+        setProperties(prev => [...prev, ...propertiesData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
-      setHasMore((data || []).length === ITEMS_PER_PAGE);
+      setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
     } finally {
