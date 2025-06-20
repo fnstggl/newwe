@@ -90,34 +90,27 @@ const Search = () => {
         }))
       });
 
-      // Type cast the raw data to our interfaces
-      const propertiesData = (data || []).map(item => ({
-        ...item,
-        images: Array.isArray(item.images) ? item.images : [],
-        videos: Array.isArray(item.videos) ? item.videos : [],
-        floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
-        amenities: Array.isArray(item.amenities) ? item.amenities : [],
-        agents: item.agents || [],
-        building_info: item.building_info || {}
-      })) as (UndervaluedSales | UndervaluedRentals)[];
+      // DIRECT ASSIGNMENT - NO TRANSFORMATION AT ALL
+      // Cast directly to our types without any mapping or transformation
+      const propertiesData = data as (UndervaluedSales | UndervaluedRentals)[];
 
-      console.log('🎯 FINAL TYPED DATA:', {
-        length: propertiesData.length,
-        firstThreeGradesScores: propertiesData.slice(0, 3).map(item => ({
+      console.log('🎯 DIRECT ASSIGNMENT DATA:', {
+        length: propertiesData?.length || 0,
+        firstThreeGradesScores: propertiesData?.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
           score: item.score,
           gradeType: typeof item.grade,
           scoreType: typeof item.score
-        }))
+        })) || []
       });
 
       if (reset) {
-        setProperties(propertiesData);
+        setProperties(propertiesData || []);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...propertiesData]);
+        setProperties(prev => [...prev, ...(propertiesData || [])]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
