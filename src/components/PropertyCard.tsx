@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import PropertyImage from './PropertyImage';
 
 // Use flexible types that can handle any data structure from Supabase
 interface FlexibleProperty {
@@ -60,37 +61,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     return discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
   };
 
-  // Handle image URL extraction with flexible typing
-  const getImageUrl = () => {
-    const images = property.images;
-    
-    if (!images) {
-      return '/placeholder.svg';
-    }
-
-    // Handle any possible structure for images
-    if (Array.isArray(images) && images.length > 0) {
-      const firstImage = images[0];
-      
-      if (typeof firstImage === 'string') {
-        return firstImage;
-      }
-      
-      if (typeof firstImage === 'object' && firstImage !== null) {
-        return firstImage.url || firstImage.image_url || '/placeholder.svg';
-      }
-    }
-
-    // If images is a string, use it directly
-    if (typeof images === 'string') {
-      return images;
-    }
-
-    return '/placeholder.svg';
-  };
-
-  const imageUrl = getImageUrl();
-
   const price = isRental 
     ? property.monthly_rent 
     : property.price;
@@ -119,18 +89,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         </div>
       </div>
       
-      {/* Image container - spans full width and height of top half */}
-      <div className="h-56 relative overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={property.address}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = '/placeholder.svg';
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-      </div>
+      {/* Optimized Image container with lazy loading and carousel */}
+      <PropertyImage
+        images={property.images}
+        address={property.address}
+        className="h-56"
+      />
       
       {/* Content */}
       <div className="p-6 space-y-4">
