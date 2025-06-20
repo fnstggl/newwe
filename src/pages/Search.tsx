@@ -45,27 +45,55 @@ const Search = () => {
     try {
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
-      // EXPLICITLY select the columns we need - don't use *
-      let query = supabase
-        .from(tableName)
-        .select(`
-          id,
-          address,
-          grade,
-          score,
-          ${isRent ? 'monthly_rent' : 'price'},
-          ${isRent ? 'rent_per_sqft' : 'price_per_sqft'},
-          bedrooms,
-          bathrooms,
-          sqft,
-          neighborhood,
-          borough,
-          zipcode,
-          discount_percent,
-          reasoning,
-          images,
-          status
-        `)
+      // Create separate queries for different table types
+      let query;
+      
+      if (isRent) {
+        query = supabase
+          .from('undervalued_rentals')
+          .select(`
+            id,
+            address,
+            grade,
+            score,
+            monthly_rent,
+            rent_per_sqft,
+            bedrooms,
+            bathrooms,
+            sqft,
+            neighborhood,
+            borough,
+            zipcode,
+            discount_percent,
+            reasoning,
+            images,
+            status
+          `);
+      } else {
+        query = supabase
+          .from('undervalued_sales')
+          .select(`
+            id,
+            address,
+            grade,
+            score,
+            price,
+            price_per_sqft,
+            bedrooms,
+            bathrooms,
+            sqft,
+            neighborhood,
+            borough,
+            zipcode,
+            discount_percent,
+            reasoning,
+            images,
+            status
+          `);
+      }
+
+      // Apply common filters
+      query = query
         .eq('status', 'active')
         .order('score', { ascending: false });
 
