@@ -1,8 +1,8 @@
 
-import { useState, useEffect } from "react";
-import { Search as SearchIcon } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
-import { Button } from "@/components/ui/button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
@@ -15,15 +15,22 @@ const Rent = () => {
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
+  const [minGrade, setMinGrade] = useState("");
+  const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
+  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const ITEMS_PER_PAGE = 50;
+  const ITEMS_PER_PAGE = 30;
+  const gradeOptions = ['C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+'];
 
   useEffect(() => {
+    fetchNeighborhoods();
     fetchProperties(true);
   }, []);
 
@@ -33,7 +40,38 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNeighborhoodDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const fetchNeighborhoods = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('undervalued_rentals')
+        .select('neighborhood')
+        .not('neighborhood', 'is', null)
+        .order('neighborhood');
+
+      if (error) {
+        console.error('Error fetching neighborhoods:', error);
+        return;
+      }
+
+      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
+      setNeighborhoods(uniqueNeighborhoods);
+    } catch (error) {
+      console.error('Error fetching neighborhoods:', error);
+    }
+  };
 
   const fetchProperties = async (reset = false) => {
     setLoading(true);
@@ -66,6 +104,18 @@ const Rent = () => {
         if (!isNaN(bedroomValue) && bedroomValue >= 0) {
           query = query.gte('bedrooms', bedroomValue);
         }
+      }
+
+      if (minGrade.trim()) {
+        const gradeIndex = gradeOptions.indexOf(minGrade);
+        if (gradeIndex !== -1) {
+          const allowedGrades = gradeOptions.slice(gradeIndex);
+          query = query.in('grade', allowedGrades);
+        }
+      }
+
+      if (selectedNeighborhoods.length > 0) {
+        query = query.in('neighborhood', selectedNeighborhoods);
       }
 
       const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
@@ -105,6 +155,18 @@ const Rent = () => {
     }
   };
 
+  const toggleNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => 
+      prev.includes(neighborhood) 
+        ? prev.filter(n => n !== neighborhood)
+        : [...prev, neighborhood]
+    );
+  };
+
+  const clearNeighborhoods = () => {
+    setSelectedNeighborhoods([]);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
@@ -121,10 +183,10 @@ const Rent = () => {
 
         {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8">
-          <div className="grid md:grid-cols-4 gap-4">
-            <div>
+          <div className="grid md:grid-cols-5 gap-4">
+            <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Search Address or Neighborhood
+                Search Address or Neighborhoods
               </label>
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -132,9 +194,40 @@ const Rent = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => setShowNeighborhoodDropdown(true)}
                   placeholder="e.g. East Village, 10009"
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
+                {showNeighborhoodDropdown && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-50 max-h-80 overflow-y-auto">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
+                      {selectedNeighborhoods.length > 0 && (
+                        <button
+                          onClick={clearNeighborhoods}
+                          className="text-xs text-blue-400 hover:text-blue-300"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {neighborhoods.map((neighborhood) => (
+                        <button
+                          key={neighborhood}
+                          onClick={() => toggleNeighborhood(neighborhood)}
+                          className={`px-3 py-1 rounded-full text-sm transition-all ${
+                            selectedNeighborhoods.includes(neighborhood)
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          {neighborhood}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <div>
@@ -178,6 +271,21 @@ const Rent = () => {
                 <option value="4">4+</option>
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                Min Grade
+              </label>
+              <select
+                value={minGrade}
+                onChange={(e) => setMinGrade(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
+                <option value="">Any Grade</option>
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade}>{grade}+</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -203,12 +311,9 @@ const Rent = () => {
         {/* Load More Button */}
         {!loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
-            <Button
-              onClick={loadMore}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold"
-            >
+            <HoverButton onClick={loadMore}>
               Load More Properties
-            </Button>
+            </HoverButton>
           </div>
         )}
 
