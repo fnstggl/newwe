@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -27,7 +26,7 @@ const Buy = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const ITEMS_PER_PAGE = 30;
-  const gradeOptions = ['C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+'];
+  const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -167,6 +166,38 @@ const Buy = () => {
     setSelectedNeighborhoods([]);
   };
 
+  const getGradeColors = (grade: string) => {
+    if (grade === 'A+') {
+      return {
+        badge: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-100',
+        scoreText: 'text-yellow-400',
+        scoreBorder: 'border-yellow-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
+      };
+    } else if (grade === 'A' || grade === 'A-') {
+      return {
+        badge: 'bg-purple-500/20 border-purple-500/30 text-purple-100',
+        scoreText: 'text-purple-400',
+        scoreBorder: 'border-purple-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
+      };
+    } else if (grade.startsWith('B')) {
+      return {
+        badge: 'bg-blue-500/20 border-blue-500/30 text-blue-100',
+        scoreText: 'text-blue-400',
+        scoreBorder: 'border-blue-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+      };
+    } else {
+      return {
+        badge: 'bg-white/20 border-white/30 text-white',
+        scoreText: 'text-gray-300',
+        scoreBorder: 'border-gray-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
+      };
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
@@ -186,7 +217,7 @@ const Buy = () => {
           <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Search Address or Neighborhoods
+                Neighborhoods
               </label>
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -199,7 +230,7 @@ const Buy = () => {
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-50 max-h-80 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
@@ -291,14 +322,18 @@ const Buy = () => {
 
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => (
-            <PropertyCard
-              key={`${property.id}-${index}`}
-              property={property}
-              isRental={false}
-              onClick={() => setSelectedProperty(property)}
-            />
-          ))}
+          {properties.map((property, index) => {
+            const gradeColors = getGradeColors(property.grade);
+            return (
+              <PropertyCard
+                key={`${property.id}-${index}`}
+                property={property}
+                isRental={false}
+                onClick={() => setSelectedProperty(property)}
+                gradeColors={gradeColors}
+              />
+            );
+          })}
         </div>
 
         {/* Loading state */}

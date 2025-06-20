@@ -23,13 +23,21 @@ interface FlexibleProperty {
   [key: string]: any; // Allow any additional properties
 }
 
+interface GradeColors {
+  badge: string;
+  scoreText: string;
+  scoreBorder: string;
+  hover: string;
+}
+
 interface PropertyCardProps {
   property: FlexibleProperty;
   isRental?: boolean;
   onClick: () => void;
+  gradeColors?: GradeColors;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick, gradeColors }) => {
   // EXTENSIVE DEBUG: Log the EXACT property data
   console.log(`🏠 PROPERTY CARD [${property.address}]:`, {
     fullProperty: property,
@@ -69,6 +77,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
+  // Default colors if not provided
+  const defaultColors = {
+    badge: 'bg-white/20 border-white/30 text-white',
+    scoreText: 'text-gray-300',
+    scoreBorder: 'border-gray-600',
+    hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+  };
+
+  const colors = gradeColors || defaultColors;
+
   // LOG THE ACTUAL VALUES BEING RENDERED
   console.log(`🎯 RENDERING VALUES FOR [${property.address}]:`, {
     displayGrade: property.grade,
@@ -79,12 +97,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
 
   return (
     <div 
-      className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40 overflow-hidden relative"
+      className={`bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 ${colors.hover} overflow-hidden relative`}
       onClick={onClick}
     >
       {/* Grade badge - positioned absolutely over the image */}
       <div className="absolute top-4 right-4 z-10">
-        <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
+        <div className={`${colors.badge} backdrop-blur-md border px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
           {String(property.grade)}
         </div>
       </div>
@@ -126,7 +144,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           <span className="text-sm text-gray-300 italic">
             {getDiscountPercentage()}
           </span>
-          <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
+          <Badge variant="outline" className={`text-xs ${colors.scoreBorder} ${colors.scoreText}`}>
             Score: {String(property.score)}
           </Badge>
         </div>
