@@ -39,12 +39,28 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      console.log(`🔍 QUERYING TABLE: ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
+      console.log(`🔍 DIRECT DATABASE TEST: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
+      // Let's do a super simple query first to see raw data
+      const testQuery = isRent 
+        ? supabase.from('undervalued_rentals').select('id, grade, score').limit(3)
+        : supabase.from('undervalued_sales').select('id, grade, score').limit(3);
+      
+      const { data: testData, error: testError } = await testQuery;
+      
+      console.log('🧪 RAW TEST QUERY RESULT:', {
+        data: testData,
+        error: testError,
+        firstItemGrade: testData?.[0]?.grade,
+        firstItemScore: testData?.[0]?.score,
+        allGrades: testData?.map(item => item.grade),
+        allScores: testData?.map(item => item.score)
+      });
+
+      // Now do the full query
       let query;
       
       if (isRent) {
-        // Query for rentals - use monthly_rent instead of price
         query = supabase
           .from('undervalued_rentals')
           .select('id, address, grade, score, discount_percent, monthly_rent, rent_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
@@ -52,7 +68,6 @@ const Search = () => {
           .order('score', { ascending: false })
           .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
       } else {
-        // Query for sales - use price
         query = supabase
           .from('undervalued_sales')
           .select('id, address, grade, score, discount_percent, price, price_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
@@ -79,7 +94,7 @@ const Search = () => {
         query = query.gte('bedrooms', parseInt(bedrooms));
       }
 
-      console.log('🚀 EXECUTING QUERY...');
+      console.log('🚀 EXECUTING FULL QUERY...');
       const { data, error } = await query;
 
       if (error) {
@@ -87,34 +102,30 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ RAW SUPABASE RESPONSE:', {
+      console.log('✅ FULL QUERY RESPONSE:', {
         dataLength: data?.length,
-        firstItem: data?.[0],
-        gradeValues: data?.slice(0, 5).map(item => ({ id: item.id, grade: item.grade, score: item.score }))
-      });
-
-      // Log each individual property directly from Supabase
-      data?.slice(0, 3).forEach((item, index) => {
-        console.log(`📄 RAW ITEM ${index + 1} FROM SUPABASE:`, {
+        firstThreeItems: data?.slice(0, 3)?.map(item => ({
           id: item.id,
           address: item.address,
-          grade: item.grade,
-          score: item.score,
+          rawGrade: item.grade,
+          rawScore: item.score,
           gradeType: typeof item.grade,
-          scoreType: typeof item.score,
-          gradeValue: JSON.stringify(item.grade),
-          scoreValue: JSON.stringify(item.score)
-        });
+          scoreType: typeof item.score
+        }))
       });
 
-      // Minimal transformation - just ensure arrays exist
-      const transformedData = (data || []).map((item) => {
-        console.log(`🔄 TRANSFORMING ITEM:`, {
-          originalGrade: item.grade,
-          originalScore: item.score,
-          beforeTransform: { grade: item.grade, score: item.score }
-        });
+      // Check if data is already corrupted here
+      const corruptedItems = data?.filter(item => item.grade === 'A+' && item.score === 100);
+      console.log('🚨 ITEMS WITH A+/100 FROM DATABASE:', {
+        count: corruptedItems?.length,
+        totalItems: data?.length,
+        percentage: corruptedItems?.length && data?.length ? (corruptedItems.length / data.length * 100).toFixed(1) + '%' : 'N/A'
+      });
 
+      // Minimal transformation - just ensure arrays exist, DON'T TOUCH grade/score
+      const transformedData = (data || []).map((item) => {
+        const beforeTransform = { grade: item.grade, score: item.score };
+        
         const result = {
           ...item,
           images: Array.isArray(item.images) ? item.images : [],
@@ -122,23 +133,31 @@ const Search = () => {
           floorplans: Array.isArray(item.floorplans) ? item.floorplans : [],
           agents: Array.isArray(item.agents) ? item.agents : [],
           amenities: Array.isArray(item.amenities) ? item.amenities : [],
+          // Explicitly preserve grade and score without any processing
+          grade: item.grade,
+          score: item.score
         };
 
-        console.log(`✨ AFTER TRANSFORM:`, {
-          resultGrade: result.grade,
-          resultScore: result.score,
-          gradeChanged: item.grade !== result.grade,
-          scoreChanged: item.score !== result.score
-        });
+        const afterTransform = { grade: result.grade, score: result.score };
+        
+        if (beforeTransform.grade !== afterTransform.grade || beforeTransform.score !== afterTransform.score) {
+          console.log('🚨 TRANSFORMATION CHANGED VALUES:', {
+            id: item.id,
+            before: beforeTransform,
+            after: afterTransform
+          });
+        }
 
         return result;
       }) as (UndervaluedSales | UndervaluedRentals)[];
 
-      console.log('🎯 FINAL DATA BEFORE STATE UPDATE:', {
+      console.log('🎯 FINAL TRANSFORMED DATA CHECK:', {
         length: transformedData.length,
-        firstItem: transformedData[0],
-        grades: transformedData.slice(0, 3).map(item => item.grade),
-        scores: transformedData.slice(0, 3).map(item => item.score)
+        firstThreeGradesAndScores: transformedData.slice(0, 3).map(item => ({
+          id: item.id,
+          finalGrade: item.grade,
+          finalScore: item.score
+        }))
       });
 
       if (reset) {
@@ -268,15 +287,13 @@ const Search = () => {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => {
-            console.log(`🏠 RENDERING PROPERTY ${index + 1}:`, {
+            console.log(`🏠 BEFORE PASSING TO CARD ${index + 1}:`, {
               id: property.id,
               address: property.address,
-              grade: property.grade,
-              score: property.score,
-              directAccess: {
-                gradeViaProperty: property.grade,
-                scoreViaProperty: property.score
-              }
+              gradeBeforeCard: property.grade,
+              scoreBeforeCard: property.score,
+              gradeType: typeof property.grade,
+              scoreType: typeof property.score
             });
             
             return (
