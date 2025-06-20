@@ -70,22 +70,28 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     return discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
   };
 
-  // Handle image URL extraction properly
+  // Handle image URL extraction properly with Supabase types
   const getImageUrl = () => {
-    if (!property.images || property.images.length === 0) {
+    // Handle the Supabase Json type properly
+    const images = property.images;
+    
+    if (!images || (Array.isArray(images) && images.length === 0)) {
       return '/placeholder.svg';
     }
 
-    const firstImage = property.images[0];
-    
-    // If it's already a string URL, use it directly
-    if (typeof firstImage === 'string') {
-      return firstImage;
-    }
-    
-    // If it's an object with url or image_url property
-    if (typeof firstImage === 'object' && firstImage !== null) {
-      return firstImage.url || firstImage.image_url || '/placeholder.svg';
+    if (Array.isArray(images)) {
+      const firstImage = images[0];
+      
+      // If it's already a string URL, use it directly
+      if (typeof firstImage === 'string') {
+        return firstImage;
+      }
+      
+      // If it's an object with url or image_url property
+      if (typeof firstImage === 'object' && firstImage !== null) {
+        const imageObj = firstImage as any;
+        return imageObj.url || imageObj.image_url || '/placeholder.svg';
+      }
     }
 
     return '/placeholder.svg';
