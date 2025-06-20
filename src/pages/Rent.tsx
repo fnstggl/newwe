@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -217,7 +216,7 @@ const Rent = () => {
         </div>
 
         {/* Search Filters */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8">
+        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-50">
           <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
@@ -234,7 +233,7 @@ const Rent = () => {
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[200] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
