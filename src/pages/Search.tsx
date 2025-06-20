@@ -47,47 +47,54 @@ const Search = () => {
       
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
-      // Explicitly select all the fields we need, especially grade and score
+      // Select different columns based on table type to avoid column mismatch errors
+      const baseColumns = `
+        id,
+        address,
+        grade,
+        score,
+        bedrooms,
+        bathrooms,
+        sqft,
+        neighborhood,
+        borough,
+        zipcode,
+        discount_percent,
+        reasoning,
+        images,
+        image_count,
+        videos,
+        floorplans,
+        description,
+        amenities,
+        property_type,
+        listed_at,
+        days_on_market,
+        built_in,
+        agents,
+        building_info,
+        status,
+        last_seen_in_search,
+        analysis_date,
+        created_at
+      `;
+
+      // Add table-specific columns
+      const selectColumns = isRent 
+        ? `${baseColumns},
+           monthly_rent,
+           rent_per_sqft,
+           likely_rented`
+        : `${baseColumns},
+           price,
+           price_per_sqft,
+           monthly_hoa,
+           monthly_tax,
+           likely_sold`;
+
       let query = supabase
         .from(tableName)
-        .select(`
-          id,
-          address,
-          grade,
-          score,
-          price,
-          monthly_rent,
-          price_per_sqft,
-          rent_per_sqft,
-          bedrooms,
-          bathrooms,
-          sqft,
-          neighborhood,
-          borough,
-          zipcode,
-          discount_percent,
-          reasoning,
-          images,
-          image_count,
-          videos,
-          floorplans,
-          description,
-          amenities,
-          property_type,
-          listed_at,
-          days_on_market,
-          built_in,
-          monthly_hoa,
-          monthly_tax,
-          agents,
-          building_info,
-          status,
-          likely_sold,
-          likely_rented,
-          last_seen_in_search,
-          analysis_date,
-          created_at
-        `)
+        .select(selectColumns)
         .eq('status', 'active')
         .order('score', { ascending: false });
 
