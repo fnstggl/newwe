@@ -29,6 +29,16 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
+  // DEBUG: Log what this specific card is receiving
+  console.log(`🃏 PropertyCard [${property.address}]:`, {
+    grade: property.grade,
+    score: property.score,
+    gradeType: typeof property.grade,
+    scoreType: typeof property.score,
+    gradeRaw: JSON.stringify(property.grade),
+    scoreRaw: JSON.stringify(property.score)
+  });
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -89,9 +99,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // Ensure we're using the actual property values, not any fallbacks
-  const displayGrade = property.grade || 'N/A';
-  const displayScore = property.score || 0;
+  // NO FALLBACKS - use exactly what comes from database
+  const displayGrade = property.grade;
+  const displayScore = property.score;
 
   return (
     <div 

@@ -45,10 +45,27 @@ const Search = () => {
     try {
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
-      // Start with a simple query to get all columns using *
+      // EXPLICITLY select the columns we need - don't use *
       let query = supabase
         .from(tableName)
-        .select('*')
+        .select(`
+          id,
+          address,
+          grade,
+          score,
+          ${isRent ? 'monthly_rent' : 'price'},
+          ${isRent ? 'rent_per_sqft' : 'price_per_sqft'},
+          bedrooms,
+          bathrooms,
+          sqft,
+          neighborhood,
+          borough,
+          zipcode,
+          discount_percent,
+          reasoning,
+          images,
+          status
+        `)
         .eq('status', 'active')
         .order('score', { ascending: false });
 
@@ -96,7 +113,16 @@ const Search = () => {
         return;
       }
 
-      // Use the data directly since we're now selecting all columns with *
+      // DEBUG: Log first 3 properties to verify data integrity
+      console.log('🔍 FETCHED DATA SAMPLE:', data.slice(0, 3).map(item => ({
+        id: item.id,
+        address: item.address,
+        grade: item.grade,
+        score: item.score,
+        gradeType: typeof item.grade,
+        scoreType: typeof item.score
+      })));
+
       if (reset) {
         setProperties(data);
         setOffset(ITEMS_PER_PAGE);
@@ -224,7 +250,7 @@ const Search = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {properties.map((property, index) => (
             <PropertyCard
-              key={`${property.id}-${property.grade}-${property.score}-${index}`}
+              key={`${property.id}-${index}`}
               property={property}
               isRental={isRent}
               onClick={() => setSelectedProperty(property)}
