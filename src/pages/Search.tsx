@@ -39,16 +39,27 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      // Let's test with a very specific query to see raw data
-      const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
-      console.log(`🔍 QUERYING TABLE: ${tableName}`);
+      console.log(`🔍 QUERYING TABLE: ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
       
-      let query = supabase
-        .from(tableName)
-        .select('id, address, grade, score, discount_percent, price, monthly_rent, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
-        .eq('status', 'active')
-        .order('score', { ascending: false })
-        .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      let query;
+      
+      if (isRent) {
+        // Query for rentals - use monthly_rent instead of price
+        query = supabase
+          .from('undervalued_rentals')
+          .select('id, address, grade, score, discount_percent, monthly_rent, rent_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
+          .eq('status', 'active')
+          .order('score', { ascending: false })
+          .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      } else {
+        // Query for sales - use price
+        query = supabase
+          .from('undervalued_sales')
+          .select('id, address, grade, score, discount_percent, price, price_per_sqft, bedrooms, bathrooms, sqft, neighborhood, images, videos, floorplans, agents, amenities')
+          .eq('status', 'active')
+          .order('score', { ascending: false })
+          .range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      }
 
       // Apply filters
       if (searchTerm) {
