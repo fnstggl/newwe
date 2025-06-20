@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PropertyImageProps {
@@ -10,7 +10,6 @@ interface PropertyImageProps {
 
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [isHovered, setIsHovered] = useState(false);
 
   // Process images to handle different formats
@@ -35,25 +34,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   }, [images]);
 
   const hasMultipleImages = processedImages.length > 1;
-
-  // Create thumbnail version of image URL (optimized for grid)
-  const getThumbnailUrl = useCallback((url: string) => {
-    if (url === '/placeholder.svg') return url;
-    return url.includes('?') ? `${url}&w=400&h=300` : `${url}?w=400&h=300`;
-  }, []);
-
-  // Preload all images immediately for fast switching
-  useEffect(() => {
-    processedImages.forEach((imageUrl, index) => {
-      if (!loadedImages.has(index)) {
-        const img = new Image();
-        img.onload = () => {
-          setLoadedImages(prev => new Set([...prev, index]));
-        };
-        img.src = getThumbnailUrl(imageUrl);
-      }
-    });
-  }, [processedImages, loadedImages, getThumbnailUrl]);
 
   // Navigation functions with event.stopPropagation()
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -85,9 +65,9 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseLeave={() => setIsHovered(false)}
     >
       <img
-        src={getThumbnailUrl(currentImageUrl)}
+        src={currentImageUrl}
         alt={address}
-        className="w-full h-full object-cover transition-opacity duration-200"
+        className="w-full h-full object-cover"
         onError={(e) => {
           e.currentTarget.src = '/placeholder.svg';
         }}
