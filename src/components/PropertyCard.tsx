@@ -29,17 +29,6 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
-  console.log('🃏 PROPERTY CARD RECEIVED - DETAILED:', {
-    id: property?.id,
-    address: property?.address,
-    grade: property?.grade,
-    score: property?.score,
-    gradeType: typeof property?.grade,
-    scoreType: typeof property?.score,
-    propertyKeys: Object.keys(property || {}),
-    fullProperty: property
-  });
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -100,26 +89,18 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // Use the raw values directly from Supabase without any conversion or null checks
-  const displayGrade = property.grade;
-  const displayScore = property.score;
-
-  console.log('🃏 FINAL VALUES BEING DISPLAYED:', {
-    address: property.address,
-    displayGrade,
-    displayScore,
-    rawGrade: property.grade,
-    rawScore: property.score
-  });
+  // Ensure we're using the actual property values, not any fallbacks
+  const displayGrade = property.grade || 'N/A';
+  const displayScore = property.score || 0;
 
   return (
     <div 
-      className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40 overflow-hidden"
+      className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40 overflow-hidden relative"
       onClick={onClick}
     >
       {/* Grade badge - positioned absolutely over the image */}
       <div className="absolute top-4 right-4 z-10">
-        <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
+        <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
           {displayGrade}
         </div>
       </div>

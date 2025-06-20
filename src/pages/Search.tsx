@@ -43,8 +43,6 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      console.log(`🔍 STARTING FRESH FETCH: Querying ${isRent ? 'undervalued_rentals' : 'undervalued_sales'}`);
-      
       const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
       
       // Start with a simple query to get all columns using *
@@ -83,15 +81,6 @@ const Search = () => {
       // Apply pagination
       const finalQuery = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      console.log('🚀 EXECUTING QUERY with filters:', {
-        searchTerm: searchTerm.trim(),
-        zipCode: zipCode.trim(),
-        maxPrice: maxPrice.trim(),
-        bedrooms: bedrooms.trim(),
-        tableName,
-        offset: currentOffset
-      });
-
       const { data, error } = await finalQuery;
 
       if (error) {
@@ -106,18 +95,6 @@ const Search = () => {
         setProperties([]);
         return;
       }
-
-      console.log('✅ QUERY SUCCESS - RAW DATA:', {
-        totalReturned: data.length,
-        firstThreeRaw: data.slice(0, 3).map(item => ({
-          id: item?.id,
-          address: item?.address,
-          grade: item?.grade,
-          score: item?.score,
-          gradeType: typeof item?.grade,
-          scoreType: typeof item?.score
-        }))
-      });
 
       // Use the data directly since we're now selecting all columns with *
       if (reset) {
@@ -245,25 +222,14 @@ const Search = () => {
 
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => {
-            console.log(`🏠 PROPERTY ${index + 1} BEING PASSED TO CARD:`, {
-              id: property?.id,
-              address: property?.address,
-              grade: property?.grade,
-              score: property?.score,
-              gradeType: typeof property?.grade,
-              scoreType: typeof property?.score
-            });
-            
-            return (
-              <PropertyCard
-                key={`${property.id}-${index}`}
-                property={property}
-                isRental={isRent}
-                onClick={() => setSelectedProperty(property)}
-              />
-            );
-          })}
+          {properties.map((property, index) => (
+            <PropertyCard
+              key={`${property.id}-${property.grade}-${property.score}-${index}`}
+              property={property}
+              isRental={isRent}
+              onClick={() => setSelectedProperty(property)}
+            />
+          ))}
         </div>
 
         {/* Loading state */}
