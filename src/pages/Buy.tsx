@@ -108,7 +108,7 @@ const Buy = () => {
       if (minGrade.trim()) {
         const gradeIndex = gradeOptions.indexOf(minGrade);
         if (gradeIndex !== -1) {
-          const allowedGrades = gradeOptions.slice(gradeIndex);
+          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
           query = query.in('grade', allowedGrades);
         }
       }
@@ -169,28 +169,28 @@ const Buy = () => {
   const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
-        badge: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-100',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-yellow-400',
         scoreBorder: 'border-yellow-600',
         hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-purple-500/20 border-purple-500/30 text-purple-100',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-purple-400',
         scoreBorder: 'border-purple-600',
         hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
       };
     } else if (grade.startsWith('B')) {
       return {
-        badge: 'bg-blue-500/20 border-blue-500/30 text-blue-100',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-blue-400',
         scoreBorder: 'border-blue-600',
         hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white/20 border-white/30 text-white',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-gray-300',
         scoreBorder: 'border-gray-600',
         hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
@@ -230,7 +230,7 @@ const Buy = () => {
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (

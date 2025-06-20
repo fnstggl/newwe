@@ -79,7 +79,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
 
   // Default colors if not provided
   const defaultColors = {
-    badge: 'bg-white/20 border-white/30 text-white',
+    badge: 'bg-white text-black border-gray-300', // Changed to white background with black text
     scoreText: 'text-gray-300',
     scoreBorder: 'border-gray-600',
     hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
@@ -102,7 +102,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     >
       {/* Grade badge - positioned absolutely over the image */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${colors.badge} backdrop-blur-md border px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg`}>
+        <div className="bg-white text-black border border-gray-300 backdrop-blur-md px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
           {String(property.grade)}
         </div>
       </div>
