@@ -29,14 +29,14 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick }) => {
-  // DEBUG: Log what this specific card is receiving
-  console.log(`🃏 PropertyCard [${property.address}]:`, {
-    grade: property.grade,
-    score: property.score,
+  // EXTENSIVE DEBUG: Log the EXACT property data
+  console.log(`🏠 PROPERTY CARD [${property.address}]:`, {
+    fullProperty: property,
+    gradeValue: property.grade,
+    scoreValue: property.score,
     gradeType: typeof property.grade,
     scoreType: typeof property.score,
-    gradeRaw: JSON.stringify(property.grade),
-    scoreRaw: JSON.stringify(property.score)
+    allKeys: Object.keys(property)
   });
 
   const formatPrice = (price: number) => {
@@ -99,9 +99,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // NO FALLBACKS - use exactly what comes from database
-  const displayGrade = property.grade;
-  const displayScore = property.score;
+  // LOG THE ACTUAL VALUES BEING RENDERED
+  console.log(`🎯 RENDERING VALUES FOR [${property.address}]:`, {
+    displayGrade: property.grade,
+    displayScore: property.score,
+    gradeInBadge: property.grade,
+    scoreInBadge: property.score
+  });
 
   return (
     <div 
@@ -111,7 +115,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
       {/* Grade badge - positioned absolutely over the image */}
       <div className="absolute top-4 right-4 z-10">
         <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
-          {displayGrade}
+          {String(property.grade)}
         </div>
       </div>
       
@@ -159,7 +163,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
             {getDiscountPercentage()}
           </span>
           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
-            Score: {displayScore}
+            Score: {String(property.score)}
           </Badge>
         </div>
 

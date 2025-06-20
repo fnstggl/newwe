@@ -141,8 +141,9 @@ const Search = () => {
         return;
       }
 
-      // DEBUG: Log first 3 properties to verify data integrity
-      console.log('🔍 FETCHED DATA SAMPLE:', data.slice(0, 3).map(item => ({
+      // CRITICAL DEBUG: Log EVERY property's grade and score
+      console.log('🔥 CRITICAL DEBUG - ALL FETCHED PROPERTIES:', data.map((item, index) => ({
+        index,
         id: item.id,
         address: item.address,
         grade: item.grade,
@@ -276,14 +277,24 @@ const Search = () => {
 
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => (
-            <PropertyCard
-              key={`${property.id}-${index}`}
-              property={property}
-              isRental={isRent}
-              onClick={() => setSelectedProperty(property)}
-            />
-          ))}
+          {properties.map((property, index) => {
+            // CRITICAL DEBUG: Log what we're passing to each card
+            console.log(`🚀 PASSING TO CARD [${index}]:`, {
+              id: property.id,
+              address: property.address,
+              grade: property.grade,
+              score: property.score
+            });
+            
+            return (
+              <PropertyCard
+                key={`${property.id}-${index}`}
+                property={property}
+                isRental={isRent}
+                onClick={() => setSelectedProperty(property)}
+              />
+            );
+          })}
         </div>
 
         {/* Loading state */}
