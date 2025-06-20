@@ -43,76 +43,41 @@ const Search = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      const tableName = isRent ? 'undervalued_rentals' : 'undervalued_sales';
-      
-      // Create separate queries for different table types
+      // Build a much simpler, more direct query
       let query;
       
       if (isRent) {
         query = supabase
           .from('undervalued_rentals')
-          .select(`
-            id,
-            address,
-            grade,
-            score,
-            monthly_rent,
-            rent_per_sqft,
-            bedrooms,
-            bathrooms,
-            sqft,
-            neighborhood,
-            borough,
-            zipcode,
-            discount_percent,
-            reasoning,
-            images,
-            status
-          `);
+          .select('*') // Select ALL columns first, no filtering
+          .eq('status', 'active')
+          .order('score', { ascending: false });
       } else {
         query = supabase
           .from('undervalued_sales')
-          .select(`
-            id,
-            address,
-            grade,
-            score,
-            price,
-            price_per_sqft,
-            bedrooms,
-            bathrooms,
-            sqft,
-            neighborhood,
-            borough,
-            zipcode,
-            discount_percent,
-            reasoning,
-            images,
-            status
-          `);
+          .select('*') // Select ALL columns first, no filtering
+          .eq('status', 'active')
+          .order('score', { ascending: false });
       }
 
-      // Apply common filters
-      query = query
-        .eq('status', 'active')
-        .order('score', { ascending: false });
-
-      // Apply filters more flexibly - only add filters if they have values
+      // Apply simple filters one by one, NOT with complex OR logic
       if (searchTerm.trim()) {
-        // Make the search more flexible by using case-insensitive partial matching
-        query = query.or(`address.ilike.%${searchTerm.trim()}%,neighborhood.ilike.%${searchTerm.trim()}%,borough.ilike.%${searchTerm.trim()}%`);
+        // Use simple ilike on address only for now
+        query = query.ilike('address', `%${searchTerm.trim()}%`);
       }
 
       if (zipCode.trim()) {
-        // Make zipcode search more flexible
-        query = query.or(`zipcode.ilike.${zipCode.trim()}%,zipcode.ilike.%${zipCode.trim()}%`);
+        query = query.ilike('zipcode', `${zipCode.trim()}%`);
       }
 
       if (maxPrice.trim()) {
         const priceValue = parseInt(maxPrice.trim());
         if (!isNaN(priceValue) && priceValue > 0) {
-          const priceField = isRent ? 'monthly_rent' : 'price';
-          query = query.lte(priceField, priceValue);
+          if (isRent) {
+            query = query.lte('monthly_rent', priceValue);
+          } else {
+            query = query.lte('price', priceValue);
+          }
         }
       }
 
@@ -123,10 +88,8 @@ const Search = () => {
         }
       }
 
-      // Apply pagination
-      const finalQuery = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
-
-      const { data, error } = await finalQuery;
+      // Apply pagination last
+      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
       if (error) {
         console.error('❌ SUPABASE ERROR:', error);
@@ -134,22 +97,18 @@ const Search = () => {
         return;
       }
 
-      // Validate that we actually have meaningful data before considering this a success
       if (!data || !Array.isArray(data)) {
         console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
         setProperties([]);
         return;
       }
 
-      // CRITICAL DEBUG: Log EVERY property's grade and score
-      console.log('🔥 CRITICAL DEBUG - ALL FETCHED PROPERTIES:', data.map((item, index) => ({
-        index,
-        id: item.id,
+      // CRITICAL: Log the raw data to see if we're getting variety
+      console.log('🔥 RAW SUPABASE DATA (first 5):', data.slice(0, 5).map(item => ({
         address: item.address,
         grade: item.grade,
         score: item.score,
-        gradeType: typeof item.grade,
-        scoreType: typeof item.score
+        id: item.id
       })));
 
       if (reset) {
@@ -277,24 +236,14 @@ const Search = () => {
 
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => {
-            // CRITICAL DEBUG: Log what we're passing to each card
-            console.log(`🚀 PASSING TO CARD [${index}]:`, {
-              id: property.id,
-              address: property.address,
-              grade: property.grade,
-              score: property.score
-            });
-            
-            return (
-              <PropertyCard
-                key={`${property.id}-${index}`}
-                property={property}
-                isRental={isRent}
-                onClick={() => setSelectedProperty(property)}
-              />
-            );
-          })}
+          {properties.map((property, index) => (
+            <PropertyCard
+              key={`${property.id}-${index}`}
+              property={property}
+              isRental={isRent}
+              onClick={() => setSelectedProperty(property)}
+            />
+          ))}
         </div>
 
         {/* Loading state */}
