@@ -235,11 +235,8 @@ const Search = () => {
           </div>
         </div>
 
-        {/* Results Count */}
+        {/* Results Count - removed the undervalued listings found text */}
         <div className="flex justify-between items-center mb-8">
-          <p className="text-gray-400 tracking-tight">
-            {properties.length} undervalued listings found
-          </p>
           <div className="text-sm text-gray-500">
             Showing {isRent ? 'rental' : 'sale'} properties
           </div>
