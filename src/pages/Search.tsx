@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -52,28 +53,44 @@ const Search = () => {
         .eq('status', 'active')
         .order('score', { ascending: false });
 
-      // Apply filters
-      if (searchTerm) {
-        query = query.or(`address.ilike.%${searchTerm}%,neighborhood.ilike.%${searchTerm}%`);
+      // Apply filters more flexibly - only add filters if they have values
+      if (searchTerm.trim()) {
+        // Make the search more flexible by using case-insensitive partial matching
+        query = query.or(`address.ilike.%${searchTerm.trim()}%,neighborhood.ilike.%${searchTerm.trim()}%,borough.ilike.%${searchTerm.trim()}%`);
       }
 
-      if (zipCode) {
-        query = query.ilike('zipcode', `%${zipCode}%`);
+      if (zipCode.trim()) {
+        // Make zipcode search more flexible
+        query = query.or(`zipcode.ilike.${zipCode.trim()}%,zipcode.ilike.%${zipCode.trim()}%`);
       }
 
-      if (maxPrice) {
-        const priceField = isRent ? 'monthly_rent' : 'price';
-        query = query.lte(priceField, parseInt(maxPrice));
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          const priceField = isRent ? 'monthly_rent' : 'price';
+          query = query.lte(priceField, priceValue);
+        }
       }
 
-      if (bedrooms) {
-        query = query.gte('bedrooms', parseInt(bedrooms));
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
+          query = query.gte('bedrooms', bedroomValue);
+        }
       }
 
       // Apply pagination
       const finalQuery = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      console.log('🚀 EXECUTING QUERY...');
+      console.log('🚀 EXECUTING QUERY with filters:', {
+        searchTerm: searchTerm.trim(),
+        zipCode: zipCode.trim(),
+        maxPrice: maxPrice.trim(),
+        bedrooms: bedrooms.trim(),
+        tableName,
+        offset: currentOffset
+      });
+
       const { data, error } = await finalQuery;
 
       if (error) {
@@ -226,6 +243,7 @@ const Search = () => {
                 className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
                 <option value="">Any</option>
+                <option value="0">Studio</option>
                 <option value="1">1+</option>
                 <option value="2">2+</option>
                 <option value="3">3+</option>
@@ -235,10 +253,10 @@ const Search = () => {
           </div>
         </div>
 
-        {/* Results Count - removed the undervalued listings found text */}
+        {/* Results Count */}
         <div className="flex justify-between items-center mb-8">
           <div className="text-sm text-gray-500">
-            Showing {isRent ? 'rental' : 'sale'} properties
+            Showing {properties.length} {isRent ? 'rental' : 'sale'} properties
           </div>
         </div>
 
