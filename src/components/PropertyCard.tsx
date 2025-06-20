@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { GlowCard } from '@/components/ui/spotlight-card';
 
 // Use flexible types that can handle any data structure from Supabase
 interface FlexibleProperty {
@@ -118,21 +117,19 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   });
 
   return (
-    <GlowCard
-      customSize={true}
-      glowColor="blue"
-      className="cursor-pointer"
+    <div 
+      className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40 overflow-hidden"
       onClick={onClick}
     >
-      {/* Grade badge - top right with glassmorphic effect */}
+      {/* Grade badge - positioned absolutely over the image */}
       <div className="absolute top-4 right-4 z-10">
         <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
           {displayGrade}
         </div>
       </div>
       
-      {/* Image container */}
-      <div className="h-56 bg-gray-800 relative overflow-hidden rounded-xl">
+      {/* Image container - spans full width and height of top half */}
+      <div className="h-56 relative overflow-hidden">
         <img
           src={imageUrl}
           alt={property.address}
@@ -185,7 +182,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           </div>
         )}
       </div>
-    </GlowCard>
+    </div>
   );
 };
 
