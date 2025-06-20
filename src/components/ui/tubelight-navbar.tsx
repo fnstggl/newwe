@@ -20,7 +20,7 @@ interface NavBarProps {
 
 export function NavBar({ items, className }: NavBarProps) {
   const location = useLocation()
-  const [activeTab, setActiveTab] = useState(items[0].name)
+  const [activeTab, setActiveTab] = useState("")
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -34,9 +34,16 @@ export function NavBar({ items, className }: NavBarProps) {
   }, [])
 
   useEffect(() => {
-    const currentItem = items.find(item => item.url === location.pathname)
-    if (currentItem) {
-      setActiveTab(currentItem.name)
+    // Only set active tab if we're on one of the nav pages, not on home/index
+    if (location.pathname === "/") {
+      setActiveTab("")
+    } else {
+      const currentItem = items.find(item => item.url === location.pathname)
+      if (currentItem) {
+        setActiveTab(currentItem.name)
+      } else {
+        setActiveTab("")
+      }
     }
   }, [location.pathname, items])
 
@@ -49,9 +56,8 @@ export function NavBar({ items, className }: NavBarProps) {
         className,
       )}
     >
-      <div className="flex items-center gap-3 bg-black/80 border border-gray-800 backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">
+      <div className="flex items-center gap-2 bg-black/80 border border-gray-800 backdrop-blur-lg py-2 px-3 rounded-full shadow-lg">
         {items.map((item) => {
-          const Icon = item.icon
           const isActive = activeTab === item.name
 
           return (
@@ -60,15 +66,12 @@ export function NavBar({ items, className }: NavBarProps) {
               to={item.url}
               onClick={() => setActiveTab(item.name)}
               className={cn(
-                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",
+                "relative cursor-pointer text-xs font-medium px-3 py-2 rounded-full transition-colors",
                 "text-gray-300 hover:text-white",
                 isActive && "bg-gray-800 text-white",
               )}
             >
-              <span className="hidden md:inline">{item.name}</span>
-              <span className="md:hidden">
-                <Icon size={18} strokeWidth={2.5} />
-              </span>
+              <span className="text-xs">{item.name}</span>
               {isActive && (
                 <motion.div
                   layoutId="lamp"

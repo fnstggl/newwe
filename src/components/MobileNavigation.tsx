@@ -15,7 +15,7 @@ const MobileNavigation = () => {
       icon: ShoppingCart,
     },
     {
-      name: "Neighborhoods",
+      name: "Areas",
       url: "/neighborhoods",
       icon: MapPin,
     },
@@ -25,7 +25,7 @@ const MobileNavigation = () => {
       icon: DollarSign,
     },
     {
-      name: "Manifesto",
+      name: "About",
       url: "/manifesto",
       icon: FileText,
     },
