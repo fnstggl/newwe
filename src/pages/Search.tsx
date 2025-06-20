@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -77,64 +78,34 @@ const Search = () => {
         return;
       }
 
-      console.log('✅ QUERY SUCCESS:', {
+      console.log('✅ QUERY SUCCESS - RAW DATA:', {
         dataLength: data?.length,
         dataType: typeof data,
         isArray: Array.isArray(data),
-        firstItemKeys: data && data.length > 0 ? Object.keys(data[0]) : 'no data',
-        rawDataSample: data?.slice(0, 3).map(item => {
-          console.log('🔍 DETAILED ITEM ANALYSIS:', {
-            item: item,
-            itemKeys: Object.keys(item || {}),
-            gradeValue: item?.grade,
-            scoreValue: item?.score,
-            gradeExists: 'grade' in (item || {}),
-            scoreExists: 'score' in (item || {}),
-            itemType: typeof item
-          });
-          return {
-            id: item?.id,
-            address: item?.address,
-            rawGrade: item?.grade,
-            rawScore: item?.score,
-            gradeType: typeof item?.grade,
-            scoreType: typeof item?.score,
-            allKeys: Object.keys(item || {})
-          };
-        })
+        firstThreeRaw: data?.slice(0, 3).map(item => ({
+          id: item?.id,
+          address: item?.address,
+          grade: item?.grade,
+          score: item?.score,
+          gradeType: typeof item?.grade,
+          scoreType: typeof item?.score,
+          allKeys: Object.keys(item || {})
+        }))
       });
 
-      // Check if data exists and has the expected structure
       if (!data || !Array.isArray(data)) {
         console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
         setProperties([]);
         return;
       }
 
-      // Validate each item has the required properties
-      const validatedData = data.filter(item => {
-        if (!item || typeof item !== 'object') {
-          console.warn('⚠️ INVALID ITEM (not an object):', item);
-          return false;
-        }
-        
-        if (!('grade' in item) || !('score' in item)) {
-          console.warn('⚠️ MISSING GRADE OR SCORE:', {
-            id: item.id,
-            hasGrade: 'grade' in item,
-            hasScore: 'score' in item,
-            keys: Object.keys(item)
-          });
-          return false;
-        }
-        
-        return true;
-      });
+      // DIRECT CAST - NO FILTERING OR VALIDATION
+      // Since you confirmed ALL properties have grades and scores
+      const propertiesData = data as (UndervaluedSales | UndervaluedRentals)[];
 
-      console.log('🎯 VALIDATED DATA:', {
-        originalLength: data.length,
-        validatedLength: validatedData.length,
-        firstThreeValidated: validatedData.slice(0, 3).map(item => ({
+      console.log('🎯 FINAL DATA BEING SET:', {
+        length: propertiesData.length,
+        firstThreeFinal: propertiesData.slice(0, 3).map(item => ({
           id: item.id,
           address: item.address,
           grade: item.grade,
@@ -143,9 +114,6 @@ const Search = () => {
           scoreType: typeof item.score
         }))
       });
-
-      // Cast to our types
-      const propertiesData = validatedData as (UndervaluedSales | UndervaluedRentals)[];
 
       if (reset) {
         setProperties(propertiesData);
