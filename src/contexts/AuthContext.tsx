@@ -9,7 +9,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  userProfile: { name: string } | null;
+  userProfile: { name: string; hasCompletedOnboarding?: boolean } | null;
+  updateOnboardingStatus: (completed: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,7 +26,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [userProfile, setUserProfile] = useState<{ name: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ name: string; hasCompletedOnboarding?: boolean } | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -62,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('name')
+        .select('name, subscription_plan')
         .eq('id', userId)
         .single();
       
@@ -72,10 +73,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data) {
-        setUserProfile({ name: data.name || '' });
+        // Check if user has completed onboarding (for now, we'll use localStorage)
+        const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
+        setUserProfile({ 
+          name: data.name || '',
+          hasCompletedOnboarding
+        });
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const updateOnboardingStatus = async (completed: boolean) => {
+    if (user) {
+      localStorage.setItem(`onboarding_${user.id}`, completed ? 'completed' : 'pending');
+      setUserProfile(prev => prev ? { ...prev, hasCompletedOnboarding: completed } : null);
     }
   };
 
@@ -115,7 +128,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
-    userProfile
+    userProfile,
+    updateOnboardingStatus
   };
 
   return (
