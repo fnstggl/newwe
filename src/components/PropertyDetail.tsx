@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -204,9 +203,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <Badge className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.textColor} ${gradeTheme.glowColor} border-2 px-4 py-2 text-lg font-bold`}>
                       {property.grade}
                     </Badge>
-                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-4 py-2 flex items-center space-x-3`}>
-                      <div className={`text-sm ${gradeTheme.textColor} font-medium`}>Deal Score</div>
-                      <div className={`text-xl font-bold ${gradeTheme.textColor}`}>{property.score}</div>
+                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
+                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
+                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
                     </div>
                   </div>
                 </div>
