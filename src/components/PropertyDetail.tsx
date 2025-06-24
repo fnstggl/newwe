@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown } from 'lucide-react';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -13,6 +15,7 @@ interface PropertyDetailProps {
 
 const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Process images to handle different formats
   const processImages = () => {
@@ -55,27 +58,47 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     }
   };
 
-  const getGradeColor = (grade: string) => {
+  const getGradeTheme = (grade: string) => {
     switch (grade.toUpperCase()) {
       case 'A+':
+        return {
+          bgColor: 'bg-yellow-500/20',
+          borderColor: 'border-yellow-500',
+          textColor: 'text-yellow-500',
+          glowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]'
+        };
       case 'A':
-        return 'bg-green-600';
       case 'A-':
+        return {
+          bgColor: 'bg-purple-500/20',
+          borderColor: 'border-purple-500',
+          textColor: 'text-purple-500',
+          glowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]'
+        };
       case 'B+':
-        return 'bg-green-500';
       case 'B':
       case 'B-':
-        return 'bg-yellow-500';
-      case 'C+':
-      case 'C':
-        return 'bg-orange-500';
-      case 'C-':
-      case 'D':
-        return 'bg-red-600';
+        return {
+          bgColor: 'bg-blue-500/20',
+          borderColor: 'border-blue-500',
+          textColor: 'text-blue-500',
+          glowColor: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]'
+        };
       default:
-        return 'bg-gray-600';
+        return {
+          bgColor: 'bg-white/20',
+          borderColor: 'border-white',
+          textColor: 'text-white',
+          glowColor: 'shadow-[0_0_20px_rgba(255,255,255,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(255,255,255,0.4)]'
+        };
     }
   };
+
+  const gradeTheme = getGradeTheme(property.grade);
 
   const price = isRental 
     ? (property as UndervaluedRentals).monthly_rent 
@@ -86,6 +109,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     : (property as UndervaluedSales).price_per_sqft;
 
   const currentImageUrl = hasImages ? images[currentImageIndex] : '/placeholder.svg';
+
+  // Truncate description for preview
+  const truncateDescription = (text: string, wordLimit: number = 35) => {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(' ') + '...';
+  };
+
+  const shouldShowReadMore = property.description && property.description.split(' ').length > 35;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
@@ -148,35 +181,40 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Info */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Address and Score */}
+                {/* Address, Price and Score */}
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="flex-1">
                     <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
                     <div className="flex items-center text-gray-400 mb-4">
                       <MapPin className="h-4 w-4 mr-2" />
                       {property.neighborhood && `${property.neighborhood}, `}
                       {property.borough}
                     </div>
+                    {/* Price moved here */}
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {formatPrice(price)}{isRental ? '/mo' : ''}
+                    </div>
+                    {pricePerSqft && (
+                      <div className="text-gray-300 mb-4">
+                        {formatPrice(pricePerSqft)}/sqft
+                      </div>
+                    )}
                   </div>
-                  <Badge className={`${getGradeColor(property.grade)} text-white px-4 py-2 text-lg font-bold`}>
-                    {property.grade}
-                  </Badge>
+                  <div className="flex flex-col items-end space-y-3">
+                    <Badge className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.textColor} ${gradeTheme.glowColor} border-2 px-4 py-2 text-lg font-bold`}>
+                      {property.grade}
+                    </Badge>
+                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-lg px-3 py-2`}>
+                      <div className={`text-sm ${gradeTheme.textColor} font-medium`}>Deal Score</div>
+                      <div className={`text-xl font-bold ${gradeTheme.textColor}`}>{property.score}</div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Price and Details */}
+                {/* Property Details */}
                 <Card className="bg-gray-800/50 border-gray-700">
                   <CardContent className="p-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <div className="text-3xl font-bold text-green-400 mb-2">
-                          {formatPrice(price)}{isRental ? '/mo' : ''}
-                        </div>
-                        {pricePerSqft && (
-                          <div className="text-gray-300">
-                            {formatPrice(pricePerSqft)}/sqft
-                          </div>
-                        )}
-                      </div>
+                    <div className="grid md:grid-cols-3 gap-6">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Bedrooms:</span>
@@ -186,29 +224,88 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                           <span className="text-gray-400">Bathrooms:</span>
                           <span className="text-white">{property.bathrooms || 0}</span>
                         </div>
+                      </div>
+                      <div className="space-y-2">
                         {property.sqft && (
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Square Feet:</span>
                             <span className="text-white">{property.sqft}</span>
                           </div>
                         )}
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Deal Score:</span>
-                          <span className="text-white">{property.score}</span>
-                        </div>
+                        {property.days_on_market && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Days on Market:</span>
+                            <span className="text-white">{property.days_on_market}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        {property.property_type && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Type:</span>
+                            <span className="text-white capitalize">{property.property_type}</span>
+                          </div>
+                        )}
+                        {isRental && (property as UndervaluedRentals).no_fee && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Broker Fee:</span>
+                            <span className="text-green-400">No Fee</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Description */}
+                {/* Market Analysis - moved here */}
+                <Card className={`bg-black ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
+                  <CardHeader>
+                    <CardTitle className="text-white">Market Analysis</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-center">
+                      <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                        {Math.round(property.discount_percent)}%
+                      </div>
+                      <div className="text-sm text-gray-400">Below Market Value</div>
+                    </div>
+                    
+                    {property.reasoning && (
+                      <div className="text-sm text-gray-300 leading-relaxed">
+                        {property.reasoning}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Description with collapsible */}
                 {property.description && (
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardHeader>
                       <CardTitle className="text-white">Description</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-300 leading-relaxed">{property.description}</p>
+                      {shouldShowReadMore ? (
+                        <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
+                          <div className="text-gray-300 leading-relaxed">
+                            {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
+                          </div>
+                          <CollapsibleTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
+                            >
+                              <span className="flex items-center">
+                                {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                                <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
+                              </span>
+                            </Button>
+                          </CollapsibleTrigger>
+                        </Collapsible>
+                      ) : (
+                        <p className="text-gray-300 leading-relaxed">{property.description}</p>
+                      )}
                     </CardContent>
                   </Card>
                 )}
@@ -234,55 +331,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
               {/* Sidebar */}
               <div className="space-y-6">
-                {/* Market Analysis */}
-                <Card className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border-blue-500/20">
-                  <CardHeader>
-                    <CardTitle className="text-white">Market Analysis</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-400 mb-1">
-                        {Math.round(property.discount_percent)}%
-                      </div>
-                      <div className="text-sm text-gray-400">Below Market Value</div>
-                    </div>
-                    
-                    {property.reasoning && (
-                      <div className="text-sm text-gray-300 leading-relaxed">
-                        {property.reasoning}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
                 {/* Property Details */}
                 <Card className="bg-gray-800/50 border-gray-700">
                   <CardHeader>
                     <CardTitle className="text-white">Property Info</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {property.property_type && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Type:</span>
-                        <span className="text-white capitalize">{property.property_type}</span>
-                      </div>
-                    )}
                     {property.built_in && (
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Built:</span>
                         <span className="text-white">{property.built_in}</span>
-                      </div>
-                    )}
-                    {property.days_on_market && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Days on Market:</span>
-                        <span className="text-white">{property.days_on_market}</span>
-                      </div>
-                    )}
-                    {isRental && (property as UndervaluedRentals).no_fee && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Broker Fee:</span>
-                        <span className="text-green-400">No Fee</span>
                       </div>
                     )}
                   </CardContent>
