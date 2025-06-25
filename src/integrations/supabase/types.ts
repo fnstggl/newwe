@@ -219,6 +219,30 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_properties: {
+        Row: {
+          id: string
+          property_id: string
+          property_type: string
+          saved_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          property_type: string
+          saved_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          property_type?: string
+          saved_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       undervalued_rentals: {
         Row: {
           address: string

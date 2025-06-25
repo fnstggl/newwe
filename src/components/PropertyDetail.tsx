@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown } from 'lucide-react';
+import BookmarkButton from './BookmarkButton';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -149,6 +149,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     onError={(e) => {
                       e.currentTarget.src = '/placeholder.svg';
                     }}
+                  />
+                </div>
+                
+                {/* Bookmark button in top right of image */}
+                <div className="absolute top-4 right-4 z-30">
+                  <BookmarkButton 
+                    propertyId={property.id}
+                    propertyType={isRental ? 'rental' : 'sale'}
                   />
                 </div>
                 

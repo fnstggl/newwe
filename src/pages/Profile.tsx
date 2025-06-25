@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import SavedPropertiesSection from '@/components/SavedPropertiesSection';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -105,6 +106,9 @@ const Profile = () => {
         <h1 className="text-4xl font-bold mb-8 tracking-tighter">Account Settings</h1>
         
         <div className="space-y-8">
+          {/* Saved Properties Section */}
+          <SavedPropertiesSection />
+
           {/* Account Information */}
           <Card className="bg-gray-900/50 border-gray-700">
             <CardHeader>

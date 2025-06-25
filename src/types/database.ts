@@ -87,4 +87,12 @@ export interface UserProfile {
   created_at: string;
 }
 
+export interface SavedProperty {
+  id: string;
+  user_id: string;
+  property_id: string;
+  property_type: 'sale' | 'rental';
+  saved_at: string;
+}
+
 export type PropertyListing = UndervaluedSales | UndervaluedRentals;
