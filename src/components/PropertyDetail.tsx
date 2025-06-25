@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -200,7 +201,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     )}
                   </div>
                   <div className="flex flex-col items-end space-y-3">
-                    <Badge className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.textColor} ${gradeTheme.glowColor} border-2 px-4 py-2 text-lg font-bold`}>
+                    <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
                       {property.grade}
                     </Badge>
                     <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
@@ -256,8 +257,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </CardContent>
                 </Card>
 
-                {/* Market Analysis - moved here */}
-                <Card className={`bg-black ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
+                {/* Market Analysis - moved here and background changed to match page */}
+                <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
                   <CardHeader>
                     <CardTitle className="text-white">Market Analysis</CardTitle>
                   </CardHeader>
