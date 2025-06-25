@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
 import Buy from "./pages/Buy";
@@ -18,10 +18,28 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
+import OnboardingPopup from "./components/OnboardingPopup";
+import { useState, useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const { user, userProfile, updateOnboardingStatus } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Show onboarding for authenticated users who haven't completed it
+    if (user && userProfile && !userProfile.hasCompletedOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, [user, userProfile]);
+
+  const handleOnboardingComplete = async (data: any) => {
+    console.log('Onboarding data:', data);
+    await updateOnboardingStatus(true);
+    setShowOnboarding(false);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <Navbar />
@@ -39,6 +57,12 @@ const AppContent = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <MobileNavigation />
+      
+      <OnboardingPopup
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };
