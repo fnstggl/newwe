@@ -1,6 +1,6 @@
 
 import { NavBar } from "@/components/ui/tubelight-navbar";
-import { Home, ShoppingCart, MapPin, DollarSign, FileText } from "lucide-react";
+import { Home, ShoppingCart, Bookmark, DollarSign, FileText } from "lucide-react";
 
 const MobileNavigation = () => {
   const navItems = [
@@ -15,9 +15,9 @@ const MobileNavigation = () => {
       icon: ShoppingCart,
     },
     {
-      name: "Areas",
-      url: "/neighborhoods",
-      icon: MapPin,
+      name: "Saved",
+      url: "/saved",
+      icon: Bookmark,
     },
     {
       name: "Pricing",

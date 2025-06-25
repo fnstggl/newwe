@@ -79,25 +79,25 @@ const Navbar = () => {
               Rent
             </Link>
             <Link 
-              to="/neighborhoods" 
+              to="/saved" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/neighborhoods' ? 'text-white' : 'text-gray-300'
+                location.pathname === '/saved' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/neighborhoods' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+                textShadow: location.pathname === '/saved' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
-                if (location.pathname !== '/neighborhoods') {
+                if (location.pathname !== '/saved') {
                   e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (location.pathname !== '/neighborhoods') {
+                if (location.pathname !== '/saved') {
                   e.currentTarget.style.textShadow = 'none';
                 }
               }}
             >
-              Neighborhoods
+              Saved
             </Link>
             <Link 
               to="/pricing" 

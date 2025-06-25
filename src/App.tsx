@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import Search from "./pages/Search";
 import Buy from "./pages/Buy";
 import Rent from "./pages/Rent";
-import Neighborhoods from "./pages/Neighborhoods";
+import SavedProperties from "./pages/SavedProperties";
 import Manifesto from "./pages/Manifesto";
 import Pricing from "./pages/Pricing";
 import Join from "./pages/Join";
@@ -18,10 +18,16 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
+import OnboardingPopup from "./components/OnboardingPopup";
+import { useState, useEffect } from "react";
+import { useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { user, userProfile } = useAuth();
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <Navbar />
@@ -30,15 +36,22 @@ const AppContent = () => {
         <Route path="/search" element={<Search />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/rent" element={<Rent />} />
-        <Route path="/neighborhoods" element={<Neighborhoods />} />
+        <Route path="/saved" element={<SavedProperties />} />
         <Route path="/manifesto" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/join" element={<Join />} />
+        <Route path="/join" element={<Join setShowOnboarding={setShowOnboarding} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <MobileNavigation />
+      
+      {showOnboarding && (
+        <OnboardingPopup 
+          onClose={() => setShowOnboarding(false)}
+          onComplete={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
   );
 };
