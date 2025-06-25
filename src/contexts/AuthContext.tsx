@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, name: string) => Promise<{ error: any; needsOnboarding?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   userProfile: { name: string; hasCompletedOnboarding?: boolean } | null;
@@ -35,12 +35,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Fetch user profile when user logs in
-        if (session?.user) {
+        // Fetch user profile when user logs in (but not on signup)
+        if (session?.user && event !== 'SIGNED_UP') {
           setTimeout(() => {
             fetchUserProfile(session.user.id);
           }, 0);
-        } else {
+        } else if (!session) {
           setUserProfile(null);
         }
       }
@@ -105,6 +105,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     });
+    
+    // If signup is successful, indicate that onboarding is needed
+    if (!error) {
+      return { error, needsOnboarding: true };
+    }
     
     return { error };
   };

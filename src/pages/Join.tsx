@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { HoverButton } from "../components/ui/hover-button";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import OnboardingPopup from "../components/OnboardingPopup";
 
 const Join = () => {
   const [name, setName] = useState("");
@@ -12,7 +13,8 @@ const Join = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { signUp, updateOnboardingStatus } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,7 +23,7 @@ const Join = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(email, password, name);
+      const { error, needsOnboarding } = await signUp(email, password, name);
       
       if (error) {
         toast({
@@ -34,7 +36,13 @@ const Join = () => {
           title: "Welcome!",
           description: "Your account has been created successfully.",
         });
-        navigate('/');
+        
+        // Show onboarding for new users
+        if (needsOnboarding) {
+          setShowOnboarding(true);
+        } else {
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -46,6 +54,13 @@ const Join = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleOnboardingComplete = async (data: any) => {
+    console.log('Onboarding data:', data);
+    await updateOnboardingStatus(true);
+    setShowOnboarding(false);
+    navigate('/');
   };
 
   return (
@@ -152,6 +167,15 @@ const Join = () => {
           </div>
         </div>
       </div>
+
+      <OnboardingPopup
+        isOpen={showOnboarding}
+        onClose={() => {
+          setShowOnboarding(false);
+          navigate('/');
+        }}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 };
