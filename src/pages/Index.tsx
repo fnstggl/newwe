@@ -7,11 +7,11 @@ import { HoverButton } from "@/components/ui/hover-button";
 const Index = () => {
   return <div className="font-inter">
       {/* Hero Section */}
-<section className="relative min-h-screen flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
         <div className="absolute inset-0 w-full h-full">
           {/* Background Image with Fade-in Effect */}
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-screen absolute inset-0 animate-fade-in w-full h-full"
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
             style={{
               backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
               animationDuration: '3s',
@@ -24,7 +24,7 @@ const Index = () => {
         </div>
           
           {/* Hero Content - Always Visible */}
-          <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <div className="relative z-10 min-h-[600px] flex items-center justify-center">
             <div className="text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
                 Your unfair advantage in real estate.
