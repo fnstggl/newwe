@@ -7,11 +7,11 @@ import { HoverButton } from "@/components/ui/hover-button";
 const Index = () => {
   return <div className="font-inter">
       {/* Hero Section */}
-<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0 md:pt-2">        {/* Background Image with Rounded Border */}
-        <div className="relative w-full max-w-7xl mx-auto rounded-3xl overflow-hidden">
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
+        <div className="absolute inset-0 w-full h-full">
           {/* Background Image with Fade-in Effect */}
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in rounded-3xl"
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
             style={{
               backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
               animationDuration: '3s',
@@ -19,8 +19,9 @@ const Index = () => {
               animationFillMode: 'both'
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/30 rounded-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/30"></div>
           </div>
+        </div>
           
           {/* Hero Content - Always Visible */}
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
@@ -36,7 +37,6 @@ const Index = () => {
               </Link>
             </div>
           </div>
-        </div>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
@@ -111,8 +111,7 @@ const Index = () => {
         {/* Blue Gradient Blob Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>
-        
+        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Let the house hunt end here.
