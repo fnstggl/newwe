@@ -75,6 +75,129 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_cache: {
+        Row: {
+          address: string
+          amenities: Json
+          available_date: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          borough: string | null
+          broker_email: string | null
+          broker_fee: string | null
+          broker_name: string | null
+          broker_phone: string | null
+          building_amenities: Json
+          building_type: string | null
+          cached_at: string
+          created_at: string
+          description: string | null
+          fetch_source: string
+          floor_plan_url: string | null
+          id: string
+          images: Json
+          last_updated: string
+          lease_term: string | null
+          listed_at: string | null
+          listing_agent: string | null
+          listing_id: string
+          listing_url: string
+          monthly_rent: number
+          neighborhood: string
+          pet_policy: string | null
+          security_deposit: string | null
+          sqft: number | null
+          status: string | null
+          street_easy_score: number | null
+          total_units_in_building: number | null
+          transit_score: number | null
+          virtual_tour_url: string | null
+          walk_score: number | null
+          year_built: number | null
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          amenities?: Json
+          available_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          broker_email?: string | null
+          broker_fee?: string | null
+          broker_name?: string | null
+          broker_phone?: string | null
+          building_amenities?: Json
+          building_type?: string | null
+          cached_at?: string
+          created_at?: string
+          description?: string | null
+          fetch_source?: string
+          floor_plan_url?: string | null
+          id?: string
+          images?: Json
+          last_updated?: string
+          lease_term?: string | null
+          listed_at?: string | null
+          listing_agent?: string | null
+          listing_id: string
+          listing_url: string
+          monthly_rent: number
+          neighborhood: string
+          pet_policy?: string | null
+          security_deposit?: string | null
+          sqft?: number | null
+          status?: string | null
+          street_easy_score?: number | null
+          total_units_in_building?: number | null
+          transit_score?: number | null
+          virtual_tour_url?: string | null
+          walk_score?: number | null
+          year_built?: number | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          amenities?: Json
+          available_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          broker_email?: string | null
+          broker_fee?: string | null
+          broker_name?: string | null
+          broker_phone?: string | null
+          building_amenities?: Json
+          building_type?: string | null
+          cached_at?: string
+          created_at?: string
+          description?: string | null
+          fetch_source?: string
+          floor_plan_url?: string | null
+          id?: string
+          images?: Json
+          last_updated?: string
+          lease_term?: string | null
+          listed_at?: string | null
+          listing_agent?: string | null
+          listing_id?: string
+          listing_url?: string
+          monthly_rent?: number
+          neighborhood?: string
+          pet_policy?: string | null
+          security_deposit?: string | null
+          sqft?: number | null
+          status?: string | null
+          street_easy_score?: number | null
+          total_units_in_building?: number | null
+          transit_score?: number | null
+          virtual_tour_url?: string | null
+          walk_score?: number | null
+          year_built?: number | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -99,6 +222,171 @@ export type Database = {
           name?: string | null
           subscription_plan?: string
           subscription_renewal?: string | null
+        }
+        Relationships: []
+      }
+      rent_stabilized_analysis_runs: {
+        Row: {
+          api_calls_saved: number | null
+          api_calls_used: number | null
+          average_rent_stabilized_confidence: number | null
+          average_savings_amount: number | null
+          average_undervaluation_confidence: number | null
+          bulk_load_mode: boolean
+          cache_hit_rate: number | null
+          completed: boolean
+          created_at: string
+          detailed_stats: Json
+          dhcr_buildings_processed: number | null
+          dhcr_files_parsed: number | null
+          duration_minutes: number | null
+          errors: Json
+          id: string
+          neighborhoods_targeted: string[]
+          rent_stabilized_found: number | null
+          run_date: string
+          saved_to_database: number | null
+          success: boolean
+          test_mode: boolean
+          total_listings_analyzed: number | null
+          undervalued_found: number | null
+        }
+        Insert: {
+          api_calls_saved?: number | null
+          api_calls_used?: number | null
+          average_rent_stabilized_confidence?: number | null
+          average_savings_amount?: number | null
+          average_undervaluation_confidence?: number | null
+          bulk_load_mode?: boolean
+          cache_hit_rate?: number | null
+          completed?: boolean
+          created_at?: string
+          detailed_stats?: Json
+          dhcr_buildings_processed?: number | null
+          dhcr_files_parsed?: number | null
+          duration_minutes?: number | null
+          errors?: Json
+          id?: string
+          neighborhoods_targeted: string[]
+          rent_stabilized_found?: number | null
+          run_date?: string
+          saved_to_database?: number | null
+          success?: boolean
+          test_mode?: boolean
+          total_listings_analyzed?: number | null
+          undervalued_found?: number | null
+        }
+        Update: {
+          api_calls_saved?: number | null
+          api_calls_used?: number | null
+          average_rent_stabilized_confidence?: number | null
+          average_savings_amount?: number | null
+          average_undervaluation_confidence?: number | null
+          bulk_load_mode?: boolean
+          cache_hit_rate?: number | null
+          completed?: boolean
+          created_at?: string
+          detailed_stats?: Json
+          dhcr_buildings_processed?: number | null
+          dhcr_files_parsed?: number | null
+          duration_minutes?: number | null
+          errors?: Json
+          id?: string
+          neighborhoods_targeted?: string[]
+          rent_stabilized_found?: number | null
+          run_date?: string
+          saved_to_database?: number | null
+          success?: boolean
+          test_mode?: boolean
+          total_listings_analyzed?: number | null
+          undervalued_found?: number | null
+        }
+        Relationships: []
+      }
+      rent_stabilized_buildings: {
+        Row: {
+          address: string
+          block: string | null
+          borough: string | null
+          building_id: string | null
+          building_type: string | null
+          city: string | null
+          county_code: string | null
+          created_at: string
+          dhcr_registered: boolean
+          house_number: string | null
+          id: string
+          lot: string | null
+          parsed_at: string
+          registration_year: number | null
+          secondary_address: string | null
+          secondary_house_number: string | null
+          secondary_street_name: string | null
+          source: string
+          status1: string | null
+          status2: string | null
+          status3: string | null
+          street_name: string | null
+          total_units: number | null
+          updated_at: string
+          year_built: number | null
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          block?: string | null
+          borough?: string | null
+          building_id?: string | null
+          building_type?: string | null
+          city?: string | null
+          county_code?: string | null
+          created_at?: string
+          dhcr_registered?: boolean
+          house_number?: string | null
+          id?: string
+          lot?: string | null
+          parsed_at?: string
+          registration_year?: number | null
+          secondary_address?: string | null
+          secondary_house_number?: string | null
+          secondary_street_name?: string | null
+          source: string
+          status1?: string | null
+          status2?: string | null
+          status3?: string | null
+          street_name?: string | null
+          total_units?: number | null
+          updated_at?: string
+          year_built?: number | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          block?: string | null
+          borough?: string | null
+          building_id?: string | null
+          building_type?: string | null
+          city?: string | null
+          county_code?: string | null
+          created_at?: string
+          dhcr_registered?: boolean
+          house_number?: string | null
+          id?: string
+          lot?: string | null
+          parsed_at?: string
+          registration_year?: number | null
+          secondary_address?: string | null
+          secondary_house_number?: string | null
+          secondary_street_name?: string | null
+          source?: string
+          status1?: string | null
+          status2?: string | null
+          status3?: string | null
+          street_name?: string | null
+          total_units?: number | null
+          updated_at?: string
+          year_built?: number | null
+          zip_code?: string | null
         }
         Relationships: []
       }
@@ -240,6 +528,195 @@ export type Database = {
           property_type?: string
           saved_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      undervalued_rent_stabilized: {
+        Row: {
+          address: string
+          admin_notes: string | null
+          amenities: Json
+          analyzed_at: string
+          available_date: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          borough: string | null
+          broker_email: string | null
+          broker_fee: string | null
+          broker_name: string | null
+          broker_phone: string | null
+          building_amenities: Json
+          building_type: string | null
+          comparable_properties_in_area: number | null
+          comparables_used: number
+          contact_requests: number | null
+          created_at: string
+          deal_quality_score: number | null
+          description: string | null
+          discovered_at: string
+          display_status: string | null
+          estimated_market_rent: number
+          featured_until: string | null
+          floor_plan_url: string | null
+          id: string
+          images: Json
+          last_verified: string
+          last_viewed_at: string | null
+          lease_term: string | null
+          listing_agent: string | null
+          listing_id: string
+          listing_url: string
+          monthly_rent: number
+          neighborhood: string
+          neighborhood_median_rent: number | null
+          opportunity_score: number | null
+          pet_policy: string | null
+          potential_annual_savings: number | null
+          potential_monthly_savings: number
+          ranking_in_neighborhood: number | null
+          rent_stabilization_analysis: Json
+          rent_stabilized_confidence: number
+          rent_stabilized_method: string
+          risk_factors: Json
+          sqft: number | null
+          street_easy_score: number | null
+          tags: Json
+          total_units_in_building: number | null
+          transit_score: number | null
+          undervaluation_analysis: Json
+          undervaluation_confidence: number
+          undervaluation_method: string
+          undervaluation_percent: number
+          updated_at: string
+          view_count: number | null
+          virtual_tour_url: string | null
+          walk_score: number | null
+          year_built: number | null
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          admin_notes?: string | null
+          amenities?: Json
+          analyzed_at?: string
+          available_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          broker_email?: string | null
+          broker_fee?: string | null
+          broker_name?: string | null
+          broker_phone?: string | null
+          building_amenities?: Json
+          building_type?: string | null
+          comparable_properties_in_area?: number | null
+          comparables_used: number
+          contact_requests?: number | null
+          created_at?: string
+          deal_quality_score?: number | null
+          description?: string | null
+          discovered_at?: string
+          display_status?: string | null
+          estimated_market_rent: number
+          featured_until?: string | null
+          floor_plan_url?: string | null
+          id?: string
+          images?: Json
+          last_verified?: string
+          last_viewed_at?: string | null
+          lease_term?: string | null
+          listing_agent?: string | null
+          listing_id: string
+          listing_url: string
+          monthly_rent: number
+          neighborhood: string
+          neighborhood_median_rent?: number | null
+          opportunity_score?: number | null
+          pet_policy?: string | null
+          potential_annual_savings?: number | null
+          potential_monthly_savings: number
+          ranking_in_neighborhood?: number | null
+          rent_stabilization_analysis?: Json
+          rent_stabilized_confidence: number
+          rent_stabilized_method: string
+          risk_factors?: Json
+          sqft?: number | null
+          street_easy_score?: number | null
+          tags?: Json
+          total_units_in_building?: number | null
+          transit_score?: number | null
+          undervaluation_analysis?: Json
+          undervaluation_confidence: number
+          undervaluation_method: string
+          undervaluation_percent: number
+          updated_at?: string
+          view_count?: number | null
+          virtual_tour_url?: string | null
+          walk_score?: number | null
+          year_built?: number | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          admin_notes?: string | null
+          amenities?: Json
+          analyzed_at?: string
+          available_date?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          broker_email?: string | null
+          broker_fee?: string | null
+          broker_name?: string | null
+          broker_phone?: string | null
+          building_amenities?: Json
+          building_type?: string | null
+          comparable_properties_in_area?: number | null
+          comparables_used?: number
+          contact_requests?: number | null
+          created_at?: string
+          deal_quality_score?: number | null
+          description?: string | null
+          discovered_at?: string
+          display_status?: string | null
+          estimated_market_rent?: number
+          featured_until?: string | null
+          floor_plan_url?: string | null
+          id?: string
+          images?: Json
+          last_verified?: string
+          last_viewed_at?: string | null
+          lease_term?: string | null
+          listing_agent?: string | null
+          listing_id?: string
+          listing_url?: string
+          monthly_rent?: number
+          neighborhood?: string
+          neighborhood_median_rent?: number | null
+          opportunity_score?: number | null
+          pet_policy?: string | null
+          potential_annual_savings?: number | null
+          potential_monthly_savings?: number
+          ranking_in_neighborhood?: number | null
+          rent_stabilization_analysis?: Json
+          rent_stabilized_confidence?: number
+          rent_stabilized_method?: string
+          risk_factors?: Json
+          sqft?: number | null
+          street_easy_score?: number | null
+          tags?: Json
+          total_units_in_building?: number | null
+          transit_score?: number | null
+          undervaluation_analysis?: Json
+          undervaluation_confidence?: number
+          undervaluation_method?: string
+          undervaluation_percent?: number
+          updated_at?: string
+          view_count?: number | null
+          virtual_tour_url?: string | null
+          walk_score?: number | null
+          year_built?: number | null
+          zip_code?: string | null
         }
         Relationships: []
       }
@@ -580,6 +1057,98 @@ export type Database = {
         }
         Relationships: []
       }
+      latest_undervalued_rent_stabilized: {
+        Row: {
+          address: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          borough: string | null
+          deal_quality_score: number | null
+          discovered_at: string | null
+          estimated_market_rent: number | null
+          id: string | null
+          images: Json | null
+          key_factors: Json | null
+          listing_id: string | null
+          listing_url: string | null
+          monthly_rent: number | null
+          neighborhood: string | null
+          potential_annual_savings: number | null
+          potential_monthly_savings: number | null
+          rent_stabilized_confidence: number | null
+          sqft: number | null
+          stabilization_explanation: string | null
+          stabilization_probability: string | null
+          undervaluation_percent: number | null
+          valuation_methodology: string | null
+          view_count: number | null
+        }
+        Insert: {
+          address?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          deal_quality_score?: number | null
+          discovered_at?: string | null
+          estimated_market_rent?: number | null
+          id?: string | null
+          images?: Json | null
+          key_factors?: never
+          listing_id?: string | null
+          listing_url?: string | null
+          monthly_rent?: number | null
+          neighborhood?: string | null
+          potential_annual_savings?: number | null
+          potential_monthly_savings?: number | null
+          rent_stabilized_confidence?: number | null
+          sqft?: number | null
+          stabilization_explanation?: never
+          stabilization_probability?: never
+          undervaluation_percent?: number | null
+          valuation_methodology?: never
+          view_count?: number | null
+        }
+        Update: {
+          address?: string | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          borough?: string | null
+          deal_quality_score?: number | null
+          discovered_at?: string | null
+          estimated_market_rent?: number | null
+          id?: string | null
+          images?: Json | null
+          key_factors?: never
+          listing_id?: string | null
+          listing_url?: string | null
+          monthly_rent?: number | null
+          neighborhood?: string | null
+          potential_annual_savings?: number | null
+          potential_monthly_savings?: number | null
+          rent_stabilized_confidence?: number | null
+          sqft?: number | null
+          stabilization_explanation?: never
+          stabilization_probability?: never
+          undervaluation_percent?: number | null
+          valuation_methodology?: never
+          view_count?: number | null
+        }
+        Relationships: []
+      }
+      neighborhood_deal_summary: {
+        Row: {
+          avg_monthly_savings: number | null
+          avg_rent: number | null
+          avg_stabilization_confidence: number | null
+          avg_undervaluation: number | null
+          borough: string | null
+          max_rent: number | null
+          min_rent: number | null
+          neighborhood: string | null
+          total_deals: number | null
+        }
+        Relationships: []
+      }
       sold_rented_detection_summary: {
         Row: {
           active_listings: number | null
@@ -587,6 +1156,35 @@ export type Database = {
           likely_sold: number | null
           recently_marked_sold: number | null
           table_type: string | null
+        }
+        Relationships: []
+      }
+      top_deals_by_savings: {
+        Row: {
+          address: string | null
+          bathrooms: number | null
+          bedrooms: number | null
+          borough: string | null
+          deal_quality_score: number | null
+          discovered_at: string | null
+          estimated_market_rent: number | null
+          id: string | null
+          images: Json | null
+          key_factors: Json | null
+          listing_id: string | null
+          listing_url: string | null
+          monthly_rent: number | null
+          neighborhood: string | null
+          potential_annual_savings: number | null
+          potential_monthly_savings: number | null
+          rent_stabilized_confidence: number | null
+          savings_rank: number | null
+          sqft: number | null
+          stabilization_explanation: string | null
+          stabilization_probability: string | null
+          undervaluation_percent: number | null
+          valuation_methodology: string | null
+          view_count: number | null
         }
         Relationships: []
       }
