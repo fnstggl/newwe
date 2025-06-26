@@ -2,6 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import PropertyImage from './PropertyImage';
+import BookmarkButton from './BookmarkButton';
 
 // Use flexible types that can handle any data structure from Supabase
 interface FlexibleProperty {
@@ -79,7 +80,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
 
   // Default colors if not provided
   const defaultColors = {
-    badge: 'bg-white text-black border-gray-300', // Changed to white background with black text
+    badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
     scoreText: 'text-gray-300',
     scoreBorder: 'border-gray-600',
     hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
@@ -100,19 +101,30 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
       className={`bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl cursor-pointer transition-all duration-300 ${colors.hover} overflow-hidden relative`}
       onClick={onClick}
     >
-      {/* Grade badge - positioned absolutely over the image */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className="bg-white text-black border border-gray-300 backdrop-blur-md px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
-          {String(property.grade)}
+      {/* Optimized Image container with lazy loading and carousel */}
+      <div className="relative">
+        <PropertyImage
+          images={property.images}
+          address={property.address}
+          className="h-56"
+        />
+        
+        {/* Grade badge - positioned absolutely over the image, top left */}
+        <div className="absolute top-4 left-4 z-10">
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
+            {String(property.grade)}
+          </div>
+        </div>
+
+        {/* Bookmark button - positioned absolutely over the image, top right */}
+        <div className="absolute top-4 right-4 z-10">
+          <BookmarkButton 
+            propertyId={property.id}
+            propertyType={isRental ? 'rental' : 'sale'}
+            className="bg-transparent hover:bg-black/20 p-2 rounded-full"
+          />
         </div>
       </div>
-      
-      {/* Optimized Image container with lazy loading and carousel */}
-      <PropertyImage
-        images={property.images}
-        address={property.address}
-        className="h-56"
-      />
       
       {/* Content */}
       <div className="p-6 space-y-4">

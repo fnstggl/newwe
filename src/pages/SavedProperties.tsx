@@ -5,7 +5,8 @@ import { Bookmark, MapPin, Home } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { UndervaluedSales, UndervaluedRentals } from "@/types/database";
-import PropertyImage from "../components/PropertyImage";
+import PropertyCard from "../components/PropertyCard";
+import PropertyDetail from "../components/PropertyDetail";
 
 interface SavedProperty {
   id: string;
@@ -23,6 +24,7 @@ const SavedProperties = () => {
   const navigate = useNavigate();
   const [savedProperties, setSavedProperties] = useState<SavedPropertyWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -116,34 +118,35 @@ const SavedProperties = () => {
     }
   }, [user]);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const handleUnsave = async (propertyId: string, propertyType: 'sale' | 'rental') => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase
-        .from('saved_properties')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('property_id', propertyId)
-        .eq('property_type', propertyType);
-
-      if (error) throw error;
-      
-      // Update local state
-      setSavedProperties(prev => 
-        prev.filter(p => !(p.property_id === propertyId && p.property_type === propertyType))
-      );
-    } catch (error) {
-      console.error('Error unsaving property:', error);
+  const getGradeColors = (grade: string) => {
+    if (grade === 'A+') {
+      return {
+        badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
+        scoreText: 'text-yellow-400',
+        scoreBorder: 'border-yellow-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
+      };
+    } else if (grade === 'A' || grade === 'A-') {
+      return {
+        badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
+        scoreText: 'text-purple-400',
+        scoreBorder: 'border-purple-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
+      };
+    } else if (grade.startsWith('B')) {
+      return {
+        badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
+        scoreText: 'text-blue-400',
+        scoreBorder: 'border-blue-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+      };
+    } else {
+      return {
+        badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
+        scoreText: 'text-gray-300',
+        scoreBorder: 'border-gray-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
+      };
     }
   };
 
@@ -165,10 +168,10 @@ const SavedProperties = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="mb-12">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Your Saved Properties
+            Find the best deals you've saved. Actually.
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
             {savedProperties.length} {savedProperties.length === 1 ? 'property' : 'properties'} saved
@@ -198,85 +201,34 @@ const SavedProperties = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {savedProperties.map((savedProp) => {
               const property = savedProp.property_details!;
               const isRental = savedProp.property_type === 'rental';
-              const price = isRental 
-                ? (property as UndervaluedRentals).monthly_rent 
-                : (property as UndervaluedSales).price;
-
+              const gradeColors = getGradeColors(property.grade);
+              
               return (
-                <div
+                <PropertyCard
                   key={`${savedProp.property_id}-${savedProp.property_type}`}
-                  className="bg-gray-900/50 rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500/50 hover:scale-105 transition-all duration-300 hover:shadow-xl group cursor-pointer"
-                >
-                  {/* Property Image */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <PropertyImage
-                      images={property.images}
-                      address={property.address}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    
-                    {/* Unsave Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUnsave(savedProp.property_id, savedProp.property_type);
-                      }}
-                      className="absolute top-4 right-4 bg-black/70 hover:bg-black/90 p-2 rounded-full transition-all duration-200"
-                    >
-                      <Bookmark className="h-5 w-5 text-white fill-white" />
-                    </button>
-
-                    {/* Grade Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-3 py-1 rounded-full text-sm font-bold tracking-tight">
-                        {property.grade}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Property Details */}
-                  <div className="p-6">
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold mb-2 tracking-tight text-white">
-                        {property.address}
-                      </h3>
-                      <div className="flex items-center text-gray-400 text-sm mb-3">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {property.neighborhood && `${property.neighborhood}, `}
-                        {property.borough}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="text-2xl font-bold text-white tracking-tight">
-                        {formatPrice(price)}{isRental ? '/mo' : ''}
-                      </div>
-                      <div className="flex items-center space-x-3 text-sm text-gray-400">
-                        <span>{property.bedrooms || 0}bd</span>
-                        <span>{property.bathrooms || 0}ba</span>
-                        {property.sqft && <span>{property.sqft}sqft</span>}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs tracking-tight">
-                        {isRental ? 'Rental' : 'Sale'}
-                      </span>
-                      <span className="text-xs text-gray-500 tracking-tight">
-                        Saved {new Date(savedProp.saved_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  property={property}
+                  isRental={isRental}
+                  onClick={() => setSelectedProperty(property)}
+                  gradeColors={gradeColors}
+                />
               );
             })}
           </div>
         )}
       </div>
+
+      {/* Property Detail Modal */}
+      {selectedProperty && (
+        <PropertyDetail
+          property={selectedProperty}
+          isRental={selectedProperty.monthly_rent ? true : false}
+          onClose={() => setSelectedProperty(null)}
+        />
+      )}
     </div>
   );
 };
