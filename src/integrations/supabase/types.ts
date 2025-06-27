@@ -638,6 +638,7 @@ export type Database = {
           listing_agent: string | null
           listing_id: string
           listing_url: string
+          market_classification: string | null
           monthly_rent: number
           neighborhood: string
           neighborhood_median_rent: number | null
@@ -700,6 +701,7 @@ export type Database = {
           listing_agent?: string | null
           listing_id: string
           listing_url: string
+          market_classification?: string | null
           monthly_rent: number
           neighborhood: string
           neighborhood_median_rent?: number | null
@@ -762,6 +764,7 @@ export type Database = {
           listing_agent?: string | null
           listing_id?: string
           listing_url?: string
+          market_classification?: string | null
           monthly_rent?: number
           neighborhood?: string
           neighborhood_median_rent?: number | null
