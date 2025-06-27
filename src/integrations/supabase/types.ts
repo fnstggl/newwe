@@ -249,6 +249,7 @@ export type Database = {
           email_address: string | null
           id: string
           name: string | null
+          neighborhood_preferences: string[] | null
           subscription_plan: string
           subscription_renewal: string | null
         }
@@ -257,6 +258,7 @@ export type Database = {
           email_address?: string | null
           id: string
           name?: string | null
+          neighborhood_preferences?: string[] | null
           subscription_plan?: string
           subscription_renewal?: string | null
         }
@@ -265,6 +267,7 @@ export type Database = {
           email_address?: string | null
           id?: string
           name?: string | null
+          neighborhood_preferences?: string[] | null
           subscription_plan?: string
           subscription_renewal?: string | null
         }
@@ -608,6 +611,7 @@ export type Database = {
           address: string
           admin_notes: string | null
           amenities: Json
+          analysis_date: string | null
           analyzed_at: string
           available_date: string | null
           bathrooms: number | null
@@ -671,6 +675,7 @@ export type Database = {
           address: string
           admin_notes?: string | null
           amenities?: Json
+          analysis_date?: string | null
           analyzed_at?: string
           available_date?: string | null
           bathrooms?: number | null
@@ -734,6 +739,7 @@ export type Database = {
           address?: string
           admin_notes?: string | null
           amenities?: Json
+          analysis_date?: string | null
           analyzed_at?: string
           available_date?: string | null
           bathrooms?: number | null

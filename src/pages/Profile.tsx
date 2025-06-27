@@ -16,6 +16,7 @@ const Profile = () => {
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [isSavingPreferences, setIsSavingPreferences] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -23,6 +24,34 @@ const Profile = () => {
       navigate('/login');
     }
   }, [user, navigate]);
+
+  // Load user's existing neighborhood preferences
+  useEffect(() => {
+    const loadUserPreferences = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('neighborhood_preferences')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error loading user preferences:', error);
+          return;
+        }
+        
+        if (data?.neighborhood_preferences) {
+          setSelectedNeighborhoods(data.neighborhood_preferences);
+        }
+      } catch (error) {
+        console.error('Error loading user preferences:', error);
+      }
+    };
+
+    loadUserPreferences();
+  }, [user]);
 
   // Fetch neighborhoods from the database
   useEffect(() => {
@@ -101,12 +130,48 @@ const Profile = () => {
     navigate('/');
   };
 
-  const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => 
-      prev.includes(neighborhood) 
-        ? prev.filter(n => n !== neighborhood)
-        : [...prev, neighborhood]
-    );
+  const toggleNeighborhood = async (neighborhood: string) => {
+    const newSelectedNeighborhoods = selectedNeighborhoods.includes(neighborhood) 
+      ? selectedNeighborhoods.filter(n => n !== neighborhood)
+      : [...selectedNeighborhoods, neighborhood];
+    
+    setSelectedNeighborhoods(newSelectedNeighborhoods);
+    await saveNeighborhoodPreferences(newSelectedNeighborhoods);
+  };
+
+  const saveNeighborhoodPreferences = async (preferences: string[]) => {
+    if (!user) return;
+    
+    setIsSavingPreferences(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ neighborhood_preferences: preferences })
+        .eq('id', user.id);
+      
+      if (error) {
+        console.error('Error saving neighborhood preferences:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save neighborhood preferences. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Preferences saved",
+          description: "Your neighborhood email preferences have been updated.",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving neighborhood preferences:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingPreferences(false);
+    }
   };
 
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
@@ -194,6 +259,7 @@ const Profile = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight"
+                disabled={isSavingPreferences}
               />
             </div>
 
@@ -203,17 +269,26 @@ const Profile = () => {
                   <button
                     key={neighborhood}
                     onClick={() => toggleNeighborhood(neighborhood)}
+                    disabled={isSavingPreferences}
                     className={`px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
                       selectedNeighborhoods.includes(neighborhood)
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
+                    } ${isSavingPreferences ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {neighborhood}
                   </button>
                 ))}
               </div>
             </div>
+
+            {selectedNeighborhoods.length > 0 && (
+              <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                <p className="text-sm text-blue-400 tracking-tight">
+                  You'll receive email notifications for deals in {selectedNeighborhoods.length} neighborhood{selectedNeighborhoods.length !== 1 ? 's' : ''}.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Subscription Plan */}
