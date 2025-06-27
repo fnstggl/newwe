@@ -6,10 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
 const Buy = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -201,6 +205,10 @@ const Buy = () => {
     }
   };
 
+  // Determine which properties to show based on auth status
+  const visibleProperties = user ? properties : properties.slice(0, 3);
+  const shouldShowBlur = !user && properties.length > 3;
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
@@ -324,19 +332,33 @@ const Buy = () => {
         </div>
 
         {/* Properties Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => {
-            const gradeColors = getGradeColors(property.grade);
-            return (
-              <PropertyCard
-                key={`${property.id}-${index}`}
-                property={property}
-                isRental={false}
-                onClick={() => setSelectedProperty(property)}
-                gradeColors={gradeColors}
-              />
-            );
-          })}
+        <div className="relative">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {visibleProperties.map((property, index) => {
+              const gradeColors = getGradeColors(property.grade);
+              return (
+                <PropertyCard
+                  key={`${property.id}-${index}`}
+                  property={property}
+                  isRental={false}
+                  onClick={() => setSelectedProperty(property)}
+                  gradeColors={gradeColors}
+                />
+              );
+            })}
+          </div>
+
+          {/* Blur overlay and sign-in button for non-authenticated users */}
+          {shouldShowBlur && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent backdrop-blur-sm rounded-2xl flex items-end justify-center pb-16">
+              <button
+                onClick={() => navigate('/login')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
+              >
+                Sign in to view all properties
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Loading state */}
@@ -346,8 +368,8 @@ const Buy = () => {
           </div>
         )}
 
-        {/* Load More Button */}
-        {!loading && hasMore && properties.length > 0 && (
+        {/* Load More Button - only show for authenticated users */}
+        {user && !loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore}>
               Load More Properties

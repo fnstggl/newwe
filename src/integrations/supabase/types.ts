@@ -311,26 +311,35 @@ export type Database = {
           building_id: string | null
           building_type: string | null
           city: string | null
+          confidence_score: number | null
           county_code: string | null
           created_at: string
           dhcr_registered: boolean
+          dhcr_source: string | null
           house_number: string | null
           id: string
+          last_updated: string | null
           lot: string | null
+          normalized_address: string | null
           parsed_at: string
+          registration_id: string | null
           registration_year: number | null
           secondary_address: string | null
           secondary_house_number: string | null
           secondary_street_name: string | null
-          source: string
+          source: string | null
+          source_file: string | null
           status1: string | null
           status2: string | null
           status3: string | null
           street_name: string | null
           total_units: number | null
+          unit_count: number | null
           updated_at: string
+          verification_status: string | null
           year_built: number | null
           zip_code: string | null
+          zipcode: string | null
         }
         Insert: {
           address: string
@@ -339,26 +348,35 @@ export type Database = {
           building_id?: string | null
           building_type?: string | null
           city?: string | null
+          confidence_score?: number | null
           county_code?: string | null
           created_at?: string
           dhcr_registered?: boolean
+          dhcr_source?: string | null
           house_number?: string | null
           id?: string
+          last_updated?: string | null
           lot?: string | null
+          normalized_address?: string | null
           parsed_at?: string
+          registration_id?: string | null
           registration_year?: number | null
           secondary_address?: string | null
           secondary_house_number?: string | null
           secondary_street_name?: string | null
-          source: string
+          source?: string | null
+          source_file?: string | null
           status1?: string | null
           status2?: string | null
           status3?: string | null
           street_name?: string | null
           total_units?: number | null
+          unit_count?: number | null
           updated_at?: string
+          verification_status?: string | null
           year_built?: number | null
           zip_code?: string | null
+          zipcode?: string | null
         }
         Update: {
           address?: string
@@ -367,26 +385,35 @@ export type Database = {
           building_id?: string | null
           building_type?: string | null
           city?: string | null
+          confidence_score?: number | null
           county_code?: string | null
           created_at?: string
           dhcr_registered?: boolean
+          dhcr_source?: string | null
           house_number?: string | null
           id?: string
+          last_updated?: string | null
           lot?: string | null
+          normalized_address?: string | null
           parsed_at?: string
+          registration_id?: string | null
           registration_year?: number | null
           secondary_address?: string | null
           secondary_house_number?: string | null
           secondary_street_name?: string | null
-          source?: string
+          source?: string | null
+          source_file?: string | null
           status1?: string | null
           status2?: string | null
           status3?: string | null
           street_name?: string | null
           total_units?: number | null
+          unit_count?: number | null
           updated_at?: string
+          verification_status?: string | null
           year_built?: number | null
           zip_code?: string | null
+          zipcode?: string | null
         }
         Relationships: []
       }
