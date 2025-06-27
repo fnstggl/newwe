@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -63,34 +62,38 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     switch (grade.toUpperCase()) {
       case 'A+':
         return {
-          bgColor: 'bg-gradient-to-br from-yellow-500/10 to-yellow-600/20',
-          borderColor: 'border-yellow-500/80',
-          textColor: 'text-yellow-400',
-          scoreColor: 'bg-yellow-500/15 border-yellow-500/50'
+          bgColor: 'bg-yellow-500/20',
+          borderColor: 'border-yellow-500',
+          textColor: 'text-yellow-500',
+          glowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]'
         };
       case 'A':
       case 'A-':
         return {
-          bgColor: 'bg-gradient-to-br from-purple-500/10 to-purple-600/20',
-          borderColor: 'border-purple-500/80',
-          textColor: 'text-purple-400',
-          scoreColor: 'bg-purple-500/15 border-purple-500/50'
+          bgColor: 'bg-purple-500/20',
+          borderColor: 'border-purple-500',
+          textColor: 'text-purple-500',
+          glowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]'
         };
       case 'B+':
       case 'B':
       case 'B-':
         return {
-          bgColor: 'bg-gradient-to-br from-blue-500/10 to-blue-600/20',
-          borderColor: 'border-blue-500/80',
-          textColor: 'text-blue-400',
-          scoreColor: 'bg-blue-500/15 border-blue-500/50'
+          bgColor: 'bg-blue-500/20',
+          borderColor: 'border-blue-500',
+          textColor: 'text-blue-500',
+          glowColor: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]'
         };
       default:
         return {
-          bgColor: 'bg-gradient-to-br from-gray-500/10 to-gray-600/20',
-          borderColor: 'border-gray-500/80',
-          textColor: 'text-gray-400',
-          scoreColor: 'bg-gray-500/15 border-gray-500/50'
+          bgColor: 'bg-white/20',
+          borderColor: 'border-white',
+          textColor: 'text-white',
+          glowColor: 'shadow-[0_0_20px_rgba(255,255,255,0.3)]',
+          marketGlow: 'shadow-[0_0_30px_rgba(255,255,255,0.4)]'
         };
     }
   };
@@ -118,27 +121,27 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const shouldShowReadMore = property.description && property.description.split(' ').length > 35;
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 overflow-y-auto">
-      <div className="min-h-screen py-6 px-4">
-        <div className="max-w-7xl mx-auto bg-gray-900/98 backdrop-blur-xl rounded-2xl border border-gray-800/60 shadow-2xl">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
+      <div className="min-h-screen py-8 px-4">
+        <div className="max-w-6xl mx-auto bg-gray-900/95 backdrop-blur-md rounded-3xl border border-gray-700/50">
           {/* Header with close button */}
-          <div className="flex justify-between items-center p-8 border-b border-gray-800/50">
-            <h1 className="text-2xl font-semibold text-white tracking-tight">Property Details</h1>
+          <div className="flex justify-between items-center p-6 border-b border-gray-700/50">
+            <h1 className="text-2xl font-bold text-white tracking-tight">Property Details</h1>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full"
+              className="text-white hover:bg-gray-800"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </Button>
           </div>
 
-          <div className="p-8">
+          <div className="p-6">
             {/* Image Gallery */}
             {hasImages && (
-              <div className="relative mb-10">
-                <div className="aspect-[16/10] rounded-xl overflow-hidden bg-gray-800 shadow-xl">
+              <div className="relative mb-8">
+                <div className="aspect-video rounded-2xl overflow-hidden bg-gray-800">
                   <img
                     src={currentImageUrl}
                     alt={property.address}
@@ -162,20 +165,20 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm rounded-full"
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
                       onClick={prevImage}
                     >
-                      <ChevronLeft className="h-5 w-5" />
+                      <ChevronLeft className="h-6 w-6" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white backdrop-blur-sm rounded-full"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
                       onClick={nextImage}
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <ChevronRight className="h-6 w-6" />
                     </Button>
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
                       {currentImageIndex + 1} / {images.length}
                     </div>
                   </>
@@ -183,79 +186,78 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               </div>
             )}
 
-            <div className="grid lg:grid-cols-5 gap-10">
+            <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Info */}
-              <div className="lg:col-span-3 space-y-8">
+              <div className="lg:col-span-2 space-y-6">
                 {/* Address, Price and Score */}
-                <div className="flex justify-between items-start gap-6">
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-3xl font-semibold text-white mb-3 leading-tight">{property.address}</h2>
-                    <div className="flex items-center text-gray-400 mb-6">
-                      <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span className="truncate">
-                        {property.neighborhood && `${property.neighborhood}, `}
-                        {property.borough}
-                      </span>
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
+                    <div className="flex items-center text-gray-400 mb-4">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {property.neighborhood && `${property.neighborhood}, `}
+                      {property.borough}
                     </div>
-                    <div className="text-4xl font-bold text-white mb-2">
+                    {/* Price moved here */}
+                    <div className="text-3xl font-bold text-white mb-2">
                       {formatPrice(price)}{isRental ? '/mo' : ''}
                     </div>
                     {pricePerSqft && (
-                      <div className="text-lg text-gray-300">
+                      <div className="text-gray-300 mb-4">
                         {formatPrice(pricePerSqft)}/sqft
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col items-end space-y-4 flex-shrink-0">
-                    <Badge className={`${gradeTheme.borderColor} ${gradeTheme.textColor} bg-transparent border-2 px-6 py-3 text-2xl font-bold rounded-xl`}>
+                  <div className="flex flex-col items-end space-y-3">
+                    <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
                       {property.grade}
                     </Badge>
-                    <div className={`${gradeTheme.scoreColor} ${gradeTheme.borderColor} border rounded-xl px-4 py-2 flex items-center space-x-2`}>
-                      <span className={`text-sm ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
-                      <span className={`text-lg font-bold ${gradeTheme.textColor}`}>{property.score}</span>
+                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
+                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
+                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Property Details */}
-                <Card className="bg-gray-800/40 border-gray-700/50 backdrop-blur-sm">
-                  <CardContent className="p-8">
-                    <div className="grid md:grid-cols-3 gap-8">
-                      <div className="space-y-4">
-                        <div className="flex justify-between text-base">
+                <Card className="bg-gray-800/50 border-gray-700">
+                  <CardContent className="p-6">
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Bedrooms:</span>
-                          <span className="text-white font-medium">{property.bedrooms || 0}</span>
+                          <span className="text-white">{property.bedrooms || 0}</span>
                         </div>
-                        <div className="flex justify-between text-base">
+                        <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Bathrooms:</span>
-                          <span className="text-white font-medium">{property.bathrooms || 0}</span>
+                          <span className="text-white">{property.bathrooms || 0}</span>
                         </div>
                       </div>
-                      <div className="space-y-4">
+                      <div className="space-y-2">
                         {property.sqft && (
-                          <div className="flex justify-between text-base">
+                          <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Square Feet:</span>
-                            <span className="text-white font-medium">{property.sqft}</span>
+                            <span className="text-white">{property.sqft}</span>
                           </div>
                         )}
                         {property.days_on_market && (
-                          <div className="flex justify-between text-base">
+                          <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Days on Market:</span>
-                            <span className="text-white font-medium">{property.days_on_market}</span>
+                            <span className="text-white">{property.days_on_market}</span>
                           </div>
                         )}
                       </div>
-                      <div className="space-y-4">
+                      <div className="space-y-2">
                         {property.property_type && (
-                          <div className="flex justify-between text-base">
+                          <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Type:</span>
-                            <span className="text-white font-medium capitalize">{property.property_type}</span>
+                            <span className="text-white capitalize">{property.property_type}</span>
                           </div>
                         )}
                         {isRental && (property as UndervaluedRentals).no_fee && (
-                          <div className="flex justify-between text-base">
+                          <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Broker Fee:</span>
-                            <span className="text-green-400 font-medium">No Fee</span>
+                            <span className="text-green-400">No Fee</span>
                           </div>
                         )}
                       </div>
@@ -263,21 +265,21 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </CardContent>
                 </Card>
 
-                {/* Market Analysis */}
-                <Card className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} border-2 backdrop-blur-sm`}>
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-white text-xl">Market Analysis</CardTitle>
+                {/* Market Analysis - moved here and background changed to match page */}
+                <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
+                  <CardHeader>
+                    <CardTitle className="text-white">Market Analysis</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-4">
                     <div className="text-center">
-                      <div className={`text-4xl font-bold ${gradeTheme.textColor} mb-2`}>
+                      <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
                         {Math.round(property.discount_percent)}%
                       </div>
-                      <div className="text-base text-gray-400">Below Market Value</div>
+                      <div className="text-sm text-gray-400">Below Market Value</div>
                     </div>
                     
                     {property.reasoning && (
-                      <div className="text-base text-gray-300 leading-relaxed bg-gray-900/30 rounded-lg p-6">
+                      <div className="text-sm text-gray-300 leading-relaxed">
                         {property.reasoning}
                       </div>
                     )}
@@ -286,21 +288,21 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                 {/* Description with collapsible */}
                 {property.description && (
-                  <Card className="bg-gray-800/40 border-gray-700/50 backdrop-blur-sm">
+                  <Card className="bg-gray-800/50 border-gray-700">
                     <CardHeader>
-                      <CardTitle className="text-white text-xl">Description</CardTitle>
+                      <CardTitle className="text-white">Description</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {shouldShowReadMore ? (
                         <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
-                          <div className="text-gray-300 leading-relaxed text-base">
+                          <div className="text-gray-300 leading-relaxed">
                             {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
                           </div>
                           <CollapsibleTrigger asChild>
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="mt-4 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
+                              className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
                             >
                               <span className="flex items-center">
                                 {isDescriptionExpanded ? 'Show less' : 'Show more'}
@@ -310,7 +312,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                           </CollapsibleTrigger>
                         </Collapsible>
                       ) : (
-                        <p className="text-gray-300 leading-relaxed text-base">{property.description}</p>
+                        <p className="text-gray-300 leading-relaxed">{property.description}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -318,14 +320,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                 {/* Amenities */}
                 {property.amenities && property.amenities.length > 0 && (
-                  <Card className="bg-gray-800/40 border-gray-700/50 backdrop-blur-sm">
+                  <Card className="bg-gray-800/50 border-gray-700">
                     <CardHeader>
-                      <CardTitle className="text-white text-xl">Amenities</CardTitle>
+                      <CardTitle className="text-white">Amenities</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-wrap gap-2">
                         {property.amenities.map((amenity, index) => (
-                          <Badge key={index} variant="outline" className="border-gray-600 text-gray-300 bg-gray-800/50 px-3 py-1">
+                          <Badge key={index} variant="outline" className="border-gray-600 text-gray-300">
                             {amenity.replace(/_/g, ' ')}
                           </Badge>
                         ))}
@@ -336,17 +338,17 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               </div>
 
               {/* Sidebar */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="space-y-6">
                 {/* Property Details */}
-                <Card className="bg-gray-800/40 border-gray-700/50 backdrop-blur-sm">
+                <Card className="bg-gray-800/50 border-gray-700">
                   <CardHeader>
-                    <CardTitle className="text-white text-xl">Property Info</CardTitle>
+                    <CardTitle className="text-white">Property Info</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3">
                     {property.built_in && (
-                      <div className="flex justify-between text-base">
+                      <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Built:</span>
-                        <span className="text-white font-medium">{property.built_in}</span>
+                        <span className="text-white">{property.built_in}</span>
                       </div>
                     )}
                   </CardContent>

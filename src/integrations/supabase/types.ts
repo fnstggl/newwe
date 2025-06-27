@@ -608,7 +608,6 @@ export type Database = {
           address: string
           admin_notes: string | null
           amenities: Json
-          analysis_date: string | null
           analyzed_at: string
           available_date: string | null
           bathrooms: number | null
@@ -672,7 +671,6 @@ export type Database = {
           address: string
           admin_notes?: string | null
           amenities?: Json
-          analysis_date?: string | null
           analyzed_at?: string
           available_date?: string | null
           bathrooms?: number | null
@@ -736,7 +734,6 @@ export type Database = {
           address?: string
           admin_notes?: string | null
           amenities?: Json
-          analysis_date?: string | null
           analyzed_at?: string
           available_date?: string | null
           bathrooms?: number | null
