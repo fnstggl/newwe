@@ -1,5 +1,47 @@
 
+import { useEffect } from 'react';
+
 const Manifesto = () => {
+  useEffect(() => {
+    // Update meta tags for SEO
+    document.title = "The Real Estate Game is Rigged - Our Manifesto | Realer Estate";
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'The NYC real estate game is rigged. Learn how Realer Estate uses advanced algorithms to give buyers an unfair advantage and stop overpaying.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'The NYC real estate game is rigged. Learn how Realer Estate uses advanced algorithms to give buyers an unfair advantage and stop overpaying.';
+      document.head.appendChild(meta);
+    }
+
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', 'The Real Estate Game is Rigged - Our Manifesto | Realer Estate');
+    
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) ogDescription.setAttribute('content', 'The NYC real estate game is rigged. Now you can win with advanced algorithms that find undervalued properties.');
+    
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/manifesto');
+
+    // Update Twitter tags
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) twitterTitle.setAttribute('content', 'The Real Estate Game is Rigged - Our Manifesto | Realer Estate');
+    
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) twitterDescription.setAttribute('content', 'The NYC real estate game is rigged. Now you can win with advanced algorithms that find undervalued properties.');
+    
+    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/manifesto');
+
+    // Update canonical URL
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', 'https://realerestate.org/manifesto');
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <div className="max-w-4xl mx-auto px-4 py-16">

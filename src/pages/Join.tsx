@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { HoverButton } from "../components/ui/hover-button";
@@ -17,6 +16,46 @@ const Join = () => {
   const { signUp, updateOnboardingStatus } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Update meta tags for SEO
+    document.title = "Join Realer Estate - Get Your Unfair Advantage in NYC Real Estate";
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Join Realer Estate to find undervalued NYC properties before they hit the market. Get exclusive access to the best real estate deals.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Join Realer Estate to find undervalued NYC properties before they hit the market. Get exclusive access to the best real estate deals.';
+      document.head.appendChild(meta);
+    }
+
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', 'Join Realer Estate - Get Your Unfair Advantage in NYC Real Estate');
+    
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) ogDescription.setAttribute('content', 'Join to find undervalued NYC properties before they hit the market. Get exclusive access to the best deals.');
+    
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/join');
+
+    // Update Twitter tags
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) twitterTitle.setAttribute('content', 'Join Realer Estate - Get Your Unfair Advantage in NYC Real Estate');
+    
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) twitterDescription.setAttribute('content', 'Join to find undervalued NYC properties before they hit the market. Get exclusive access to the best deals.');
+    
+    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/join');
+
+    // Update canonical URL
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', 'https://realerestate.org/join');
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
