@@ -75,6 +75,51 @@ export type Database = {
         }
         Relationships: []
       }
+      comprehensive_listing_cache: {
+        Row: {
+          address: string | null
+          amenities: Json | null
+          bathrooms: number | null
+          bedrooms: number | null
+          cached_at: string | null
+          description: string | null
+          listed_at: string | null
+          listing_id: string
+          listing_url: string | null
+          monthly_rent: number | null
+          neighborhood: string | null
+          sqft: number | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: Json | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          cached_at?: string | null
+          description?: string | null
+          listed_at?: string | null
+          listing_id: string
+          listing_url?: string | null
+          monthly_rent?: number | null
+          neighborhood?: string | null
+          sqft?: number | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: Json | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          cached_at?: string | null
+          description?: string | null
+          listed_at?: string | null
+          listing_id?: string
+          listing_url?: string | null
+          monthly_rent?: number | null
+          neighborhood?: string | null
+          sqft?: number | null
+        }
+        Relationships: []
+      }
       listing_cache: {
         Row: {
           address: string
