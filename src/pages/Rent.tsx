@@ -205,6 +205,14 @@ const Rent = () => {
     }
   };
 
+  const handlePropertyClick = (property: any, index: number) => {
+    // Only allow clicks on first 3 properties for non-authenticated users
+    if (!user && index >= 3) {
+      return;
+    }
+    setSelectedProperty(property);
+  };
+
   // Determine which properties to show based on auth status
   const visibleProperties = user ? properties : properties.slice(0, 3);
   const shouldShowBlur = !user && properties.length > 3;
@@ -334,29 +342,41 @@ const Rent = () => {
         {/* Properties Grid */}
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {visibleProperties.map((property, index) => {
+            {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
+              const isBlurred = !user && index >= 3;
+              const isClickable = user || index < 3;
+              
               return (
-                <PropertyCard
+                <div
                   key={`${property.id}-${index}`}
-                  property={property}
-                  isRental={true}
-                  onClick={() => setSelectedProperty(property)}
-                  gradeColors={gradeColors}
-                />
+                  className={`relative ${isBlurred ? 'blur-sm' : ''}`}
+                >
+                  <PropertyCard
+                    property={property}
+                    isRental={true}
+                    onClick={() => handlePropertyClick(property, index)}
+                    gradeColors={gradeColors}
+                  />
+                  {!isClickable && (
+                    <div className="absolute inset-0 cursor-not-allowed z-10" />
+                  )}
+                </div>
               );
             })}
           </div>
 
-          {/* Blur overlay and sign-in button for non-authenticated users */}
-          {shouldShowBlur && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent backdrop-blur-sm rounded-2xl flex items-end justify-center pb-16">
-              <button
-                onClick={() => navigate('/login')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
-              >
-                Sign in to view all properties
-              </button>
+          {/* Sign-in button overlay for non-authenticated users */}
+          {!user && properties.length > 3 && (
+            <div className="relative">
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100"
+                >
+                  Sign in to view all properties
+                </button>
+              </div>
             </div>
           )}
         </div>
