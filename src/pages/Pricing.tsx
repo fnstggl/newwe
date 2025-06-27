@@ -46,7 +46,7 @@ const Pricing = () => {
               <ul className="space-y-3 mb-12 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  See up to 3 deals per day
+                  See up to 3 deals per day (all for now)
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -102,7 +102,7 @@ const Pricing = () => {
                     </li>
                   </ul>
                   <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200">
-                    {isAnnual ? "Try 3 days free" : "Access Everything"}
+                    {isAnnual ? "Coming soon" : "Coming soon"}
                   </button>
                 </div>
               </div>
