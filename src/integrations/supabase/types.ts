@@ -81,6 +81,7 @@ export type Database = {
           amenities: Json | null
           bathrooms: number | null
           bedrooms: number | null
+          broker_fee: string | null
           cached_at: string | null
           description: string | null
           listed_at: string | null
@@ -95,6 +96,7 @@ export type Database = {
           amenities?: Json | null
           bathrooms?: number | null
           bedrooms?: number | null
+          broker_fee?: string | null
           cached_at?: string | null
           description?: string | null
           listed_at?: string | null
@@ -109,6 +111,7 @@ export type Database = {
           amenities?: Json | null
           bathrooms?: number | null
           bedrooms?: number | null
+          broker_fee?: string | null
           cached_at?: string | null
           description?: string | null
           listed_at?: string | null

@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { HoverButton } from "./ui/hover-button";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface OnboardingPopupProps {
   isOpen: boolean;
@@ -22,6 +25,8 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   const [experience, setExperience] = useState("");
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
   const [emailNotifications, setEmailNotifications] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const neighborhoodList = [
     "Upper East Side", "Upper West Side", "Midtown", "Chelsea", "Greenwich Village",
@@ -39,17 +44,57 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
     );
   };
 
-  const handleNext = () => {
+  const savePreferencesToDatabase = async () => {
+    if (!user) return;
+
+    try {
+      // Save neighborhood preferences if email notifications are enabled
+      const preferencesToSave = emailNotifications ? neighborhoods : [];
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          neighborhood_preferences: preferencesToSave
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error saving onboarding preferences:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save your preferences. Please try again.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error saving onboarding preferences:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const handleNext = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      onComplete({
-        lookingDuration,
-        experience,
-        neighborhoods,
-        emailNotifications
-      });
-      onClose();
+      // Save preferences to database before completing
+      const saved = await savePreferencesToDatabase();
+      if (saved) {
+        onComplete({
+          lookingDuration,
+          experience,
+          neighborhoods,
+          emailNotifications
+        });
+        onClose();
+      }
     }
   };
 

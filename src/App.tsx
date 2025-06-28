@@ -19,14 +19,12 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
 import OnboardingPopup from "./components/OnboardingPopup";
-import { useState, useEffect } from "react";
-import { useAuth } from "./contexts/AuthContext";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const { user, userProfile } = useAuth();
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -46,12 +44,11 @@ const AppContent = () => {
       </Routes>
       <MobileNavigation />
       
-      {showOnboarding && (
-        <OnboardingPopup 
-          onClose={() => setShowOnboarding(false)}
-          onComplete={() => setShowOnboarding(false)}
-        />
-      )}
+      <OnboardingPopup 
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={() => setShowOnboarding(false)}
+      />
     </div>
   );
 };
