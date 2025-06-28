@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 
 const Manifesto = () => {
@@ -116,7 +115,7 @@ const Manifesto = () => {
             </div>
           </div>
 
-          <div className="text-center bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/20">
+          <div className="text-center bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/20 mb-12">
             <h2 className="text-3xl font-bold mb-4 tracking-tighter">
               It's time buyers had the edge.
             </h2>
@@ -129,6 +128,13 @@ const Manifesto = () => {
             >
               Join the Movement
             </a>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="text-center mt-16 pt-8 border-t border-gray-800">
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Realer Estate is an independent housing search tool. We are not affiliated with or endorsed by StreetEasy, Zillow, or any other listing platform. Our goal is to surface below-market opportunities for NYC renters by analyzing publicly accessible listings and government data sources.
+            </p>
           </div>
         </div>
       </div>
