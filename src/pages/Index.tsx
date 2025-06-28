@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -67,7 +68,7 @@ const Index = () => {
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 The best deals in the city—found for you.
               </p>
-              <Link to="/search" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
+              <Link to="/rent" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
               </Link>
             </div>
@@ -133,9 +134,9 @@ const Index = () => {
               <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690</p>
             </div>
           </div>
-          <Link to="/neighborhoods">
+          <Link to="/rent">
             <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
-              Explore Neighborhoods
+              Explore Homes
             </HoverButton>
           </Link>
         </div>
