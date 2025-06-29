@@ -471,12 +471,10 @@ export type Database = {
       rental_market_cache: {
         Row: {
           address: string | null
-          amenities: Json | null
           bathrooms: number | null
           bedrooms: number | null
           borough: string | null
           created_at: string
-          description: string | null
           id: string
           last_analyzed: string | null
           last_checked: string
@@ -491,12 +489,10 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          amenities?: Json | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
           created_at?: string
-          description?: string | null
           id?: string
           last_analyzed?: string | null
           last_checked?: string
@@ -511,12 +507,10 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          amenities?: Json | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
           created_at?: string
-          description?: string | null
           id?: string
           last_analyzed?: string | null
           last_checked?: string
@@ -636,7 +630,6 @@ export type Database = {
           comparables_used: number
           contact_requests: number | null
           created_at: string
-          deal_quality: string | null
           deal_quality_score: number | null
           description: string | null
           discovered_at: string
@@ -701,7 +694,6 @@ export type Database = {
           comparables_used: number
           contact_requests?: number | null
           created_at?: string
-          deal_quality?: string | null
           deal_quality_score?: number | null
           description?: string | null
           discovered_at?: string
@@ -766,7 +758,6 @@ export type Database = {
           comparables_used?: number
           contact_requests?: number | null
           created_at?: string
-          deal_quality?: string | null
           deal_quality_score?: number | null
           description?: string | null
           discovered_at?: string
@@ -833,7 +824,6 @@ export type Database = {
           comparison_method: string
           created_at: string
           days_on_market: number | null
-          deal_quality: string | null
           description: string | null
           discount_percent: number
           doorman_building: boolean
@@ -851,7 +841,6 @@ export type Database = {
           listed_at: string | null
           listing_id: string
           listing_status: string | null
-          listing_url: string | null
           longitude: number | null
           market_rent_per_sqft: number | null
           monthly_rent: number
@@ -894,7 +883,6 @@ export type Database = {
           comparison_method: string
           created_at?: string
           days_on_market?: number | null
-          deal_quality?: string | null
           description?: string | null
           discount_percent: number
           doorman_building?: boolean
@@ -912,7 +900,6 @@ export type Database = {
           listed_at?: string | null
           listing_id: string
           listing_status?: string | null
-          listing_url?: string | null
           longitude?: number | null
           market_rent_per_sqft?: number | null
           monthly_rent: number
@@ -955,7 +942,6 @@ export type Database = {
           comparison_method?: string
           created_at?: string
           days_on_market?: number | null
-          deal_quality?: string | null
           description?: string | null
           discount_percent?: number
           doorman_building?: boolean
@@ -973,7 +959,6 @@ export type Database = {
           listed_at?: string | null
           listing_id?: string
           listing_status?: string | null
-          listing_url?: string | null
           longitude?: number | null
           market_rent_per_sqft?: number | null
           monthly_rent?: number
@@ -1016,7 +1001,6 @@ export type Database = {
           comparison_method: string
           created_at: string
           days_on_market: number | null
-          deal_quality: string | null
           description: string | null
           discount_percent: number
           floorplans: Json
@@ -1064,7 +1048,6 @@ export type Database = {
           comparison_method: string
           created_at?: string
           days_on_market?: number | null
-          deal_quality?: string | null
           description?: string | null
           discount_percent: number
           floorplans?: Json
@@ -1112,7 +1095,6 @@ export type Database = {
           comparison_method?: string
           created_at?: string
           days_on_market?: number | null
-          deal_quality?: string | null
           description?: string | null
           discount_percent?: number
           floorplans?: Json
