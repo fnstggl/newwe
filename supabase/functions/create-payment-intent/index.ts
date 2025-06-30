@@ -67,25 +67,12 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create subscription instead of payment intent
-    const subscription = await stripe.subscriptions.create({
+    // Create a simple payment intent for subscription setup
+    const paymentIntent = await stripe.paymentIntents.create({
       customer: customerId,
-      items: [{
-        price_data: {
-          currency: "usd",
-          unit_amount: amount,
-          recurring: {
-            interval: billing_cycle === 'annual' ? 'year' : 'month',
-          },
-          product_data: {
-            name: "Realer Estate Unlimited Plan",
-            description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
-          },
-        },
-      }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
+      amount: amount,
+      currency: "usd",
+      setup_future_usage: 'off_session',
       metadata: {
         user_id: user.id,
         billing_cycle,
@@ -93,14 +80,12 @@ serve(async (req) => {
       },
     });
 
-    logStep("Subscription created", { subscriptionId: subscription.id });
+    logStep("Payment intent created", { paymentIntentId: paymentIntent.id });
 
-    // Update profiles table with stripe_customer_id and subscription info
+    // Update profiles table with stripe_customer_id
     const { error: profileError } = await supabaseClient
       .from('profiles')
       .update({ 
-        subscription_plan: 'unlimited',
-        subscription_renewal: billing_cycle === 'annual' ? 'annual' : 'monthly',
         stripe_customer_id: customerId
       })
       .eq('id', user.id);
@@ -111,14 +96,9 @@ serve(async (req) => {
       logStep("Profile updated successfully");
     }
 
-    const paymentIntent = subscription.latest_invoice?.payment_intent;
-    if (!paymentIntent || typeof paymentIntent === 'string') {
-      throw new Error("Failed to get payment intent from subscription");
-    }
-
     return new Response(JSON.stringify({ 
       client_secret: paymentIntent.client_secret,
-      subscription_id: subscription.id
+      payment_intent_id: paymentIntent.id
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

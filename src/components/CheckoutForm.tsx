@@ -109,11 +109,11 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         )}
       </button>
 
-      {/* Security notice */}
+      {/* Security notice with cancellation text */}
       <p className="text-xs text-gray-500 text-center tracking-tight">
         Your payment information is secure and encrypted. Powered by Stripe.
         <br />
-        {billingCycle === 'annual' ? 'Annual recurring subscription' : 'Monthly recurring subscription'}, cancel any time.
+        {billingCycle === 'annual' ? 'Annual recurring subscription, cancel any time.' : 'Monthly recurring subscription, cancel any time.'}
       </p>
     </form>
   );

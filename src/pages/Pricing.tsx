@@ -219,11 +219,6 @@ const Pricing = () => {
                       Advanced deal analysis
                     </li>
                   </ul>
-
-                  {/* Cancellation text */}
-                  <p className="text-xs text-gray-500 mb-4 tracking-tight">
-                    {isAnnual ? 'Annual recurring subscription, cancel any time' : 'Monthly recurring subscription, cancel any time'}
-                  </p>
                   
                   {isOnCurrentPlan ? (
                     <button
