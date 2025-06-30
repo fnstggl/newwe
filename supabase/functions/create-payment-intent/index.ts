@@ -66,21 +66,23 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create or get price for the subscription
-    const priceData = {
+    // First create a product
+    const product = await stripe.products.create({
+      name: "Realer Estate Unlimited Plan",
+      description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
+    });
+    logStep("Created product", { productId: product.id });
+
+    // Then create a price for the product
+    const price = await stripe.prices.create({
       currency: "usd",
       unit_amount: amount,
       recurring: {
         interval: billing_cycle === 'annual' ? 'year' as const : 'month' as const,
       },
-      product_data: {
-        name: "Realer Estate Unlimited Plan",
-        description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
-      },
-    };
-
-    const price = await stripe.prices.create(priceData);
-    logStep("Created price", { priceId: price.id, amount, interval: priceData.recurring.interval });
+      product: product.id,
+    });
+    logStep("Created price", { priceId: price.id, amount, interval: billing_cycle });
 
     // Create payment intent for subscription setup
     const paymentIntent = await stripe.paymentIntents.create({
