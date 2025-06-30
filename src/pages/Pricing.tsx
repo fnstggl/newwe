@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
@@ -114,33 +115,61 @@ const Pricing = () => {
     <div className="font-inter min-h-screen bg-black text-white">
       <GooeyFilter />
       
+      {/* Back Button */}
+      <div className="pt-6 px-4">
+        <Link 
+          to="/" 
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <ArrowLeft size={20} />
+          <span>Back</span>
+        </Link>
+      </div>
+
+      {/* Hero Section with Image */}
+      <section className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Image */}
+            <div className="order-2 lg:order-1">
+              <img 
+                src="/lovable-uploads/dde89847-dbb0-40fc-8550-be478093c9db.png" 
+                alt="Realer Estate Property Search Interface" 
+                className="w-full h-auto rounded-2xl shadow-2xl"
+              />
+            </div>
+            
+            {/* Right side - Content */}
+            <div className="order-1 lg:order-2">
+              <h1 className="text-4xl md:text-6xl font-semibold mb-6 tracking-tighter">
+                Real estate is all about being early.
+              </h1>
+              <p className="text-xl text-gray-400 tracking-tight mb-8">
+                The best deals disappear in days. Get notified first.
+              </p>
+              
+              {/* Billing Toggle */}
+              <div className="flex items-center justify-center lg:justify-start gap-4">
+                <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                  Monthly
+                </span>
+                <Toggle
+                  checked={isAnnual}
+                  onCheckedChange={setIsAnnual}
+                  variant="default"
+                />
+                <span className={`text-lg ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                  Annual
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-              Real estate is all about being early.
-            </h1>
-            <p className="text-xl text-gray-400 tracking-tight">
-              The best deals disappear in days. Get notified first.
-            </p>
-            
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Monthly
-              </span>
-              <Toggle
-                checked={isAnnual}
-                onCheckedChange={setIsAnnual}
-                variant="default"
-              />
-              <span className={`text-lg ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Annual
-              </span>
-            </div>
-          </div>
-          
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Plan */}
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col">
