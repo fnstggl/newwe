@@ -6,6 +6,7 @@ import { useAuth } from './AuthContext';
 interface SubscriptionContextType {
   subscribed: boolean;
   subscriptionTier: string | null;
+  subscriptionRenewal: string | null;
   subscriptionEnd: string | null;
   loading: boolean;
   checkSubscription: () => Promise<void>;
@@ -27,13 +28,15 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const { user, session } = useAuth();
   const [subscribed, setSubscribed] = useState(false);
   const [subscriptionTier, setSubscriptionTier] = useState<string | null>(null);
+  const [subscriptionRenewal, setSubscriptionRenewal] = useState<string | null>(null);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const checkSubscription = async () => {
     if (!user || !session) {
       setSubscribed(false);
-      setSubscriptionTier(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
       return;
     }
@@ -52,7 +55,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }
 
       setSubscribed(data.subscribed || false);
-      setSubscriptionTier(data.subscription_tier || null);
+      setSubscriptionTier(data.subscription_tier || 'free');
+      setSubscriptionRenewal(data.subscription_renewal || 'monthly');
       setSubscriptionEnd(data.subscription_end || null);
     } catch (error) {
       console.error('Error checking subscription:', error);
@@ -115,7 +119,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       checkSubscription();
     } else {
       setSubscribed(false);
-      setSubscriptionTier(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
     }
   }, [user, session]);
@@ -123,6 +128,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const value = {
     subscribed,
     subscriptionTier,
+    subscriptionRenewal,
     subscriptionEnd,
     loading,
     checkSubscription,

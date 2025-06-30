@@ -42,14 +42,29 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user");
-    }
-    const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
+    // Get customer ID from profiles table first
+    const { data: profileData, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', user.id)
+      .single();
 
+    let customerId = profileData?.stripe_customer_id;
+
+    if (!customerId) {
+      // Fall back to Stripe customer lookup
+      const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length === 0) {
+        throw new Error("No Stripe customer found for this user");
+      }
+      customerId = customers.data[0].id;
+      logStep("Found Stripe customer via fallback", { customerId });
+    } else {
+      logStep("Found customer ID from profile", { customerId });
+    }
+
+    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     const origin = req.headers.get("origin") || "http://localhost:3000";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,

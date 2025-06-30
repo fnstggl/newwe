@@ -56,7 +56,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
       });
     } else {
       toast({
-        title: "Payment successful!",
+        title: "Subscription successful!",
         description: "Welcome to the Unlimited plan.",
       });
       navigate('/pricing?success=true');
@@ -112,6 +112,8 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
       {/* Security notice */}
       <p className="text-xs text-gray-500 text-center tracking-tight">
         Your payment information is secure and encrypted. Powered by Stripe.
+        <br />
+        {billingCycle === 'annual' ? 'Annual recurring subscription' : 'Monthly recurring subscription'}, cancel any time.
       </p>
     </form>
   );

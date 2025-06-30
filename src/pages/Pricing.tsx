@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -10,7 +11,7 @@ import { ArrowLeft } from "lucide-react";
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const navigate = useNavigate();
-  const { subscribed, subscriptionTier, openCustomerPortal } = useSubscription();
+  const { subscribed, subscriptionTier, subscriptionRenewal, openCustomerPortal } = useSubscription();
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -49,14 +50,12 @@ const Pricing = () => {
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/pricing');
 
-    // Check for success/cancel URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
       toast({
         title: "Subscription successful!",
         description: "Welcome to the Unlimited plan. You now have access to all deals.",
       });
-      // Clean up URL
       window.history.replaceState({}, document.title, '/pricing');
     } else if (urlParams.get('canceled') === 'true') {
       toast({
@@ -64,7 +63,6 @@ const Pricing = () => {
         description: "No worries! You can subscribe anytime.",
         variant: "destructive",
       });
-      // Clean up URL
       window.history.replaceState({}, document.title, '/pricing');
     }
   }, [toast]);
@@ -79,7 +77,6 @@ const Pricing = () => {
       return;
     }
 
-    // Navigate to custom checkout page
     navigate(`/checkout?billing=${billingCycle}`);
   };
 
@@ -95,6 +92,11 @@ const Pricing = () => {
       });
     }
   };
+
+  // Check if user is on current plan type
+  const isOnCurrentPlan = subscribed && subscriptionTier === 'unlimited';
+  const isOnMonthlyPlan = isOnCurrentPlan && subscriptionRenewal === 'monthly';
+  const isOnAnnualPlan = isOnCurrentPlan && subscriptionRenewal === 'annual';
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -163,13 +165,13 @@ const Pricing = () => {
               </ul>
               <button 
                 className={`w-full py-3 rounded-full font-medium tracking-tight transition-all mt-8 ${
-                  !subscribed 
+                  subscriptionTier === 'free'
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
-                disabled={subscribed}
+                disabled={subscriptionTier !== 'free'}
               >
-                {!subscribed ? 'Current Plan' : 'Free Plan'}
+                {subscriptionTier === 'free' ? 'Current Plan' : 'Free Plan'}
               </button>
             </div>
 
@@ -177,7 +179,7 @@ const Pricing = () => {
             <div className="relative flex flex-col">
               {/* Card with animated border */}
               <div className={`relative overflow-hidden rounded-2xl p-[3px] ${
-                subscribed 
+                isOnCurrentPlan
                   ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
                   : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
               }`}>
@@ -186,9 +188,9 @@ const Pricing = () => {
                   {/* Header with subscription status badge */}
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
-                    {subscribed && (
+                    {isOnCurrentPlan && (
                       <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-medium">
-                        Your Plan
+                        Current Plan
                       </span>
                     )}
                   </div>
@@ -199,7 +201,7 @@ const Pricing = () => {
                       <>$3<span className="text-lg text-gray-400">/mo</span></>
                     )}
                   </p>
-                  <ul className="space-y-3 mb-12 text-gray-300 flex-grow">
+                  <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
                       <strong className="text-white">Access to ALL deals</strong>
@@ -217,20 +219,32 @@ const Pricing = () => {
                       Advanced deal analysis
                     </li>
                   </ul>
+
+                  {/* Cancellation text */}
+                  <p className="text-xs text-gray-500 mb-4 tracking-tight">
+                    {isAnnual ? 'Annual recurring subscription, cancel any time' : 'Monthly recurring subscription, cancel any time'}
+                  </p>
                   
-                  {subscribed ? (
+                  {isOnCurrentPlan ? (
                     <button
                       onClick={handleManageSubscription}
-                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200"
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
                       Manage Subscription
                     </button>
                   ) : (
                     <button
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200"
+                      className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
+                        (isAnnual && isOnMonthlyPlan) || (!isAnnual && isOnAnnualPlan)
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-white text-black hover:bg-gray-200'
+                      }`}
                     >
-                      Subscribe {isAnnual ? 'Annually' : 'Monthly'}
+                      {(isAnnual && isOnMonthlyPlan) || (!isAnnual && isOnAnnualPlan)
+                        ? `Switch to ${isAnnual ? 'Annual' : 'Monthly'}`
+                        : `Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`
+                      }
                     </button>
                   )}
                 </div>
@@ -239,12 +253,12 @@ const Pricing = () => {
           </div>
 
           {/* Subscription status display */}
-          {subscribed && subscriptionTier && (
+          {isOnCurrentPlan && (
             <div className="mt-8 text-center">
               <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-green-400 font-medium">
-                  Active {subscriptionTier} Subscription
+                  Active {subscriptionTier === 'unlimited' ? 'Unlimited' : subscriptionTier} Subscription ({subscriptionRenewal})
                 </span>
               </div>
             </div>

@@ -20,7 +20,8 @@ serve(async (req) => {
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false } }
   );
 
   try {
@@ -66,43 +67,58 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // First create a product
-    const product = await stripe.products.create({
-      name: "Realer Estate Unlimited Plan",
-      description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
-    });
-    logStep("Created product", { productId: product.id });
-
-    // Then create a price for the product
-    const price = await stripe.prices.create({
-      currency: "usd",
-      unit_amount: amount,
-      recurring: {
-        interval: billing_cycle === 'annual' ? 'year' as const : 'month' as const,
-      },
-      product: product.id,
-    });
-    logStep("Created price", { priceId: price.id, amount, interval: billing_cycle });
-
-    // Create payment intent for subscription setup
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: "usd",
+    // Create subscription instead of payment intent
+    const subscription = await stripe.subscriptions.create({
       customer: customerId,
-      setup_future_usage: "off_session",
-      payment_method_types: ["card"],
+      items: [{
+        price_data: {
+          currency: "usd",
+          unit_amount: amount,
+          recurring: {
+            interval: billing_cycle === 'annual' ? 'year' : 'month',
+          },
+          product_data: {
+            name: "Realer Estate Unlimited Plan",
+            description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
+          },
+        },
+      }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
       metadata: {
         user_id: user.id,
         billing_cycle,
-        price_id: price.id,
         subscription_type: "realer_estate_unlimited",
       },
     });
 
-    logStep("Payment intent created", { paymentIntentId: paymentIntent.id });
+    logStep("Subscription created", { subscriptionId: subscription.id });
+
+    // Update profiles table with stripe_customer_id and subscription info
+    const { error: profileError } = await supabaseClient
+      .from('profiles')
+      .update({ 
+        subscription_plan: 'unlimited',
+        subscription_renewal: billing_cycle === 'annual' ? 'annual' : 'monthly',
+        stripe_customer_id: customerId
+      })
+      .eq('id', user.id);
+
+    if (profileError) {
+      logStep("Profile update error", { error: profileError });
+    } else {
+      logStep("Profile updated successfully");
+    }
+
+    const paymentIntent = subscription.latest_invoice?.payment_intent;
+    if (!paymentIntent || typeof paymentIntent === 'string') {
+      throw new Error("Failed to get payment intent from subscription");
+    }
 
     return new Response(JSON.stringify({ 
-      client_secret: paymentIntent.client_secret 
+      client_secret: paymentIntent.client_secret,
+      subscription_id: subscription.id
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

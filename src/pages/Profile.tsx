@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -17,6 +16,7 @@ const Profile = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [isSavingPreferences, setIsSavingPreferences] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -25,32 +25,35 @@ const Profile = () => {
     }
   }, [user, navigate]);
 
-  // Load user's existing neighborhood preferences
+  // Load user's profile data including subscription info
   useEffect(() => {
-    const loadUserPreferences = async () => {
+    const loadUserProfile = async () => {
       if (!user) return;
       
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('neighborhood_preferences')
+          .select('*')
           .eq('id', user.id)
           .single();
         
         if (error) {
-          console.error('Error loading user preferences:', error);
+          console.error('Error loading user profile:', error);
           return;
         }
         
-        if (data?.neighborhood_preferences) {
-          setSelectedNeighborhoods(data.neighborhood_preferences);
+        if (data) {
+          setProfileData(data);
+          if (data.neighborhood_preferences) {
+            setSelectedNeighborhoods(data.neighborhood_preferences);
+          }
         }
       } catch (error) {
-        console.error('Error loading user preferences:', error);
+        console.error('Error loading user profile:', error);
       }
     };
 
-    loadUserPreferences();
+    loadUserProfile();
   }, [user]);
 
   // Fetch neighborhoods from the database
@@ -178,7 +181,7 @@ const Profile = () => {
     neighborhood.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (!user || !userProfile) {
+  if (!user || !userProfile || !profileData) {
     return null;
   }
 
@@ -205,7 +208,7 @@ const Profile = () => {
                   Name
                 </label>
                 <div className="w-full px-4 py-4 bg-gray-800/50 border-2 border-gray-700 rounded-full text-white tracking-tight text-lg">
-                  {userProfile.name}
+                  {profileData.name || userProfile.name}
                 </div>
               </div>
 
@@ -298,11 +301,11 @@ const Profile = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-lg font-medium tracking-tight capitalize">
-                  {userProfile.subscription_plan || 'Free'} Plan
+                  {profileData.subscription_plan || 'Free'} Plan
                 </p>
                 <p className="text-gray-400 text-sm tracking-tight">
-                  {userProfile.subscription_plan === 'unlimited' 
-                    ? 'Access to all deals and features' 
+                  {profileData.subscription_plan === 'unlimited' 
+                    ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
                     : 'Limited to 3 deals per day'
                   }
                 </p>

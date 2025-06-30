@@ -48,17 +48,18 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
     if (customers.data.length === 0) {
-      logStep("No customer found, updating unsubscribed state");
-      await supabaseClient.from("subscribers").upsert({
-        email: user.email,
-        user_id: user.id,
-        stripe_customer_id: null,
-        subscribed: false,
-        subscription_tier: null,
-        subscription_end: null,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'email' });
-      return new Response(JSON.stringify({ subscribed: false }), {
+      logStep("No customer found, updating to free plan");
+      await supabaseClient.from("profiles").update({
+        subscription_plan: 'free',
+        subscription_renewal: 'monthly',
+        stripe_customer_id: null
+      }).eq('id', user.id);
+      
+      return new Response(JSON.stringify({ 
+        subscribed: false, 
+        subscription_tier: 'free',
+        subscription_renewal: 'monthly'
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
@@ -73,46 +74,49 @@ serve(async (req) => {
       limit: 1,
     });
     const hasActiveSub = subscriptions.data.length > 0;
-    let subscriptionTier = null;
+    let subscriptionTier = 'free';
+    let subscriptionRenewal = 'monthly';
     let subscriptionEnd = null;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
+      subscriptionTier = 'unlimited';
       
-      const priceId = subscription.items.data[0].price.id;
-      const price = await stripe.prices.retrieve(priceId);
-      const amount = price.unit_amount || 0;
-      const interval = price.recurring?.interval;
+      // Determine renewal type from subscription interval
+      const interval = subscription.items.data[0]?.price?.recurring?.interval;
+      subscriptionRenewal = interval === 'year' ? 'annual' : 'monthly';
       
-      if (interval === 'year') {
-        subscriptionTier = "Annual";
-      } else if (interval === 'month') {
-        subscriptionTier = "Monthly";
-      } else {
-        subscriptionTier = "Premium";
-      }
-      
-      logStep("Determined subscription tier", { priceId, amount, interval, subscriptionTier });
+      logStep("Active subscription found", { 
+        subscriptionId: subscription.id, 
+        endDate: subscriptionEnd,
+        interval: interval
+      });
     } else {
       logStep("No active subscription found");
     }
 
-    await supabaseClient.from("subscribers").upsert({
-      email: user.email,
-      user_id: user.id,
-      stripe_customer_id: customerId,
-      subscribed: hasActiveSub,
-      subscription_tier: subscriptionTier,
-      subscription_end: subscriptionEnd,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'email' });
+    // Update profiles table
+    const { error: updateError } = await supabaseClient.from("profiles").update({
+      subscription_plan: subscriptionTier,
+      subscription_renewal: subscriptionRenewal,
+      stripe_customer_id: customerId
+    }).eq('id', user.id);
 
-    logStep("Updated database with subscription info", { subscribed: hasActiveSub, subscriptionTier });
+    if (updateError) {
+      logStep("Profile update error", { error: updateError });
+    }
+
+    logStep("Updated profile with subscription info", { 
+      subscribed: hasActiveSub, 
+      subscriptionTier,
+      subscriptionRenewal
+    });
+    
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
+      subscription_renewal: subscriptionRenewal,
       subscription_end: subscriptionEnd
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
