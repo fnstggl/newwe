@@ -21,6 +21,7 @@ interface FlexibleProperty {
   discount_percent?: number;
   reasoning?: string;
   images: any; // Allow any type for images
+  isRentStabilized?: boolean; // Flag for rent-stabilized properties
   [key: string]: any; // Allow any additional properties
 }
 
@@ -59,6 +60,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   };
 
   const getDiscountPercentage = () => {
+    // For rent-stabilized properties, handle above/below market differently
+    if (property.isRentStabilized && property.discount_percent !== undefined) {
+      const percent = Math.abs(property.discount_percent);
+      if (property.discount_percent > 0) {
+        return `${Math.round(percent)}% above market`;
+      } else if (property.discount_percent < 0) {
+        return `${Math.round(percent)}% below market`;
+      }
+    }
+    
     // First try to get from discount_percent field
     if (property.discount_percent && property.discount_percent > 0) {
       return `${Math.round(property.discount_percent)}% below market`;
@@ -109,11 +120,17 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           className="h-56"
         />
         
-        {/* Grade badge - positioned absolutely over the image, top left */}
+        {/* Grade badge or Rent-stabilized badge - positioned absolutely over the image, top left */}
         <div className="absolute top-4 left-4 z-10">
-          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
-            {String(property.grade)}
-          </div>
+          {property.isRentStabilized ? (
+            <div className="bg-green-500 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
+              Rent-stabilized
+            </div>
+          ) : (
+            <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
+              {String(property.grade)}
+            </div>
+          )}
         </div>
 
         {/* Bookmark button - positioned absolutely over the image, top right */}
@@ -156,9 +173,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           <span className="text-sm text-gray-300 italic">
             {getDiscountPercentage()}
           </span>
-          <Badge variant="outline" className={`text-xs ${colors.scoreBorder} ${colors.scoreText}`}>
-            Score: {String(property.score)}
-          </Badge>
+          <div className="flex gap-2">
+            {property.isRentStabilized && (
+              <Badge variant="outline" className="text-xs border-green-600 text-green-400">
+                Rent-stabilized
+              </Badge>
+            )}
+            <Badge variant="outline" className={`text-xs ${colors.scoreBorder} ${colors.scoreText}`}>
+              Score: {String(property.score)}
+            </Badge>
+          </div>
         </div>
 
         {property.neighborhood && (

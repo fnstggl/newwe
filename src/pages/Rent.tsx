@@ -8,6 +8,7 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { UndervaluedRentStabilized } from "@/types/database";
 
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 
@@ -98,22 +99,60 @@ const Rent = () => {
 
   const fetchNeighborhoods = async () => {
     try {
-      const { data, error } = await supabase
-        .from('undervalued_rentals')
-        .select('neighborhood')
-        .not('neighborhood', 'is', null)
-        .order('neighborhood');
+      // Fetch neighborhoods from both tables
+      const [rentalsResult, rentStabilizedResult] = await Promise.all([
+        supabase
+          .from('undervalued_rentals')
+          .select('neighborhood')
+          .not('neighborhood', 'is', null)
+          .order('neighborhood'),
+        supabase
+          .from('undervalued_rent_stabilized')
+          .select('neighborhood')
+          .not('neighborhood', 'is', null)
+          .order('neighborhood')
+      ]);
 
-      if (error) {
-        console.error('Error fetching neighborhoods:', error);
-        return;
-      }
-
-      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
+      const rentalNeighborhoods = rentalsResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
+      const rentStabilizedNeighborhoods = rentStabilizedResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
+      
+      const allNeighborhoods = [...rentalNeighborhoods, ...rentStabilizedNeighborhoods];
+      const uniqueNeighborhoods = [...new Set(allNeighborhoods)];
       setNeighborhoods(uniqueNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
     }
+  };
+
+  const normalizeRentStabilizedProperty = (property: UndervaluedRentStabilized): any => {
+    return {
+      ...property,
+      // Map rent-stabilized fields to match regular rental fields
+      zipcode: property.zip_code,
+      rent_per_sqft: property.sqft ? property.monthly_rent / property.sqft : null,
+      grade: 'RS', // Special grade for rent-stabilized
+      score: property.rent_stabilized_confidence,
+      discount_percent: property.undervaluation_percent,
+      reasoning: `Rent-stabilized property with ${property.rent_stabilized_confidence}% confidence`,
+      listed_at: property.discovered_at,
+      days_on_market: null,
+      built_in: property.year_built,
+      no_fee: false,
+      pet_friendly: false,
+      laundry_available: false,
+      gym_available: false,
+      doorman_building: false,
+      elevator_building: false,
+      rooftop_access: false,
+      agents: [],
+      building_info: {},
+      status: property.display_status || 'active',
+      likely_rented: false,
+      last_seen_in_search: property.last_verified,
+      analysis_date: property.analysis_date || property.created_at,
+      annual_savings: property.potential_annual_savings,
+      isRentStabilized: true // Flag to identify rent-stabilized properties
+    };
   };
 
   const fetchProperties = async (reset = false) => {
@@ -121,62 +160,74 @@ const Rent = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      let query = supabase
+      // Build queries for both tables
+      let rentalsQuery = supabase
         .from('undervalued_rentals')
         .select('*')
         .eq('status', 'active')
-        .order('created_at', { ascending: false }); // Random-ish order instead of by score
+        .order('created_at', { ascending: false });
 
+      let rentStabilizedQuery = supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('display_status', 'active')
+        .order('created_at', { ascending: false });
+
+      // Apply filters to both queries
       if (searchTerm.trim()) {
-        query = query.ilike('address', `%${searchTerm.trim()}%`);
+        rentalsQuery = rentalsQuery.ilike('address', `%${searchTerm.trim()}%`);
+        rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
       }
 
       if (zipCode.trim()) {
-        query = query.ilike('zipcode', `${zipCode.trim()}%`);
+        rentalsQuery = rentalsQuery.ilike('zipcode', `${zipCode.trim()}%`);
+        rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
       }
 
       if (maxPrice.trim()) {
         const priceValue = parseInt(maxPrice.trim());
         if (!isNaN(priceValue) && priceValue > 0) {
-          query = query.lte('monthly_rent', priceValue);
+          rentalsQuery = rentalsQuery.lte('monthly_rent', priceValue);
+          rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
         }
       }
 
       if (bedrooms.trim()) {
         const bedroomValue = parseInt(bedrooms.trim());
         if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-          query = query.gte('bedrooms', bedroomValue);
-        }
-      }
-
-      if (minGrade.trim()) {
-        const gradeIndex = gradeOptions.indexOf(minGrade);
-        if (gradeIndex !== -1) {
-          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-          query = query.in('grade', allowedGrades);
+          rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
+          rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
         }
       }
 
       if (selectedNeighborhoods.length > 0) {
-        query = query.in('neighborhood', selectedNeighborhoods);
+        rentalsQuery = rentalsQuery.in('neighborhood', selectedNeighborhoods);
+        rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
       }
 
-      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      // Execute both queries
+      const [rentalsResult, rentStabilizedResult] = await Promise.all([
+        rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
+        rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
+      ]);
 
-      if (error) {
-        console.error('❌ SUPABASE ERROR:', error);
-        setProperties([]);
-        return;
+      if (rentalsResult.error) {
+        console.error('❌ RENTALS ERROR:', rentalsResult.error);
       }
 
-      if (!data || !Array.isArray(data)) {
-        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
-        setProperties([]);
-        return;
+      if (rentStabilizedResult.error) {
+        console.error('❌ RENT STABILIZED ERROR:', rentStabilizedResult.error);
       }
 
-      // Shuffle the results to make them appear random
-      const shuffledData = data.sort(() => Math.random() - 0.5);
+      const rentalsData = rentalsResult.data || [];
+      const rentStabilizedData = rentStabilizedResult.data || [];
+
+      // Normalize rent-stabilized properties
+      const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
+
+      // Combine and shuffle both types of properties
+      const combinedData = [...rentalsData, ...normalizedRentStabilized];
+      const shuffledData = combinedData.sort(() => Math.random() - 0.5);
 
       if (reset) {
         setProperties(shuffledData);
@@ -186,7 +237,7 @@ const Rent = () => {
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
-      setHasMore(data.length === ITEMS_PER_PAGE);
+      setHasMore(combinedData.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
       setProperties([]);
@@ -213,31 +264,40 @@ const Rent = () => {
     setSelectedNeighborhoods([]);
   };
 
-  const getGradeColors = (grade: string) => {
+  const getGradeColors = (grade: string, isRentStabilized?: boolean) => {
+    if (isRentStabilized) {
+      return {
+        badge: 'bg-green-500 text-white border-green-600',
+        scoreText: 'text-green-400',
+        scoreBorder: 'border-green-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:border-green-400/40'
+      };
+    }
+    
     if (grade === 'A+') {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-yellow-400',
         scoreBorder: 'border-yellow-600',
         hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-purple-400',
         scoreBorder: 'border-purple-600',
         hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
       };
     } else if (grade.startsWith('B')) {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-blue-400',
         scoreBorder: 'border-blue-600',
         hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-gray-300',
         scoreBorder: 'border-gray-600',
         hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
@@ -383,7 +443,7 @@ const Rent = () => {
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade);
+              const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
               const isBlurred = !user && index >= 3;
               const isClickable = user || index < 3;
               
