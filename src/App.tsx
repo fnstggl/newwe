@@ -20,6 +20,7 @@ import MobileNavigation from "./components/MobileNavigation";
 import OnboardingPopup from "./components/OnboardingPopup";
 import { useState } from "react";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const AppContent = () => {
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/manifesto" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/join" element={<Join setShowOnboarding={setShowOnboarding} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />

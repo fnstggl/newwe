@@ -1,18 +1,18 @@
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
-  const { subscribed, subscriptionTier, createCheckout, openCustomerPortal } = useSubscription();
+  const navigate = useNavigate();
+  const { subscribed, subscriptionTier, openCustomerPortal } = useSubscription();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -69,7 +69,7 @@ const Pricing = () => {
     }
   }, [toast]);
 
-  const handleSubscribe = async (billingCycle: 'monthly' | 'annual') => {
+  const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
       toast({
         title: "Please log in",
@@ -79,22 +79,8 @@ const Pricing = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      const checkoutUrl = await createCheckout(billingCycle);
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Navigate to custom checkout page
+    navigate(`/checkout?billing=${billingCycle}`);
   };
 
   const handleManageSubscription = async () => {
@@ -114,6 +100,17 @@ const Pricing = () => {
     <div className="font-inter min-h-screen bg-black text-white">
       <GooeyFilter />
       
+      {/* Header with back button */}
+      <div className="max-w-6xl mx-auto px-4 pt-8">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors tracking-tight mb-8"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Home
+        </button>
+      </div>
+
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
@@ -178,7 +175,7 @@ const Pricing = () => {
 
             {/* Unlimited Plan */}
             <div className="relative flex flex-col">
-              {/* Card with animated border - highlight if this is the current plan */}
+              {/* Card with animated border */}
               <div className={`relative overflow-hidden rounded-2xl p-[3px] ${
                 subscribed 
                   ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
@@ -231,10 +228,9 @@ const Pricing = () => {
                   ) : (
                     <button
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-                      disabled={loading}
-                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200"
                     >
-                      {loading ? 'Loading...' : `Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
+                      Subscribe {isAnnual ? 'Annually' : 'Monthly'}
                     </button>
                   )}
                 </div>
@@ -274,10 +270,9 @@ const Pricing = () => {
           ) : !subscribed ? (
             <button
               onClick={() => handleSubscribe('monthly')}
-              disabled={loading}
-              className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              {loading ? 'Loading...' : 'Start Your Subscription'}
+              Start Your Subscription
             </button>
           ) : (
             <div className="text-green-400 font-semibold text-lg">
