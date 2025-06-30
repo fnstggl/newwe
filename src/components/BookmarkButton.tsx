@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bookmark } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSavedProperties } from '@/hooks/useSavedProperties';
 import { useNavigate } from 'react-router-dom';
@@ -50,10 +50,10 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({
     <button
       onClick={handleBookmarkClick}
       disabled={isLoading}
-      className={`p-2 transition-all duration-200 ${className}`}
+      className={`p-2 transition-all duration-200 hover:text-pink-500 ${className}`}
     >
-      <Bookmark 
-        className={`h-5 w-5 text-white ${saved ? 'fill-white' : 'fill-none'} stroke-2`} 
+      <Heart 
+        className={`h-5 w-5 text-white ${saved ? 'fill-pink-500 text-pink-500' : 'fill-none'} stroke-2 hover:fill-pink-500`} 
       />
     </button>
   );

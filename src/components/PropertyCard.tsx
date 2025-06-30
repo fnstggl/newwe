@@ -50,6 +50,19 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     allKeys: Object.keys(property)
   });
 
+  // Calculate grade from score for rent-stabilized properties
+  const calculateGradeFromScore = (score: number): string => {
+    if (score >= 98) return 'A+';
+    if (score >= 93) return 'A';
+    if (score >= 88) return 'B+';
+    if (score >= 83) return 'B';
+    if (score >= 79) return 'B-';
+    if (score >= 75) return 'C+';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'C-';
+    return 'D';
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -99,12 +112,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
 
   const colors = gradeColors || defaultColors;
 
+  // Determine the display grade - for rent-stabilized, calculate from score
+  const displayGrade = property.isRentStabilized 
+    ? calculateGradeFromScore(Number(property.score))
+    : String(property.grade);
+
   // LOG THE ACTUAL VALUES BEING RENDERED
   console.log(`🎯 RENDERING VALUES FOR [${property.address}]:`, {
-    displayGrade: property.grade,
+    displayGrade: displayGrade,
     displayScore: property.score,
-    gradeInBadge: property.grade,
-    scoreInBadge: property.score
+    isRentStabilized: property.isRentStabilized
   });
 
   return (
@@ -120,17 +137,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           className="h-56"
         />
         
-        {/* Grade badge or Rent-stabilized badge - positioned absolutely over the image, top left */}
+        {/* Grade badge - positioned absolutely over the image, top left */}
         <div className="absolute top-4 left-4 z-10">
-          {property.isRentStabilized ? (
-            <div className="bg-green-500 text-white px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
-              Rent-stabilized
-            </div>
-          ) : (
-            <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black px-3 py-2 rounded-full text-sm font-bold tracking-tight shadow-lg">
-              {String(property.grade)}
-            </div>
-          )}
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold tracking-tight shadow-lg">
+            {displayGrade}
+          </div>
         </div>
 
         {/* Bookmark button - positioned absolutely over the image, top right */}
