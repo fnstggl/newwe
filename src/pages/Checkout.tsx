@@ -7,13 +7,15 @@ import { ArrowLeft } from 'lucide-react';
 import CheckoutForm from '@/components/CheckoutForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51234567890abcdef'); // You'll need to add your publishable key
+// Use the actual Supabase project's publishable key - you'll need to set this
+const stripePromise = loadStripe('pk_test_51234567890abcdef'); // Replace with your actual Stripe publishable key
 
 const Checkout = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
@@ -33,22 +35,33 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for subscription
+    // Create payment intent for subscription using Supabase edge function
     const createPaymentIntent = async () => {
       try {
-        const response = await fetch('/api/create-payment-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        console.log('Creating payment intent with billing cycle:', billingCycle);
+        
+        const { data, error } = await supabase.functions.invoke('create-payment-intent', {
+          body: {
             billing_cycle: billingCycle,
             amount: billingCycle === 'annual' ? 1900 : 300, // in cents
-          }),
+          },
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
         });
 
-        const { client_secret } = await response.json();
-        setClientSecret(client_secret);
+        if (error) {
+          console.error('Supabase function error:', error);
+          throw error;
+        }
+
+        console.log('Payment intent response:', data);
+        
+        if (data?.client_secret) {
+          setClientSecret(data.client_secret);
+        } else {
+          throw new Error('No client secret returned from payment intent');
+        }
       } catch (error) {
         console.error('Error creating payment intent:', error);
         toast({
@@ -61,8 +74,10 @@ const Checkout = () => {
       }
     };
 
-    createPaymentIntent();
-  }, [user, billingCycle, navigate, toast]);
+    if (session) {
+      createPaymentIntent();
+    }
+  }, [user, session, billingCycle, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
