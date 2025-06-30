@@ -9,8 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-// Use the actual Supabase project's publishable key - you'll need to set this
-const stripePromise = loadStripe('pk_test_51234567890abcdef'); // Replace with your actual Stripe publishable key
+// Use your live Stripe publishable key
+const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6pyWWeH61H5VPMRW9d37HVi2F1VIzRuUElclZVkRlHJh9O8iHhaGgr00D1tOSeNi');
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for subscription using Supabase edge function
+    // Create payment intent for recurring subscription using Supabase edge function
     const createPaymentIntent = async () => {
       try {
         console.log('Creating payment intent with billing cycle:', billingCycle);

@@ -66,15 +66,34 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create payment intent for subscription
+    // Create or get price for the subscription
+    const priceData = {
+      currency: "usd",
+      unit_amount: amount,
+      recurring: {
+        interval: billing_cycle === 'annual' ? 'year' as const : 'month' as const,
+      },
+      product_data: {
+        name: "Realer Estate Unlimited Plan",
+        description: `Unlimited access to NYC real estate deals - ${billing_cycle} billing`,
+      },
+    };
+
+    const price = await stripe.prices.create(priceData);
+    logStep("Created price", { priceId: price.id, amount, interval: priceData.recurring.interval });
+
+    // Create payment intent for subscription setup
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: "usd",
       customer: customerId,
       setup_future_usage: "off_session",
+      payment_method_types: ["card"],
       metadata: {
         user_id: user.id,
         billing_cycle,
+        price_id: price.id,
+        subscription_type: "realer_estate_unlimited",
       },
     });
 
