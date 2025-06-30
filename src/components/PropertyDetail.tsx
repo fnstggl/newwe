@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,19 @@ interface PropertyDetailProps {
 const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
+  // Calculate grade from score for rent-stabilized properties
+  const calculateGradeFromScore = (score: number): string => {
+    if (score >= 98) return 'A+';
+    if (score >= 93) return 'A';
+    if (score >= 88) return 'B+';
+    if (score >= 83) return 'B';
+    if (score >= 79) return 'B-';
+    if (score >= 75) return 'C+';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'C-';
+    return 'D';
+  };
 
   // Process images to handle different formats
   const processImages = () => {
@@ -98,7 +112,15 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     }
   };
 
-  const gradeTheme = getGradeTheme(property.grade);
+  // Check if this is a rent-stabilized property
+  const isRentStabilized = (property as any).isRentStabilized;
+  
+  // Determine the display grade
+  const displayGrade = isRentStabilized 
+    ? calculateGradeFromScore(Number(property.score))
+    : String(property.grade);
+
+  const gradeTheme = getGradeTheme(displayGrade);
 
   const price = isRental 
     ? (property as UndervaluedRentals).monthly_rent 
@@ -210,7 +232,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </div>
                   <div className="flex flex-col items-end space-y-3">
                     <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
-                      {property.grade}
+                      {displayGrade}
                     </Badge>
                     <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
                       <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
@@ -285,6 +307,53 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     )}
                   </CardContent>
                 </Card>
+
+                {/* Rent-Stabilized Analysis Section */}
+                {isRentStabilized && (property as any).rent_stabilization_analysis && (
+                  <Card className="bg-gray-800/50 border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-white flex items-center">
+                        Rent-Stabilized Analysis
+                        <Badge variant="outline" className="ml-2 text-xs border-green-600 text-green-400">
+                          Rent-stabilized
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {(property as any).rent_stabilization_analysis?.explanation && (
+                        <div className="text-sm text-gray-300 leading-relaxed">
+                          <strong>Analysis:</strong> {(property as any).rent_stabilization_analysis.explanation}
+                        </div>
+                      )}
+                      
+                      {(property as any).rent_stabilization_analysis?.key_factors && 
+                       (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
+                          <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                            {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
+                              <li key={index}>{factor}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      
+                      {(property as any).rent_stabilized_confidence && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Confidence Level:</span>
+                          <span className="text-green-400">{(property as any).rent_stabilized_confidence}%</span>
+                        </div>
+                      )}
+                      
+                      {(property as any).potential_monthly_savings && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Potential Monthly Savings:</span>
+                          <span className="text-green-400">{formatPrice((property as any).potential_monthly_savings)}</span>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Description with collapsible */}
                 {property.description && (

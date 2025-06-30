@@ -76,11 +76,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     // For rent-stabilized properties, handle above/below market differently
     if (property.isRentStabilized && property.discount_percent !== undefined) {
       const percent = Math.abs(property.discount_percent);
-      if (property.discount_percent > 0) {
-        return `${Math.round(percent)}% above market`;
-      } else if (property.discount_percent < 0) {
-        return `${Math.round(percent)}% below market`;
-      }
+      // All rent-stabilized should be "below market"
+      return `${Math.round(percent)}% below market`;
     }
     
     // First try to get from discount_percent field
@@ -102,20 +99,53 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
     ? property.rent_per_sqft
     : property.price_per_sqft;
 
-  // Default colors if not provided
-  const defaultColors = {
-    badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
-    scoreText: 'text-gray-300',
-    scoreBorder: 'border-gray-600',
-    hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
-  };
-
-  const colors = gradeColors || defaultColors;
-
   // Determine the display grade - for rent-stabilized, calculate from score
   const displayGrade = property.isRentStabilized 
     ? calculateGradeFromScore(Number(property.score))
     : String(property.grade);
+
+  // Get colors based on the actual grade (not just rent-stabilized status)
+  const getGradeColorsForProperty = (grade: string, isRentStabilized?: boolean) => {
+    if (grade === 'A+') {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-yellow-400',
+        scoreBorder: 'border-yellow-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
+      };
+    } else if (grade === 'A' || grade === 'A-') {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-purple-400',
+        scoreBorder: 'border-purple-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
+      };
+    } else if (grade.startsWith('B')) {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-blue-400',
+        scoreBorder: 'border-blue-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+      };
+    } else {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-gray-300',
+        scoreBorder: 'border-gray-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
+      };
+    }
+  };
+
+  // Use grade-based colors instead of passed gradeColors for rent-stabilized
+  const colors = property.isRentStabilized 
+    ? getGradeColorsForProperty(displayGrade, true)
+    : (gradeColors || {
+        badge: 'bg-white/20 backdrop-blur-md border-white/30 text-white',
+        scoreText: 'text-gray-300',
+        scoreBorder: 'border-gray-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+      });
 
   // LOG THE ACTUAL VALUES BEING RENDERED
   console.log(`🎯 RENDERING VALUES FOR [${property.address}]:`, {
@@ -139,7 +169,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         
         {/* Grade badge - positioned absolutely over the image, top left */}
         <div className="absolute top-4 left-4 z-10">
-          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold tracking-tight shadow-lg">
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 text-black w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold tracking-tight shadow-lg">
             {displayGrade}
           </div>
         </div>
