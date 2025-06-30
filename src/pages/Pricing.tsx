@@ -3,26 +3,31 @@ import { Link } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const { subscribed, subscriptionTier, createCheckout, openCustomerPortal } = useSubscription();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "Pricing - Realer Estate | Find NYC Real Estate Deals Early";
     
-    // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access to undervalued properties starting at $3/month.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access to undervalued properties starting at $3/month.';
+      meta.content = 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.';
       document.head.appendChild(meta);
     }
 
-    // Update Open Graph tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', 'Pricing - Realer Estate | Find NYC Real Estate Deals Early');
     
@@ -32,7 +37,6 @@ const Pricing = () => {
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/pricing');
 
-    // Update Twitter tags
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', 'Pricing - Realer Estate | Find NYC Real Estate Deals Early');
     
@@ -42,10 +46,69 @@ const Pricing = () => {
     const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/pricing');
 
-    // Update canonical URL
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/pricing');
-  }, []);
+
+    // Check for success/cancel URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      toast({
+        title: "Subscription successful!",
+        description: "Welcome to the Unlimited plan. You now have access to all deals.",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, '/pricing');
+    } else if (urlParams.get('canceled') === 'true') {
+      toast({
+        title: "Subscription canceled",
+        description: "No worries! You can subscribe anytime.",
+        variant: "destructive",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, '/pricing');
+    }
+  }, [toast]);
+
+  const handleSubscribe = async (billingCycle: 'monthly' | 'annual') => {
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const checkoutUrl = await createCheckout(billingCycle);
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      await openCustomerPortal();
+    } catch (error) {
+      console.error('Customer portal error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open subscription management. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -101,20 +164,36 @@ const Pricing = () => {
                   Search and filter
                 </li>
               </ul>
-              <button className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight hover:bg-gray-700 transition-all mt-8">
-                Current Plan
+              <button 
+                className={`w-full py-3 rounded-full font-medium tracking-tight transition-all mt-8 ${
+                  !subscribed 
+                    ? 'bg-gray-800 text-white hover:bg-gray-700' 
+                    : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                }`}
+                disabled={subscribed}
+              >
+                {!subscribed ? 'Current Plan' : 'Free Plan'}
               </button>
             </div>
 
             {/* Unlimited Plan */}
             <div className="relative flex flex-col">
-              {/* Card with animated border */}
-              <div className="relative overflow-hidden rounded-2xl p-[3px] bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
+              {/* Card with animated border - highlight if this is the current plan */}
+              <div className={`relative overflow-hidden rounded-2xl p-[3px] ${
+                subscribed 
+                  ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
+                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
+              }`}>
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
-                  {/* Header with title only */}
-                  <div className="mb-4">
+                  {/* Header with subscription status badge */}
+                  <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
+                    {subscribed && (
+                      <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-medium">
+                        Your Plan
+                      </span>
+                    )}
                   </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">
                     {isAnnual ? (
@@ -141,13 +220,39 @@ const Pricing = () => {
                       Advanced deal analysis
                     </li>
                   </ul>
-                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200">
-                    {isAnnual ? "Coming soon" : "Coming soon"}
-                  </button>
+                  
+                  {subscribed ? (
+                    <button
+                      onClick={handleManageSubscription}
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200"
+                    >
+                      Manage Subscription
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
+                      disabled={loading}
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'Loading...' : `Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Subscription status display */}
+          {subscribed && subscriptionTier && (
+            <div className="mt-8 text-center">
+              <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-green-400 font-medium">
+                  Active {subscriptionTier} Subscription
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -160,11 +265,25 @@ const Pricing = () => {
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
             Join the platform that actually works for buyers.
           </p>
-          <Link to="/join">
-            <HoverButton className="text-white font-semibold tracking-tight">
-              Join now.
-            </HoverButton>
-          </Link>
+          {!user ? (
+            <Link to="/join">
+              <HoverButton className="text-white font-semibold tracking-tight">
+                Join now.
+              </HoverButton>
+            </Link>
+          ) : !subscribed ? (
+            <button
+              onClick={() => handleSubscribe('monthly')}
+              disabled={loading}
+              className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Loading...' : 'Start Your Subscription'}
+            </button>
+          ) : (
+            <div className="text-green-400 font-semibold text-lg">
+              You're all set! Enjoy unlimited access to all deals.
+            </div>
+          )}
         </div>
       </section>
     </div>
