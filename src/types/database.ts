@@ -161,4 +161,16 @@ export interface SavedProperty {
   saved_at: string;
 }
 
+export interface Subscriber {
+  id: string;
+  user_id: string;
+  email: string;
+  stripe_customer_id?: string;
+  subscribed: boolean;
+  subscription_tier?: string;
+  subscription_end?: string;
+  updated_at: string;
+  created_at: string;
+}
+
 export type PropertyListing = UndervaluedSales | UndervaluedRentals;

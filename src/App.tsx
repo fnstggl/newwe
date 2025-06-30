@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import Index from "./pages/Index";
 import Search from "./pages/Search";
 import Buy from "./pages/Buy";
@@ -37,7 +38,7 @@ const AppContent = () => {
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/manifesto" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/join" element={<Join setShowOnboarding={setShowOnboarding} />} />
+        <Route path="/join" element={<Join onShowOnboarding={() => setShowOnboarding(true)} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFound />} />
@@ -59,9 +60,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
+        <SubscriptionProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </SubscriptionProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

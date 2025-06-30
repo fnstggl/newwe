@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,25 +13,31 @@ interface SavedProperty {
 export const useSavedProperties = () => {
   const { user } = useAuth();
   const [savedProperties, setSavedProperties] = useState<SavedProperty[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchSavedProperties = async () => {
     if (!user) return;
     
-    setLoading(true);
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('saved_properties')
         .select('*')
-        .eq('user_id', user.id)
-        .order('saved_at', { ascending: false });
+        .eq('user_id', user.id);
 
       if (error) throw error;
-      setSavedProperties(data || []);
+      
+      // Ensure property_type is properly typed
+      const typedData = data.map(item => ({
+        ...item,
+        property_type: item.property_type as 'sale' | 'rental'
+      }));
+      
+      setSavedProperties(typedData);
     } catch (error) {
       console.error('Error fetching saved properties:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -94,19 +99,15 @@ export const useSavedProperties = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchSavedProperties();
-    } else {
-      setSavedProperties([]);
-    }
+    fetchSavedProperties();
   }, [user]);
 
   return {
     savedProperties,
-    loading,
+    isLoading,
     saveProperty,
     unsaveProperty,
     isSaved,
-    fetchSavedProperties
+    refetch: fetchSavedProperties,
   };
 };

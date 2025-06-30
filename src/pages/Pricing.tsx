@@ -1,11 +1,18 @@
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+  const { subscribed, subscriptionTier, createCheckout, openCustomerPortal, isLoading, checkSubscription } = useSubscription();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -46,6 +53,60 @@ const Pricing = () => {
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/pricing');
   }, []);
+
+  // Handle success/cancel from Stripe
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    
+    if (success === 'true') {
+      toast({
+        title: "Payment Successful!",
+        description: "Welcome to the Unlimited plan! Your subscription is now active.",
+      });
+      // Refresh subscription status
+      checkSubscription();
+    } else if (canceled === 'true') {
+      toast({
+        title: "Payment Canceled",
+        description: "Your payment was canceled. You can try again anytime.",
+        variant: "destructive",
+      });
+    }
+  }, [searchParams, toast, checkSubscription]);
+
+  const handleSubscribe = async (billingType: 'monthly' | 'annual') => {
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to subscribe.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await createCheckout(billingType);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      await openCustomerPortal();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to open subscription management. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -101,7 +162,10 @@ const Pricing = () => {
                   Search and filter
                 </li>
               </ul>
-              <button className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight hover:bg-gray-700 transition-all mt-8">
+              <button 
+                className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight hover:bg-gray-700 transition-all mt-8"
+                disabled
+              >
                 Current Plan
               </button>
             </div>
@@ -114,7 +178,14 @@ const Pricing = () => {
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   {/* Header with title only */}
                   <div className="mb-4">
-                    <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight">
+                      Unlimited
+                      {subscribed && subscriptionTier && (
+                        <span className="ml-2 text-sm bg-green-600 text-white px-2 py-1 rounded-full">
+                          Active - {subscriptionTier}
+                        </span>
+                      )}
+                    </h3>
                   </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">
                     {isAnnual ? (
@@ -141,9 +212,24 @@ const Pricing = () => {
                       Advanced deal analysis
                     </li>
                   </ul>
-                  <button className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200">
-                    {isAnnual ? "Coming soon" : "Coming soon"}
-                  </button>
+                  
+                  {subscribed ? (
+                    <button 
+                      onClick={handleManageSubscription}
+                      disabled={isLoading}
+                      className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {isLoading ? "Loading..." : "Manage Subscription"}
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
+                      disabled={isLoading}
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all mt-8 hover:bg-gray-200 disabled:opacity-50"
+                    >
+                      {isLoading ? "Loading..." : `Subscribe ${isAnnual ? "Annually" : "Monthly"}`}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
