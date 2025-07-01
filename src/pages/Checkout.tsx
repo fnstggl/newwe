@@ -39,6 +39,8 @@ const Checkout = () => {
     const createPaymentIntent = async () => {
       try {
         console.log('Creating payment intent with billing cycle:', billingCycle);
+        console.log('Session available:', !!session);
+        console.log('Access token available:', !!session?.access_token);
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
@@ -74,10 +76,13 @@ const Checkout = () => {
       }
     };
 
-    if (session) {
+    if (session?.access_token) {
       createPaymentIntent();
+    } else {
+      console.log('Waiting for session with access token...');
+      setLoading(false);
     }
-  }, [user, session, billingCycle, navigate, toast]);
+  }, [user, session?.access_token, billingCycle, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
@@ -120,6 +125,14 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
         <div className="text-xl tracking-tight">Loading checkout...</div>
+      </div>
+    );
+  }
+
+  if (!session?.access_token) {
+    return (
+      <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
+        <div className="text-xl tracking-tight">Authenticating...</div>
       </div>
     );
   }
