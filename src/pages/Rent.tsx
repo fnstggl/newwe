@@ -9,11 +9,11 @@ import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { UndervaluedRentStabilized } from "@/types/database";
+
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
+
 const Rent = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -29,31 +29,38 @@ const Rent = () => {
   const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+
   useEffect(() => {
     fetchNeighborhoods();
     fetchProperties(true);
   }, []);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       fetchProperties(true);
     }, 500);
+
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowNeighborhoodDropdown(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "NYC Rental Apartments - Find Undervalued Rentals | Realer Estate";
-
+    
     // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -68,16 +75,20 @@ const Rent = () => {
     // Update Open Graph tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', 'NYC Rental Apartments - Find Undervalued Rentals | Realer Estate');
+    
     const ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) ogDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/rent');
 
     // Update Twitter tags
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', 'NYC Rental Apartments - Find Undervalued Rentals | Realer Estate');
+    
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterDescription) twitterDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    
     const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/rent');
 
@@ -85,12 +96,26 @@ const Rent = () => {
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/rent');
   }, []);
+
   const fetchNeighborhoods = async () => {
     try {
       // Fetch neighborhoods from both tables
-      const [rentalsResult, rentStabilizedResult] = await Promise.all([supabase.from('undervalued_rentals').select('neighborhood').not('neighborhood', 'is', null).order('neighborhood'), supabase.from('undervalued_rent_stabilized').select('neighborhood').not('neighborhood', 'is', null).order('neighborhood')]);
+      const [rentalsResult, rentStabilizedResult] = await Promise.all([
+        supabase
+          .from('undervalued_rentals')
+          .select('neighborhood')
+          .not('neighborhood', 'is', null)
+          .order('neighborhood'),
+        supabase
+          .from('undervalued_rent_stabilized')
+          .select('neighborhood')
+          .not('neighborhood', 'is', null)
+          .order('neighborhood')
+      ]);
+
       const rentalNeighborhoods = rentalsResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
       const rentStabilizedNeighborhoods = rentStabilizedResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
+      
       const allNeighborhoods = [...rentalNeighborhoods, ...rentStabilizedNeighborhoods];
       const uniqueNeighborhoods = [...new Set(allNeighborhoods)];
       setNeighborhoods(uniqueNeighborhoods);
@@ -98,14 +123,14 @@ const Rent = () => {
       console.error('Error fetching neighborhoods:', error);
     }
   };
+
   const normalizeRentStabilizedProperty = (property: UndervaluedRentStabilized): any => {
     return {
       ...property,
       // Map rent-stabilized fields to match regular rental fields
       zipcode: property.zip_code,
       rent_per_sqft: property.sqft ? property.monthly_rent / property.sqft : null,
-      grade: 'RS',
-      // Special grade for rent-stabilized
+      grade: 'RS', // Special grade for rent-stabilized
       score: property.rent_stabilized_confidence,
       discount_percent: property.undervaluation_percent,
       reasoning: `Rent-stabilized property with ${property.rent_stabilized_confidence}% confidence`,
@@ -129,27 +154,36 @@ const Rent = () => {
       isRentStabilized: true // Flag to identify rent-stabilized properties
     };
   };
+
   const fetchProperties = async (reset = false) => {
     setLoading(true);
     const currentOffset = reset ? 0 : offset;
+
     try {
       // Build queries for both tables
-      let rentalsQuery = supabase.from('undervalued_rentals').select('*').eq('status', 'active').order('created_at', {
-        ascending: false
-      });
-      let rentStabilizedQuery = supabase.from('undervalued_rent_stabilized').select('*').eq('display_status', 'active').order('created_at', {
-        ascending: false
-      });
+      let rentalsQuery = supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      let rentStabilizedQuery = supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('display_status', 'active')
+        .order('created_at', { ascending: false });
 
       // Apply filters to both queries
       if (searchTerm.trim()) {
         rentalsQuery = rentalsQuery.ilike('address', `%${searchTerm.trim()}%`);
         rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
       }
+
       if (zipCode.trim()) {
         rentalsQuery = rentalsQuery.ilike('zipcode', `${zipCode.trim()}%`);
         rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
       }
+
       if (maxPrice.trim()) {
         const priceValue = parseInt(maxPrice.trim());
         if (!isNaN(priceValue) && priceValue > 0) {
@@ -157,6 +191,7 @@ const Rent = () => {
           rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
         }
       }
+
       if (bedrooms.trim()) {
         const bedroomValue = parseInt(bedrooms.trim());
         if (!isNaN(bedroomValue) && bedroomValue >= 0) {
@@ -164,19 +199,26 @@ const Rent = () => {
           rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
         }
       }
+
       if (selectedNeighborhoods.length > 0) {
         rentalsQuery = rentalsQuery.in('neighborhood', selectedNeighborhoods);
         rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
       }
 
       // Execute both queries
-      const [rentalsResult, rentStabilizedResult] = await Promise.all([rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1), rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)]);
+      const [rentalsResult, rentStabilizedResult] = await Promise.all([
+        rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
+        rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
+      ]);
+
       if (rentalsResult.error) {
         console.error('❌ RENTALS ERROR:', rentalsResult.error);
       }
+
       if (rentStabilizedResult.error) {
         console.error('❌ RENT STABILIZED ERROR:', rentStabilizedResult.error);
       }
+
       const rentalsData = rentalsResult.data || [];
       const rentStabilizedData = rentStabilizedResult.data || [];
 
@@ -186,6 +228,7 @@ const Rent = () => {
       // Combine and shuffle both types of properties
       const combinedData = [...rentalsData, ...normalizedRentStabilized];
       const shuffledData = combinedData.sort(() => Math.random() - 0.5);
+
       if (reset) {
         setProperties(shuffledData);
         setOffset(ITEMS_PER_PAGE);
@@ -193,6 +236,7 @@ const Rent = () => {
         setProperties(prev => [...prev, ...shuffledData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
+
       setHasMore(combinedData.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
@@ -201,17 +245,25 @@ const Rent = () => {
       setLoading(false);
     }
   };
+
   const loadMore = () => {
     if (!loading && hasMore) {
       fetchProperties(false);
     }
   };
+
   const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.includes(neighborhood) ? prev.filter(n => n !== neighborhood) : [...prev, neighborhood]);
+    setSelectedNeighborhoods(prev => 
+      prev.includes(neighborhood) 
+        ? prev.filter(n => n !== neighborhood)
+        : [...prev, neighborhood]
+    );
   };
+
   const clearNeighborhoods = () => {
     setSelectedNeighborhoods([]);
   };
+
   const getGradeColors = (grade: string, isRentStabilized?: boolean) => {
     if (isRentStabilized) {
       return {
@@ -221,6 +273,7 @@ const Rent = () => {
         hover: 'hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:border-green-400/40'
       };
     }
+    
     if (grade === 'A+') {
       return {
         badge: 'bg-white text-black border-gray-300',
@@ -251,6 +304,7 @@ const Rent = () => {
       };
     }
   };
+
   const handlePropertyClick = (property: any, index: number) => {
     // Only allow clicks on first 3 properties for non-authenticated users
     if (!user && index >= 3) {
@@ -262,7 +316,9 @@ const Rent = () => {
   // Determine which properties to show based on auth status
   const visibleProperties = user ? properties : properties.slice(0, 3);
   const shouldShowBlur = !user && properties.length > 3;
-  return <div className="min-h-screen bg-black text-white font-inter">
+
+  return (
+    <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
@@ -284,39 +340,79 @@ const Rent = () => {
               </label>
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onFocus={() => setShowNeighborhoodDropdown(true)} placeholder="e.g. East Village, 10009" className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
-                {showNeighborhoodDropdown && <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => setShowNeighborhoodDropdown(true)}
+                  placeholder="e.g. East Village, 10009"
+                  className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+                {showNeighborhoodDropdown && (
+                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
-                      {selectedNeighborhoods.length > 0 && <button onClick={clearNeighborhoods} className="text-xs text-blue-400 hover:text-blue-300">
+                      {selectedNeighborhoods.length > 0 && (
+                        <button
+                          onClick={clearNeighborhoods}
+                          className="text-xs text-blue-400 hover:text-blue-300"
+                        >
                           Clear all
-                        </button>}
+                        </button>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {neighborhoods.map(neighborhood => <button key={neighborhood} onClick={() => toggleNeighborhood(neighborhood)} className={`px-3 py-1 rounded-full text-sm transition-all ${selectedNeighborhoods.includes(neighborhood) ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}>
+                      {neighborhoods.map((neighborhood) => (
+                        <button
+                          key={neighborhood}
+                          onClick={() => toggleNeighborhood(neighborhood)}
+                          className={`px-3 py-1 rounded-full text-sm transition-all ${
+                            selectedNeighborhoods.includes(neighborhood)
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
                           {neighborhood}
-                        </button>)}
+                        </button>
+                      ))}
                     </div>
-                  </div>}
+                  </div>
+                )}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Zip Code
               </label>
-              <input type="text" value={zipCode} onChange={e => setZipCode(e.target.value)} placeholder="10009" className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
+              <input
+                type="text"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                placeholder="10009"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Max /month
               </label>
-              <input type="text" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} placeholder="$4,000" className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
+              <input
+                type="text"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="$4,000"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Bedrooms
               </label>
-              <select value={bedrooms} onChange={e => setBedrooms(e.target.value)} className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
+              <select
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
                 <option value="">Any</option>
                 <option value="0">Studio</option>
                 <option value="1">1+</option>
@@ -329,9 +425,15 @@ const Rent = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Min Grade
               </label>
-              <select value={minGrade} onChange={e => setMinGrade(e.target.value)} className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
+              <select
+                value={minGrade}
+                onChange={(e) => setMinGrade(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
                 <option value="">Any Grade</option>
-                {gradeOptions.map(grade => <option key={grade} value={grade}>{grade}</option>)}
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade}>{grade}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -341,51 +443,83 @@ const Rent = () => {
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
-            const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
-            const isBlurred = !user && index >= 3;
-            const isClickable = user || index < 3;
-            return <div key={`${property.id}-${index}`} className={`relative ${isBlurred ? 'blur-sm' : ''}`}>
-                  <PropertyCard property={property} isRental={true} onClick={() => handlePropertyClick(property, index)} gradeColors={gradeColors} />
-                  {!isClickable && <div className="absolute inset-0 cursor-not-allowed z-10" />}
-                </div>;
-          })}
+              const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
+              const isBlurred = !user && index >= 3;
+              const isClickable = user || index < 3;
+              
+              return (
+                <div
+                  key={`${property.id}-${index}`}
+                  className={`relative ${isBlurred ? 'blur-sm' : ''}`}
+                >
+                  <PropertyCard
+                    property={property}
+                    isRental={true}
+                    onClick={() => handlePropertyClick(property, index)}
+                    gradeColors={gradeColors}
+                  />
+                  {!isClickable && (
+                    <div className="absolute inset-0 cursor-not-allowed z-10" />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Sign-in button overlay for non-authenticated users */}
-          {!user && properties.length > 3 && <div className="relative">
+          {!user && properties.length > 3 && (
+            <div className="relative">
               <div className="flex justify-center mt-8">
-                <button onClick={() => navigate('/login')} className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100"
+                >
                   Sign in to view all properties
                 </button>
               </div>
-            </div>}
+            </div>
+          )}
         </div>
 
         {/* Loading state */}
-        {loading && <div className="text-center py-8">
+        {loading && (
+          <div className="text-center py-8">
             <div className="text-gray-400">Loading properties...</div>
-          </div>}
+          </div>
+        )}
 
         {/* Load More Button - only show for authenticated users */}
-        {user && !loading && hasMore && properties.length > 0 && <div className="text-center py-8">
-            <HoverButton onClick={loadMore} className="text-slate-50">
+        {user && !loading && hasMore && properties.length > 0 && (
+          <div className="text-center py-8">
+            <HoverButton onClick={loadMore}>
               Load More Properties
             </HoverButton>
-          </div>}
+          </div>
+        )}
 
         {/* Empty State */}
-        {!loading && properties.length === 0 && <div className="text-center py-16">
+        {!loading && properties.length === 0 && (
+          <div className="text-center py-16">
             <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
               No properties found matching your criteria
             </h3>
             <p className="text-gray-500 tracking-tight">
               Try adjusting your search filters to see more results.
             </p>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Property Detail Modal */}
-      {selectedProperty && <PropertyDetail property={selectedProperty} isRental={true} onClose={() => setSelectedProperty(null)} />}
-    </div>;
+      {selectedProperty && (
+        <PropertyDetail
+          property={selectedProperty}
+          isRental={true}
+          onClose={() => setSelectedProperty(null)}
+        />
+      )}
+    </div>
+  );
 };
+
 export default Rent;
