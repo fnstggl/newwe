@@ -163,7 +163,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                   "Exhausting. Too many wasted hours scrolling on streeteasy to find a good deal",
                   "Frustrating. Every home looks overpriced",
                   "Cutthroat. Too much competition for every listing",
-                  "Chill. (I just started looking today)"
+                  "Chill. I just started looking today"
                 ].map((option) => (
                   <button
                     key={option}
