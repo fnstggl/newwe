@@ -163,7 +163,7 @@ const Checkout = () => {
             <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800">
               <h3 className="text-xl font-semibold mb-3 tracking-tight">Unlimited Plan</h3>
               <div className="text-3xl font-semibold mb-4 tracking-tight">{price}</div>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-2 text-gray-300 mb-4">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
                   Access to ALL deals
@@ -181,6 +181,11 @@ const Checkout = () => {
                   Advanced deal analysis
                 </li>
               </ul>
+              
+              {/* Recurring subscription text at bottom of plan box */}
+              <p className="text-xs text-gray-500 tracking-tight">
+                {billingCycle === 'annual' ? 'Annual recurring subscription, cancel any time.' : 'Monthly recurring subscription, cancel any time.'}
+              </p>
             </div>
           </div>
 

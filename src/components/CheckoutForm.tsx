@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -109,11 +108,9 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         )}
       </button>
 
-      {/* Security notice with cancellation text */}
+      {/* Security notice only */}
       <p className="text-xs text-gray-500 text-center tracking-tight">
         Your payment information is secure and encrypted. Powered by Stripe.
-        <br />
-        {billingCycle === 'annual' ? 'Annual recurring subscription, cancel any time.' : 'Monthly recurring subscription, cancel any time.'}
       </p>
     </form>
   );

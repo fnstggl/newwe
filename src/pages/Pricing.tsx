@@ -142,10 +142,10 @@ const Pricing = () => {
           
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Plan */}
-            <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col">
+            <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col h-full">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
-              <ul className="space-y-3 mb-12 text-gray-300 flex-grow">
+              <ul className="space-y-3 mb-8 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
                   See up to 3 deals per day (all for now)
@@ -164,7 +164,7 @@ const Pricing = () => {
                 </li>
               </ul>
               <button 
-                className={`w-full py-3 rounded-full font-medium tracking-tight transition-all mt-8 ${
+                className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
                   subscriptionTier === 'free'
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
@@ -176,9 +176,9 @@ const Pricing = () => {
             </div>
 
             {/* Unlimited Plan */}
-            <div className="relative flex flex-col">
+            <div className="relative flex flex-col h-full">
               {/* Card with animated border */}
-              <div className={`relative overflow-hidden rounded-2xl p-[3px] ${
+              <div className={`relative overflow-hidden rounded-2xl p-[3px] h-full ${
                 isOnCurrentPlan
                   ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
                   : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
