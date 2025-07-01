@@ -159,7 +159,7 @@ const Index = () => {
           </Link>
           
           {/* Footer Links */}
-          <div className="mt-16 mb-0">
+          <div className="mt-16 mb-2">
             <div className="flex justify-center space-x-8 text-xs text-gray-400">
               <Link to="/privacy" className="hover:text-gray-300 transition-colors">
                 Privacy Policy
