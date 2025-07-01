@@ -125,15 +125,6 @@ const Terms = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Contact Information</h2>
-            <p className="mb-4">
-              If you have questions about these Terms, please contact us at:
-            </p>
-            <p className="mb-2">Email: legal@realerestate.org</p>
-            <p className="mb-6">Address: New York, NY</p>
-          </section>
-
-          <section>
             <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Changes to Terms</h2>
             <p className="mb-6">
               We reserve the right to modify these Terms at any time. We will notify users of material changes by posting the updated Terms on our website. Your continued use of the Service after changes become effective constitutes acceptance of the new Terms.

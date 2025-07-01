@@ -117,15 +117,6 @@ const Privacy = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Contact Us</h2>
-            <p className="mb-4">
-              If you have questions about this Privacy Policy or our data practices, please contact us at:
-            </p>
-            <p className="mb-2">Email: privacy@realerestate.org</p>
-            <p className="mb-6">Address: New York, NY</p>
-          </section>
-
-          <section>
             <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Updates to This Policy</h2>
             <p className="mb-6">
               We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new policy on this page and updating the "Last updated" date.
