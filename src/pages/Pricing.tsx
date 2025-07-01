@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
@@ -100,17 +99,6 @@ const Pricing = () => {
   return (
     <div className="font-inter min-h-screen bg-black text-white">
       <GooeyFilter />
-      
-      {/* Header with back button */}
-      <div className="max-w-6xl mx-auto px-4 pt-8">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors tracking-tight mb-8"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Home
-        </button>
-      </div>
 
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
@@ -144,7 +132,7 @@ const Pricing = () => {
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col h-full">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
-              <ul className="space-y-3 mb-20 text-gray-300 flex-grow">
+              <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
                   See up to 3 deals per day (all for now)
@@ -200,7 +188,7 @@ const Pricing = () => {
                       <>$3<span className="text-lg text-gray-400">/mo</span></>
                     )}
                   </p>
-                  <ul className="space-y-3 mb-20 text-gray-300 flex-grow">
+                  <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
                       <strong className="text-white">Access to ALL deals</strong>
