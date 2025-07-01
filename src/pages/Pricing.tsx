@@ -67,11 +67,7 @@ const Pricing = () => {
 
   const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to subscribe.",
-        variant: "destructive",
-      });
+      navigate('/login');
       return;
     }
 
@@ -152,15 +148,15 @@ const Pricing = () => {
               </ul>
               <button 
                 className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
-                  subscriptionTier === 'free'
+                  isOnUnlimitedPlan
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                    : isOnUnlimitedPlan
-                    ? 'bg-gray-700 text-white hover:bg-gray-600'
+                    : subscriptionTier === 'free'
+                    ? 'bg-gray-800 text-white hover:bg-gray-700'
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
                 disabled={!isOnUnlimitedPlan && subscriptionTier !== 'free'}
               >
-                {subscriptionTier === 'free' ? 'Current Plan' : isOnUnlimitedPlan ? 'Lose Access' : 'Free Plan'}
+                {isOnUnlimitedPlan ? 'Lose Access' : subscriptionTier === 'free' ? 'Current Plan' : 'Free Plan'}
               </button>
             </div>
 
