@@ -8,11 +8,11 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
+
 const Buy = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -28,31 +28,38 @@ const Buy = () => {
   const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+
   useEffect(() => {
     fetchNeighborhoods();
     fetchProperties(true);
   }, []);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       fetchProperties(true);
     }, 500);
+
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowNeighborhoodDropdown(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
-
+    
     // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -67,16 +74,20 @@ const Buy = () => {
     // Update Open Graph tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    
     const ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/buy');
 
     // Update Twitter tags
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterDescription) twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    
     const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
 
@@ -84,48 +95,60 @@ const Buy = () => {
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/buy');
   }, []);
+
   const fetchNeighborhoods = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('undervalued_sales').select('neighborhood').not('neighborhood', 'is', null).order('neighborhood');
+      const { data, error } = await supabase
+        .from('undervalued_sales')
+        .select('neighborhood')
+        .not('neighborhood', 'is', null)
+        .order('neighborhood');
+
       if (error) {
         console.error('Error fetching neighborhoods:', error);
         return;
       }
+
       const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
       setNeighborhoods(uniqueNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
     }
   };
+
   const fetchProperties = async (reset = false) => {
     setLoading(true);
     const currentOffset = reset ? 0 : offset;
+
     try {
-      let query = supabase.from('undervalued_sales').select('*').eq('status', 'active').order('created_at', {
-        ascending: false
-      }); // Random-ish order instead of by score
+      let query = supabase
+        .from('undervalued_sales')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false }); // Random-ish order instead of by score
 
       if (searchTerm.trim()) {
         query = query.ilike('address', `%${searchTerm.trim()}%`);
       }
+
       if (zipCode.trim()) {
         query = query.ilike('zipcode', `${zipCode.trim()}%`);
       }
+
       if (maxPrice.trim()) {
         const priceValue = parseInt(maxPrice.trim());
         if (!isNaN(priceValue) && priceValue > 0) {
           query = query.lte('price', priceValue);
         }
       }
+
       if (bedrooms.trim()) {
         const bedroomValue = parseInt(bedrooms.trim());
         if (!isNaN(bedroomValue) && bedroomValue >= 0) {
           query = query.gte('bedrooms', bedroomValue);
         }
       }
+
       if (minGrade.trim()) {
         const gradeIndex = gradeOptions.indexOf(minGrade);
         if (gradeIndex !== -1) {
@@ -133,18 +156,19 @@ const Buy = () => {
           query = query.in('grade', allowedGrades);
         }
       }
+
       if (selectedNeighborhoods.length > 0) {
         query = query.in('neighborhood', selectedNeighborhoods);
       }
-      const {
-        data,
-        error
-      } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+
+      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+
       if (error) {
         console.error('❌ SUPABASE ERROR:', error);
         setProperties([]);
         return;
       }
+
       if (!data || !Array.isArray(data)) {
         console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
         setProperties([]);
@@ -153,6 +177,7 @@ const Buy = () => {
 
       // Shuffle the results to make them appear random
       const shuffledData = data.sort(() => Math.random() - 0.5);
+
       if (reset) {
         setProperties(shuffledData);
         setOffset(ITEMS_PER_PAGE);
@@ -160,6 +185,7 @@ const Buy = () => {
         setProperties(prev => [...prev, ...shuffledData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
+
       setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
@@ -168,52 +194,57 @@ const Buy = () => {
       setLoading(false);
     }
   };
+
   const loadMore = () => {
     if (!loading && hasMore) {
       fetchProperties(false);
     }
   };
+
   const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.includes(neighborhood) ? prev.filter(n => n !== neighborhood) : [...prev, neighborhood]);
+    setSelectedNeighborhoods(prev => 
+      prev.includes(neighborhood) 
+        ? prev.filter(n => n !== neighborhood)
+        : [...prev, neighborhood]
+    );
   };
+
   const clearNeighborhoods = () => {
     setSelectedNeighborhoods([]);
   };
+
   const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
-        badge: 'bg-white text-black border-gray-300',
-        // White background, black text
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-yellow-400',
         scoreBorder: 'border-yellow-600',
         hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-white text-black border-gray-300',
-        // White background, black text
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-purple-400',
         scoreBorder: 'border-purple-600',
         hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
       };
     } else if (grade.startsWith('B')) {
       return {
-        badge: 'bg-white text-black border-gray-300',
-        // White background, black text
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-blue-400',
         scoreBorder: 'border-blue-600',
         hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white text-black border-gray-300',
-        // White background, black text
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-gray-300',
         scoreBorder: 'border-gray-600',
         hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
       };
     }
   };
+
   const handlePropertyClick = (property: any, index: number) => {
     // Only allow clicks on first 3 properties for non-authenticated users
     if (!user && index >= 3) {
@@ -221,7 +252,9 @@ const Buy = () => {
     }
     setSelectedProperty(property);
   };
-  return <div className="min-h-screen bg-black text-white font-inter">
+
+  return (
+    <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
@@ -243,39 +276,79 @@ const Buy = () => {
               </label>
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} onFocus={() => setShowNeighborhoodDropdown(true)} placeholder="e.g. East Village, 10009" className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
-                {showNeighborhoodDropdown && <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onFocus={() => setShowNeighborhoodDropdown(true)}
+                  placeholder="e.g. East Village, 10009"
+                  className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+                {showNeighborhoodDropdown && (
+                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
-                      {selectedNeighborhoods.length > 0 && <button onClick={clearNeighborhoods} className="text-xs text-blue-400 hover:text-blue-300">
+                      {selectedNeighborhoods.length > 0 && (
+                        <button
+                          onClick={clearNeighborhoods}
+                          className="text-xs text-blue-400 hover:text-blue-300"
+                        >
                           Clear all
-                        </button>}
+                        </button>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {neighborhoods.map(neighborhood => <button key={neighborhood} onClick={() => toggleNeighborhood(neighborhood)} className={`px-3 py-1 rounded-full text-sm transition-all ${selectedNeighborhoods.includes(neighborhood) ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}>
+                      {neighborhoods.map((neighborhood) => (
+                        <button
+                          key={neighborhood}
+                          onClick={() => toggleNeighborhood(neighborhood)}
+                          className={`px-3 py-1 rounded-full text-sm transition-all ${
+                            selectedNeighborhoods.includes(neighborhood)
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
                           {neighborhood}
-                        </button>)}
+                        </button>
+                      ))}
                     </div>
-                  </div>}
+                  </div>
+                )}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Zip Code
               </label>
-              <input type="text" value={zipCode} onChange={e => setZipCode(e.target.value)} placeholder="10009" className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
+              <input
+                type="text"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                placeholder="10009"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Max Price
               </label>
-              <input type="text" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} placeholder="$1,500,000" className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight" />
+              <input
+                type="text"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="$1,500,000"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Bedrooms
               </label>
-              <select value={bedrooms} onChange={e => setBedrooms(e.target.value)} className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
+              <select
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
                 <option value="">Any</option>
                 <option value="0">Studio</option>
                 <option value="1">1+</option>
@@ -288,9 +361,15 @@ const Buy = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Min Grade
               </label>
-              <select value={minGrade} onChange={e => setMinGrade(e.target.value)} className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
+              <select
+                value={minGrade}
+                onChange={(e) => setMinGrade(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
                 <option value="">Any Grade</option>
-                {gradeOptions.map(grade => <option key={grade} value={grade}>{grade}</option>)}
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade}>{grade}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -300,51 +379,83 @@ const Buy = () => {
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
-            const gradeColors = getGradeColors(property.grade);
-            const isBlurred = !user && index >= 3;
-            const isClickable = user || index < 3;
-            return <div key={`${property.id}-${index}`} className={`relative ${isBlurred ? 'blur-sm' : ''}`}>
-                  <PropertyCard property={property} isRental={false} onClick={() => handlePropertyClick(property, index)} gradeColors={gradeColors} />
-                  {!isClickable && <div className="absolute inset-0 cursor-not-allowed z-10" />}
-                </div>;
-          })}
+              const gradeColors = getGradeColors(property.grade);
+              const isBlurred = !user && index >= 3;
+              const isClickable = user || index < 3;
+              
+              return (
+                <div
+                  key={`${property.id}-${index}`}
+                  className={`relative ${isBlurred ? 'blur-sm' : ''}`}
+                >
+                  <PropertyCard
+                    property={property}
+                    isRental={false}
+                    onClick={() => handlePropertyClick(property, index)}
+                    gradeColors={gradeColors}
+                  />
+                  {!isClickable && (
+                    <div className="absolute inset-0 cursor-not-allowed z-10" />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Sign-in button overlay for non-authenticated users */}
-          {!user && properties.length > 3 && <div className="relative">
+          {!user && properties.length > 3 && (
+            <div className="relative">
               <div className="flex justify-center mt-8">
-                <button onClick={() => navigate('/login')} className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100"
+                >
                   Sign in to view all properties
                 </button>
               </div>
-            </div>}
+            </div>
+          )}
         </div>
 
         {/* Loading state */}
-        {loading && <div className="text-center py-8">
+        {loading && (
+          <div className="text-center py-8">
             <div className="text-gray-400">Loading properties...</div>
-          </div>}
+          </div>
+        )}
 
         {/* Load More Button - only show for authenticated users */}
-        {user && !loading && hasMore && properties.length > 0 && <div className="text-center py-8">
-            <HoverButton onClick={loadMore} className="text-slate-50">
+        {user && !loading && hasMore && properties.length > 0 && (
+          <div className="text-center py-8">
+            <HoverButton onClick={loadMore}>
               Load More Properties
             </HoverButton>
-          </div>}
+          </div>
+        )}
 
         {/* Empty State */}
-        {!loading && properties.length === 0 && <div className="text-center py-16">
+        {!loading && properties.length === 0 && (
+          <div className="text-center py-16">
             <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
               No properties found matching your criteria
             </h3>
             <p className="text-gray-500 tracking-tight">
               Try adjusting your search filters to see more results.
             </p>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Property Detail Modal */}
-      {selectedProperty && <PropertyDetail property={selectedProperty} isRental={false} onClose={() => setSelectedProperty(null)} />}
-    </div>;
+      {selectedProperty && (
+        <PropertyDetail
+          property={selectedProperty}
+          isRental={false}
+          onClose={() => setSelectedProperty(null)}
+        />
+      )}
+    </div>
+  );
 };
+
 export default Buy;
