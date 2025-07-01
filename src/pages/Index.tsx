@@ -142,7 +142,7 @@ const Index = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4 relative overflow-hidden">
+      <section className="py-20 pb-0 px-4 relative overflow-hidden">
         {/* Blue Gradient Blob Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
