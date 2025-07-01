@@ -35,8 +35,13 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for recurring subscription using Supabase edge function
-    const createPaymentIntent = async () => {
+    // Wait a bit for session to be fully established
+    const initializeCheckout = async () => {
+      if (!session) {
+        console.log('No session available yet, waiting...');
+        return;
+      }
+
       try {
         console.log('Creating payment intent with billing cycle:', billingCycle);
         console.log('Session available:', !!session);
@@ -76,13 +81,13 @@ const Checkout = () => {
       }
     };
 
-    if (session?.access_token) {
-      createPaymentIntent();
-    } else {
-      console.log('Waiting for session with access token...');
-      setLoading(false);
-    }
-  }, [user, session?.access_token, billingCycle, navigate, toast]);
+    // Add a small delay to ensure session is properly set
+    const timer = setTimeout(() => {
+      initializeCheckout();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [user, session, billingCycle, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
@@ -129,7 +134,7 @@ const Checkout = () => {
     );
   }
 
-  if (!session?.access_token) {
+  if (!session) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
         <div className="text-xl tracking-tight">Authenticating...</div>
