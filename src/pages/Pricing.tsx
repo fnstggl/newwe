@@ -195,7 +195,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Email alerts for new deals
+                      Email alerts for new deals (coming soon)
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
