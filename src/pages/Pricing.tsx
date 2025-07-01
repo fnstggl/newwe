@@ -144,7 +144,7 @@ const Pricing = () => {
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col h-full">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
-              <ul className="space-y-3 mb-16 text-gray-300 flex-grow">
+              <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
                   See up to 3 deals per day (all for now)
@@ -200,7 +200,7 @@ const Pricing = () => {
                       <>$3<span className="text-lg text-gray-400">/mo</span></>
                     )}
                   </p>
-                  <ul className="space-y-3 mb-16 text-gray-300 flex-grow">
+                  <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
                       <strong className="text-white">Access to ALL deals</strong>
