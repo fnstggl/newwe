@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -142,7 +143,7 @@ const Index = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 pb-0 px-4 relative overflow-hidden">
+      <section className="py-20 px-4 relative overflow-hidden">
         {/* Blue Gradient Blob Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
@@ -157,18 +158,6 @@ const Index = () => {
           <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
             Join now.
           </Link>
-          
-          {/* Footer Links */}
-          <div className="mt-16 mb-2">
-            <div className="flex justify-center space-x-8 text-xs text-gray-400">
-              <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-gray-300 transition-colors">
-                Terms of Service
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
     </div>;
