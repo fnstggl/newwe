@@ -112,7 +112,7 @@ const Privacy = () => {
           <section>
             <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Cookies and Tracking</h2>
             <p className="mb-6">
-              We use cookies and similar technologies to enhance your experience, analyze usage, and provide personalized content. You can control cookie settings through your browser preferences.
+              We only collect necessary cookies. We do not collect any more cookies beyond that.
             </p>
           </section>
 
