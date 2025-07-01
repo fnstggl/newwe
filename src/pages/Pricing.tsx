@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -93,9 +92,9 @@ const Pricing = () => {
   };
 
   // Check if user is on current plan type
-  const isOnCurrentPlan = subscribed && subscriptionTier === 'unlimited';
-  const isOnMonthlyPlan = isOnCurrentPlan && subscriptionRenewal === 'monthly';
-  const isOnAnnualPlan = isOnCurrentPlan && subscriptionRenewal === 'annual';
+  const isOnUnlimitedPlan = subscribed && subscriptionTier === 'unlimited';
+  const isOnMonthlyPlan = isOnUnlimitedPlan && subscriptionRenewal === 'monthly';
+  const isOnAnnualPlan = isOnUnlimitedPlan && subscriptionRenewal === 'annual';
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -155,13 +154,13 @@ const Pricing = () => {
                 className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
                   subscriptionTier === 'free'
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                    : isOnCurrentPlan
+                    : isOnUnlimitedPlan
                     ? 'bg-gray-700 text-white hover:bg-gray-600'
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
-                disabled={!isOnCurrentPlan && subscriptionTier !== 'free'}
+                disabled={!isOnUnlimitedPlan && subscriptionTier !== 'free'}
               >
-                {subscriptionTier === 'free' ? 'Current Plan' : isOnCurrentPlan ? 'Lose Access' : 'Free Plan'}
+                {subscriptionTier === 'free' ? 'Current Plan' : isOnUnlimitedPlan ? 'Lose Access' : 'Free Plan'}
               </button>
             </div>
 
@@ -169,7 +168,7 @@ const Pricing = () => {
             <div className="relative flex flex-col h-full">
               {/* Card with animated border */}
               <div className={`relative overflow-hidden rounded-2xl p-[3px] h-full ${
-                isOnCurrentPlan
+                isOnUnlimitedPlan
                   ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
                   : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
               }`}>
@@ -178,7 +177,7 @@ const Pricing = () => {
                   {/* Header with subscription status badge */}
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
-                    {isOnCurrentPlan && (
+                    {isOnUnlimitedPlan && (
                       <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-medium">
                         Current Plan
                       </span>
@@ -210,7 +209,7 @@ const Pricing = () => {
                     </li>
                   </ul>
                   
-                  {isOnCurrentPlan ? (
+                  {isOnUnlimitedPlan ? (
                     <button
                       onClick={handleManageSubscription}
                       className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight transition-all hover:bg-blue-700"
@@ -238,7 +237,7 @@ const Pricing = () => {
           </div>
 
           {/* Subscription status display */}
-          {isOnCurrentPlan && (
+          {isOnUnlimitedPlan && (
             <div className="mt-8 text-center">
               <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
