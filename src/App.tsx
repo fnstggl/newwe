@@ -42,7 +42,7 @@ const AppContent = () => {
         <Route path="/manifesto" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/join" element={<Join />} />
+        <Route path="/join" element={<Join setShowOnboarding={setShowOnboarding} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />

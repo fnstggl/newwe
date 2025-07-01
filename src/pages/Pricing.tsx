@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -68,8 +67,11 @@ const Pricing = () => {
 
   const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
-      // Redirect to login instead of showing toast error
-      navigate('/login');
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -152,13 +154,11 @@ const Pricing = () => {
                 className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
                   subscriptionTier === 'free'
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                    : isOnCurrentPlan
-                    ? 'bg-gray-700 text-white cursor-not-allowed'
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
                 disabled={subscriptionTier !== 'free'}
               >
-                {subscriptionTier === 'free' ? 'Current Plan' : isOnCurrentPlan ? 'Lose Access' : 'Free Plan'}
+                {subscriptionTier === 'free' ? 'Current Plan' : 'Free Plan'}
               </button>
             </div>
 
@@ -210,9 +210,9 @@ const Pricing = () => {
                   {isOnCurrentPlan ? (
                     <button
                       onClick={handleManageSubscription}
-                      className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight transition-all hover:bg-blue-700"
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Current Plan
+                      Manage Subscription
                     </button>
                   ) : (
                     <button
