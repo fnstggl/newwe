@@ -67,7 +67,11 @@ const Pricing = () => {
 
   const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
-      navigate('/login');
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -88,9 +92,9 @@ const Pricing = () => {
   };
 
   // Check if user is on current plan type
-  const isOnUnlimitedPlan = subscribed && subscriptionTier === 'unlimited';
-  const isOnMonthlyPlan = isOnUnlimitedPlan && subscriptionRenewal === 'monthly';
-  const isOnAnnualPlan = isOnUnlimitedPlan && subscriptionRenewal === 'annual';
+  const isOnCurrentPlan = subscribed && subscriptionTier === 'unlimited';
+  const isOnMonthlyPlan = isOnCurrentPlan && subscriptionRenewal === 'monthly';
+  const isOnAnnualPlan = isOnCurrentPlan && subscriptionRenewal === 'annual';
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -148,15 +152,13 @@ const Pricing = () => {
               </ul>
               <button 
                 className={`w-full py-3 rounded-full font-medium tracking-tight transition-all ${
-                  isOnUnlimitedPlan
+                  subscriptionTier === 'free'
                     ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                    : subscriptionTier === 'free'
-                    ? 'bg-gray-800 text-white hover:bg-gray-700'
                     : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
-                disabled={!isOnUnlimitedPlan && subscriptionTier !== 'free'}
+                disabled={subscriptionTier !== 'free'}
               >
-                {isOnUnlimitedPlan ? 'Lose Access' : subscriptionTier === 'free' ? 'Current Plan' : 'Free Plan'}
+                {subscriptionTier === 'free' ? 'Current Plan' : 'Free Plan'}
               </button>
             </div>
 
@@ -164,7 +166,7 @@ const Pricing = () => {
             <div className="relative flex flex-col h-full">
               {/* Card with animated border */}
               <div className={`relative overflow-hidden rounded-2xl p-[3px] h-full ${
-                isOnUnlimitedPlan
+                isOnCurrentPlan
                   ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
                   : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
               }`}>
@@ -173,7 +175,7 @@ const Pricing = () => {
                   {/* Header with subscription status badge */}
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
-                    {isOnUnlimitedPlan && (
+                    {isOnCurrentPlan && (
                       <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-medium">
                         Current Plan
                       </span>
@@ -205,12 +207,12 @@ const Pricing = () => {
                     </li>
                   </ul>
                   
-                  {isOnUnlimitedPlan ? (
+                  {isOnCurrentPlan ? (
                     <button
                       onClick={handleManageSubscription}
-                      className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight transition-all hover:bg-blue-700"
+                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Current Plan
+                      Manage Subscription
                     </button>
                   ) : (
                     <button
@@ -233,7 +235,7 @@ const Pricing = () => {
           </div>
 
           {/* Subscription status display */}
-          {isOnUnlimitedPlan && (
+          {isOnCurrentPlan && (
             <div className="mt-8 text-center">
               <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
