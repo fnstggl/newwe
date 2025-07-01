@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -160,7 +159,7 @@ const Index = () => {
           </Link>
           
           {/* Footer Links */}
-          <div className="mt-16 pt-8 border-t border-gray-700/30">
+          <div className="mt-8">
             <div className="flex justify-center space-x-8 text-sm text-gray-400">
               <Link to="/privacy" className="hover:text-gray-300 transition-colors">
                 Privacy Policy
