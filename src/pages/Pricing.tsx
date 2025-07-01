@@ -67,11 +67,7 @@ const Pricing = () => {
 
   const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to subscribe.",
-        variant: "destructive",
-      });
+      navigate('/login');
       return;
     }
 
