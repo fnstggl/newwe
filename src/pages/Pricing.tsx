@@ -225,7 +225,7 @@ const Pricing = () => {
                     >
                       {(isAnnual && isOnMonthlyPlan) || (!isAnnual && isOnAnnualPlan)
                         ? `Switch to ${isAnnual ? 'Annual' : 'Monthly'}`
-                        : `Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`
+                        : 'Access Everything'
                       }
                     </button>
                   )}
