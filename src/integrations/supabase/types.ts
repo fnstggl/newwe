@@ -708,7 +708,7 @@ export type Database = {
           transit_score: number | null
           undervaluation_analysis: Json
           undervaluation_confidence: number
-          undervaluation_method: string
+          undervaluation_method: string | null
           undervaluation_percent: number
           updated_at: string
           view_count: number | null
@@ -773,7 +773,7 @@ export type Database = {
           transit_score?: number | null
           undervaluation_analysis?: Json
           undervaluation_confidence: number
-          undervaluation_method: string
+          undervaluation_method?: string | null
           undervaluation_percent: number
           updated_at?: string
           view_count?: number | null
@@ -838,7 +838,7 @@ export type Database = {
           transit_score?: number | null
           undervaluation_analysis?: Json
           undervaluation_confidence?: number
-          undervaluation_method?: string
+          undervaluation_method?: string | null
           undervaluation_percent?: number
           updated_at?: string
           view_count?: number | null
@@ -1331,6 +1331,25 @@ export type Database = {
       cleanup_old_cache_entries: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_users_by_neighborhoods: {
+        Args: { neighborhoods: string[] }
+        Returns: {
+          email: string
+          neighborhood_preferences: string[]
+        }[]
+      }
+      get_users_for_neighborhood: {
+        Args: { neighborhood: string }
+        Returns: {
+          created_at: string
+          email_address: string | null
+          id: string
+          name: string | null
+          neighborhood_preferences: string[] | null
+          subscription_plan: string
+          subscription_renewal: string | null
+        }[]
       }
       mark_likely_rented_listings: {
         Args: Record<PropertyKey, never>
