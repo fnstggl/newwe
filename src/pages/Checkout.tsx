@@ -153,7 +153,7 @@ const Checkout = () => {
             {/* Reference image */}
             <div className="relative">
               <img
-                src="/lovable-uploads/f3955d1d-5ae6-4636-a28f-14650db0b254.png"
+                src="/lovable-uploads/d100a766-4e80-4bbb-89b4-46c97dd6b5c2.png"
                 alt="NYC Real Estate Platform"
                 className="w-full max-w-md rounded-xl border border-gray-800"
               />

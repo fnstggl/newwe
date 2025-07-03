@@ -1359,6 +1359,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      retry_send_property_emails: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
