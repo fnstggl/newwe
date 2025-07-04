@@ -35,8 +35,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const checkSubscription = async () => {
     if (!user || !session) {
       setSubscribed(false);
-      setSubscriptionTier(null);
-      setSubscriptionRenewal(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
       return;
     }
@@ -119,8 +119,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       checkSubscription();
     } else {
       setSubscribed(false);
-      setSubscriptionTier(null);
-      setSubscriptionRenewal(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
     }
   }, [user, session]);
