@@ -10,7 +10,7 @@ const corsHeaders = {
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CUSTOMER-PORTAL] ${step}${detailsStr}`);
+  console.log(`[CANCEL-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -25,10 +25,10 @@ serve(async (req) => {
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
     logStep("Stripe key verified");
 
+    // Initialize Supabase client with the anon key for user authentication
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
     const authHeader = req.headers.get("Authorization");
@@ -42,43 +42,53 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Get customer ID from profiles table first
-    const { data: profileData, error: profileError } = await supabaseClient
-      .from('profiles')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
+    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+    
+    // Find the customer by email
+    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    if (customers.data.length === 0) {
+      throw new Error("No Stripe customer found for this user");
+    }
+    const customerId = customers.data[0].id;
+    logStep("Found Stripe customer", { customerId });
 
-    let customerId = profileData?.stripe_customer_id;
-
-    if (!customerId) {
-      // Fall back to Stripe customer lookup
-      const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-      if (customers.data.length === 0) {
-        throw new Error("No Stripe customer found for this user");
-      }
-      customerId = customers.data[0].id;
-      logStep("Found Stripe customer via fallback", { customerId });
-    } else {
-      logStep("Found customer ID from profile", { customerId });
+    // Find active subscriptions for this customer
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "active",
+      limit: 10,
+    });
+    
+    if (subscriptions.data.length === 0) {
+      logStep("No active subscriptions found");
+      return new Response(JSON.stringify({ success: true, message: "No active subscriptions to cancel" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
     }
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-    const origin = req.headers.get("origin") || "http://localhost:3000";
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: customerId,
-      return_url: `${origin}/pricing`,
-    });
-    logStep("Customer portal session created", { sessionId: portalSession.id, url: portalSession.url });
+    // Cancel all active subscriptions
+    const cancelledSubscriptions = [];
+    for (const subscription of subscriptions.data) {
+      const cancelled = await stripe.subscriptions.cancel(subscription.id);
+      cancelledSubscriptions.push(cancelled.id);
+      logStep("Cancelled subscription", { subscriptionId: cancelled.id });
+    }
 
-    return new Response(JSON.stringify({ url: portalSession.url }), {
+    logStep("All subscriptions cancelled", { count: cancelledSubscriptions.length });
+
+    return new Response(JSON.stringify({ 
+      success: true, 
+      cancelledSubscriptions,
+      message: "Subscription(s) cancelled successfully"
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in customer-portal", { message: errorMessage });
+    logStep("ERROR in cancel-subscription", { message: errorMessage });
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
