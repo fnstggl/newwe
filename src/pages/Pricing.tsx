@@ -92,7 +92,7 @@ const Pricing = () => {
     navigate('/cancel-subscription');
   };
 
-  // Check if user is on unlimited plan
+  // Check if user is on unlimited plan using userProfile from AuthContext
   const isOnUnlimitedPlan = userProfile?.subscription_plan === 'unlimited';
 
   return (
