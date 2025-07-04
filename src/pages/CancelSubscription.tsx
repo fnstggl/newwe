@@ -1,14 +1,46 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const CancelSubscription = () => {
   const navigate = useNavigate();
   const { openCustomerPortal } = useSubscription();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
+
+  // Load user's profile data to check subscription plan
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error loading user profile:', error);
+          return;
+        }
+        
+        if (data) {
+          setProfileData(data);
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
 
   const handleCancelSubscription = async () => {
     setIsLoading(true);
@@ -53,13 +85,15 @@ const CancelSubscription = () => {
           </div>
 
           <div className="space-y-4">
-            <button
-              onClick={handleCancelSubscription}
-              disabled={isLoading}
-              className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Opening...' : 'Manage Subscription'}
-            </button>
+            {profileData?.subscription_plan === 'unlimited' && (
+              <button
+                onClick={handleCancelSubscription}
+                disabled={isLoading}
+                className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Opening...' : 'Manage Subscription'}
+              </button>
+            )}
             
             <button
               onClick={handleGoBack}

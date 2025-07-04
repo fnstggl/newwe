@@ -6,13 +6,43 @@ import { useState, useEffect } from "react";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
   const navigate = useNavigate();
   const { subscribed, subscriptionTier, subscriptionRenewal, openCustomerPortal } = useSubscription();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Load user's profile data to check subscription plan
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error loading user profile:', error);
+          return;
+        }
+        
+        if (data) {
+          setProfileData(data);
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -92,8 +122,8 @@ const Pricing = () => {
     navigate('/cancel-subscription');
   };
 
-  // Check if user is on unlimited plan
-  const isOnUnlimitedPlan = subscribed && subscriptionTier === 'unlimited';
+  // Check if user is on unlimited plan using profiles table
+  const isOnUnlimitedPlan = profileData?.subscription_plan === 'unlimited';
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -237,7 +267,7 @@ const Pricing = () => {
               <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-green-400 font-medium">
-                  Active {subscriptionTier === 'unlimited' ? 'Unlimited' : subscriptionTier} Subscription ({subscriptionRenewal})
+                  Active {profileData?.subscription_plan === 'unlimited' ? 'Unlimited' : profileData?.subscription_plan} Subscription ({profileData?.subscription_renewal || 'monthly'})
                 </span>
               </div>
             </div>
@@ -260,7 +290,7 @@ const Pricing = () => {
                 Join now.
               </HoverButton>
             </Link>
-          ) : !subscribed ? (
+          ) : !isOnUnlimitedPlan ? (
             <button
               onClick={() => handleSubscribe('monthly')}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
