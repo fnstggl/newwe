@@ -2,33 +2,48 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 
-interface SavedProperty {
+export interface SavedProperty {
   id: string;
+  user_id: string;
   property_id: string;
   property_type: 'sale' | 'rental';
   saved_at: string;
 }
 
 export const useSavedProperties = () => {
-  const { user } = useAuth();
   const [savedProperties, setSavedProperties] = useState<SavedProperty[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   const fetchSavedProperties = async () => {
-    if (!user) return;
-    
-    setLoading(true);
+    if (!user) {
+      setSavedProperties([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('saved_properties')
         .select('*')
-        .eq('user_id', user.id)
-        .order('saved_at', { ascending: false });
+        .eq('user_id', user.id);
 
-      if (error) throw error;
-      setSavedProperties(data || []);
+      if (error) {
+        console.error('Error fetching saved properties:', error);
+        return;
+      }
+
+      // Type-safe conversion
+      const typedData: SavedProperty[] = (data || []).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        property_id: item.property_id,
+        property_type: item.property_type as 'sale' | 'rental',
+        saved_at: item.saved_at
+      }));
+
+      setSavedProperties(typedData);
     } catch (error) {
       console.error('Error fetching saved properties:', error);
     } finally {
@@ -37,7 +52,7 @@ export const useSavedProperties = () => {
   };
 
   const saveProperty = async (propertyId: string, propertyType: 'sale' | 'rental') => {
-    if (!user) return false;
+    if (!user) return;
 
     try {
       const { error } = await supabase
@@ -48,65 +63,54 @@ export const useSavedProperties = () => {
           property_type: propertyType
         });
 
-      if (error) throw error;
-      
-      // Update local state
-      const newSavedProperty: SavedProperty = {
-        id: crypto.randomUUID(),
-        property_id: propertyId,
-        property_type: propertyType,
-        saved_at: new Date().toISOString()
-      };
-      setSavedProperties(prev => [newSavedProperty, ...prev]);
-      return true;
+      if (error) {
+        console.error('Error saving property:', error);
+        return;
+      }
+
+      // Refresh the saved properties list
+      await fetchSavedProperties();
     } catch (error) {
       console.error('Error saving property:', error);
-      return false;
     }
   };
 
-  const unsaveProperty = async (propertyId: string, propertyType: 'sale' | 'rental') => {
-    if (!user) return false;
+  const removeSavedProperty = async (propertyId: string) => {
+    if (!user) return;
 
     try {
       const { error } = await supabase
         .from('saved_properties')
         .delete()
         .eq('user_id', user.id)
-        .eq('property_id', propertyId)
-        .eq('property_type', propertyType);
+        .eq('property_id', propertyId);
 
-      if (error) throw error;
-      
-      // Update local state
-      setSavedProperties(prev => 
-        prev.filter(p => !(p.property_id === propertyId && p.property_type === propertyType))
-      );
-      return true;
+      if (error) {
+        console.error('Error removing saved property:', error);
+        return;
+      }
+
+      // Refresh the saved properties list
+      await fetchSavedProperties();
     } catch (error) {
-      console.error('Error unsaving property:', error);
-      return false;
+      console.error('Error removing saved property:', error);
     }
   };
 
-  const isSaved = (propertyId: string, propertyType: 'sale' | 'rental') => {
-    return savedProperties.some(p => p.property_id === propertyId && p.property_type === propertyType);
+  const isPropertySaved = (propertyId: string) => {
+    return savedProperties.some(prop => prop.property_id === propertyId);
   };
 
   useEffect(() => {
-    if (user) {
-      fetchSavedProperties();
-    } else {
-      setSavedProperties([]);
-    }
+    fetchSavedProperties();
   }, [user]);
 
   return {
     savedProperties,
     loading,
     saveProperty,
-    unsaveProperty,
-    isSaved,
-    fetchSavedProperties
+    removeSavedProperty,
+    isPropertySaved,
+    refetch: fetchSavedProperties
   };
 };

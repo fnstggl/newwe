@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         // Fetch user profile when user logs in (but not on signup)
-        if (session?.user && event !== 'SIGN_UP') {
+        if (session?.user && event !== 'SIGNED_UP') {
           setTimeout(() => {
             fetchUserProfile(session.user.id);
           }, 0);

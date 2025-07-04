@@ -22,7 +22,10 @@ serve(async (req) => {
     logStep("Function started");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!stripeKey) {
+      logStep("ERROR: STRIPE_SECRET_KEY is not set");
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
     logStep("Stripe key verified");
 
     const supabaseClient = createClient(
@@ -32,14 +35,23 @@ serve(async (req) => {
     );
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      logStep("ERROR: No authorization header provided");
+      throw new Error("No authorization header provided");
+    }
     logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError) {
+      logStep("ERROR: Authentication failed", { error: userError.message });
+      throw new Error(`Authentication error: ${userError.message}`);
+    }
     const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
+    if (!user?.email) {
+      logStep("ERROR: User not authenticated or email not available");
+      throw new Error("User not authenticated or email not available");
+    }
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Get customer ID from profiles table first
@@ -50,16 +62,35 @@ serve(async (req) => {
       .single();
 
     let customerId = profileData?.stripe_customer_id;
+    logStep("Profile lookup result", { 
+      profileFound: !!profileData, 
+      hasStripeCustomerId: !!customerId,
+      profileError: profileError?.message 
+    });
 
     if (!customerId) {
       // Fall back to Stripe customer lookup
+      logStep("No stripe_customer_id in profile, falling back to Stripe lookup");
       const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
       const customers = await stripe.customers.list({ email: user.email, limit: 1 });
       if (customers.data.length === 0) {
-        throw new Error("No Stripe customer found for this user");
+        logStep("ERROR: No Stripe customer found", { email: user.email });
+        throw new Error("No Stripe customer found for this user. Please contact support.");
       }
       customerId = customers.data[0].id;
       logStep("Found Stripe customer via fallback", { customerId });
+
+      // Update the profile with the found customer ID
+      const { error: updateError } = await supabaseClient
+        .from('profiles')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', user.id);
+      
+      if (updateError) {
+        logStep("Warning: Could not update profile with stripe_customer_id", { error: updateError.message });
+      } else {
+        logStep("Updated profile with stripe_customer_id", { customerId });
+      }
     } else {
       logStep("Found customer ID from profile", { customerId });
     }
