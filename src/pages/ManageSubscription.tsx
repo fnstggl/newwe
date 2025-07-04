@@ -3,29 +3,70 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const ManageSubscription = () => {
   const navigate = useNavigate();
-  const { user, userProfile, openCustomerPortal } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
 
+  // Load user's profile data to check subscription plan
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    
-    // If user is not on unlimited plan, redirect to pricing
-    if (userProfile && userProfile.subscription_plan !== 'unlimited') {
-      navigate('/pricing');
-    }
-  }, [user, userProfile, navigate]);
+    const loadUserProfile = async () => {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error loading user profile:', error);
+          return;
+        }
+        
+        if (data) {
+          setProfileData(data);
+          // If user is not on unlimited plan, redirect to pricing
+          if (data.subscription_plan !== 'unlimited') {
+            navigate('/pricing');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    };
+
+    loadUserProfile();
+  }, [user, navigate]);
 
   const handleOpenStripePortal = async () => {
     setIsLoading(true);
     try {
-      await openCustomerPortal();
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) {
+        console.error('Customer portal error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to open subscription management. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL returned');
+      }
     } catch (error) {
       console.error('Customer portal error:', error);
       toast({
@@ -42,7 +83,7 @@ const ManageSubscription = () => {
     navigate('/pricing');
   };
 
-  if (!userProfile) {
+  if (!profileData) {
     return (
       <div className="font-inter min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
@@ -70,7 +111,7 @@ const ManageSubscription = () => {
             <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2 mb-6">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span className="text-blue-400 font-medium">
-                Active Unlimited Subscription ({userProfile?.subscription_renewal || 'monthly'})
+                Active Unlimited Subscription ({profileData?.subscription_renewal || 'monthly'})
               </span>
             </div>
             

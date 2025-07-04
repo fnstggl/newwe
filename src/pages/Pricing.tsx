@@ -1,16 +1,47 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
   const navigate = useNavigate();
-  const { user, userProfile, createCheckout } = useAuth();
+  const { subscribed, subscriptionTier, subscriptionRenewal, openCustomerPortal } = useSubscription();
+  const { user } = useAuth();
   const { toast } = useToast();
+
+  // Load user's profile data to check subscription plan
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (error) {
+          console.error('Error loading user profile:', error);
+          return;
+        }
+        
+        if (data) {
+          setProfileData(data);
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -64,24 +95,13 @@ const Pricing = () => {
     }
   }, [toast]);
 
-  const handleSubscribe = async (billingCycle: 'monthly' | 'annual') => {
+  const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
     if (!user) {
       navigate('/login');
       return;
     }
 
-    try {
-      const url = await createCheckout(billingCycle);
-      if (url) {
-        window.location.href = url;
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
-        variant: "destructive",
-      });
-    }
+    navigate(`/checkout?billing=${billingCycle}`);
   };
 
   const handleManageSubscription = () => {
@@ -92,8 +112,8 @@ const Pricing = () => {
     navigate('/cancel-subscription');
   };
 
-  // Check if user is on unlimited plan using userProfile from AuthContext
-  const isOnUnlimitedPlan = userProfile?.subscription_plan === 'unlimited';
+  // Check if user is on unlimited plan using profiles table
+  const isOnUnlimitedPlan = profileData?.subscription_plan === 'unlimited';
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -228,7 +248,7 @@ const Pricing = () => {
               <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                 <span className="text-blue-400 font-medium">
-                  Active {userProfile?.subscription_plan === 'unlimited' ? 'Unlimited' : userProfile?.subscription_plan} Subscription ({userProfile?.subscription_renewal || 'monthly'})
+                  Active {profileData?.subscription_plan === 'unlimited' ? 'Unlimited' : profileData?.subscription_plan} Subscription ({profileData?.subscription_renewal || 'monthly'})
                 </span>
               </div>
             </div>

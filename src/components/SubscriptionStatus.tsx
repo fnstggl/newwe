@@ -1,12 +1,9 @@
 
-import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { HoverButton } from "@/components/ui/hover-button";
 
 const SubscriptionStatus = () => {
-  const { userProfile, openCustomerPortal } = useAuth();
-
-  const subscribed = userProfile?.subscription_plan === 'unlimited';
-  const subscriptionTier = userProfile?.subscription_plan || 'free';
+  const { subscribed, subscriptionTier, subscriptionEnd, openCustomerPortal } = useSubscription();
 
   const handleManageSubscription = async () => {
     try {
@@ -31,6 +28,11 @@ const SubscriptionStatus = () => {
               : 'Limited to 3 deals per day'
             }
           </p>
+          {subscribed && subscriptionEnd && (
+            <p className="text-gray-500 text-xs mt-1">
+              Renews on {new Date(subscriptionEnd).toLocaleDateString()}
+            </p>
+          )}
         </div>
         
         {subscribed ? (

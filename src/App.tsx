@@ -24,6 +24,7 @@ import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
 import OnboardingPopup from "./components/OnboardingPopup";
 import { useState } from "react";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
@@ -69,9 +70,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
+        <SubscriptionProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </SubscriptionProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
