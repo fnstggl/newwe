@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -58,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -71,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log('Fetching user profile for:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('name, subscription_plan, subscription_renewal')
@@ -82,15 +84,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      console.log('Fetched profile data:', data);
+      
       if (data) {
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
-        setUserProfile({ 
+        const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
           subscription_plan: data.subscription_plan || 'free',
           subscription_renewal: data.subscription_renewal || 'monthly'
-        });
+        };
+        
+        console.log('Setting user profile:', profileData);
+        setUserProfile(profileData);
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
