@@ -179,7 +179,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           <BookmarkButton 
             propertyId={property.id}
             propertyType={isRental ? 'rental' : 'sale'}
-            className="bg-transparent hover:bg-black/20 p-2 rounded-full"
+            className="bg-transparent p-2 rounded-full"
           />
         </div>
       </div>

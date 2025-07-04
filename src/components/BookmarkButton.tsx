@@ -55,8 +55,8 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({
       <Heart 
         className={`h-5 w-5 ${
           saved 
-            ? 'fill-red-400 text-red-400' 
-            : 'fill-none text-white hover:text-red-400'
+            ? 'fill-red-500 text-red-500' 
+            : 'fill-none text-white hover:text-red-500'
         } stroke-2`} 
       />
     </button>
