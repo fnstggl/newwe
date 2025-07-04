@@ -142,6 +142,27 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   const shouldShowReadMore = property.description && property.description.split(' ').length > 35;
 
+  // Get the market analysis text for rent-stabilized properties
+  const getMarketAnalysisText = () => {
+    if (isRentStabilized && (property as any).undervaluation_analysis) {
+      const analysis = (property as any).undervaluation_analysis;
+      
+      // If it's a string, return it directly
+      if (typeof analysis === 'string') {
+        return analysis;
+      }
+      
+      // If it's an object, try to extract the explanation or methodology
+      if (typeof analysis === 'object' && analysis !== null) {
+        return analysis.explanation || analysis.methodology || analysis.summary || 
+               (typeof analysis === 'object' ? JSON.stringify(analysis) : '');
+      }
+    }
+    
+    // Fallback to existing reasoning for non-rent-stabilized properties
+    return property.reasoning || '';
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
       <div className="min-h-screen py-8 px-4">
@@ -300,9 +321,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       <div className="text-sm text-gray-400">Below Market Value</div>
                     </div>
                     
-                    {property.reasoning && (
+                    {getMarketAnalysisText() && (
                       <div className="text-sm text-gray-300 leading-relaxed">
-                        {property.reasoning}
+                        {getMarketAnalysisText()}
                       </div>
                     )}
                   </CardContent>
