@@ -50,12 +50,12 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({
     <button
       onClick={handleBookmarkClick}
       disabled={isLoading}
-      className={`p-2 transition-all duration-200 ${className}`}
+     className={`transition-all duration-200 ${className}`} // Remove p-2
     >
       <Heart 
         className={`h-5 w-5 ${
           saved 
-            ? 'fill-pink-500 text-pink-500' 
+            ? 'fill-red-400 text-red-400' 
             : 'fill-none text-white hover:text-red-400'
         } stroke-2`} 
       />
