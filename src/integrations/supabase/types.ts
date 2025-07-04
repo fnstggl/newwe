@@ -253,7 +253,6 @@ export type Database = {
           id: string
           name: string | null
           neighborhood_preferences: string[] | null
-          stripe_customer_id: string | null
           subscription_plan: string
           subscription_renewal: string | null
         }
@@ -263,7 +262,6 @@ export type Database = {
           id: string
           name?: string | null
           neighborhood_preferences?: string[] | null
-          stripe_customer_id?: string | null
           subscription_plan?: string
           subscription_renewal?: string | null
         }
@@ -273,7 +271,6 @@ export type Database = {
           id?: string
           name?: string | null
           neighborhood_preferences?: string[] | null
-          stripe_customer_id?: string | null
           subscription_plan?: string
           subscription_renewal?: string | null
         }
@@ -1350,7 +1347,6 @@ export type Database = {
           id: string
           name: string | null
           neighborhood_preferences: string[] | null
-          stripe_customer_id: string | null
           subscription_plan: string
           subscription_renewal: string | null
         }[]
