@@ -34,10 +34,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const checkSubscription = async () => {
     if (!user || !session) {
-      // Only reset state when no user, don't assume free plan
       setSubscribed(false);
-      setSubscriptionTier(null);
-      setSubscriptionRenewal(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
       return;
     }
@@ -119,10 +118,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (user && session) {
       checkSubscription();
     } else {
-      // Only reset state when no user, don't set default values
       setSubscribed(false);
-      setSubscriptionTier(null);
-      setSubscriptionRenewal(null);
+      setSubscriptionTier('free');
+      setSubscriptionRenewal('monthly');
       setSubscriptionEnd(null);
     }
   }, [user, session]);
