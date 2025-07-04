@@ -1,14 +1,12 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const CancelSubscription = () => {
   const navigate = useNavigate();
-  const { openCustomerPortal } = useSubscription();
   const { user } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -42,20 +40,8 @@ const CancelSubscription = () => {
     loadUserProfile();
   }, [user]);
 
-  const handleCancelSubscription = async () => {
-    setIsLoading(true);
-    try {
-      await openCustomerPortal();
-    } catch (error) {
-      console.error('Customer portal error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to open subscription management. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleManageSubscription = () => {
+    navigate('/manage-subscription');
   };
 
   const handleGoBack = () => {
@@ -87,7 +73,7 @@ const CancelSubscription = () => {
           <div className="space-y-4">
             {profileData?.subscription_plan === 'unlimited' && (
               <button
-                onClick={handleCancelSubscription}
+                onClick={handleManageSubscription}
                 disabled={isLoading}
                 className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >

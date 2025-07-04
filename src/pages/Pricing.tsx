@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -105,17 +104,8 @@ const Pricing = () => {
     navigate(`/checkout?billing=${billingCycle}`);
   };
 
-  const handleManageSubscription = async () => {
-    try {
-      await openCustomerPortal();
-    } catch (error) {
-      console.error('Customer portal error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to open subscription management. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleManageSubscription = () => {
+    navigate('/manage-subscription');
   };
 
   const handleCancelSubscription = () => {
@@ -199,21 +189,12 @@ const Pricing = () => {
             {/* Unlimited Plan */}
             <div className="relative flex flex-col h-full">
               {/* Card with animated border */}
-              <div className={`relative overflow-hidden rounded-2xl p-[3px] h-full ${
-                isOnUnlimitedPlan
-                  ? 'bg-gradient-to-r from-green-500 via-blue-500 to-green-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
-                  : 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]'
-              }`}>
+              <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
-                  {/* Header with subscription status badge */}
+                  {/* Header without subscription status badge for unlimited users */}
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
-                    {isOnUnlimitedPlan && (
-                      <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-medium">
-                        Current Plan
-                      </span>
-                    )}
                   </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">
                     {isAnnual ? (
@@ -264,9 +245,9 @@ const Pricing = () => {
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
             <div className="mt-8 text-center">
-              <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-green-400 font-medium">
+              <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span className="text-blue-400 font-medium">
                   Active {profileData?.subscription_plan === 'unlimited' ? 'Unlimited' : profileData?.subscription_plan} Subscription ({profileData?.subscription_renewal || 'monthly'})
                 </span>
               </div>
@@ -298,7 +279,7 @@ const Pricing = () => {
               Start Your Subscription
             </button>
           ) : (
-            <div className="text-green-400 font-semibold text-lg">
+            <div className="text-blue-400 font-semibold text-lg">
               You're all set! Enjoy unlimited access to all deals.
             </div>
           )}
