@@ -9,8 +9,17 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<{ error: any; needsOnboarding?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  userProfile: { name: string; hasCompletedOnboarding?: boolean } | null;
+  userProfile: { 
+    name: string; 
+    hasCompletedOnboarding?: boolean;
+    subscription_plan?: string;
+    subscription_renewal?: string;
+  } | null;
   updateOnboardingStatus: (completed: boolean) => Promise<void>;
+  // Subscription-related functions
+  createCheckout: (billingCycle: 'monthly' | 'annual') => Promise<string | null>;
+  openCustomerPortal: () => Promise<void>;
+  refreshSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,7 +35,12 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [userProfile, setUserProfile] = useState<{ name: string; hasCompletedOnboarding?: boolean } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ 
+    name: string; 
+    hasCompletedOnboarding?: boolean;
+    subscription_plan?: string;
+    subscription_renewal?: string;
+  } | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -63,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('name, subscription_plan')
+        .select('name, subscription_plan, subscription_renewal')
         .eq('id', userId)
         .single();
       
@@ -77,7 +91,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         setUserProfile({ 
           name: data.name || '',
-          hasCompletedOnboarding
+          hasCompletedOnboarding,
+          subscription_plan: data.subscription_plan || 'free',
+          subscription_renewal: data.subscription_renewal || 'monthly'
         });
       }
     } catch (error) {
@@ -89,6 +105,73 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       localStorage.setItem(`onboarding_${user.id}`, completed ? 'completed' : 'pending');
       setUserProfile(prev => prev ? { ...prev, hasCompletedOnboarding: completed } : null);
+    }
+  };
+
+  const createCheckout = async (billingCycle: 'monthly' | 'annual'): Promise<string | null> => {
+    if (!user || !session) {
+      throw new Error('User must be logged in to create checkout');
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { billing_cycle: billingCycle },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Error creating checkout:', error);
+        throw error;
+      }
+
+      return data.url;
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      throw error;
+    }
+  };
+
+  const openCustomerPortal = async () => {
+    if (!user || !session) {
+      throw new Error('User must be logged in to access customer portal');
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Error opening customer portal:', error);
+        throw error;
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      throw error;
+    }
+  };
+
+  const refreshSubscription = async () => {
+    if (!user || !session) return;
+
+    try {
+      // Call check-subscription to update the database
+      await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      // Refresh the user profile to get updated subscription data
+      await fetchUserProfile(user.id);
+    } catch (error) {
+      console.error('Error refreshing subscription:', error);
     }
   };
 
@@ -134,7 +217,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     userProfile,
-    updateOnboardingStatus
+    updateOnboardingStatus,
+    createCheckout,
+    openCustomerPortal,
+    refreshSubscription
   };
 
   return (
