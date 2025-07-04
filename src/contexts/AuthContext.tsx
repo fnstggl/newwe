@@ -9,7 +9,12 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<{ error: any; needsOnboarding?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  userProfile: { name: string; hasCompletedOnboarding?: boolean } | null;
+  userProfile: { 
+    name: string; 
+    hasCompletedOnboarding?: boolean;
+    subscription_plan?: string;
+    subscription_renewal?: string;
+  } | null;
   updateOnboardingStatus: (completed: boolean) => Promise<void>;
 }
 
@@ -26,7 +31,12 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [userProfile, setUserProfile] = useState<{ name: string; hasCompletedOnboarding?: boolean } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ 
+    name: string; 
+    hasCompletedOnboarding?: boolean;
+    subscription_plan?: string;
+    subscription_renewal?: string;
+  } | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -63,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('name, subscription_plan')
+        .select('name, subscription_plan, subscription_renewal')
         .eq('id', userId)
         .single();
       
@@ -77,7 +87,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         setUserProfile({ 
           name: data.name || '',
-          hasCompletedOnboarding
+          hasCompletedOnboarding,
+          subscription_plan: data.subscription_plan || 'free',
+          subscription_renewal: data.subscription_renewal || 'monthly'
         });
       }
     } catch (error) {

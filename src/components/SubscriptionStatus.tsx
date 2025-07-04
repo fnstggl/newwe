@@ -1,16 +1,14 @@
 
-import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { HoverButton } from "@/components/ui/hover-button";
 
 const SubscriptionStatus = () => {
-  const { subscribed, subscriptionTier, subscriptionEnd, openCustomerPortal } = useSubscription();
+  const { userProfile } = useAuth();
 
-  const handleManageSubscription = async () => {
-    try {
-      await openCustomerPortal();
-    } catch (error) {
-      console.error('Error opening customer portal:', error);
-    }
+  const isSubscribed = userProfile?.subscription_plan === 'unlimited';
+
+  const handleManageSubscription = () => {
+    window.location.href = '/manage-subscription';
   };
 
   return (
@@ -20,22 +18,17 @@ const SubscriptionStatus = () => {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-lg font-medium tracking-tight">
-            {subscribed ? `${subscriptionTier} Plan` : 'Free Plan'}
+            {isSubscribed ? `${userProfile?.subscription_plan} Plan` : 'Free Plan'}
           </p>
           <p className="text-gray-400 text-sm tracking-tight">
-            {subscribed 
+            {isSubscribed 
               ? 'Access to all deals and features' 
               : 'Limited to 3 deals per day'
             }
           </p>
-          {subscribed && subscriptionEnd && (
-            <p className="text-gray-500 text-xs mt-1">
-              Renews on {new Date(subscriptionEnd).toLocaleDateString()}
-            </p>
-          )}
         </div>
         
-        {subscribed ? (
+        {isSubscribed ? (
           <button
             onClick={handleManageSubscription}
             className="px-6 py-2 bg-white text-black rounded-full font-medium tracking-tight transition-colors hover:bg-gray-200"
