@@ -534,6 +534,48 @@ export type Database = {
         }
         Relationships: []
       }
+      requested_tours: {
+        Row: {
+          date_1: string | null
+          date_2: string | null
+          date_3: string | null
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          property_address: string | null
+          property_id: string
+          requested_at: string
+          user_id: string | null
+        }
+        Insert: {
+          date_1?: string | null
+          date_2?: string | null
+          date_3?: string | null
+          email: string
+          id?: string
+          name: string
+          phone?: string | null
+          property_address?: string | null
+          property_id: string
+          requested_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          date_1?: string | null
+          date_2?: string | null
+          date_3?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          property_address?: string | null
+          property_id?: string
+          requested_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       sales_market_cache: {
         Row: {
           address: string | null
