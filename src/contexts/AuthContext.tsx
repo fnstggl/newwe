@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -38,6 +38,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     subscription_renewal?: string;
   } | null>(null);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+  
+  // Track if this is an actual login vs tab switch
+  const isInitialLoadRef = useRef(true);
+  const hasEverFetchedProfileRef = useRef(false);
 
   // Get cached subscription state from localStorage
   const getCachedSubscriptionState = (userId: string) => {
@@ -66,22 +70,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Only fetch profile on actual login/signup events, not on every auth state change
-        if (session?.user && (event === 'SIGNED_IN' || event === 'SIGNED_UP')) {
-          fetchUserProfile(session.user.id);
-        } else if (session?.user && event === 'TOKEN_REFRESHED') {
-          // For token refresh, use cached state if available, only fetch if cache is stale
-          const now = Date.now();
-          const cachedState = getCachedSubscriptionState(session.user.id);
-          
-          if (cachedState && (now - lastFetchTime < 300000)) { // 5 minutes cache
-            console.log('Using cached subscription state for token refresh');
-            setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-          } else {
+        if (session?.user) {
+          // Only fetch profile on actual login/signup or initial load - NOT on tab switches
+          if (event === 'SIGNED_UP' || (event === 'SIGNED_IN' && !hasEverFetchedProfileRef.current)) {
+            console.log('Actual login/signup detected, fetching profile');
             fetchUserProfile(session.user.id);
+            hasEverFetchedProfileRef.current = true;
+          } else if (event === 'SIGNED_IN' && hasEverFetchedProfileRef.current) {
+            // This is a tab switch SIGNED_IN event - use cached state
+            console.log('Tab switch detected, using cached subscription state');
+            const cachedState = getCachedSubscriptionState(session.user.id);
+            if (cachedState) {
+              setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+            }
+          } else if (event === 'TOKEN_REFRESHED') {
+            // For token refresh, use cached state if available
+            const cachedState = getCachedSubscriptionState(session.user.id);
+            if (cachedState) {
+              console.log('Using cached subscription state for token refresh');
+              setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+            }
           }
         } else if (!session) {
           setUserProfile(null);
+          hasEverFetchedProfileRef.current = false;
         }
       }
     );
@@ -92,8 +104,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       
-      if (session?.user) {
+      if (session?.user && isInitialLoadRef.current) {
+        // This is the initial load - fetch profile
         fetchUserProfile(session.user.id);
+        hasEverFetchedProfileRef.current = true;
+        isInitialLoadRef.current = false;
+      } else if (session?.user) {
+        // Use cached state for non-initial loads
+        const cachedState = getCachedSubscriptionState(session.user.id);
+        if (cachedState) {
+          setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+        }
       }
     });
 
@@ -193,6 +214,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
+    // Reset the fetch tracking for actual login
+    hasEverFetchedProfileRef.current = false;
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -210,6 +234,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Ignore localStorage errors
       }
     }
+    hasEverFetchedProfileRef.current = false;
     await supabase.auth.signOut();
   };
 
