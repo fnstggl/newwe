@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -38,6 +37,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     subscription_plan?: string;
     subscription_renewal?: string;
   } | null>(null);
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
+
+  // Get cached subscription state from localStorage
+  const getCachedSubscriptionState = (userId: string) => {
+    try {
+      const cached = localStorage.getItem(`subscription_state_${userId}`);
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Cache subscription state to localStorage
+  const cacheSubscriptionState = (userId: string, subscriptionData: any) => {
+    try {
+      localStorage.setItem(`subscription_state_${userId}`, JSON.stringify(subscriptionData));
+    } catch {
+      // Ignore localStorage errors
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -47,11 +66,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Fetch user profile when user is signed in (for all events except sign out)
-        if (session?.user && event !== 'SIGNED_OUT') {
-          setTimeout(() => {
+        // Only fetch profile on actual login/signup events, not on every auth state change
+        if (session?.user && (event === 'SIGNED_IN' || event === 'SIGNED_UP')) {
+          fetchUserProfile(session.user.id);
+        } else if (session?.user && event === 'TOKEN_REFRESHED') {
+          // For token refresh, use cached state if available, only fetch if cache is stale
+          const now = Date.now();
+          const cachedState = getCachedSubscriptionState(session.user.id);
+          
+          if (cachedState && (now - lastFetchTime < 300000)) { // 5 minutes cache
+            console.log('Using cached subscription state for token refresh');
+            setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+          } else {
             fetchUserProfile(session.user.id);
-          }, 0);
+          }
         } else if (!session) {
           setUserProfile(null);
         }
@@ -75,6 +103,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserProfile = async (userId: string) => {
     try {
       console.log('Fetching user profile for:', userId);
+      
+      // Get cached state before making database call
+      const cachedState = getCachedSubscriptionState(userId);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('name, subscription_plan, subscription_renewal')
@@ -83,6 +115,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) {
         console.error('Error fetching user profile:', error);
+        // On error, preserve existing cached state instead of defaulting to free
+        if (cachedState) {
+          console.log('Using cached subscription state due to database error');
+          setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+        }
         return;
       }
       
@@ -91,18 +128,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data) {
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
+        
+        // CRITICAL FIX: Remove automatic 'free' fallback - preserve existing state if DB returns null
+        const currentSubscriptionPlan = data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan;
+        const currentSubscriptionRenewal = data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal;
+        
         const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
-          subscription_plan: data.subscription_plan || 'free',
-          subscription_renewal: data.subscription_renewal || 'monthly'
+          subscription_plan: currentSubscriptionPlan,
+          subscription_renewal: currentSubscriptionRenewal
         };
+        
+        // Cache the successful subscription state
+        if (currentSubscriptionPlan) {
+          cacheSubscriptionState(userId, {
+            subscription_plan: currentSubscriptionPlan,
+            subscription_renewal: currentSubscriptionRenewal
+          });
+        }
         
         console.log('Setting user profile:', profileData);
         setUserProfile(profileData);
+        setLastFetchTime(Date.now());
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      // On catch, preserve existing cached state
+      const cachedState = getCachedSubscriptionState(userId);
+      if (cachedState) {
+        console.log('Using cached subscription state due to fetch error');
+        setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
+      }
     }
   };
 
@@ -145,6 +202,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    // Clear cached subscription state on sign out
+    if (user?.id) {
+      try {
+        localStorage.removeItem(`subscription_state_${user.id}`);
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
     await supabase.auth.signOut();
   };
 
@@ -164,4 +229,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
