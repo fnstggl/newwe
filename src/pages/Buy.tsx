@@ -1,7 +1,9 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
+import { GlowEffect } from "@/components/ui/glow-effect";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
@@ -447,12 +449,21 @@ const Buy = () => {
             <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
               The best deals in the city get bought in days. Don't miss them.
             </p>
-            <button 
-              onClick={() => navigate('/pricing')}
-              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
-            >
-              Early Access
-            </button>
+            <div className="relative inline-block">
+              <button 
+                onClick={() => navigate('/pricing')}
+                className="relative bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 shadow-lg font-inter tracking-tight overflow-hidden"
+              >
+                <GlowEffect
+                  colors={['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#E74C3C', '#9B59B6']}
+                  mode="rotate"
+                  blur="soft"
+                  duration={3}
+                  className="absolute inset-[-2px] rounded-full"
+                />
+                Early Access
+              </button>
+            </div>
           </div>
         )}
 
