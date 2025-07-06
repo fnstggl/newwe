@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
@@ -120,7 +119,9 @@ const Rent = () => {
       const rentStabilizedNeighborhoods = rentStabilizedResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
       
       const allNeighborhoods = [...rentalNeighborhoods, ...rentStabilizedNeighborhoods];
-      const uniqueNeighborhoods = [...new Set(allNeighborhoods)];
+      const uniqueNeighborhoods = [...new Set(allNeighborhoods)].map(neighborhood => 
+        neighborhood === 'Bedford-Stuyvesant' ? 'Bed-Stuy' : neighborhood
+      );
       setNeighborhoods(uniqueNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
@@ -195,7 +196,8 @@ const Rent = () => {
         }
 
         if (selectedNeighborhoods.length > 0) {
-          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+          const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
+          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
         }
 
         const { data, error } = await rentStabilizedQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
@@ -260,8 +262,9 @@ const Rent = () => {
         }
 
         if (selectedNeighborhoods.length > 0) {
-          rentalsQuery = rentalsQuery.in('neighborhood', selectedNeighborhoods);
-          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+          const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
+          rentalsQuery = rentalsQuery.in('neighborhood', mappedNeighborhoods);
+          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
         }
 
         // Execute both queries
@@ -409,31 +412,33 @@ const Rent = () => {
                 Neighborhoods
               </label>
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
-                <input
-                  type="text"
-                  value={neighborhoodSearchTerm}
-                  onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
-                  onFocus={() => setShowNeighborhoodDropdown(true)}
-                  placeholder="East Village"
-                  className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-                
-                {/* Selected neighborhoods pills */}
-                {selectedNeighborhoods.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {selectedNeighborhoods.map((neighborhood) => (
-                      <div
-                        key={neighborhood}
-                        className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm flex items-center cursor-pointer"
-                        onClick={() => removeNeighborhood(neighborhood)}
-                      >
-                        {neighborhood}
-                        <X className="ml-1 h-3 w-3" />
+                <div className="relative flex items-center">
+                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
+                  <div className="flex items-center w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                    {selectedNeighborhoods.length > 0 && (
+                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                        {selectedNeighborhoods.map((neighborhood) => (
+                          <div
+                            key={neighborhood}
+                            className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
+                            onClick={() => removeNeighborhood(neighborhood)}
+                          >
+                            {neighborhood}
+                            <X className="ml-1 h-3 w-3" />
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
+                    <input
+                      type="text"
+                      value={neighborhoodSearchTerm}
+                      onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
+                      onFocus={() => setShowNeighborhoodDropdown(true)}
+                      placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
+                      className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 min-w-0"
+                    />
                   </div>
-                )}
+                </div>
                 
                 {showNeighborhoodDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
