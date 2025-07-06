@@ -494,22 +494,23 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Card>
                   )}
                   
-                  {/* Below Market & Annual Savings Stats */}
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardContent className="p-6">      
-                        {annualSavings && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">
-                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-                            </span>
-                            <span className="text-lg font-bold text-[#FFFFFF]">
-                              {formatPrice(annualSavings)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                 {/* Annual Savings Only */}
+<Card className="bg-gray-800/50 border-gray-700">
+  <CardContent className="p-6">
+    <div className="space-y-4">
+      {annualSavings && (
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-400">
+            {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+          </span>
+          <span className="text-lg font-bold text-[#FFFFFF]">
+            {formatPrice(annualSavings)}
+          </span>
+        </div>
+      )}
+    </div>
+  </CardContent>
+</Card>
                   
                   {/* Request Tour Button moved here for Sales Properties Only */}
                   {!isRental && (
