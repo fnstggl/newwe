@@ -123,7 +123,7 @@ const Pricing = () => {
               <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  See up to 3 deals per day (all for now)
+                  Access to ALL deals
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -175,7 +175,7 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white">Access to ALL deals</strong>
+                      <strong className="text-white">Be the FIRST to know</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
