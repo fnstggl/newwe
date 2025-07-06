@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
-import { Button } from "@/components/ui/button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
@@ -390,14 +390,6 @@ const Rent = () => {
   const visibleProperties = user ? properties : properties.slice(0, 3);
   const shouldShowBlur = !user && properties.length > 3;
 
-  // Get the primary neighborhood for the "Early Access" section
-  const getPrimaryNeighborhood = () => {
-    if (selectedNeighborhoods.length > 0) {
-      return selectedNeighborhoods[0];
-    }
-    return "NYC";
-  };
-
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
@@ -601,30 +593,12 @@ const Rent = () => {
           </div>
         )}
 
-        {/* Load More Button - only show for authenticated users and when there are more results */}
+        {/* Load More Button - only show for authenticated users */}
         {user && !loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
-            <Button
-              onClick={loadMore}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold"
-            >
+            <HoverButton onClick={loadMore}>
               Load More Properties
-            </Button>
-          </div>
-        )}
-
-        {/* Early Access Section - only show when there are no more properties to load */}
-        {user && !loading && !hasMore && properties.length > 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
-              Want to be the first to know when new properties in {getPrimaryNeighborhood()} are listed?
-            </h3>
-            <p className="text-lg text-gray-400 mb-8 tracking-tight">
-              The best deals in the city get bought in days. Don't miss them.
-            </p>
-            <Button className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100">
-              Early Access
-            </Button>
+            </HoverButton>
           </div>
         )}
 
