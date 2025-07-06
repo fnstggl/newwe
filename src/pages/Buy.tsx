@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -310,7 +309,7 @@ const Buy = () => {
                           onClick={() => toggleNeighborhood(neighborhood)}
                           className={`px-3 py-1 rounded-full text-sm transition-all ${
                             selectedNeighborhoods.includes(neighborhood)
-                              ? 'bg-blue-600 text-white'
+                              ? 'bg-white text-black'
                               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                           }`}
                         >
@@ -450,7 +449,7 @@ const Buy = () => {
             </p>
             <button 
               onClick={() => navigate('/pricing')}
-              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100 font-inter tracking-tight"
+              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
             >
               Early Access
             </button>
