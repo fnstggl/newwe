@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -243,7 +244,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       <div className="flex items-center text-gray-400 mb-4">
                         <MapPin className="h-4 w-4 mr-2" />
                         {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
-                        {property.borough}
+                        {capitalizeNeighborhood(property.borough)}
                       </div>
                       {/* Price moved here */}
                       <div className="text-3xl font-bold text-white mb-2">
