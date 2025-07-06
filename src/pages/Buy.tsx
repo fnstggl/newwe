@@ -27,6 +27,7 @@ const Buy = () => {
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+  const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const ITEMS_PER_PAGE = 30;
@@ -253,6 +254,11 @@ const Buy = () => {
     setSelectedProperty(property);
   };
 
+  // Filter neighborhoods based on search term
+  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
+    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
@@ -278,10 +284,10 @@ const Buy = () => {
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={neighborhoodSearchTerm}
+                  onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
                   onFocus={() => setShowNeighborhoodDropdown(true)}
-                  placeholder="e.g. East Village, 10009"
+                  placeholder="East Village"
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
@@ -298,7 +304,7 @@ const Buy = () => {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {neighborhoods.map((neighborhood) => (
+                      {filteredNeighborhoods.map((neighborhood) => (
                         <button
                           key={neighborhood}
                           onClick={() => toggleNeighborhood(neighborhood)}
@@ -347,14 +353,14 @@ const Buy = () => {
               <select
                 value={bedrooms}
                 onChange={(e) => setBedrooms(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
-                <option value="">Any</option>
-                <option value="0">Studio</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
+                <option value="" className="text-gray-500">Any</option>
+                <option value="0" className="text-white">Studio</option>
+                <option value="1" className="text-white">1+</option>
+                <option value="2" className="text-white">2+</option>
+                <option value="3" className="text-white">3+</option>
+                <option value="4" className="text-white">4+</option>
               </select>
             </div>
             <div>
@@ -364,11 +370,11 @@ const Buy = () => {
               <select
                 value={minGrade}
                 onChange={(e) => setMinGrade(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
-                <option value="">Any Grade</option>
+                <option value="" className="text-gray-500">Any Grade</option>
                 {gradeOptions.map((grade) => (
-                  <option key={grade} value={grade}>{grade}</option>
+                  <option key={grade} value={grade} className="text-white">{grade}</option>
                 ))}
               </select>
             </div>

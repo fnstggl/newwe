@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
-import { GooeyFilter } from "@/components/ui/liquid-toggle";
+import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -21,6 +21,7 @@ const Rent = () => {
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
+  const [rentStabilizedOnly, setRentStabilizedOnly] = useState(false);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -28,6 +29,7 @@ const Rent = () => {
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
   const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+  const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const ITEMS_PER_PAGE = 30;
@@ -44,7 +46,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -160,84 +162,141 @@ const Rent = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      // Build queries for both tables
-      let rentalsQuery = supabase
-        .from('undervalued_rentals')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+      if (rentStabilizedOnly) {
+        // Only fetch rent-stabilized properties
+        let rentStabilizedQuery = supabase
+          .from('undervalued_rent_stabilized')
+          .select('*')
+          .eq('display_status', 'active')
+          .order('created_at', { ascending: false });
 
-      let rentStabilizedQuery = supabase
-        .from('undervalued_rent_stabilized')
-        .select('*')
-        .eq('display_status', 'active')
-        .order('created_at', { ascending: false });
-
-      // Apply filters to both queries
-      if (searchTerm.trim()) {
-        rentalsQuery = rentalsQuery.ilike('address', `%${searchTerm.trim()}%`);
-        rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
-      }
-
-      if (zipCode.trim()) {
-        rentalsQuery = rentalsQuery.ilike('zipcode', `${zipCode.trim()}%`);
-        rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
-      }
-
-      if (maxPrice.trim()) {
-        const priceValue = parseInt(maxPrice.trim());
-        if (!isNaN(priceValue) && priceValue > 0) {
-          rentalsQuery = rentalsQuery.lte('monthly_rent', priceValue);
-          rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
+        // Apply filters to rent-stabilized query
+        if (searchTerm.trim()) {
+          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
         }
-      }
 
-      if (bedrooms.trim()) {
-        const bedroomValue = parseInt(bedrooms.trim());
-        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-          rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
-          rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+        if (zipCode.trim()) {
+          rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
         }
-      }
 
-      if (selectedNeighborhoods.length > 0) {
-        rentalsQuery = rentalsQuery.in('neighborhood', selectedNeighborhoods);
-        rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
-      }
+        if (maxPrice.trim()) {
+          const priceValue = parseInt(maxPrice.trim());
+          if (!isNaN(priceValue) && priceValue > 0) {
+            rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
+          }
+        }
 
-      // Execute both queries
-      const [rentalsResult, rentStabilizedResult] = await Promise.all([
-        rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
-        rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
-      ]);
+        if (bedrooms.trim()) {
+          const bedroomValue = parseInt(bedrooms.trim());
+          if (!isNaN(bedroomValue) && bedroomValue >= 0) {
+            rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+          }
+        }
 
-      if (rentalsResult.error) {
-        console.error('❌ RENTALS ERROR:', rentalsResult.error);
-      }
+        if (selectedNeighborhoods.length > 0) {
+          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+        }
 
-      if (rentStabilizedResult.error) {
-        console.error('❌ RENT STABILIZED ERROR:', rentStabilizedResult.error);
-      }
+        const { data, error } = await rentStabilizedQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      const rentalsData = rentalsResult.data || [];
-      const rentStabilizedData = rentStabilizedResult.data || [];
+        if (error) {
+          console.error('❌ RENT STABILIZED ERROR:', error);
+          setProperties([]);
+          return;
+        }
 
-      // Normalize rent-stabilized properties
-      const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
+        const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
+        const shuffledData = normalizedData.sort(() => Math.random() - 0.5);
 
-      // Combine and shuffle both types of properties
-      const combinedData = [...rentalsData, ...normalizedRentStabilized];
-      const shuffledData = combinedData.sort(() => Math.random() - 0.5);
+        if (reset) {
+          setProperties(shuffledData);
+          setOffset(ITEMS_PER_PAGE);
+        } else {
+          setProperties(prev => [...prev, ...shuffledData]);
+          setOffset(prev => prev + ITEMS_PER_PAGE);
+        }
 
-      if (reset) {
-        setProperties(shuffledData);
-        setOffset(ITEMS_PER_PAGE);
+        setHasMore(data?.length === ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...shuffledData]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
-      }
+        // Build queries for both tables
+        let rentalsQuery = supabase
+          .from('undervalued_rentals')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
 
-      setHasMore(combinedData.length === ITEMS_PER_PAGE);
+        let rentStabilizedQuery = supabase
+          .from('undervalued_rent_stabilized')
+          .select('*')
+          .eq('display_status', 'active')
+          .order('created_at', { ascending: false });
+
+        // Apply filters to both queries
+        if (searchTerm.trim()) {
+          rentalsQuery = rentalsQuery.ilike('address', `%${searchTerm.trim()}%`);
+          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
+        }
+
+        if (zipCode.trim()) {
+          rentalsQuery = rentalsQuery.ilike('zipcode', `${zipCode.trim()}%`);
+          rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
+        }
+
+        if (maxPrice.trim()) {
+          const priceValue = parseInt(maxPrice.trim());
+          if (!isNaN(priceValue) && priceValue > 0) {
+            rentalsQuery = rentalsQuery.lte('monthly_rent', priceValue);
+            rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
+          }
+        }
+
+        if (bedrooms.trim()) {
+          const bedroomValue = parseInt(bedrooms.trim());
+          if (!isNaN(bedroomValue) && bedroomValue >= 0) {
+            rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
+            rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+          }
+        }
+
+        if (selectedNeighborhoods.length > 0) {
+          rentalsQuery = rentalsQuery.in('neighborhood', selectedNeighborhoods);
+          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+        }
+
+        // Execute both queries
+        const [rentalsResult, rentStabilizedResult] = await Promise.all([
+          rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
+          rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
+        ]);
+
+        if (rentalsResult.error) {
+          console.error('❌ RENTALS ERROR:', rentalsResult.error);
+        }
+
+        if (rentStabilizedResult.error) {
+          console.error('❌ RENT STABILIZED ERROR:', rentStabilizedResult.error);
+        }
+
+        const rentalsData = rentalsResult.data || [];
+        const rentStabilizedData = rentStabilizedResult.data || [];
+
+        // Normalize rent-stabilized properties
+        const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
+
+        // Combine and shuffle both types of properties
+        const combinedData = [...rentalsData, ...normalizedRentStabilized];
+        const shuffledData = combinedData.sort(() => Math.random() - 0.5);
+
+        if (reset) {
+          setProperties(shuffledData);
+          setOffset(ITEMS_PER_PAGE);
+        } else {
+          setProperties(prev => [...prev, ...shuffledData]);
+          setOffset(prev => prev + ITEMS_PER_PAGE);
+        }
+
+        setHasMore(combinedData.length === ITEMS_PER_PAGE);
+      }
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
       setProperties([]);
@@ -313,6 +372,11 @@ const Rent = () => {
     setSelectedProperty(property);
   };
 
+  // Filter neighborhoods based on search term
+  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
+    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
+  );
+
   // Determine which properties to show based on auth status
   const visibleProperties = user ? properties : properties.slice(0, 3);
   const shouldShowBlur = !user && properties.length > 3;
@@ -331,6 +395,23 @@ const Rent = () => {
           </p>
         </div>
 
+        {/* Rent Stabilized Toggle */}
+        <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center space-x-4">
+            <span className={`text-sm font-medium tracking-tight transition-colors ${!rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
+              All Rentals
+            </span>
+            <Toggle 
+              checked={rentStabilizedOnly} 
+              onCheckedChange={setRentStabilizedOnly} 
+              variant="success"
+            />
+            <span className={`text-sm font-medium tracking-tight transition-colors ${rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
+              Rent Stabilized Only
+            </span>
+          </div>
+        </div>
+
         {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
           <div className="grid md:grid-cols-5 gap-4">
@@ -342,10 +423,10 @@ const Rent = () => {
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={neighborhoodSearchTerm}
+                  onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
                   onFocus={() => setShowNeighborhoodDropdown(true)}
-                  placeholder="e.g. East Village, 10009"
+                  placeholder="East Village"
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
                 {showNeighborhoodDropdown && (
@@ -362,7 +443,7 @@ const Rent = () => {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {neighborhoods.map((neighborhood) => (
+                      {filteredNeighborhoods.map((neighborhood) => (
                         <button
                           key={neighborhood}
                           onClick={() => toggleNeighborhood(neighborhood)}
@@ -411,14 +492,14 @@ const Rent = () => {
               <select
                 value={bedrooms}
                 onChange={(e) => setBedrooms(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
-                <option value="">Any</option>
-                <option value="0">Studio</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
+                <option value="" className="text-gray-500">Any</option>
+                <option value="0" className="text-white">Studio</option>
+                <option value="1" className="text-white">1+</option>
+                <option value="2" className="text-white">2+</option>
+                <option value="3" className="text-white">3+</option>
+                <option value="4" className="text-white">4+</option>
               </select>
             </div>
             <div>
@@ -428,11 +509,11 @@ const Rent = () => {
               <select
                 value={minGrade}
                 onChange={(e) => setMinGrade(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
-                <option value="">Any Grade</option>
+                <option value="" className="text-gray-500">Any Grade</option>
                 {gradeOptions.map((grade) => (
-                  <option key={grade} value={grade}>{grade}</option>
+                  <option key={grade} value={grade} className="text-white">{grade}</option>
                 ))}
               </select>
             </div>
