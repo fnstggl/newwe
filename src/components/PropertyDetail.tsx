@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
 import TourRequestForm from './TourRequestForm';
-import { getNeighborhoodInfo, capitalizeNeighborhood, capitalizeBorough } from '@/data/neighborhoodData';
+import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -244,7 +243,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       <div className="flex items-center text-gray-400 mb-4">
                         <MapPin className="h-4 w-4 mr-2" />
                         {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
-                        {capitalizeBorough(property.borough)}
+                        {property.borough}
                       </div>
                       {/* Price moved here */}
                       <div className="text-3xl font-bold text-white mb-2">
@@ -499,4 +498,3 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 };
 
 export default PropertyDetail;
-
