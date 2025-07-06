@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown } from "lucide-react";
+import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
@@ -317,6 +318,11 @@ const Rent = () => {
         ? prev.filter(n => n !== neighborhood)
         : [...prev, neighborhood]
     );
+    setNeighborhoodSearchTerm("");
+  };
+
+  const removeNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
   };
 
   const clearNeighborhoods = () => {
@@ -403,7 +409,7 @@ const Rent = () => {
                 Neighborhoods
               </label>
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
                 <input
                   type="text"
                   value={neighborhoodSearchTerm}
@@ -412,8 +418,25 @@ const Rent = () => {
                   placeholder="East Village"
                   className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
                 />
+                
+                {/* Selected neighborhoods pills */}
+                {selectedNeighborhoods.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedNeighborhoods.map((neighborhood) => (
+                      <div
+                        key={neighborhood}
+                        className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm flex items-center cursor-pointer"
+                        onClick={() => removeNeighborhood(neighborhood)}
+                      >
+                        {neighborhood}
+                        <X className="ml-1 h-3 w-3" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
@@ -501,7 +524,7 @@ const Rent = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight text-center">
                 Rent Stabilized
               </label>
               <div className="flex justify-center mt-4">
@@ -509,7 +532,7 @@ const Rent = () => {
                   checked={rentStabilizedOnly} 
                   onCheckedChange={setRentStabilizedOnly} 
                   variant="default"
-                  className="[--c-background:#000000]"
+                  className={rentStabilizedOnly ? '[--c-background:#000000]' : ''}
                 />
               </div>
             </div>
