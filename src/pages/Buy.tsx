@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -441,13 +442,16 @@ const Buy = () => {
         {/* Early Access Section - only show when there are no more properties to load */}
         {user && !loading && !hasMore && properties.length > 0 && (
           <div className="text-center py-16">
-            <h3 className="text-xl text-white mb-4 tracking-tight">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
               Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
             </h3>
-            <p className="text-gray-400 mb-8 tracking-tight">
+            <p className="text-xl text-gray-400 mb-12 tracking-tight font-inter">
               The best deals in the city get bought in days. Don't miss them
             </p>
-            <button className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100">
+            <button 
+              onClick={() => navigate('/pricing')}
+              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100 font-inter tracking-tight"
+            >
               Early Access
             </button>
           </div>
