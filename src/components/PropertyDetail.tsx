@@ -168,6 +168,30 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   const neighborhoodInfo = getNeighborhoodInfo(property.neighborhood);
 
+  // Get discount percent and annual savings based on property type
+  const getDiscountPercent = () => {
+    if (isRentStabilized) {
+      return (property as any).undervaluation_percent;
+    } else if (isRental) {
+      return (property as UndervaluedRentals).discount_percent;
+    } else {
+      return (property as UndervaluedSales).discount_percent;
+    }
+  };
+
+  const getAnnualSavings = () => {
+    if (isRentStabilized) {
+      return (property as any).potential_annual_savings;
+    } else if (isRental) {
+      return (property as UndervaluedRentals).annual_savings;
+    } else {
+      return (property as UndervaluedSales).potential_savings;
+    }
+  };
+
+  const discountPercent = getDiscountPercent();
+  const annualSavings = getAnnualSavings();
+
   return (
     <>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
@@ -267,28 +291,28 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </div>
                   </div>
 
-                  {/* Property Details - Updated to include Built year */}
+                  {/* Property Details - Updated to hide 0 values */}
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bedrooms:</span>
-                            <span className="text-white">{property.bedrooms || 0}</span>
+                            <span className="text-white">{property.bedrooms || 'N/A'}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bathrooms:</span>
-                            <span className="text-white">{property.bathrooms || 0}</span>
+                            <span className="text-white">{property.bathrooms || 'N/A'}</span>
                           </div>
                         </div>
                         <div className="space-y-2">
-                          {property.sqft && (
+                          {property.sqft && property.sqft > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Square Feet:</span>
                               <span className="text-white">{property.sqft}</span>
                             </div>
                           )}
-                          {property.days_on_market && (
+                          {property.days_on_market && property.days_on_market > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Days on Market:</span>
                               <span className="text-white">{property.days_on_market}</span>
@@ -302,7 +326,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                               <span className="text-white capitalize">{property.property_type}</span>
                             </div>
                           )}
-                          {property.built_in && (
+                          {property.built_in && property.built_in > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Built:</span>
                               <span className="text-white">{property.built_in}</span>
@@ -438,7 +462,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
                 </div>
 
-                {/* Sidebar - About the Neighborhood */}
+                {/* Sidebar - About the Neighborhood + New Stats */}
                 <div className="space-y-6">
                   {neighborhoodInfo && (
                     <Card className="bg-gray-800/50 border-gray-700">
@@ -469,6 +493,31 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       </CardContent>
                     </Card>
                   )}
+                  
+                  {/* Below Market & Annual Savings Stats */}
+                  <Card className="bg-gray-800/50 border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {discountPercent && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">Below Market:</span>
+                            <span className="text-lg font-bold text-green-400">{Math.round(discountPercent)}%</span>
+                          </div>
+                        )}
+                        
+                        {annualSavings && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">
+                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+                            </span>
+                            <span className="text-lg font-bold text-green-400">
+                              {formatPrice(annualSavings)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                   
                   {/* Request Tour Button moved here for Sales Properties Only */}
                   {!isRental && (
