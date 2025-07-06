@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -231,225 +230,233 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                 </div>
               )}
 
-              {/* Main content - now full width */}
-              <div className="space-y-6">
-                {/* Address, Price and Score */}
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
-                    <div className="flex items-center text-gray-400 mb-4">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {property.neighborhood && `${property.neighborhood}, `}
-                      {property.borough}
-                    </div>
-                    {/* Price moved here */}
-                    <div className="text-3xl font-bold text-white mb-2">
-                      {formatPrice(price)}{isRental ? '/mo' : ''}
-                    </div>
-                    {pricePerSqft && (
-                      <div className="text-gray-300 mb-4">
-                        {formatPrice(pricePerSqft)}/sqft
+              <div className="grid lg:grid-cols-3 gap-8">
+                {/* Main Info */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Address, Price and Score */}
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
+                      <div className="flex items-center text-gray-400 mb-4">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {property.neighborhood && `${property.neighborhood}, `}
+                        {property.borough}
                       </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-end space-y-3">
-                    <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
-                      {displayGrade}
-                    </Badge>
-                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
-                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
-                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
-                    </div>
-                    {/* Request Tour Button moved here for Sales Properties Only */}
-                    {!isRental && (
-                      <Button
-                        onClick={() => setShowTourRequest(true)}
-                        className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
-                      >
-                        Request Tour
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Property Details */}
-                <Card className="bg-gray-800/50 border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="grid md:grid-cols-3 gap-6">
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Bedrooms:</span>
-                          <span className="text-white">{property.bedrooms || 0}</span>
+                      {/* Price moved here */}
+                      <div className="text-3xl font-bold text-white mb-2">
+                        {formatPrice(price)}{isRental ? '/mo' : ''}
+                      </div>
+                      {pricePerSqft && (
+                        <div className="text-gray-300 mb-4">
+                          {formatPrice(pricePerSqft)}/sqft
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Bathrooms:</span>
-                          <span className="text-white">{property.bathrooms || 0}</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        {property.sqft && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Square Feet:</span>
-                            <span className="text-white">{property.sqft}</span>
-                          </div>
-                        )}
-                        {property.days_on_market && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Days on Market:</span>
-                            <span className="text-white">{property.days_on_market}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        {property.property_type && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Type:</span>
-                            <span className="text-white capitalize">{property.property_type}</span>
-                          </div>
-                        )}
-                        {isRental && (property as UndervaluedRentals).no_fee && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Broker Fee:</span>
-                            <span className="text-green-400">No Fee</span>
-                          </div>
-                        )}
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end space-y-3">
+                      <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
+                        {displayGrade}
+                      </Badge>
+                      <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
+                        <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
+                        <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
 
-                {/* Market Analysis - moved here and background changed to match page */}
-                <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
-                  <CardHeader>
-                    <CardTitle className="text-white">Market Analysis</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="text-center">
-                      <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
-                        {Math.round(property.discount_percent)}%
-                      </div>
-                      <div className="text-sm text-gray-400">Below Market Value</div>
-                    </div>
-                    
-                    {getMarketAnalysisText() && (
-                      <div className="text-sm text-gray-300 leading-relaxed">
-                        {getMarketAnalysisText()}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Rent-Stabilized Analysis Section */}
-                {isRentStabilized && (property as any).rent_stabilization_analysis && (
+                  {/* Property Details */}
                   <Card className="bg-gray-800/50 border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="grid md:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Bedrooms:</span>
+                            <span className="text-white">{property.bedrooms || 0}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Bathrooms:</span>
+                            <span className="text-white">{property.bathrooms || 0}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          {property.sqft && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Square Feet:</span>
+                              <span className="text-white">{property.sqft}</span>
+                            </div>
+                          )}
+                          {property.days_on_market && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Days on Market:</span>
+                              <span className="text-white">{property.days_on_market}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          {property.property_type && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Type:</span>
+                              <span className="text-white capitalize">{property.property_type}</span>
+                            </div>
+                          )}
+                          {isRental && (property as UndervaluedRentals).no_fee && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Broker Fee:</span>
+                              <span className="text-green-400">No Fee</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Market Analysis - moved here and background changed to match page */}
+                  <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
                     <CardHeader>
-                      <CardTitle className="text-white flex items-center">
-                        Rent-Stabilized Analysis
-                        <Badge variant="outline" className="ml-2 text-xs border-green-600 text-green-400">
-                          Rent-stabilized
-                        </Badge>
-                      </CardTitle>
+                      <CardTitle className="text-white">Market Analysis</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {(property as any).rent_stabilization_analysis?.explanation && (
+                      <div className="text-center">
+                        <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                          {Math.round(property.discount_percent)}%
+                        </div>
+                        <div className="text-sm text-gray-400">Below Market Value</div>
+                      </div>
+                      
+                      {getMarketAnalysisText() && (
                         <div className="text-sm text-gray-300 leading-relaxed">
-                          <strong>Analysis:</strong> {(property as any).rent_stabilization_analysis.explanation}
-                        </div>
-                      )}
-                      
-                      {(property as any).rent_stabilization_analysis?.key_factors && 
-                       (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
-                          <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                            {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
-                              <li key={index}>{factor}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {(property as any).rent_stabilized_confidence && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Confidence Level:</span>
-                          <span className="text-green-400">{(property as any).rent_stabilized_confidence}%</span>
-                        </div>
-                      )}
-                      
-                      {(property as any).potential_monthly_savings && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Potential Monthly Savings:</span>
-                          <span className="text-green-400">{formatPrice((property as any).potential_monthly_savings)}</span>
+                          {getMarketAnalysisText()}
                         </div>
                       )}
                     </CardContent>
                   </Card>
-                )}
 
-                {/* Description with collapsible */}
-                {property.description && (
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Description</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {shouldShowReadMore ? (
-                        <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
-                          <div className="text-gray-300 leading-relaxed">
-                            {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
-                          </div>
-                          <CollapsibleTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
-                            >
-                              <span className="flex items-center">
-                                {isDescriptionExpanded ? 'Show less' : 'Show more'}
-                                <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
-                              </span>
-                            </Button>
-                          </CollapsibleTrigger>
-                        </Collapsible>
-                      ) : (
-                        <p className="text-gray-300 leading-relaxed">{property.description}</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Amenities */}
-                {property.amenities && property.amenities.length > 0 && (
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Amenities</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2">
-                        {property.amenities.map((amenity, index) => (
-                          <Badge key={index} variant="outline" className="border-gray-600 text-gray-300">
-                            {amenity.replace(/_/g, ' ')}
+                  {/* Rent-Stabilized Analysis Section */}
+                  {isRentStabilized && (property as any).rent_stabilization_analysis && (
+                    <Card className="bg-gray-800/50 border-gray-700">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center">
+                          Rent-Stabilized Analysis
+                          <Badge variant="outline" className="ml-2 text-xs border-green-600 text-green-400">
+                            Rent-stabilized
                           </Badge>
-                        ))}
-                      </div>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {(property as any).rent_stabilization_analysis?.explanation && (
+                          <div className="text-sm text-gray-300 leading-relaxed">
+                            <strong>Analysis:</strong> {(property as any).rent_stabilization_analysis.explanation}
+                          </div>
+                        )}
+                        
+                        {(property as any).rent_stabilization_analysis?.key_factors && 
+                         (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
+                            <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                              {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
+                                <li key={index}>{factor}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {(property as any).rent_stabilized_confidence && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Confidence Level:</span>
+                            <span className="text-green-400">{(property as any).rent_stabilized_confidence}%</span>
+                          </div>
+                        )}
+                        
+                        {(property as any).potential_monthly_savings && (
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Potential Monthly Savings:</span>
+                            <span className="text-green-400">{formatPrice((property as any).potential_monthly_savings)}</span>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Description with collapsible */}
+                  {property.description && (
+                    <Card className="bg-gray-800/50 border-gray-700">
+                      <CardHeader>
+                        <CardTitle className="text-white">Description</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {shouldShowReadMore ? (
+                          <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
+                            <div className="text-gray-300 leading-relaxed">
+                              {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
+                            </div>
+                            <CollapsibleTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
+                              >
+                                <span className="flex items-center">
+                                  {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
+                                </span>
+                              </Button>
+                            </CollapsibleTrigger>
+                          </Collapsible>
+                        ) : (
+                          <p className="text-gray-300 leading-relaxed">{property.description}</p>
+                        )}
+                        
+                        {/* Tour Request Button for Sales Properties Only */}
+                        {!isRental && (
+                          <div className="mt-6 pt-4 border-t border-gray-700">
+                            <Button
+                              onClick={() => setShowTourRequest(true)}
+                              className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
+                            >
+                              Request Tour
+                            </Button>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Amenities */}
+                  {property.amenities && property.amenities.length > 0 && (
+                    <Card className="bg-gray-800/50 border-gray-700">
+                      <CardHeader>
+                        <CardTitle className="text-white">Amenities</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                          {property.amenities.map((amenity, index) => (
+                            <Badge key={index} variant="outline" className="border-gray-600 text-gray-300">
+                              {amenity.replace(/_/g, ' ')}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
+                {/* Sidebar */}
+                <div className="space-y-6">
+                  {/* Property Details */}
+                  <Card className="bg-gray-800/50 border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-white">Property Info</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {property.built_in && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Built:</span>
+                          <span className="text-white">{property.built_in}</span>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
-                )}
-
-                {/* Property Info - moved to bottom */}
-                <Card className="bg-gray-800/50 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-white">Property Info</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {property.built_in && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Built:</span>
-                        <span className="text-white">{property.built_in}</span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                </div>
               </div>
             </div>
           </div>
