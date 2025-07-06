@@ -123,7 +123,7 @@ const Pricing = () => {
               <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  Access to ALL deals
+                  Access to all deals
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -163,7 +163,7 @@ const Pricing = () => {
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
                   {/* Header without subscription status badge for unlimited users */}
                   <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
+                    <h3 className="text-2xl font-semibold tracking-tight">Early Access</h3>
                   </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">
                     {isAnnual ? (
@@ -187,7 +187,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Advanced deal analysis
+                      Get the deals before they're gone
                     </li>
                   </ul>
                   
