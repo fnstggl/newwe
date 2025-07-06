@@ -128,7 +128,7 @@ const Rent = () => {
     }
   };
 
-  const normalizeRentStabilizedProperty = (property: UndervaluedRentStabilized): any => {
+  const normalizeRentStabilizedProperty = (property: any): any => {
     return {
       ...property,
       // Map rent-stabilized fields to match regular rental fields
@@ -381,7 +381,7 @@ const Rent = () => {
     setSelectedProperty(property);
   };
 
-  // Filter neighborhoods based on search term
+  // Filter neighborhoods based on search term and display Bed-Stuy instead of Bedford-Stuyvesant
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
