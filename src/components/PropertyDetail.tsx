@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -113,6 +114,70 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     }
   };
 
+  // Get neighborhood description and details
+  const getNeighborhoodInfo = (neighborhood: string | null) => {
+    if (!neighborhood) return null;
+    
+    const neighborhoodData: { [key: string]: { description: string; pros: string[]; cons: string[] } } = {
+      'Upper East Side': {
+        description: 'A sophisticated and upscale neighborhood known for its luxury shopping, world-class museums, and elegant pre-war buildings. Home to Museum Mile and Central Park\'s eastern border.',
+        pros: ['Great for families', 'Excellent schools', 'Beautiful architecture'],
+        cons: ['Limited nightlife', 'More expensive', 'Less diverse dining']
+      },
+      'Upper West Side': {
+        description: 'A cultural hub with a neighborhood feel, featuring tree-lined streets, historic brownstones, and proximity to Central Park and Lincoln Center.',
+        pros: ['Family-friendly', 'Great culture scene', 'Good restaurants'],
+        cons: ['Can be quiet at night', 'Limited shopping', 'Tourist crowds']
+      },
+      'Lower East Side': {
+        description: 'A vibrant and eclectic neighborhood that blends historic immigrant culture with modern hipster appeal, known for its nightlife and diverse food scene.',
+        pros: ['Great nightlife', 'Excellent food scene', 'Rich history'],
+        cons: ['Can be noisy', 'Limited green space', 'Crowded on weekends']
+      },
+      'SoHo': {
+        description: 'A trendy shopping district with cobblestone streets and cast-iron architecture, famous for high-end boutiques, art galleries, and loft-style living.',
+        pros: ['Amazing shopping', 'Beautiful architecture', 'Great for art lovers'],
+        cons: ['Very expensive', 'Tourist heavy', 'Limited local amenities']
+      },
+      'Chelsea': {
+        description: 'A dynamic neighborhood known for its art galleries, the High Line park, and vibrant nightlife scene, with a mix of modern and historic architecture.',
+        pros: ['Great art scene', 'Excellent nightlife', 'Good transportation'],
+        cons: ['Can be expensive', 'Crowded streets', 'Limited parking']
+      },
+      'Greenwich Village': {
+        description: 'A charming bohemian neighborhood with tree-lined streets, historic townhouses, and a rich artistic heritage, known for its cozy cafes and intimate venues.',
+        pros: ['Charming atmosphere', 'Great cafes', 'Rich history'],
+        cons: ['Very expensive', 'Limited space', 'Tourist crowds']
+      },
+      'East Village': {
+        description: 'A gritty and artistic neighborhood with a punk rock heritage, known for its dive bars, experimental restaurants, and young creative community.',
+        pros: ['Great nightlife', 'Diverse food scene', 'Artistic community'],
+        cons: ['Can be noisy', 'Less family-friendly', 'Limited green space']
+      },
+      'Tribeca': {
+        description: 'An upscale neighborhood with cobblestone streets and converted industrial buildings, known for its celebrity residents and high-end dining scene.',
+        pros: ['Luxury living', 'Excellent restaurants', 'Quiet streets'],
+        cons: ['Very expensive', 'Limited nightlife', 'Can feel isolated']
+      },
+      'Williamsburg': {
+        description: 'A trendy Brooklyn neighborhood across the East River, known for its hipster culture, artisanal food scene, and stunning Manhattan skyline views.',
+        pros: ['Great food scene', 'Vibrant nightlife', 'Beautiful waterfront'],
+        cons: ['Can be pretentious', 'Expensive for Brooklyn', 'Limited subway access']
+      },
+      'Park Slope': {
+        description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
+        pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
+        cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
+      }
+    };
+
+    return neighborhoodData[neighborhood] || {
+      description: `${neighborhood} is a distinctive New York neighborhood with its own unique character and charm, offering residents a blend of urban convenience and local community feel.`,
+      pros: ['Good transportation', 'Local character', 'Urban convenience'],
+      cons: ['Varies by location', 'City noise', 'Parking challenges']
+    };
+  };
+
   // Check if this is a rent-stabilized property
   const isRentStabilized = (property as any).isRentStabilized;
   
@@ -163,6 +228,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     // Fallback to existing reasoning for non-rent-stabilized properties
     return property.reasoning || '';
   };
+
+  const neighborhoodInfo = getNeighborhoodInfo(property.neighborhood);
 
   return (
     <>
@@ -260,10 +327,20 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
                         <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
                       </div>
+
+                      {/* Tour Request Button for Sales Properties Only */}
+                      {!isRental && (
+                        <Button
+                          onClick={() => setShowTourRequest(true)}
+                          className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2 mt-2"
+                        >
+                          Request Tour
+                        </Button>
+                      )}
                     </div>
                   </div>
 
-                  {/* Property Details */}
+                  {/* Property Details - Updated to include Built year */}
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
@@ -298,6 +375,12 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                               <span className="text-white capitalize">{property.property_type}</span>
                             </div>
                           )}
+                          {property.built_in && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Built:</span>
+                              <span className="text-white">{property.built_in}</span>
+                            </div>
+                          )}
                           {isRental && (property as UndervaluedRentals).no_fee && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Broker Fee:</span>
@@ -309,7 +392,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </CardContent>
                   </Card>
 
-                  {/* Market Analysis - moved here and background changed to match page */}
+                  {/* Market Analysis */}
                   <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
                     <CardHeader>
                       <CardTitle className="text-white">Market Analysis</CardTitle>
@@ -405,18 +488,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         ) : (
                           <p className="text-gray-300 leading-relaxed">{property.description}</p>
                         )}
-                        
-                        {/* Tour Request Button for Sales Properties Only */}
-                        {!isRental && (
-                          <div className="mt-6 pt-4 border-t border-gray-700">
-                            <Button
-                              onClick={() => setShowTourRequest(true)}
-                              className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
-                            >
-                              Request Tour
-                            </Button>
-                          </div>
-                        )}
                       </CardContent>
                     </Card>
                   )}
@@ -440,22 +511,37 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
                 </div>
 
-                {/* Sidebar */}
+                {/* Sidebar - About the Neighborhood */}
                 <div className="space-y-6">
-                  {/* Property Details */}
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Property Info</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {property.built_in && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-400">Built:</span>
-                          <span className="text-white">{property.built_in}</span>
+                  {neighborhoodInfo && (
+                    <Card className="bg-gray-800/50 border-gray-700">
+                      <CardHeader>
+                        <CardTitle className="text-white">About the Neighborhood</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-300 leading-relaxed">
+                          {neighborhoodInfo.description}
+                        </p>
+                        
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="text-sm font-medium text-green-400 mb-1">Great for:</h4>
+                            <p className="text-xs text-gray-400">{neighborhoodInfo.pros[0]}</p>
+                          </div>
+                          
+                          <div>
+                            <h4 className="text-sm font-medium text-yellow-400 mb-1">Good for:</h4>
+                            <p className="text-xs text-gray-400">{neighborhoodInfo.pros[1]}</p>
+                          </div>
+                          
+                          <div>
+                            <h4 className="text-sm font-medium text-red-400 mb-1">Not ideal for:</h4>
+                            <p className="text-xs text-gray-400">{neighborhoodInfo.cons[0]}</p>
+                          </div>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </div>
