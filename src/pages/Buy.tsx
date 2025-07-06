@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -433,7 +432,7 @@ const Buy = () => {
         {/* Load More Button - only show for authenticated users */}
         {user && !loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
-            <HoverButton onClick={loadMore}>
+            <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
             </HoverButton>
           </div>
