@@ -496,15 +496,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   
                   {/* Below Market & Annual Savings Stats */}
                   <Card className="bg-gray-800/50 border-gray-700">
-                    <CardContent className="p-6">
-                      <div className="space-y-4">
-                        {discountPercent && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">Below Market:</span>
-                            <span className="text-lg font-bold text-[#FFFFFF]">{Math.round(discountPercent)}%</span>
-                          </div>
-                        )}
-                        
+                    <CardContent className="p-6">      
                         {annualSavings && (
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-400">
