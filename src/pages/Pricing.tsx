@@ -187,7 +187,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Get the deals before they're gone
+                      Get deals before they're gone
                     </li>
                   </ul>
                   
