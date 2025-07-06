@@ -1,542 +1,322 @@
-
-import React, { useState } from 'react';
-import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown } from 'lucide-react';
-import BookmarkButton from './BookmarkButton';
-import TourRequestForm from './TourRequestForm';
-import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
+import React, { useState, useEffect } from "react";
+import { X, MapPin, Calendar, Users, Square, Home, Hammer, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import TourRequestForm from "./TourRequestForm";
+import PropertyImage from "./PropertyImage";
 
 interface PropertyDetailProps {
-  property: UndervaluedSales | UndervaluedRentals;
-  isRental?: boolean;
+  property: any;
+  isRental: boolean;
   onClose: () => void;
 }
 
-const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [showTourRequest, setShowTourRequest] = useState(false);
+const PropertyDetail = ({ property, isRental, onClose }: PropertyDetailProps) => {
+  const [showTourForm, setShowTourForm] = useState(false);
+  const [neighborhood, setNeighborhood] = useState<any>(null);
 
-  // Calculate grade from score for rent-stabilized properties
-  const calculateGradeFromScore = (score: number): string => {
-    if (score >= 98) return 'A+';
-    if (score >= 93) return 'A';
-    if (score >= 88) return 'B+';
-    if (score >= 83) return 'B';
-    if (score >= 79) return 'B-';
-    if (score >= 75) return 'C+';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'C-';
-    return 'D';
-  };
+  useEffect(() => {
+    const fetchNeighborhoodData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('neighborhood_stats')
+          .select('*')
+          .ilike('neighborhood', property.neighborhood)
+          .single();
 
-  // Process images to handle different formats
-  const processImages = () => {
-    if (!property.images || property.images.length === 0) {
-      return [];
+        if (data && !error) {
+          setNeighborhood(data);
+        }
+      } catch (error) {
+        console.log('No neighborhood data found');
+      }
+    };
+
+    if (property.neighborhood) {
+      fetchNeighborhoodData();
     }
+  }, [property.neighborhood]);
 
-    return property.images.map((img: any) => {
-      if (typeof img === 'string') {
-        return img;
-      }
-      if (typeof img === 'object' && img !== null) {
-        return img.url || img.image_url || '/placeholder.svg';
-      }
-      return '/placeholder.svg';
-    });
-  };
-
-  const images = processImages();
-  const hasImages = images.length > 0;
-
-  const formatPrice = (price: number) => {
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(amount);
   };
 
-  const nextImage = () => {
-    if (hasImages) {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
-  const prevImage = () => {
-    if (hasImages) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    }
-  };
-
-  const getGradeTheme = (grade: string) => {
-    switch (grade.toUpperCase()) {
-      case 'A+':
-        return {
-          bgColor: 'bg-yellow-500/20',
-          borderColor: 'border-yellow-500',
-          textColor: 'text-yellow-500',
-          glowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]'
-        };
-      case 'A':
-      case 'A-':
-        return {
-          bgColor: 'bg-purple-500/20',
-          borderColor: 'border-purple-500',
-          textColor: 'text-purple-500',
-          glowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]'
-        };
-      case 'B+':
-      case 'B':
-      case 'B-':
-        return {
-          bgColor: 'bg-blue-500/20',
-          borderColor: 'border-blue-500',
-          textColor: 'text-blue-500',
-          glowColor: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]'
-        };
-      default:
-        return {
-          bgColor: 'bg-white/20',
-          borderColor: 'border-white',
-          textColor: 'text-white',
-          glowColor: 'shadow-[0_0_20px_rgba(255,255,255,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(255,255,255,0.4)]'
-        };
-    }
-  };
-
-  // Check if this is a rent-stabilized property
-  const isRentStabilized = (property as any).isRentStabilized;
-  
-  // Determine the display grade
-  const displayGrade = isRentStabilized 
-    ? calculateGradeFromScore(Number(property.score))
-    : String(property.grade);
-
-  const gradeTheme = getGradeTheme(displayGrade);
-
-  const price = isRental 
-    ? (property as UndervaluedRentals).monthly_rent 
-    : (property as UndervaluedSales).price;
-
-  const pricePerSqft = isRental
-    ? (property as UndervaluedRentals).rent_per_sqft
-    : (property as UndervaluedSales).price_per_sqft;
-
-  const currentImageUrl = hasImages ? images[currentImageIndex] : '/placeholder.svg';
-
-  // Truncate description for preview
-  const truncateDescription = (text: string, wordLimit: number = 35) => {
-    if (!text) return '';
-    const words = text.split(' ');
-    if (words.length <= wordLimit) return text;
-    return words.slice(0, wordLimit).join(' ') + '...';
-  };
-
-  const shouldShowReadMore = property.description && property.description.split(' ').length > 35;
-
-  // Get the market analysis text for rent-stabilized properties
-  const getMarketAnalysisText = () => {
-    if (isRentStabilized && (property as any).undervaluation_analysis) {
-      const analysis = (property as any).undervaluation_analysis;
-      
-      // If it's a string, return it directly
-      if (typeof analysis === 'string') {
-        return analysis;
-      }
-      
-      // If it's an object, try to extract the explanation or methodology
-      if (typeof analysis === 'object' && analysis !== null) {
-        return analysis.explanation || analysis.methodology || analysis.summary || 
-               (typeof analysis === 'object' ? JSON.stringify(analysis) : '');
-      }
-    }
-    
-    // Fallback to existing reasoning for non-rent-stabilized properties
-    return property.reasoning || '';
-  };
-
-  const neighborhoodInfo = getNeighborhoodInfo(property.neighborhood);
-
-  // Get discount percent and annual savings based on property type
   const getDiscountPercent = () => {
-    if (isRentStabilized) {
-      return (property as any).undervaluation_percent;
+    if (property.isRentStabilized) {
+      return property.undervaluation_percent;
     } else if (isRental) {
-      return (property as UndervaluedRentals).discount_percent;
+      return property.discount_percent;
     } else {
-      return (property as UndervaluedSales).discount_percent;
+      return property.discount_percent;
     }
   };
 
   const getAnnualSavings = () => {
-    if (isRentStabilized) {
-      return (property as any).potential_annual_savings;
+    if (property.isRentStabilized) {
+      return property.potential_annual_savings;
     } else if (isRental) {
-      return (property as UndervaluedRentals).annual_savings;
+      return property.annual_savings;
     } else {
-      return (property as UndervaluedSales).potential_savings;
+      return property.annual_savings; // Changed from potential_savings to annual_savings
     }
   };
 
-  const discountPercent = getDiscountPercent();
-  const annualSavings = getAnnualSavings();
+  const getSavingsLabel = () => {
+    return isRental ? "Est Annual Savings" : "Est Savings";
+  };
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
-        <div className="min-h-screen py-8 px-4">
-          <div className="max-w-6xl mx-auto bg-gray-900/95 backdrop-blur-md rounded-3xl border border-gray-700/50">
-            {/* Header with close button */}
-            <div className="flex justify-between items-center p-6 border-b border-gray-700/50">
-              <h1 className="text-2xl font-bold text-white tracking-tight">Property Details</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="text-white hover:bg-gray-800"
-              >
-                <X className="h-6 w-6" />
-              </Button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900">{property.address}</h2>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 p-6">
+          {/* Left Column - Images and Details */}
+          <div className="space-y-6">
+            {/* Image Gallery */}
+            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+              <PropertyImage 
+                images={property.images} 
+                address={property.address}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            <div className="p-6">
-              {hasImages && (
-                <div className="relative mb-8">
-                  <div className="aspect-video rounded-2xl overflow-hidden bg-gray-800">
-                    <img
-                      src={currentImageUrl}
-                      alt={property.address}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = '/placeholder.svg';
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Bookmark button in top right of image */}
-                  <div className="absolute top-4 right-4 z-30">
-                    <BookmarkButton 
-                      propertyId={property.id}
-                      propertyType={isRental ? 'rental' : 'sale'}
-                    />
-                  </div>
-                  
-                  {images.length > 1 && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                        onClick={prevImage}
-                      >
-                        <ChevronLeft className="h-6 w-6" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                        onClick={nextImage}
-                      >
-                        <ChevronRight className="h-6 w-6" />
-                      </Button>
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                        {currentImageIndex + 1} / {images.length}
-                      </div>
-                    </>
-                  )}
+            {/* Property Details Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <Users className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.bedrooms || property.bedrooms === 0 ? property.bedrooms : ''}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {property.bedrooms === 0 ? 'Studio' : property.bedrooms === 1 ? 'Bed' : 'Beds'}
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <div className="h-6 w-6 mx-auto mb-2 bg-gray-600 rounded-full"></div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.bathrooms || ''}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {property.bathrooms === 1 ? 'Bath' : 'Baths'}
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <Square className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.sqft ? property.sqft.toLocaleString() : ''}
+                </div>
+                <div className="text-sm text-gray-600">Sq Ft</div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <Home className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.property_type || property.building_type || ''}
+                </div>
+                <div className="text-sm text-gray-600">Type</div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <Hammer className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.built_in || property.year_built || ''}
+                </div>
+                <div className="text-sm text-gray-600">Built</div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <Calendar className="h-6 w-6 mx-auto mb-2 text-gray-600" />
+                <div className="text-2xl font-bold text-gray-900">
+                  {property.days_on_market || ''}
+                </div>
+                <div className="text-sm text-gray-600">Days</div>
+              </div>
+            </div>
+
+            {/* Description */}
+            {property.description && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+                <p className="text-gray-700 leading-relaxed">{property.description}</p>
+              </div>
+            )}
+
+            {/* Amenities */}
+            {property.amenities && property.amenities.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Amenities</h3>
+                <div className="flex flex-wrap gap-2">
+                  {property.amenities.map((amenity: string, index: number) => (
+                    <Badge key={index} variant="secondary">
+                      {amenity}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Pricing and Actions */}
+          <div className="space-y-6">
+            {/* Price and Key Stats */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-200">
+              <div className="text-3xl font-bold text-gray-900 mb-2">
+                {isRental 
+                  ? formatCurrency(property.monthly_rent)
+                  : formatCurrency(property.price)
+                }
+                {isRental && <span className="text-lg font-normal text-gray-600">/month</span>}
+              </div>
+              
+              {property.rent_per_sqft && (
+                <div className="text-sm text-gray-600 mb-4">
+                  {formatCurrency(property.rent_per_sqft)}/sqft
                 </div>
               )}
 
-              <div className="grid lg:grid-cols-3 gap-8">
-                {/* Main Info */}
-                <div className="lg:col-span-2 space-y-6">
-                  {/* Address, Price and Score */}
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
-                      <div className="flex items-center text-gray-400 mb-4">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
-                        {capitalizeNeighborhood(property.borough)}
+              <div className="flex items-center space-x-4 mb-4">
+                <Badge 
+                  className={`${
+                    property.grade === 'A+' ? 'bg-yellow-500 text-white' :
+                    property.grade?.startsWith('A') ? 'bg-purple-500 text-white' :
+                    property.grade?.startsWith('B') ? 'bg-blue-500 text-white' :
+                    property.isRentStabilized ? 'bg-green-500 text-white' :
+                    'bg-gray-500 text-white'
+                  }`}
+                >
+                  Grade: {property.isRentStabilized ? 'RS' : property.grade}
+                </Badge>
+                
+                <div className="text-sm text-gray-600">
+                  Score: {property.score || property.rent_stabilized_confidence || 'N/A'}
+                </div>
+              </div>
+
+              <Button 
+                onClick={() => setShowTourForm(true)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
+              >
+                Request Tour
+              </Button>
+            </div>
+
+            {/* Location */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <MapPin className="h-5 w-5 mr-2" />
+                Location
+              </h3>
+              <div className="space-y-2 text-gray-700">
+                <div>{property.address}</div>
+                <div>{property.neighborhood}</div>
+                <div>{property.zipcode || property.zip_code}</div>
+              </div>
+            </div>
+
+            {/* About the Neighborhood */}
+            {neighborhood && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">About the Neighborhood</h3>
+                <div className="space-y-3 text-gray-700">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-sm text-gray-500">Median {isRental ? 'Rent' : 'Price'}</div>
+                      <div className="font-semibold">
+                        {formatCurrency(isRental ? neighborhood.median_rent : neighborhood.median_price)}
                       </div>
-                      {/* Price moved here */}
-                      <div className="text-3xl font-bold text-white mb-2">
-                        {formatPrice(price)}{isRental ? '/mo' : ''}
-                      </div>
-                      {pricePerSqft && (
-                        <div className="text-gray-300 mb-4">
-                          {formatPrice(pricePerSqft)}/sqft
-                        </div>
-                      )}
                     </div>
-                    <div className="flex flex-col items-end space-y-3">
-                      <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
-                        {displayGrade}
-                      </Badge>
-                      <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
-                        <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
-                        <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
-                      </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Walk Score</div>
+                      <div className="font-semibold">{neighborhood.walk_score || 'N/A'}</div>
                     </div>
                   </div>
-
-                  {/* Property Details - Updated to hide 0 values */}
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardContent className="p-6">
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Bedrooms:</span>
-                            <span className="text-white">{property.bedrooms || 'N/A'}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Bathrooms:</span>
-                            <span className="text-white">{property.bathrooms || 'N/A'}</span>
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          {property.sqft && property.sqft > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Square Feet:</span>
-                              <span className="text-white">{property.sqft}</span>
-                            </div>
-                          )}
-                          {property.days_on_market && property.days_on_market > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Days on Market:</span>
-                              <span className="text-white">{property.days_on_market}</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          {property.property_type && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Type:</span>
-                              <span className="text-white capitalize">{property.property_type}</span>
-                            </div>
-                          )}
-                          {property.built_in && property.built_in > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Built:</span>
-                              <span className="text-white">{property.built_in}</span>
-                            </div>
-                          )}
-                          {isRental && (property as UndervaluedRentals).no_fee && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Broker Fee:</span>
-                              <span className="text-green-400">No Fee</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Market Analysis */}
-                  <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
-                    <CardHeader>
-                      <CardTitle className="text-white">Market Analysis</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="text-center">
-                        <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
-                          {Math.round(property.discount_percent)}%
-                        </div>
-                        <div className="text-sm text-gray-400">Below Market Value</div>
-                      </div>
-                      
-                      {getMarketAnalysisText() && (
-                        <div className="text-sm text-gray-300 leading-relaxed">
-                          {getMarketAnalysisText()}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {/* Rent-Stabilized Analysis Section */}
-                  {isRentStabilized && (property as any).rent_stabilization_analysis && (
-                    <Card className="bg-gray-800/50 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white flex items-center">
-                          Rent-Stabilized Analysis
-                          <Badge variant="outline" className="ml-2 text-xs border-green-600 text-green-400">
-                            Rent-stabilized
-                          </Badge>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {(property as any).rent_stabilization_analysis?.explanation && (
-                          <div className="text-sm text-gray-300 leading-relaxed">
-                            <strong>Analysis:</strong> {(property as any).rent_stabilization_analysis.explanation}
-                          </div>
-                        )}
-                        
-                        {(property as any).rent_stabilization_analysis?.key_factors && 
-                         (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
-                            <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                              {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
-                                <li key={index}>{factor}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        {(property as any).rent_stabilized_confidence && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Confidence Level:</span>
-                            <span className="text-green-400">{(property as any).rent_stabilized_confidence}%</span>
-                          </div>
-                        )}
-                        
-                        {(property as any).potential_monthly_savings && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Potential Monthly Savings:</span>
-                            <span className="text-green-400">{formatPrice((property as any).potential_monthly_savings)}</span>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Description with collapsible */}
-                  {property.description && (
-                    <Card className="bg-gray-800/50 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">Description</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {shouldShowReadMore ? (
-                          <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
-                            <div className="text-gray-300 leading-relaxed">
-                              {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
-                            </div>
-                            <CollapsibleTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
-                              >
-                                <span className="flex items-center">
-                                  {isDescriptionExpanded ? 'Show less' : 'Show more'}
-                                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
-                                </span>
-                              </Button>
-                            </CollapsibleTrigger>
-                          </Collapsible>
-                        ) : (
-                          <p className="text-gray-300 leading-relaxed">{property.description}</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Amenities */}
-                  {property.amenities && property.amenities.length > 0 && (
-                    <Card className="bg-gray-800/50 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">Amenities</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {property.amenities.map((amenity, index) => (
-                            <Badge key={index} variant="outline" className="border-gray-600 text-gray-300">
-                              {amenity.replace(/_/g, ' ')}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
+                  {neighborhood.description && (
+                    <p className="text-sm leading-relaxed">{neighborhood.description}</p>
                   )}
                 </div>
+              </div>
+            )}
 
-                {/* Sidebar - About the Neighborhood + New Stats */}
-                <div className="space-y-6">
-                  {neighborhoodInfo && (
-                    <Card className="bg-gray-800/50 border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">About the Neighborhood</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-300 leading-relaxed">
-                          {neighborhoodInfo.description}
-                        </p>
-                        
-                        <div className="space-y-3">
-                          <div>
-                            <h4 className="text-sm font-medium text-green-400 mb-1">Great for:</h4>
-                            <p className="text-xs text-gray-400">{neighborhoodInfo.pros[0]}</p>
-                          </div>
-                          
-                          <div>
-                            <h4 className="text-sm font-medium text-yellow-400 mb-1">Good for:</h4>
-                            <p className="text-xs text-gray-400">{neighborhoodInfo.pros[1] || neighborhoodInfo.pros[0]}</p>
-                          </div>
-                          
-                          <div>
-                            <h4 className="text-sm font-medium text-red-400 mb-1">Not ideal for:</h4>
-                            <p className="text-xs text-gray-400">{neighborhoodInfo.cons[0]}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                  
-                 {/* Annual Savings Only */}
-<Card className="bg-gray-800/50 border-gray-700">
-  <CardContent className="p-6">
-    <div className="space-y-4">
-      {annualSavings && (
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-400">
-            {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-          </span>
-          <span className="text-lg font-bold text-[#FFFFFF]">
-            {formatPrice(annualSavings)}
-          </span>
-        </div>
-      )}
-    </div>
-  </CardContent>
-</Card>
-                  
-                  {/* Request Tour Button moved here for Sales Properties Only */}
-                  {!isRental && (
-                    <Button
-                      onClick={() => setShowTourRequest(true)}
-                      className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3"
+            {/* Below Market and Annual Savings */}
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div className="space-y-2">
+                {getDiscountPercent() && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">Below Market:</span>
+                    <span className="text-lg font-bold text-green-600">{getDiscountPercent()}%</span>
+                  </div>
+                )}
+                {getAnnualSavings() && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700">{getSavingsLabel()}:</span>
+                    <span className="text-lg font-bold text-green-600">{formatCurrency(getAnnualSavings())}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Listing Details */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Listing Details</h3>
+              <div className="space-y-2 text-sm text-gray-700">
+                {property.listed_at && (
+                  <div className="flex justify-between">
+                    <span>Listed:</span>
+                    <span>{formatDate(property.listed_at)}</span>
+                  </div>
+                )}
+                
+                {property.listing_url && (
+                  <div className="mt-4">
+                    <a 
+                      href={property.listing_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
                     >
-                      Request Tour
-                    </Button>
-                  )}
-                </div>
+                      View Original Listing
+                      <ExternalLink className="h-4 w-4 ml-1" />
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Tour Request Form Modal */}
-      {showTourRequest && (
-        <TourRequestForm
-          propertyId={property.id}
-          propertyAddress={property.address}
-          onClose={() => setShowTourRequest(false)}
-        />
-      )}
-    </>
+        {/* Tour Request Form Modal */}
+        {showTourForm && (
+          <TourRequestForm
+            property={property}
+            onClose={() => setShowTourForm(false)}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
