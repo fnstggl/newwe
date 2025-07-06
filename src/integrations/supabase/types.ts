@@ -727,9 +727,11 @@ export type Database = {
           floor_plan_url: string | null
           id: string
           images: Json
+          last_seen_in_search: string
           last_verified: string
           last_viewed_at: string | null
           lease_term: string | null
+          likely_rented: boolean
           listing_agent: string | null
           listing_id: string
           listing_url: string
@@ -745,10 +747,12 @@ export type Database = {
           rent_stabilization_analysis: Json
           rent_stabilized_confidence: number
           rent_stabilized_method: string
+          rented_detected_at: string | null
           risk_factors: Json
           sqft: number | null
           street_easy_score: number | null
           tags: Json
+          times_seen_in_search: number | null
           total_units_in_building: number | null
           transit_score: number | null
           undervaluation_analysis: Json
@@ -792,9 +796,11 @@ export type Database = {
           floor_plan_url?: string | null
           id?: string
           images?: Json
+          last_seen_in_search?: string
           last_verified?: string
           last_viewed_at?: string | null
           lease_term?: string | null
+          likely_rented?: boolean
           listing_agent?: string | null
           listing_id: string
           listing_url: string
@@ -810,10 +816,12 @@ export type Database = {
           rent_stabilization_analysis?: Json
           rent_stabilized_confidence: number
           rent_stabilized_method: string
+          rented_detected_at?: string | null
           risk_factors?: Json
           sqft?: number | null
           street_easy_score?: number | null
           tags?: Json
+          times_seen_in_search?: number | null
           total_units_in_building?: number | null
           transit_score?: number | null
           undervaluation_analysis?: Json
@@ -857,9 +865,11 @@ export type Database = {
           floor_plan_url?: string | null
           id?: string
           images?: Json
+          last_seen_in_search?: string
           last_verified?: string
           last_viewed_at?: string | null
           lease_term?: string | null
+          likely_rented?: boolean
           listing_agent?: string | null
           listing_id?: string
           listing_url?: string
@@ -875,10 +885,12 @@ export type Database = {
           rent_stabilization_analysis?: Json
           rent_stabilized_confidence?: number
           rent_stabilized_method?: string
+          rented_detected_at?: string | null
           risk_factors?: Json
           sqft?: number | null
           street_easy_score?: number | null
           tags?: Json
+          times_seen_in_search?: number | null
           total_units_in_building?: number | null
           transit_score?: number | null
           undervaluation_analysis?: Json

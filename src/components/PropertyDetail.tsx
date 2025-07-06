@@ -327,16 +327,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
                         <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
                       </div>
-
-                      {/* Tour Request Button for Sales Properties Only */}
-                      {!isRental && (
-                        <Button
-                          onClick={() => setShowTourRequest(true)}
-                          className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2 mt-2"
-                        >
-                          Request Tour
-                        </Button>
-                      )}
                     </div>
                   </div>
 
@@ -541,6 +531,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         </div>
                       </CardContent>
                     </Card>
+                  )}
+                  
+                  {/* Request Tour Button moved here for Sales Properties Only */}
+                  {!isRental && (
+                    <Button
+                      onClick={() => setShowTourRequest(true)}
+                      className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3"
+                    >
+                      Request Tour
+                    </Button>
                   )}
                 </div>
               </div>
