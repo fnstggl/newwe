@@ -395,29 +395,9 @@ const Rent = () => {
           </p>
         </div>
 
-        {/* Rent Stabilized Toggle */}
-        <div className="flex items-center justify-center mb-6">
-          <div className="flex items-center space-x-4">
-            <span className={`text-sm font-medium tracking-tight transition-colors ${!rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
-              Undervalued
-            </span>
-            <div className="[--c-background:#000000]">
-              <Toggle 
-                checked={rentStabilizedOnly} 
-                onCheckedChange={setRentStabilizedOnly} 
-                variant="default"
-                className="[--c-background:#000000]"
-              />
-            </div>
-            <span className={`text-sm font-medium tracking-tight transition-colors ${rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
-              Undervalued & Rent-Stabilized
-            </span>
-          </div>
-        </div>
-
         {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-5 gap-4">
+          <div className="grid md:grid-cols-6 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Neighborhoods
@@ -519,6 +499,19 @@ const Rent = () => {
                   <option key={grade} value={grade} className="text-white">{grade}</option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                Rent Stabilized
+              </label>
+              <div className="flex justify-center mt-4">
+                <Toggle 
+                  checked={rentStabilizedOnly} 
+                  onCheckedChange={setRentStabilizedOnly} 
+                  variant="default"
+                  className="[--c-background:#000000]"
+                />
+              </div>
             </div>
           </div>
         </div>
