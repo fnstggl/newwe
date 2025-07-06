@@ -399,15 +399,18 @@ const Rent = () => {
         <div className="flex items-center justify-center mb-6">
           <div className="flex items-center space-x-4">
             <span className={`text-sm font-medium tracking-tight transition-colors ${!rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
-              All Rentals
+              Undervalued
             </span>
-            <Toggle 
-              checked={rentStabilizedOnly} 
-              onCheckedChange={setRentStabilizedOnly} 
-              variant="success"
-            />
+            <div className="[--c-background:#000000]">
+              <Toggle 
+                checked={rentStabilizedOnly} 
+                onCheckedChange={setRentStabilizedOnly} 
+                variant="default"
+                className="[--c-background:#000000]"
+              />
+            </div>
             <span className={`text-sm font-medium tracking-tight transition-colors ${rentStabilizedOnly ? 'text-white' : 'text-gray-400'}`}>
-              Rent Stabilized Only
+              Undervalued & Rent-Stabilized
             </span>
           </div>
         </div>
