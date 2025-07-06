@@ -501,7 +501,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         {discountPercent && (
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-400">Below Market:</span>
-                            <span className="text-lg font-bold text-green-400">{Math.round(discountPercent)}%</span>
+                            <span className="text-lg font-bold text-white-100">{Math.round(discountPercent)}%</span>
                           </div>
                         )}
                         
@@ -510,7 +510,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                             <span className="text-sm text-gray-400">
                               {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
                             </span>
-                            <span className="text-lg font-bold text-green-400">
+                            <span className="text-lg font-bold text-white-100">
                               {formatPrice(annualSavings)}
                             </span>
                           </div>
