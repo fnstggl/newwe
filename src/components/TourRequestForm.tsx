@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { X, CalendarIcon, Plus, Minus } from 'lucide-react';
+import { X, CalendarIcon, Plus, Minus, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -17,10 +17,11 @@ import { cn } from '@/lib/utils';
 interface TourRequestFormProps {
   propertyId: string;
   propertyAddress: string;
+  propertyType?: 'sale' | 'rental';
   onClose: () => void;
 }
 
-const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyAddress, onClose }) => {
+const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyAddress, propertyType, onClose }) => {
   const { user, userProfile } = useAuth();
   const [useProfileInfo, setUseProfileInfo] = useState(false);
   const [formData, setFormData] = useState({
@@ -251,6 +252,30 @@ const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyA
                   )}
                 </div>
               </div>
+
+              {/* Tiger Liu Realtor Profile - Only for sales listings */}
+              {propertyType === 'sale' && (
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img
+                        src="/lovable-uploads/bd686247-be03-4fec-a000-cc7f3233f81a.png"
+                        alt="Tiger Liu"
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-3 h-3 text-white fill-current" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-semibold text-sm">Tiger Liu</h3>
+                      <p className="text-gray-300 text-xs">Licensed Real Estate Salesperson</p>
+                      <p className="text-gray-400 text-xs">Compass</p>
+                      <p className="text-blue-400 text-xs font-medium">(917) 227-9987</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Disclaimer */}
               <p className="text-xs text-gray-400 text-center">

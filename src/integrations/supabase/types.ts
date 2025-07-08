@@ -1140,9 +1140,14 @@ export type Database = {
           amenities: string[]
           amenity_count: number | null
           analysis_date: string
+          annual_savings: number | null
+          available_date: string | null
+          available_from: string | null
           bathrooms: number | null
           bedrooms: number | null
           borough: string | null
+          broker_fee: string | null
+          building_amenities: string[] | null
           building_id: string | null
           building_info: Json
           built_in: number | null
@@ -1156,6 +1161,7 @@ export type Database = {
           description: string | null
           discount_percent: number
           estimated_market_price: number | null
+          estimated_market_rent: number | null
           floorplans: Json
           grade: string
           id: string
@@ -1171,8 +1177,11 @@ export type Database = {
           longitude: number | null
           market_price_per_sqft: number | null
           monthly_hoa: number | null
+          monthly_rent: number | null
           monthly_tax: number | null
           neighborhood: string | null
+          no_fee: boolean | null
+          potential_monthly_savings: number | null
           potential_savings: number | null
           ppsqft: number | null
           price: number
@@ -1185,9 +1194,13 @@ export type Database = {
           sqft: number | null
           status: string | null
           times_seen_in_search: number | null
+          total_units_in_building: number | null
           undervaluation_category: string | null
+          undervaluation_percent: number | null
           undervaluation_phrases: string[] | null
           videos: Json
+          year_built: number | null
+          zip_code: string | null
           zipcode: string | null
         }
         Insert: {
@@ -1196,9 +1209,14 @@ export type Database = {
           amenities?: string[]
           amenity_count?: number | null
           analysis_date?: string
+          annual_savings?: number | null
+          available_date?: string | null
+          available_from?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          broker_fee?: string | null
+          building_amenities?: string[] | null
           building_id?: string | null
           building_info?: Json
           built_in?: number | null
@@ -1212,6 +1230,7 @@ export type Database = {
           description?: string | null
           discount_percent: number
           estimated_market_price?: number | null
+          estimated_market_rent?: number | null
           floorplans?: Json
           grade: string
           id?: string
@@ -1227,8 +1246,11 @@ export type Database = {
           longitude?: number | null
           market_price_per_sqft?: number | null
           monthly_hoa?: number | null
+          monthly_rent?: number | null
           monthly_tax?: number | null
           neighborhood?: string | null
+          no_fee?: boolean | null
+          potential_monthly_savings?: number | null
           potential_savings?: number | null
           ppsqft?: number | null
           price: number
@@ -1241,9 +1263,13 @@ export type Database = {
           sqft?: number | null
           status?: string | null
           times_seen_in_search?: number | null
+          total_units_in_building?: number | null
           undervaluation_category?: string | null
+          undervaluation_percent?: number | null
           undervaluation_phrases?: string[] | null
           videos?: Json
+          year_built?: number | null
+          zip_code?: string | null
           zipcode?: string | null
         }
         Update: {
@@ -1252,9 +1278,14 @@ export type Database = {
           amenities?: string[]
           amenity_count?: number | null
           analysis_date?: string
+          annual_savings?: number | null
+          available_date?: string | null
+          available_from?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          broker_fee?: string | null
+          building_amenities?: string[] | null
           building_id?: string | null
           building_info?: Json
           built_in?: number | null
@@ -1268,6 +1299,7 @@ export type Database = {
           description?: string | null
           discount_percent?: number
           estimated_market_price?: number | null
+          estimated_market_rent?: number | null
           floorplans?: Json
           grade?: string
           id?: string
@@ -1283,8 +1315,11 @@ export type Database = {
           longitude?: number | null
           market_price_per_sqft?: number | null
           monthly_hoa?: number | null
+          monthly_rent?: number | null
           monthly_tax?: number | null
           neighborhood?: string | null
+          no_fee?: boolean | null
+          potential_monthly_savings?: number | null
           potential_savings?: number | null
           ppsqft?: number | null
           price?: number
@@ -1297,9 +1332,13 @@ export type Database = {
           sqft?: number | null
           status?: string | null
           times_seen_in_search?: number | null
+          total_units_in_building?: number | null
           undervaluation_category?: string | null
+          undervaluation_percent?: number | null
           undervaluation_phrases?: string[] | null
           videos?: Json
+          year_built?: number | null
+          zip_code?: string | null
           zipcode?: string | null
         }
         Relationships: []
