@@ -185,7 +185,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     } else if (isRental) {
       return (property as UndervaluedRentals).annual_savings;
     } else {
-      return (property as UndervaluedSales).potential_savings;
+      return (property as UndervaluedSales).annual_savings;
     }
   };
 
@@ -533,6 +533,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
         <TourRequestForm
           propertyId={property.id}
           propertyAddress={property.address}
+          propertyType={isRental ? 'rental' : 'sale'}
           onClose={() => setShowTourRequest(false)}
         />
       )}
