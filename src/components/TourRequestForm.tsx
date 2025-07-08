@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { X, CalendarIcon, Plus, Minus, CheckCircle } from 'lucide-react';
+import { X, CalendarIcon, Plus, Minus, Check } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -264,7 +263,7 @@ const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyA
                         className="w-12 h-12 rounded-full object-cover"
                       />
                       <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-3 h-3 text-white fill-current" />
+                        <Check className="w-3 h-3 text-white" />
                       </div>
                     </div>
                     <div className="flex-1">
