@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
       bi_weekly_analysis_runs: {
@@ -579,60 +584,96 @@ export type Database = {
       sales_market_cache: {
         Row: {
           address: string | null
+          agents: Json | null
+          amenities: string[] | null
           bathrooms: number | null
           bedrooms: number | null
           borough: string | null
+          building_info: Json | null
+          built_in: number | null
           created_at: string
+          description: string | null
           id: string
+          images: Json | null
           last_analyzed: string | null
           last_checked: string
           last_seen_in_search: string
+          latitude: number | null
           listing_id: string
+          longitude: number | null
           market_status: string | null
+          monthly_hoa: number | null
+          monthly_tax: number | null
           neighborhood: string | null
+          ppsqft: number | null
           price: number | null
           property_type: string | null
           sale_price: number | null
           sqft: number | null
           times_seen: number | null
+          zipcode: string | null
         }
         Insert: {
           address?: string | null
+          agents?: Json | null
+          amenities?: string[] | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          building_info?: Json | null
+          built_in?: number | null
           created_at?: string
+          description?: string | null
           id?: string
+          images?: Json | null
           last_analyzed?: string | null
           last_checked?: string
           last_seen_in_search?: string
+          latitude?: number | null
           listing_id: string
+          longitude?: number | null
           market_status?: string | null
+          monthly_hoa?: number | null
+          monthly_tax?: number | null
           neighborhood?: string | null
+          ppsqft?: number | null
           price?: number | null
           property_type?: string | null
           sale_price?: number | null
           sqft?: number | null
           times_seen?: number | null
+          zipcode?: string | null
         }
         Update: {
           address?: string | null
+          agents?: Json | null
+          amenities?: string[] | null
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          building_info?: Json | null
+          built_in?: number | null
           created_at?: string
+          description?: string | null
           id?: string
+          images?: Json | null
           last_analyzed?: string | null
           last_checked?: string
           last_seen_in_search?: string
+          latitude?: number | null
           listing_id?: string
+          longitude?: number | null
           market_status?: string | null
+          monthly_hoa?: number | null
+          monthly_tax?: number | null
           neighborhood?: string | null
+          ppsqft?: number | null
           price?: number | null
           property_type?: string | null
           sale_price?: number | null
           sqft?: number | null
           times_seen?: number | null
+          zipcode?: string | null
         }
         Relationships: []
       }
@@ -1102,30 +1143,38 @@ export type Database = {
           bathrooms: number | null
           bedrooms: number | null
           borough: string | null
+          building_id: string | null
           building_info: Json
           built_in: number | null
           category_confidence: number | null
           comparison_group: string | null
           comparison_method: string
+          consumer_reasoning: string | null
           created_at: string
           days_on_market: number | null
           deal_quality: string | null
           description: string | null
           discount_percent: number
+          estimated_market_price: number | null
           floorplans: Json
           grade: string
           id: string
           image_count: number | null
           images: Json
+          investment_reasoning: string | null
           last_seen_in_search: string
+          latitude: number | null
           likely_sold: boolean
           listed_at: string | null
           listing_id: string
+          listing_url: string | null
+          longitude: number | null
           market_price_per_sqft: number | null
           monthly_hoa: number | null
           monthly_tax: number | null
           neighborhood: string | null
           potential_savings: number | null
+          ppsqft: number | null
           price: number
           price_per_sqft: number | null
           property_type: string | null
@@ -1150,30 +1199,38 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          building_id?: string | null
           building_info?: Json
           built_in?: number | null
           category_confidence?: number | null
           comparison_group?: string | null
           comparison_method: string
+          consumer_reasoning?: string | null
           created_at?: string
           days_on_market?: number | null
           deal_quality?: string | null
           description?: string | null
           discount_percent: number
+          estimated_market_price?: number | null
           floorplans?: Json
           grade: string
           id?: string
           image_count?: number | null
           images?: Json
+          investment_reasoning?: string | null
           last_seen_in_search?: string
+          latitude?: number | null
           likely_sold?: boolean
           listed_at?: string | null
           listing_id: string
+          listing_url?: string | null
+          longitude?: number | null
           market_price_per_sqft?: number | null
           monthly_hoa?: number | null
           monthly_tax?: number | null
           neighborhood?: string | null
           potential_savings?: number | null
+          ppsqft?: number | null
           price: number
           price_per_sqft?: number | null
           property_type?: string | null
@@ -1198,30 +1255,38 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           borough?: string | null
+          building_id?: string | null
           building_info?: Json
           built_in?: number | null
           category_confidence?: number | null
           comparison_group?: string | null
           comparison_method?: string
+          consumer_reasoning?: string | null
           created_at?: string
           days_on_market?: number | null
           deal_quality?: string | null
           description?: string | null
           discount_percent?: number
+          estimated_market_price?: number | null
           floorplans?: Json
           grade?: string
           id?: string
           image_count?: number | null
           images?: Json
+          investment_reasoning?: string | null
           last_seen_in_search?: string
+          latitude?: number | null
           likely_sold?: boolean
           listed_at?: string | null
           listing_id?: string
+          listing_url?: string | null
+          longitude?: number | null
           market_price_per_sqft?: number | null
           monthly_hoa?: number | null
           monthly_tax?: number | null
           neighborhood?: string | null
           potential_savings?: number | null
+          ppsqft?: number | null
           price?: number
           price_per_sqft?: number | null
           property_type?: string | null
@@ -1431,21 +1496,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -1463,14 +1532,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -1486,14 +1557,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -1509,14 +1582,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -1524,14 +1599,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
