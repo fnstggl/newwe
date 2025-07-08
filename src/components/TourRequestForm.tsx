@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { X, CalendarIcon, Plus, Minus, Check } from 'lucide-react';
+import { X, CalendarIcon, Plus, Minus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -18,10 +18,9 @@ interface TourRequestFormProps {
   propertyId: string;
   propertyAddress: string;
   onClose: () => void;
-  isRental?: boolean;
 }
 
-const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyAddress, onClose, isRental = false }) => {
+const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyAddress, onClose }) => {
   const { user, userProfile } = useAuth();
   const [useProfileInfo, setUseProfileInfo] = useState(false);
   const [formData, setFormData] = useState({
@@ -252,30 +251,6 @@ const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyA
                   )}
                 </div>
               </div>
-
-              {/* Tiger Liu Realtor Profile - Only for sales listings */}
-              {!isRental && (
-                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="relative">
-                      <img
-                        src="/lovable-uploads/7e19e30a-ab57-4ae2-aa0b-477b41101a51.png"
-                        alt="Tiger Liu"
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-1">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-white font-medium text-sm">Tiger Liu</h4>
-                      <p className="text-gray-400 text-xs">Licensed Real Estate Salesperson</p>
-                      <p className="text-gray-400 text-xs">Compass</p>
-                      <p className="text-blue-400 text-xs font-medium">(917) 227-9987</p>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Disclaimer */}
               <p className="text-xs text-gray-400 text-center">

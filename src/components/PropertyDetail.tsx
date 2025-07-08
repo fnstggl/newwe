@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +16,7 @@ interface PropertyDetailProps {
   onClose: () => void;
 }
 
-const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, onClose, isRental = false }) => {
+const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showTourRequest, setShowTourRequest] = useState(false);
@@ -192,10 +193,10 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, onClose, isRe
   const annualSavings = getAnnualSavings();
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
-      <div className="min-h-screen py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-gray-900/95 backdrop-blur-md border-gray-700">
+    <>
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
+        <div className="min-h-screen py-8 px-4">
+          <div className="max-w-6xl mx-auto bg-gray-900/95 backdrop-blur-md rounded-3xl border border-gray-700/50">
             {/* Header with close button */}
             <div className="flex justify-between items-center p-6 border-b border-gray-700/50">
               <h1 className="text-2xl font-bold text-white tracking-tight">Property Details</h1>
@@ -523,7 +524,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, onClose, isRe
                 </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
 
@@ -533,10 +534,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, onClose, isRe
           propertyId={property.id}
           propertyAddress={property.address}
           onClose={() => setShowTourRequest(false)}
-          isRental={isRental}
         />
       )}
-    </div>
+    </>
   );
 };
 
