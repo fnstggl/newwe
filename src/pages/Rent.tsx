@@ -626,9 +626,25 @@ const Rent = () => {
             <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
               No properties found matching your criteria
             </h3>
-            <p className="text-gray-500 tracking-tight">
+            <p className="text-gray-500 tracking-tight mb-16">
               Try adjusting your search filters to see more results.
             </p>
+            
+            {/* Early Access Section - same as bottom section */}
+            <div className="text-center">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
+                Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
+              </h3>
+              <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
+                The best deals in the city get bought in days. Don't miss them.
+              </p>
+              <button 
+                onClick={() => navigate('/pricing')}
+                className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
+              >
+                Early Access
+              </button>
+            </div>
           </div>
         )}
       </div>
