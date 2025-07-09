@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown } from "lucide-react";
+import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
@@ -263,6 +263,10 @@ const Buy = () => {
     setSelectedNeighborhoods([]);
   };
 
+  const removeNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
+  };
+
   const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
@@ -330,15 +334,30 @@ const Buy = () => {
                 Neighborhoods
               </label>
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="text"
-                  value={neighborhoodSearchTerm}
-                  onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
-                  onFocus={() => setShowNeighborhoodDropdown(true)}
-                  placeholder="East Village"
-                  className="w-full pl-10 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
+                <div className="w-full min-h-[48px] px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all tracking-tight flex flex-wrap gap-2 items-center">
+                  {selectedNeighborhoods.map((neighborhood) => (
+                    <span
+                      key={neighborhood}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-white text-black rounded-full text-sm font-medium"
+                    >
+                      {neighborhood}
+                      <button
+                        onClick={() => removeNeighborhood(neighborhood)}
+                        className="hover:bg-gray-200 rounded-full p-0.5 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    value={neighborhoodSearchTerm}
+                    onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
+                    onFocus={() => setShowNeighborhoodDropdown(true)}
+                    placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
+                    className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-white placeholder-gray-500"
+                  />
+                </div>
                 {showNeighborhoodDropdown && (
                   <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
