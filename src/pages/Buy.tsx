@@ -174,6 +174,7 @@ const Buy = () => {
       let query = supabase
         .from('undervalued_sales')
         .select('*')
+        .eq('status', 'active')
         .order('created_at', { ascending: false }); // Random-ish order instead of by score
 
       if (searchTerm.trim()) {
