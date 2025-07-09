@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { Link } from "react-router-dom";
 import { HoverButton } from "./ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -203,25 +204,23 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
               </div>
               
               <div className="pt-4 border-t border-gray-800">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-white tracking-tight">
                     Get email notifications for new undervalued deals
                   </span>
                   <button
-                    onClick={() => setEmailNotifications(!emailNotifications)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
-                      emailNotifications ? "bg-white border-white" : "bg-gray-700 border-gray-700"
-                    }`}
+                    disabled
+                    className="relative inline-flex h-6 w-11 shrink-0 cursor-not-allowed rounded-full border-2 bg-gray-700 border-gray-700 opacity-50"
                   >
-                    <span
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        emailNotifications 
-                          ? "translate-x-5 bg-black" 
-                          : "translate-x-0 bg-white"
-                      }`}
-                    />
+                    <span className="pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out translate-x-0 bg-gray-400" />
                   </button>
                 </div>
+                <Link 
+                  to="/pricing" 
+                  className="text-blue-400 hover:text-blue-300 text-sm tracking-tight underline transition-colors"
+                >
+                  Be the first to know when new undervalued deals are listed
+                </Link>
               </div>
             </div>
           )}
