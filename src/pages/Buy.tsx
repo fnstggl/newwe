@@ -334,30 +334,33 @@ const Buy = () => {
                 Neighborhoods
               </label>
               <div className="relative">
-                <div className="w-full min-h-[48px] px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all tracking-tight flex flex-wrap gap-2 items-center">
-                  {selectedNeighborhoods.map((neighborhood) => (
-                    <span
-                      key={neighborhood}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-white text-black rounded-full text-sm font-medium"
-                    >
-                      {neighborhood}
-                      <button
-                        onClick={() => removeNeighborhood(neighborhood)}
-                        className="hover:bg-gray-200 rounded-full p-0.5 transition-colors"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    value={neighborhoodSearchTerm}
-                    onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
-                    onFocus={() => setShowNeighborhoodDropdown(true)}
-                    placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
-                    className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-white placeholder-gray-500"
-                  />
+                <div className="relative flex items-center">
+                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                    {selectedNeighborhoods.length > 0 && (
+                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                        {selectedNeighborhoods.map((neighborhood) => (
+                          <div
+                            key={neighborhood}
+                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
+                            onClick={() => removeNeighborhood(neighborhood)}
+                          >
+                            {neighborhood}
+                            <X className="ml-1 h-3 w-3" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      value={neighborhoodSearchTerm}
+                      onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
+                      onFocus={() => setShowNeighborhoodDropdown(true)}
+                      placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
+                      className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 min-w-0"
+                    />
+                  </div>
                 </div>
+                
                 {showNeighborhoodDropdown && (
                   <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
