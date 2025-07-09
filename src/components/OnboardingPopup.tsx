@@ -160,10 +160,10 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
               </h3>
               <div className="space-y-3">
                 {[
-                  "Exhausting. Too many wasted hours scrolling on streeteasy to find a good deal",
+                  "Exhausting. Too many wasted hours scrolling on Streeteasy to find a good deal",
                   "Frustrating. Every home looks overpriced",
-                  "Cutthroat. Too much competition for every listing",
-                  "Chill. (I just started looking today)"
+                  "Cutthroat. Too much competition for every apartment",
+                  "Not too bad. I just started looking today"
                 ].map((option) => (
                   <button
                     key={option}
