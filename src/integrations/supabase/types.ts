@@ -1171,6 +1171,7 @@ export type Database = {
           image_count: number | null
           images: Json
           investment_reasoning: string | null
+          investor_plan_property: boolean | null
           last_seen_in_search: string
           latitude: number | null
           likely_sold: boolean
@@ -1240,6 +1241,7 @@ export type Database = {
           image_count?: number | null
           images?: Json
           investment_reasoning?: string | null
+          investor_plan_property?: boolean | null
           last_seen_in_search?: string
           latitude?: number | null
           likely_sold?: boolean
@@ -1309,6 +1311,7 @@ export type Database = {
           image_count?: number | null
           images?: Json
           investment_reasoning?: string | null
+          investor_plan_property?: boolean | null
           last_seen_in_search?: string
           latitude?: number | null
           likely_sold?: boolean

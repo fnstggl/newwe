@@ -175,6 +175,7 @@ const Buy = () => {
         .from('undervalued_sales')
         .select('*')
         .eq('status', 'active')
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true')
         .order('created_at', { ascending: false }); // Random-ish order instead of by score
 
       if (searchTerm.trim()) {
