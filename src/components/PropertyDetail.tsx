@@ -493,7 +493,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                 </div>
 
                 {/* Sidebar - Grade/Deal Score + About the Neighborhood + Stats */}
-                <div className="space-y-6">
+                <div className="space-y-6 mt-16">
                   {/* Grade and Deal Score moved to top of sidebar */}
                   <div className="flex flex-col items-end space-y-3">
                     <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
