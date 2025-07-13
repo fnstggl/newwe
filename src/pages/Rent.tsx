@@ -375,10 +375,6 @@ const Rent = () => {
   };
 
   const handlePropertyClick = (property: any, index: number) => {
-    // Only allow clicks on first 3 properties for non-authenticated users
-    if (!user && index >= 3) {
-      return;
-    }
     setSelectedProperty(property);
   };
 
@@ -386,10 +382,6 @@ const Rent = () => {
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
-
-  // Determine which properties to show based on auth status
-  const visibleProperties = user ? properties : properties.slice(0, 3);
-  const shouldShowBlur = !user && properties.length > 3;
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -549,13 +541,11 @@ const Rent = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
-              const isBlurred = !user && index >= 3;
-              const isClickable = user || index < 3;
               
               return (
                 <div
                   key={`${property.id}-${index}`}
-                  className={`relative ${isBlurred ? 'blur-sm' : ''}`}
+                  className="relative"
                 >
                   <PropertyCard
                     property={property}
@@ -563,27 +553,11 @@ const Rent = () => {
                     onClick={() => handlePropertyClick(property, index)}
                     gradeColors={gradeColors}
                   />
-                  {!isClickable && (
-                    <div className="absolute inset-0 cursor-not-allowed z-10" />
-                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Sign-in button overlay for non-authenticated users */}
-          {!user && properties.length > 3 && (
-            <div className="relative">
-              <div className="flex justify-center mt-8">
-                <button
-                  onClick={() => navigate('/login')}
-                  className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100"
-                >
-                  Sign in to view all properties
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Loading state */}
@@ -593,8 +567,8 @@ const Rent = () => {
           </div>
         )}
 
-        {/* Load More Button - only show for authenticated users */}
-        {user && !loading && hasMore && properties.length > 0 && (
+        {/* Load More Button */}
+        {!loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
