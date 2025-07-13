@@ -110,7 +110,7 @@ const Join = () => {
             NYC's best deals don't stay online for long.
           </h1>
           <p className="text-gray-400 text-lg tracking-tight">
-            Get access to the full data for all of the best deals in the city. For free.
+            Access the full data for all of the best deals in the city. For free.
           </p>
         </div>
 
