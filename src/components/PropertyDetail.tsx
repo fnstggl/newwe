@@ -11,6 +11,7 @@ import TourRequestForm from './TourRequestForm';
 import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { HoverButton } from '@/components/ui/hover-button';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -19,7 +20,7 @@ interface PropertyDetailProps {
 }
 
 const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -499,6 +500,28 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       </CardContent>
                     </Card>
                   )}
+
+                  {/* Early Access CTA - Only for Free Plan Users */}
+                  {(!userProfile?.subscription_plan || userProfile.subscription_plan === 'free') && (
+                    <Card className="bg-gray-800/50 border-gray-700">
+                      <CardContent className="p-6 text-center space-y-4">
+                        <div>
+                          <h3 className="text-white text-lg font-semibold mb-2">
+                            Want alerts on more deals like these?
+                          </h3>
+                          <p className="text-gray-400 text-sm mb-4">
+                            Be the first to know via email
+                          </p>
+                        </div>
+                        <HoverButton
+                          onClick={() => navigate('/join')}
+                          className="bg-transparent border border-white/20 text-white hover:bg-white/10"
+                        >
+                          Early Access
+                        </HoverButton>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
 
                 {/* Sidebar - About the Neighborhood + New Stats */}
@@ -533,7 +556,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Card>
                   )}
                   
-                 {/* Annual Savings Only */}
+                  {/* Annual Savings + Monthly Tax/HOA for Sales */}
 <Card className="bg-gray-800/50 border-gray-700">
   <CardContent className="p-6">
     <div className="space-y-4">
@@ -546,6 +569,28 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
             {formatPrice(annualSavings)}
           </span>
         </div>
+      )}
+      
+      {/* Monthly Tax and HOA for Sales Properties */}
+      {!isRental && (
+        <>
+          {(property as UndervaluedSales).monthly_tax && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-400">Monthly Tax:</span>
+              <span className="text-sm font-medium text-white">
+                {formatPrice((property as UndervaluedSales).monthly_tax)}
+              </span>
+            </div>
+          )}
+          {(property as UndervaluedSales).monthly_hoa && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-400">Monthly HOA:</span>
+              <span className="text-sm font-medium text-white">
+                {formatPrice((property as UndervaluedSales).monthly_hoa)}
+              </span>
+            </div>
+          )}
+        </>
       )}
     </div>
   </CardContent>
