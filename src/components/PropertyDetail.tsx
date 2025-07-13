@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,8 @@ import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, Chevr
 import BookmarkButton from './BookmarkButton';
 import TourRequestForm from './TourRequestForm';
 import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -17,6 +18,8 @@ interface PropertyDetailProps {
 }
 
 const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showTourRequest, setShowTourRequest] = useState(false);
@@ -344,22 +347,57 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </Card>
 
                   {/* Market Analysis */}
-                  <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
+                  <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2 relative`}>
                     <CardHeader>
                       <CardTitle className="text-white">Market Analysis</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="text-center">
-                        <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
-                          {Math.round(property.discount_percent)}%
+                      {!user ? (
+                        <div className="relative">
+                          {/* Blurred content */}
+                          <div className="blur-sm pointer-events-none">
+                            <div className="text-center">
+                              <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                                {Math.round(property.discount_percent)}%
+                              </div>
+                              <div className="text-sm text-gray-400">Below Market Value</div>
+                            </div>
+                            
+                            {getMarketAnalysisText() && (
+                              <div className="text-sm text-gray-300 leading-relaxed mt-4">
+                                {getMarketAnalysisText()}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Overlay with sign up prompt */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-lg">
+                            <p className="text-white text-center mb-4 font-medium">
+                              Want to unlock the full analysis?
+                            </p>
+                            <Button
+                              onClick={() => navigate('/join')}
+                              className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
+                            >
+                              Create free account
+                            </Button>
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-400">Below Market Value</div>
-                      </div>
-                      
-                      {getMarketAnalysisText() && (
-                        <div className="text-sm text-gray-300 leading-relaxed">
-                          {getMarketAnalysisText()}
-                        </div>
+                      ) : (
+                        <>
+                          <div className="text-center">
+                            <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                              {Math.round(property.discount_percent)}%
+                            </div>
+                            <div className="text-sm text-gray-400">Below Market Value</div>
+                          </div>
+                          
+                          {getMarketAnalysisText() && (
+                            <div className="text-sm text-gray-300 leading-relaxed">
+                              {getMarketAnalysisText()}
+                            </div>
+                          )}
+                        </>
                       )}
                     </CardContent>
                   </Card>
@@ -494,23 +532,23 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Card>
                   )}
                   
-                 {/* Annual Savings Only */}
-<Card className="bg-gray-800/50 border-gray-700">
-  <CardContent className="p-6">
-    <div className="space-y-4">
-      {annualSavings && (
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-400">
-            {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-          </span>
-          <span className="text-lg font-bold text-[#FFFFFF]">
-            {formatPrice(annualSavings)}
-          </span>
-        </div>
-      )}
-    </div>
-  </CardContent>
-</Card>
+                  {/* Annual Savings Only */}
+                  <Card className="bg-gray-800/50 border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {annualSavings && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">
+                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+                            </span>
+                            <span className="text-lg font-bold text-[#FFFFFF]">
+                              {formatPrice(annualSavings)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                   
                   {/* Request Tour Button moved here for Sales Properties Only */}
                   {!isRental && (
