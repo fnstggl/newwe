@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -27,7 +28,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
             <img 
-              src="/lovable-uploads/d10f4f5b-6ff4-4d31-b3be-53683101c65f.png" 
+              src="/lovable-uploads/e305d36e-f12e-4789-b034-cb522f4ef7ca.png" 
               alt="Realer Estate Logo" 
               className="h-8 w-auto"
             />
