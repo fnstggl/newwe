@@ -300,17 +300,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Bedrooms:</span>
-                             <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
-                             <span className="text-[#19202D]" style={{color: '#19202D'}}>0</span>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Bedrooms:</span>
+                              <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">Bathrooms:</span>
+                              <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
+                            </div>
                           </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Bathrooms:</span>
-                            <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
-                          </div>
-                        </div>
                         <div className="space-y-2">
                           {property.sqft && property.sqft > 0 && (
                             <div className="flex justify-between text-sm">
@@ -502,20 +501,24 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Card>
                   )}
 
-                  {/* Early Access CTA - Centered at bottom for all users except unlimited */}
-                  {userProfile?.subscription_plan !== 'unlimited' && (
-                    <div className="text-center space-y-4 pt-6">
-                      <div>
-                        <h3 className="text-white text-lg font-semibold mb-2">
-                          Want alerts on more deals like these?
-                        </h3>
-                        <p className="text-gray-400 text-sm mb-4">
-                          Be the first to know via email
-                        </p>
-                      </div>
+                  {/* Early Access CTA Box for Rentals - positioned at bottom */}
+                  {isRental && userProfile?.subscription_plan !== 'unlimited' && (
+                    <div 
+                      className="rounded-2xl border-2 p-6 text-center space-y-3"
+                      style={{
+                        backgroundColor: '#000f3b',
+                        borderColor: '#0040ff'
+                      }}
+                    >
+                      <h3 className="text-white text-lg font-semibold">
+                        Want alerts on more deals like these?
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Be the first to know via email
+                      </p>
                       <HoverButton
                         onClick={() => navigate('/pricing')}
-                        className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
+                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
                       >
                         Early Access
                       </HoverButton>
@@ -570,8 +573,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
         </div>
       )}
       
-      <span className="text-[#19202D]" style={{color: '#19202D'}}>0</span>
-      
       {/* Monthly HOA and Tax for Sales Properties */}
       {!isRental && (
         <>
@@ -591,8 +592,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               </span>
             </div>
           )}
-          {(((property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0) || 
-            ((property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0)) && (
+           {((property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0) && 
+            ((property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0) && (
             <div className="flex justify-between items-center border-t border-gray-700 pt-4">
               <span className="text-sm text-gray-400 font-semibold">Total Monthly:</span>
               <span className="text-sm font-bold text-white">
@@ -617,6 +618,30 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     >
                       Request Tour
                     </Button>
+                  )}
+
+                  {/* Early Access CTA Box for Sales - positioned below Request Tour */}
+                  {!isRental && userProfile?.subscription_plan !== 'unlimited' && (
+                    <div 
+                      className="rounded-2xl border-2 p-6 text-center space-y-3"
+                      style={{
+                        backgroundColor: '#000f3b',
+                        borderColor: '#0040ff'
+                      }}
+                    >
+                      <h3 className="text-white text-lg font-semibold">
+                        Want alerts on more deals like these?
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Be the first to know via email
+                      </p>
+                      <HoverButton
+                        onClick={() => navigate('/pricing')}
+                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                      >
+                        Early Access
+                      </HoverButton>
+                    </div>
                   )}
                 </div>
               </div>
