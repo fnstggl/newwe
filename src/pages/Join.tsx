@@ -110,7 +110,7 @@ const Join = () => {
             NYC's best deals don't stay online for long.
           </h1>
           <p className="text-gray-400 text-lg tracking-tight">
-            Get exclusive access to undervalued listings before they hit the market.
+            Get access to all of the best undervalued listings in the city. For free.
           </p>
         </div>
 
