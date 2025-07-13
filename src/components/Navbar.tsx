@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -118,7 +117,7 @@ const Navbar = () => {
                 }
               }}
             >
-              Pricing
+              Upgrade
             </Link>
             <Link 
               to="/manifesto" 
