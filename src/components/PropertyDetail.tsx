@@ -266,7 +266,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               <div className="grid lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-6">
-                  {/* Address, Price and Score */}
+                  {/* Address and Price */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
@@ -285,7 +285,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col items-end space-y-3">
+                    {/* Grade and Deal Score moved to far right */}
+                    <div className="flex flex-col items-end space-y-3 ml-8">
                       <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
                         {displayGrade}
                       </Badge>
@@ -500,30 +501,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       </CardContent>
                     </Card>
                   )}
-
-                  {/* Early Access CTA Box for Rentals - positioned at bottom */}
-                  {isRental && userProfile?.subscription_plan !== 'unlimited' && (
-                    <div 
-                      className="rounded-2xl border-2 p-6 text-center space-y-3"
-                      style={{
-                        backgroundColor: '#000f3b',
-                        borderColor: '#0040ff'
-                      }}
-                    >
-                      <h3 className="text-white text-lg font-semibold">
-                        Want alerts on more deals like these?
-                      </h3>
-                      <p className="text-gray-400 text-sm">
-                        Be the first to know via email
-                      </p>
-                      <HoverButton
-                        onClick={() => navigate('/pricing')}
-                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
-                      >
-                        Early Access
-                      </HoverButton>
-                    </div>
-                  )}
                 </div>
 
                 {/* Sidebar - About the Neighborhood + New Stats */}
@@ -559,56 +536,80 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
                   
                   {/* Annual Savings + Monthly Tax/HOA for Sales */}
-<Card className="bg-gray-800/50 border-gray-700">
-  <CardContent className="p-6">
-    <div className="space-y-4">
-      {annualSavings && (
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-400">
-            {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-          </span>
-          <span className="text-lg font-bold text-[#FFFFFF]">
-          {formatPrice(annualSavings)}
-          </span>
-        </div>
-      )}
-      
-      {/* Monthly HOA and Tax for Sales Properties */}
-      {!isRental && (
-        <>
-          {(property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-400">Monthly HOA:</span>
-              <span className="text-sm font-medium text-white">
-                {formatPrice((property as UndervaluedSales).monthly_hoa)}
-              </span>
-            </div>
-          )}
-          {(property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-400">Monthly Tax:</span>
-              <span className="text-sm font-medium text-white">
-                {formatPrice((property as UndervaluedSales).monthly_tax)}
-              </span>
-            </div>
-          )}
-           {((property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0) && 
-            ((property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0) && (
-            <div className="flex justify-between items-center border-t border-gray-700 pt-4">
-              <span className="text-sm text-gray-400 font-semibold">Total Monthly:</span>
-              <span className="text-sm font-bold text-white">
-                {formatPrice(
-                  ((property as UndervaluedSales).monthly_hoa || 0) + 
-                  ((property as UndervaluedSales).monthly_tax || 0)
-                )}
-              </span>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  </CardContent>
-</Card>
+                  <Card className="bg-gray-800/50 border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        {annualSavings && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">
+                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+                            </span>
+                            <span className="text-lg font-bold text-[#FFFFFF]">
+                            {formatPrice(annualSavings)}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Monthly HOA and Tax for Sales Properties */}
+                        {!isRental && (
+                          <>
+                            {(property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-400">Monthly HOA:</span>
+                                <span className="text-sm font-medium text-white">
+                                  {formatPrice((property as UndervaluedSales).monthly_hoa)}
+                                </span>
+                              </div>
+                            )}
+                            {(property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-400">Monthly Tax:</span>
+                                <span className="text-sm font-medium text-white">
+                                  {formatPrice((property as UndervaluedSales).monthly_tax)}
+                                </span>
+                              </div>
+                            )}
+                             {((property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0) && 
+                              ((property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0) && (
+                              <div className="flex justify-between items-center border-t border-gray-700 pt-4">
+                                <span className="text-sm text-gray-400 font-semibold">Total Monthly:</span>
+                                <span className="text-sm font-bold text-white">
+                                  {formatPrice(
+                                    ((property as UndervaluedSales).monthly_hoa || 0) + 
+                                    ((property as UndervaluedSales).monthly_tax || 0)
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Early Access CTA Box for Rentals - positioned below Est Annual Savings */}
+                  {isRental && userProfile?.subscription_plan !== 'unlimited' && (
+                    <div 
+                      className="rounded-2xl border-2 p-6 text-center space-y-3"
+                      style={{
+                        backgroundColor: '#000f3b',
+                        borderColor: '#0040ff'
+                      }}
+                    >
+                      <h3 className="text-white text-lg font-semibold">
+                        Want alerts on more deals like these?
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        Be the first to know via email
+                      </p>
+                      <HoverButton
+                        onClick={() => navigate('/pricing')}
+                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                      >
+                        Early Access
+                      </HoverButton>
+                    </div>
+                  )}
                   
                   {/* Request Tour Button moved here for Sales Properties Only */}
                   {!isRental && (
