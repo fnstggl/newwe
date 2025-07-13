@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
@@ -275,7 +274,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
                         {capitalizeNeighborhood(property.borough)}
                       </div>
-                      {/* Price moved here */}
+                      {/* Price */}
                       <div className="text-3xl font-bold text-white mb-2">
                         {formatPrice(price)}{isRental ? '/mo' : ''}
                       </div>
@@ -285,32 +284,22 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         </div>
                       )}
                     </div>
-                    {/* Grade and Deal Score moved to far right */}
-                    <div className="flex flex-col items-end space-y-3 ml-8">
-                      <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
-                        {displayGrade}
-                      </Badge>
-                      <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
-                        <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
-                        <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Property Details - Updated to hide 0 values */}
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Bedrooms:</span>
-                              <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Bathrooms:</span>
-                              <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
-                            </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Bedrooms:</span>
+                            <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
                           </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-400">Bathrooms:</span>
+                            <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
+                          </div>
+                        </div>
                         <div className="space-y-2">
                           {property.sqft && property.sqft > 0 && (
                             <div className="flex justify-between text-sm">
@@ -503,8 +492,20 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
                 </div>
 
-                {/* Sidebar - About the Neighborhood + New Stats */}
+                {/* Sidebar - Grade/Deal Score + About the Neighborhood + Stats */}
                 <div className="space-y-6">
+                  {/* Grade and Deal Score moved to top of sidebar */}
+                  <div className="flex flex-col items-end space-y-3">
+                    <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
+                      {displayGrade}
+                    </Badge>
+                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
+                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
+                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
+                    </div>
+                  </div>
+
+                  {/* About the Neighborhood - now aligned with property details */}
                   {neighborhoodInfo && (
                     <Card className="bg-gray-800/50 border-gray-700">
                       <CardHeader>
