@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (session?.user) {
           // Only fetch profile on actual login/signup or initial load - NOT on tab switches
-          if (event === 'SIGNED_UP' || (event === 'SIGNED_IN' && !hasEverFetchedProfileRef.current)) {
+          if (event === 'SIGNED_IN' && !hasEverFetchedProfileRef.current) {
             console.log('Actual login/signup detected, fetching profile');
             fetchUserProfile(session.user.id);
             hasEverFetchedProfileRef.current = true;

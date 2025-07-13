@@ -13,6 +13,7 @@ interface SavedProperty {
   property_id: string;
   property_type: 'sale' | 'rental';
   saved_at: string;
+  user_id?: string;
 }
 
 interface SavedPropertyWithDetails extends SavedProperty {
@@ -98,6 +99,7 @@ const SavedProperties = () => {
 
           return {
             ...savedProp,
+            property_type: savedProp.property_type as 'sale' | 'rental',
             property_details: propertyDetails
           };
         });

@@ -28,7 +28,10 @@ export const useSavedProperties = () => {
         .order('saved_at', { ascending: false });
 
       if (error) throw error;
-      setSavedProperties(data || []);
+      setSavedProperties((data || []).map(item => ({
+        ...item,
+        property_type: item.property_type as 'sale' | 'rental'
+      })));
     } catch (error) {
       console.error('Error fetching saved properties:', error);
     } finally {

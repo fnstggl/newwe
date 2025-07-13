@@ -303,11 +303,12 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bedrooms:</span>
-                            <span className="text-white">{property.bedrooms || 'N/A'}</span>
+                             <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
+                             <span className="text-[#19202D]" style={{color: '#19202D'}}>0</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bathrooms:</span>
-                            <span className="text-white">{property.bathrooms || 'N/A'}</span>
+                            <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
                           </div>
                         </div>
                         <div className="space-y-2">
@@ -501,26 +502,24 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Card>
                   )}
 
-                  {/* Early Access CTA - Only for Free Plan Users */}
-                  {(!userProfile?.subscription_plan || userProfile.subscription_plan === 'free') && (
-                    <Card className="bg-gray-800/50 border-gray-700">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div>
-                          <h3 className="text-white text-lg font-semibold mb-2">
-                            Want alerts on more deals like these?
-                          </h3>
-                          <p className="text-gray-400 text-sm mb-4">
-                            Be the first to know via email
-                          </p>
-                        </div>
-                        <HoverButton
-                          onClick={() => navigate('/join')}
-                          className="bg-transparent border border-white/20 text-white hover:bg-white/10"
-                        >
-                          Early Access
-                        </HoverButton>
-                      </CardContent>
-                    </Card>
+                  {/* Early Access CTA - Centered at bottom for all users except unlimited */}
+                  {userProfile?.subscription_plan !== 'unlimited' && (
+                    <div className="text-center space-y-4 pt-6">
+                      <div>
+                        <h3 className="text-white text-lg font-semibold mb-2">
+                          Want alerts on more deals like these?
+                        </h3>
+                        <p className="text-gray-400 text-sm mb-4">
+                          Be the first to know via email
+                        </p>
+                      </div>
+                      <HoverButton
+                        onClick={() => navigate('/pricing')}
+                        className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2"
+                      >
+                        Early Access
+                      </HoverButton>
+                    </div>
                   )}
                 </div>
 
@@ -566,15 +565,25 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
             {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
           </span>
           <span className="text-lg font-bold text-[#FFFFFF]">
-            {formatPrice(annualSavings)}
+          {formatPrice(annualSavings)}
           </span>
         </div>
       )}
       
-      {/* Monthly Tax and HOA for Sales Properties */}
+      <span className="text-[#19202D]" style={{color: '#19202D'}}>0</span>
+      
+      {/* Monthly HOA and Tax for Sales Properties */}
       {!isRental && (
         <>
-          {(property as UndervaluedSales).monthly_tax && (
+          {(property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-400">Monthly HOA:</span>
+              <span className="text-sm font-medium text-white">
+                {formatPrice((property as UndervaluedSales).monthly_hoa)}
+              </span>
+            </div>
+          )}
+          {(property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-400">Monthly Tax:</span>
               <span className="text-sm font-medium text-white">
@@ -582,11 +591,15 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
               </span>
             </div>
           )}
-          {(property as UndervaluedSales).monthly_hoa && (
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-400">Monthly HOA:</span>
-              <span className="text-sm font-medium text-white">
-                {formatPrice((property as UndervaluedSales).monthly_hoa)}
+          {(((property as UndervaluedSales).monthly_hoa && (property as UndervaluedSales).monthly_hoa > 0) || 
+            ((property as UndervaluedSales).monthly_tax && (property as UndervaluedSales).monthly_tax > 0)) && (
+            <div className="flex justify-between items-center border-t border-gray-700 pt-4">
+              <span className="text-sm text-gray-400 font-semibold">Total Monthly:</span>
+              <span className="text-sm font-bold text-white">
+                {formatPrice(
+                  ((property as UndervaluedSales).monthly_hoa || 0) + 
+                  ((property as UndervaluedSales).monthly_tax || 0)
+                )}
               </span>
             </div>
           )}
