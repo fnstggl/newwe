@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { Search as SearchIcon } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
+import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -18,13 +19,13 @@ const Buy = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
-    const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
-  const [properties, setProperties] = useState<SupabaseUndervaluedSales[]>([]);
+  const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
+  const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<SupabaseUndervaluedSales | null>(null);
-    const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
   const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
   const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -58,42 +59,91 @@ const Buy = () => {
 
   useEffect(() => {
     // Update meta tags for SEO
-    document.title = "NYC Apartments For Sale - Find Undervalued Homes | Realer Estate";
+    document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
     
     // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
+    let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Discover undervalued NYC apartments for sale with our advanced real estate algorithms. Find your dream home with transparent pricing data.');
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
     } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Discover undervalued NYC apartments for sale with our advanced real estate algorithms. Find your dream home with transparent pricing data.';
-      document.head.appendChild(meta);
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
+      document.head.appendChild(metaDescription);
+    }
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://realerestate.org/buy');
+    } else {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('href', 'https://realerestate.org/buy');
+      document.head.appendChild(canonical);
     }
 
     // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', 'NYC Apartments For Sale - Find Undervalued Homes | Realer Estate');
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    } else {
+      ogTitle = document.createElement('meta');
+      ogTitle.setAttribute('property', 'og:title');
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+      document.head.appendChild(ogTitle);
+    }
     
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) ogDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in real estate.');
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    } else {
+      ogDescription = document.createElement('meta');
+      ogDescription.setAttribute('property', 'og:description');
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+      document.head.appendChild(ogDescription);
+    }
     
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/buy');
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
+    } else {
+      ogUrl = document.createElement('meta');
+      ogUrl.setAttribute('property', 'og:url');
+      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
+      document.head.appendChild(ogUrl);
+    }
 
     // Update Twitter tags
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) twitterTitle.setAttribute('content', 'NYC Apartments For Sale - Find Undervalued Homes | Realer Estate');
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    } else {
+      twitterTitle = document.createElement('meta');
+      twitterTitle.setAttribute('name', 'twitter:title');
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+      document.head.appendChild(twitterTitle);
+    }
     
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) twitterDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in real estate.');
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    } else {
+      twitterDescription = document.createElement('meta');
+      twitterDescription.setAttribute('name', 'twitter:description');
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+      document.head.appendChild(twitterDescription);
+    }
     
-    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
-    if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
-
-    // Update canonical URL
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute('href', 'https://realerestate.org/buy');
+    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (twitterUrl) {
+      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
+    } else {
+      twitterUrl = document.createElement('meta');
+      twitterUrl.setAttribute('name', 'twitter:url');
+      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
+      document.head.appendChild(twitterUrl);
+    }
   }, []);
 
   const fetchNeighborhoods = async () => {
@@ -109,7 +159,7 @@ const Buy = () => {
         return;
       }
 
-      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood))];
+      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
       setNeighborhoods(uniqueNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
@@ -120,63 +170,77 @@ const Buy = () => {
     setLoading(true);
     const currentOffset = reset ? 0 : offset;
 
-    let query = supabase
-      .from('undervalued_sales')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (searchTerm.trim()) {
-      query = query.ilike('address', `%${searchTerm.trim()}%`);
-    }
-
-    if (zipCode.trim()) {
-      query = query.ilike('zipcode', `${zipCode.trim()}%`);
-    }
-
-    if (maxPrice.trim()) {
-      const priceValue = parseInt(maxPrice.trim());
-      if (!isNaN(priceValue) && priceValue > 0) {
-        query = query.lte('price', priceValue);
-      }
-    }
-
-    if (bedrooms.trim()) {
-      const bedroomValue = parseInt(bedrooms.trim());
-      if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-        query = query.gte('bedrooms', bedroomValue);
-      }
-    }
-
-    if (minGrade.trim()) {
-      query = query.gte('grade', minGrade);
-    }
-
-        if (selectedNeighborhoods.length > 0) {
-      query = query.in('neighborhood', selectedNeighborhoods);
-    }
-
-    query = query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
-
     try {
-      const { data, error } = await query;
+      let query = supabase
+        .from('undervalued_sales')
+        .select('*')
+        .eq('status', 'active')
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true')
+        .order('created_at', { ascending: false }); // Random-ish order instead of by score
+
+      if (searchTerm.trim()) {
+        query = query.ilike('address', `%${searchTerm.trim()}%`);
+      }
+
+      if (zipCode.trim()) {
+        query = query.ilike('zipcode', `${zipCode.trim()}%`);
+      }
+
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          query = query.lte('price', priceValue);
+        }
+      }
+
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
+          query = query.gte('bedrooms', bedroomValue);
+        }
+      }
+
+      if (minGrade.trim()) {
+        const gradeIndex = gradeOptions.indexOf(minGrade);
+        if (gradeIndex !== -1) {
+          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
+          query = query.in('grade', allowedGrades);
+        }
+      }
+
+      if (selectedNeighborhoods.length > 0) {
+        query = query.in('neighborhood', selectedNeighborhoods);
+      }
+
+      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
       if (error) {
-        console.error('Error fetching properties:', error);
-        setLoading(false);
+        console.error('❌ SUPABASE ERROR:', error);
+        setProperties([]);
         return;
       }
 
+      if (!data || !Array.isArray(data)) {
+        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+        setProperties([]);
+        return;
+      }
+
+      // Shuffle the results to make them appear random
+      const shuffledData = data.sort(() => Math.random() - 0.5);
+
       if (reset) {
-        setProperties(data || []);
+        setProperties(shuffledData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...(data || [])]);
+        setProperties(prev => [...prev, ...shuffledData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
-      setHasMore(data?.length === ITEMS_PER_PAGE);
+      setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error('💥 CATCH ERROR:', error);
+      setProperties([]);
     } finally {
       setLoading(false);
     }
@@ -188,48 +252,47 @@ const Buy = () => {
     }
   };
 
-    const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev =>
-      prev.includes(neighborhood)
+  const toggleNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => 
+      prev.includes(neighborhood) 
         ? prev.filter(n => n !== neighborhood)
         : [...prev, neighborhood]
     );
-    setNeighborhoodSearchTerm("");
-  };
-
-  const removeNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
   };
 
   const clearNeighborhoods = () => {
     setSelectedNeighborhoods([]);
   };
 
+  const removeNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
+  };
+
   const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
-        badge: 'bg-white text-black border-gray-300',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-yellow-400',
         scoreBorder: 'border-yellow-600',
         hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-white text-black border-gray-300',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-purple-400',
         scoreBorder: 'border-purple-600',
         hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
       };
     } else if (grade.startsWith('B')) {
       return {
-        badge: 'bg-white text-black border-gray-300',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-blue-400',
         scoreBorder: 'border-blue-600',
         hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white text-black border-gray-300',
+        badge: 'bg-white text-black border-gray-300', // White background, black text
         scoreText: 'text-gray-300',
         scoreBorder: 'border-gray-600',
         hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
@@ -237,16 +300,22 @@ const Buy = () => {
     }
   };
 
-  const handlePropertyClick = (property: SupabaseUndervaluedSales) => {
+  const handlePropertyClick = (property: any, index: number) => {
+    // Only allow clicks on first 3 properties for non-authenticated users
+    if (!user && index >= 3) {
+      return;
+    }
     setSelectedProperty(property);
   };
 
-    const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
+  // Filter neighborhoods based on search term
+  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
+      <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -294,7 +363,7 @@ const Buy = () => {
                 </div>
                 
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
@@ -385,20 +454,45 @@ const Buy = () => {
         </div>
 
         {/* Properties Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {properties.map((property, index) => {
-            const gradeColors = getGradeColors(property.grade);
-            
-            return (
-              <PropertyCard
-                key={`${property.id}-${index}`}
-                property={property}
-                isRental={false}
-                onClick={() => handlePropertyClick(property)}
-                gradeColors={gradeColors}
-              />
-            );
-          })}
+        <div className="relative">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {properties.map((property, index) => {
+              const gradeColors = getGradeColors(property.grade);
+              const isBlurred = !user && index >= 3;
+              const isClickable = user || index < 3;
+              
+              return (
+                <div
+                  key={`${property.id}-${index}`}
+                  className={`relative ${isBlurred ? 'blur-sm' : ''}`}
+                >
+                  <PropertyCard
+                    property={property}
+                    isRental={false}
+                    onClick={() => handlePropertyClick(property, index)}
+                    gradeColors={gradeColors}
+                  />
+                  {!isClickable && (
+                    <div className="absolute inset-0 cursor-not-allowed z-10" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Sign-in button overlay for non-authenticated users */}
+          {!user && properties.length > 3 && (
+            <div className="relative">
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-white text-black px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:bg-gray-100"
+                >
+                  Sign in to view all properties
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Loading state */}
@@ -408,30 +502,12 @@ const Buy = () => {
           </div>
         )}
 
-        {/* Load More Button */}
-        {!loading && hasMore && properties.length > 0 && (
+        {/* Load More Button - only show for authenticated users */}
+        {user && !loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
             </HoverButton>
-          </div>
-        )}
-
-        {/* Early Access Section */}
-        {!loading && !hasMore && properties.length > 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
-              Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
-            </h3>
-            <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
-              The best deals in the city get bought in days. Don't miss them.
-            </p>
-            <button 
-              onClick={() => navigate('/pricing')}
-              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
-            >
-              Early Access
-            </button>
           </div>
         )}
 
