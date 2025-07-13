@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown, ExternalLink } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
 import TourRequestForm from './TourRequestForm';
 import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
@@ -588,7 +588,18 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </CardContent>
                   </Card>
                   
-                  {/* Early Access CTA Box for Rentals - positioned below Est Annual Savings */}
+                  {/* Request Tour Button for Rentals - opens StreetEasy */}
+                  {isRental && (
+                    <Button
+                      onClick={() => window.open(`https://www.streeteasy.com/rental/${(property as any).listing_id}`, '_blank')}
+                      className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3 flex items-center justify-center"
+                    >
+                      Request Tour
+                      <ExternalLink className="h-4 w-4 ml-2 text-black" />
+                    </Button>
+                  )}
+                  
+                  {/* Early Access CTA Box for Rentals - positioned below Request Tour */}
                   {isRental && userProfile?.subscription_plan !== 'unlimited' && (
                     <div 
                       className="rounded-2xl border-2 p-6 text-center space-y-3"
