@@ -517,12 +517,13 @@ const Buy = () => {
         )}
       </div>
 
-      {/* Property Detail Modal */}
+      {/* Property Detail Modal - now passes all properties for the map */}
       {selectedProperty && (
         <PropertyDetail
           property={selectedProperty}
           isRental={false}
           onClose={() => setSelectedProperty(null)}
+          allListings={properties}
         />
       )}
     </div>
