@@ -4,11 +4,14 @@ import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { RotateCcw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, forceRefreshSubscriptionStatus } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,6 +81,42 @@ const Pricing = () => {
 
   const handleCancelSubscription = () => {
     navigate('/cancel-subscription');
+  };
+
+  const handleRefreshSubscription = async () => {
+    if (!user) return;
+    
+    setIsRefreshing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      
+      if (error) {
+        toast({
+          title: "Error refreshing subscription",
+          description: "Could not check subscription status. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Force refresh the auth context to update the UI
+      if (forceRefreshSubscriptionStatus) {
+        await forceRefreshSubscriptionStatus();
+      }
+
+      toast({
+        title: "Subscription status updated",
+        description: "Your subscription status has been refreshed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error refreshing subscription",
+        description: "Could not check subscription status. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   // Check if user is on unlimited plan using userProfile from AuthContext
@@ -160,9 +199,20 @@ const Pricing = () => {
               <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
                 {/* Card content with black background */}
                 <div className="relative bg-black rounded-2xl p-8 flex flex-col h-full">
-                  {/* Header without subscription status badge for unlimited users */}
+                  {/* Header with refresh button */}
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Early Access</h3>
+                    <button
+                      onClick={handleRefreshSubscription}
+                      disabled={isRefreshing || !user}
+                      className="p-2 text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Refresh subscription status"
+                    >
+                      <RotateCcw 
+                        size={20} 
+                        className={isRefreshing ? "animate-spin" : ""} 
+                      />
+                    </button>
                   </div>
                   <p className="text-4xl font-semibold mb-6 tracking-tight">
                     {isAnnual ? (

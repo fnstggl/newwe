@@ -16,6 +16,7 @@ interface AuthContextType {
     subscription_renewal?: string;
   } | null;
   updateOnboardingStatus: (completed: boolean) => Promise<void>;
+  forceRefreshSubscriptionStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,6 +61,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       // Ignore localStorage errors
     }
+  };
+
+  // Force refresh subscription status - only to be called after explicit subscription actions
+  const forceRefreshSubscriptionStatus = async () => {
+    if (!user?.id) return;
+    
+    console.log('Force refreshing subscription status after explicit action');
+    
+    // Clear cached state first
+    try {
+      localStorage.removeItem(`subscription_state_${user.id}`);
+    } catch {
+      // Ignore localStorage errors
+    }
+    
+    // Fetch fresh profile data
+    await fetchUserProfile(user.id, true);
   };
 
   useEffect(() => {
@@ -121,12 +139,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string, forceRefresh = false) => {
     try {
-      console.log('Fetching user profile for:', userId);
+      console.log('Fetching user profile for:', userId, forceRefresh ? '(force refresh)' : '');
       
-      // Get cached state before making database call
-      const cachedState = getCachedSubscriptionState(userId);
+      // Get cached state before making database call (unless forcing refresh)
+      const cachedState = forceRefresh ? null : getCachedSubscriptionState(userId);
       
       const { data, error } = await supabase
         .from('profiles')
@@ -136,8 +154,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) {
         console.error('Error fetching user profile:', error);
-        // On error, preserve existing cached state instead of defaulting to free
-        if (cachedState) {
+        // On error, preserve existing cached state instead of defaulting to free (unless forcing refresh)
+        if (cachedState && !forceRefresh) {
           console.log('Using cached subscription state due to database error');
           setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
         }
@@ -150,9 +168,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
-        // CRITICAL FIX: Remove automatic 'free' fallback - preserve existing state if DB returns null
-        const currentSubscriptionPlan = data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan;
-        const currentSubscriptionRenewal = data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal;
+        // CRITICAL FIX: Remove automatic 'free' fallback - preserve existing state if DB returns null (unless forcing refresh)
+        const currentSubscriptionPlan = data.subscription_plan || (!forceRefresh && cachedState?.subscription_plan) || userProfile?.subscription_plan;
+        const currentSubscriptionRenewal = data.subscription_renewal || (!forceRefresh && cachedState?.subscription_renewal) || userProfile?.subscription_renewal;
         
         const profileData = { 
           name: data.name || '',
@@ -161,7 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           subscription_renewal: currentSubscriptionRenewal
         };
         
-        // Cache the successful subscription state
+        // Cache the successful subscription state (only if we have valid data)
         if (currentSubscriptionPlan) {
           cacheSubscriptionState(userId, {
             subscription_plan: currentSubscriptionPlan,
@@ -175,9 +193,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      // On catch, preserve existing cached state
+      // On catch, preserve existing cached state (unless forcing refresh)
       const cachedState = getCachedSubscriptionState(userId);
-      if (cachedState) {
+      if (cachedState && !forceRefresh) {
         console.log('Using cached subscription state due to fetch error');
         setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
       }
@@ -245,7 +263,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     userProfile,
-    updateOnboardingStatus
+    updateOnboardingStatus,
+    forceRefreshSubscriptionStatus
   };
 
   return (
