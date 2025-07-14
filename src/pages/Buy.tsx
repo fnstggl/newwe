@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -9,13 +8,6 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
@@ -426,35 +418,33 @@ const Buy = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Bedrooms
               </label>
-              <Select value={bedrooms} onValueChange={setBedrooms}>
-                <SelectTrigger className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
-                  <SelectValue placeholder="Any" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-900 border border-gray-700 rounded-xl">
-                  <SelectItem value="" className="text-white hover:bg-gray-700">Any</SelectItem>
-                  <SelectItem value="0" className="text-white hover:bg-gray-700">Studio</SelectItem>
-                  <SelectItem value="1" className="text-white hover:bg-gray-700">1+</SelectItem>
-                  <SelectItem value="2" className="text-white hover:bg-gray-700">2+</SelectItem>
-                  <SelectItem value="3" className="text-white hover:bg-gray-700">3+</SelectItem>
-                  <SelectItem value="4" className="text-white hover:bg-gray-700">4+</SelectItem>
-                </SelectContent>
-              </Select>
+              <select
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
+                <option value="" className="text-gray-500">Any</option>
+                <option value="0" className="text-white">Studio</option>
+                <option value="1" className="text-white">1+</option>
+                <option value="2" className="text-white">2+</option>
+                <option value="3" className="text-white">3+</option>
+                <option value="4" className="text-white">4+</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Min Grade
               </label>
-              <Select value={minGrade} onValueChange={setMinGrade}>
-                <SelectTrigger className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight">
-                  <SelectValue placeholder="Any Grade" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-900 border border-gray-700 rounded-xl">
-                  <SelectItem value="" className="text-white hover:bg-gray-700">Any Grade</SelectItem>
-                  {gradeOptions.map((grade) => (
-                    <SelectItem key={grade} value={grade} className="text-white hover:bg-gray-700">{grade}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                value={minGrade}
+                onChange={(e) => setMinGrade(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              >
+                <option value="" className="text-gray-500">Any Grade</option>
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade} className="text-white">{grade}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
