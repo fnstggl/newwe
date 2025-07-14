@@ -224,7 +224,7 @@ const Pricing = () => {
 
           {/* Email Notification Mockup */}
           <div className="mt-16 flex justify-center">
-            <div className="max-w-2xl w-full">
+            <div className="max-w-3xl w-full">
               <img 
                 src="/lovable-uploads/998ab199-d0b6-406e-890c-9cdc289f4a6d.png" 
                 alt="Email notification preview" 
