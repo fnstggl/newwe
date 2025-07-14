@@ -75,30 +75,30 @@ const CancelSubscription = () => {
         return;
       }
 
-      // Clear cached subscription state from localStorage
-      if (user?.id) {
-        try {
-          localStorage.removeItem(`subscription_state_${user.id}`);
-        } catch (error) {
-          console.log('Error clearing subscription cache:', error);
-        }
+      // Update user's profile to free plan
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          subscription_plan: 'free',
+          subscription_renewal: null,
+          stripe_customer_id: null
+        })
+        .eq('id', user?.id);
+
+      if (updateError) {
+        console.error('Error updating profile:', updateError);
+        toast({
+          title: "Error",
+          description: "Failed to update your plan. Please contact support.",
+          variant: "destructive",
+        });
+        return;
       }
 
-      // Call check-subscription to get real-time Stripe status and update database
-      const { data: checkData, error: checkError } = await supabase.functions.invoke('check-subscription');
-      
-      if (checkError) {
-        console.error('Subscription check error:', checkError);
-        toast({
-          title: "Subscription Cancelled",
-          description: "Your subscription has been cancelled. Please refresh the page to see updated status.",
-        });
-      } else {
-        toast({
-          title: "Subscription Cancelled",
-          description: "Your subscription has been cancelled and you're now on the free plan.",
-        });
-      }
+      toast({
+        title: "Subscription Cancelled",
+        description: "Your subscription has been cancelled and you're now on the free plan.",
+      });
 
       // Redirect to pricing page
       navigate('/pricing');
