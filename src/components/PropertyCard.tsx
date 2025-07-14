@@ -203,7 +203,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         
         <div className="flex justify-between text-sm text-gray-400">
           <span className="tracking-tight">
-            {property.bedrooms || 0} bed, {property.bathrooms || 0} bath
+            {(property.bedrooms || 0) === 0 ? 'Studio' : `${property.bedrooms || 0} bed`}, {property.bathrooms || 0} bath
           </span>
           {property.sqft && (
             <span className="tracking-tight">{property.sqft} sqft</span>
