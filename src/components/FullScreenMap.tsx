@@ -1,19 +1,10 @@
 
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Coordinates } from '@/utils/geocoding';
-import L from 'leaflet';
-
-// Fix for default markers in React Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-});
 
 interface PropertyLocation {
   address: string;
@@ -36,15 +27,109 @@ const FullScreenMap: React.FC<FullScreenMapProps> = ({
   properties, 
   centerProperty 
 }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+
+  useEffect(() => {
+    if (!isOpen || !mapRef.current) return;
+
+    // Calculate bounds for all properties
+    const validProperties = properties.filter(p => p.coordinates);
+    if (validProperties.length === 0) return;
+
+    const bounds = L.latLngBounds(validProperties.map(p => [p.coordinates.lat, p.coordinates.lng]));
+    
+    // Initialize map
+    const map = L.map(mapRef.current, {
+      zoomControl: true,
+      attributionControl: false
+    });
+
+    mapInstanceRef.current = map;
+
+    // Add dark tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Add markers for all properties
+    validProperties.forEach(property => {
+      const iconHtml = `
+        <div style="
+          background: ${property.isCurrentProperty ? '#3b82f6' : 'white'};
+          border: 2px solid ${property.isCurrentProperty ? 'white' : '#374151'};
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: bold;
+          color: ${property.isCurrentProperty ? 'white' : 'black'};
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        ">
+          ${property.type === 'sale' ? '$' : property.type === 'rental' ? 'R' : 'S'}
+        </div>
+      `;
+
+      const customIcon = L.divIcon({
+        html: iconHtml,
+        className: 'custom-marker',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12]
+      });
+
+      const marker = L.marker([property.coordinates.lat, property.coordinates.lng], {
+        icon: customIcon
+      }).addTo(map);
+
+      // Format price based on type
+      const formattedPrice = property.type === 'rental' || property.type === 'rent-stabilized'
+        ? `$${property.price.toLocaleString()}/mo`
+        : `$${property.price.toLocaleString()}`;
+
+      const typeLabel = property.type === 'sale' ? 'For Sale' : 
+                       property.type === 'rental' ? 'For Rent' : 
+                       'Rent-Stabilized';
+
+      // Add popup with price and property info
+      marker.bindPopup(`
+        <div style="color: black; font-family: system-ui;">
+          <div style="font-weight: bold; margin-bottom: 4px;">${formattedPrice}</div>
+          <div style="font-size: 12px; color: #666; margin-bottom: 4px;">${typeLabel}</div>
+          <div style="font-size: 11px; color: #888;">${property.address}</div>
+        </div>
+      `);
+
+      // Show popup on hover
+      marker.on('mouseover', function() {
+        this.openPopup();
+      });
+
+      marker.on('mouseout', function() {
+        this.closePopup();
+      });
+    });
+
+    // Fit map to show all properties
+    if (validProperties.length === 1) {
+      map.setView([validProperties[0].coordinates.lat, validProperties[0].coordinates.lng], 15);
+    } else {
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [isOpen, properties]);
+
   if (!isOpen) return null;
-
-  // Calculate center position
-  const validProperties = properties.filter(p => p.coordinates);
-  if (validProperties.length === 0) return null;
-
-  const center = centerProperty 
-    ? [centerProperty.coordinates.lat, centerProperty.coordinates.lng] as [number, number]
-    : [validProperties[0].coordinates.lat, validProperties[0].coordinates.lng] as [number, number];
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -63,64 +148,32 @@ const FullScreenMap: React.FC<FullScreenMapProps> = ({
         </div>
 
         {/* Map */}
-        <div className="w-full h-full pt-16">
-          <MapContainer
-            center={center}
-            zoom={validProperties.length === 1 ? 15 : 12}
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='© OpenStreetMap contributors'
-            />
-            
-            {validProperties.map((property, index) => (
-              <Marker
-                key={`${property.address}-${index}`}
-                position={[property.coordinates.lat, property.coordinates.lng]}
-              >
-                <Popup>
-                  <div style={{ color: 'black', fontFamily: 'system-ui' }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                      {property.type === 'rental' || property.type === 'rent-stabilized'
-                        ? `$${property.price.toLocaleString()}/mo`
-                        : `$${property.price.toLocaleString()}`}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                      {property.type === 'sale' ? 'For Sale' : 
-                       property.type === 'rental' ? 'For Rent' : 
-                       'Rent-Stabilized'}
-                    </div>
-                    <div style={{ fontSize: '11px', color: '#888' }}>
-                      {property.address}
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
+        <div 
+          ref={mapRef} 
+          className="w-full h-full pt-16"
+          style={{ 
+            filter: 'contrast(1.1) brightness(0.9)',
+          }}
+        />
 
         {/* Legend */}
         <div className="absolute bottom-4 left-4 bg-black/80 text-white p-3 rounded-lg text-xs space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+            <div className="w-4 h-4 bg-white rounded-full border-2 border-gray-400 flex items-center justify-center text-black font-bold text-[10px]">$</div>
             <span>For Sale</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+            <div className="w-4 h-4 bg-white rounded-full border-2 border-gray-400 flex items-center justify-center text-black font-bold text-[10px]">R</div>
             <span>For Rent</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+            <div className="w-4 h-4 bg-white rounded-full border-2 border-gray-400 flex items-center justify-center text-black font-bold text-[10px]">S</div>
             <span>Rent-Stabilized</span>
           </div>
-          {centerProperty && (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-white rounded-full border-2 border-gray-400"></div>
-              <span>Current Property</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>
+            <span>Current Property</span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
@@ -622,13 +623,12 @@ const Rent = () => {
         )}
       </div>
 
-      {/* Property Detail Modal - now passes all properties for the map */}
+      {/* Property Detail Modal */}
       {selectedProperty && (
         <PropertyDetail
           property={selectedProperty}
           isRental={true}
           onClose={() => setSelectedProperty(null)}
-          allListings={properties}
         />
       )}
     </div>
