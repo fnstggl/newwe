@@ -20,13 +20,13 @@ export function useGeocodedListings(listings: any[]) {
       setIsGeocoding(true);
       
       try {
-        // Extract unique addresses
+        // Extract unique addresses from all listings
         const addresses = [...new Set(listings.map(listing => listing.address).filter(Boolean))];
         
         // Geocode all addresses
         const coordinatesMap = await geocodeAddresses(addresses);
         
-        // Map back to listings
+        // Map back to listings with proper type detection
         const geocoded = listings.map(listing => {
           const coordinates = coordinatesMap.get(listing.address) || null;
           
@@ -35,13 +35,15 @@ export function useGeocodedListings(listings: any[]) {
           
           // Determine type and price based on listing properties
           if (listing.monthly_rent !== undefined) {
-            if (listing.rent_stabilized_confidence !== undefined) {
+            // This is a rental property
+            if (listing.rent_stabilized_confidence !== undefined || listing.isRentStabilized === true) {
               type = 'rent-stabilized';
             } else {
               type = 'rental';
             }
             price = listing.monthly_rent;
           } else if (listing.price !== undefined) {
+            // This is a sale property
             type = 'sale';
             price = listing.price;
           }
@@ -52,7 +54,7 @@ export function useGeocodedListings(listings: any[]) {
             price,
             type
           };
-        }).filter(listing => listing.coordinates !== null);
+        });
         
         setGeocodedListings(geocoded);
       } catch (error) {
