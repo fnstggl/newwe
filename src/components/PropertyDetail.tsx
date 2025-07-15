@@ -31,30 +31,18 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const [showTourRequest, setShowTourRequest] = useState(false);
   const [showFullMap, setShowFullMap] = useState(false);
   const [propertyCoordinates, setPropertyCoordinates] = useState<Coordinates | null>(null);
-  const [isGeocodingProperty, setIsGeocodingProperty] = useState(false);
-  
-  console.log('🏠 PropertyDetail rendered for:', property.address);
-  console.log('🗺️ All listings count:', allListings.length);
   
   // Geocode all listings for the full map
-  const { geocodedListings, isGeocoding } = useGeocodedListings(allListings);
+  const { geocodedListings } = useGeocodedListings(allListings);
 
   // Geocode current property address on mount
   React.useEffect(() => {
-    if (property.address && !propertyCoordinates && !isGeocodingProperty) {
-      console.log('🗺️ Starting geocoding for property:', property.address);
-      setIsGeocodingProperty(true);
-      
+    if (property.address) {
       geocodeAddress(property.address).then(coords => {
-        console.log('🗺️ Geocoding result for property:', property.address, coords);
         setPropertyCoordinates(coords);
-        setIsGeocodingProperty(false);
-      }).catch(error => {
-        console.error('🗺️ Error geocoding property:', error);
-        setIsGeocodingProperty(false);
       });
     }
-  }, [property.address, propertyCoordinates, isGeocodingProperty]);
+  }, [property.address]);
 
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
@@ -232,8 +220,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     ...listing,
     isCurrentProperty: listing.address === property.address
   }));
-
-  console.log('🗺️ Map properties prepared:', mapProperties.length);
 
   return (
     <>
@@ -536,20 +522,11 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       <CardTitle className="text-white">Location</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {isGeocodingProperty ? (
-                        <div className="w-full h-48 bg-gray-800/50 border border-gray-700 rounded-xl flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                            <p className="text-sm text-gray-400">Loading location...</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <MiniMap
-                          coordinates={propertyCoordinates}
-                          address={property.address}
-                          onClick={() => setShowFullMap(true)}
-                        />
-                      )}
+                      <MiniMap
+                        coordinates={propertyCoordinates}
+                        address={property.address}
+                        onClick={() => setShowFullMap(true)}
+                      />
                     </CardContent>
                   </Card>
                 </div>

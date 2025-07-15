@@ -4,7 +4,7 @@ const geocodeCache = new Map<string, { lat: number; lng: number }>();
 
 // Rate limiting for Nominatim API (1 request per second)
 let lastRequestTime = 0;
-const RATE_LIMIT_MS = 1100; // Slightly more than 1 second to be safe
+const RATE_LIMIT_MS = 1000;
 
 export interface Coordinates {
   lat: number;
@@ -14,14 +14,8 @@ export interface Coordinates {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function geocodeAddress(address: string): Promise<Coordinates | null> {
-  if (!address || address.trim() === '') {
-    console.log('🗺️ Empty address provided for geocoding');
-    return null;
-  }
-
   // Check cache first
   if (geocodeCache.has(address)) {
-    console.log('🗺️ Using cached coordinates for:', address);
     return geocodeCache.get(address)!;
   }
 
@@ -30,21 +24,17 @@ export async function geocodeAddress(address: string): Promise<Coordinates | nul
     const now = Date.now();
     const timeSinceLastRequest = now - lastRequestTime;
     if (timeSinceLastRequest < RATE_LIMIT_MS) {
-      const waitTime = RATE_LIMIT_MS - timeSinceLastRequest;
-      console.log(`🗺️ Rate limiting: waiting ${waitTime}ms before geocoding:`, address);
-      await delay(waitTime);
+      await delay(RATE_LIMIT_MS - timeSinceLastRequest);
     }
 
     lastRequestTime = Date.now();
 
-    // Format address for NYC - be more specific
+    // Format address for NYC
     const formattedAddress = `${address}, New York, NY, USA`;
     const encodedAddress = encodeURIComponent(formattedAddress);
     
-    console.log('🗺️ Geocoding address:', formattedAddress);
-    
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=us&addressdetails=1`,
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=us`,
       {
         headers: {
           'User-Agent': 'RealerEstate/1.0 (contact@realerestate.org)'
@@ -53,47 +43,35 @@ export async function geocodeAddress(address: string): Promise<Coordinates | nul
     );
 
     if (!response.ok) {
-      console.error('🗺️ Geocoding API error:', response.status, response.statusText);
       throw new Error(`Geocoding failed: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('🗺️ Geocoding response for', address, ':', data);
     
     if (data && data.length > 0) {
-      const result = data[0];
       const coords = {
-        lat: parseFloat(result.lat),
-        lng: parseFloat(result.lon)
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon)
       };
       
-      // Validate coordinates are reasonable for NYC area
-      if (coords.lat >= 40.4 && coords.lat <= 41.0 && coords.lng >= -74.5 && coords.lng <= -73.5) {
-        console.log('🗺️ Successfully geocoded:', address, 'to', coords);
-        // Cache the result
-        geocodeCache.set(address, coords);
-        return coords;
-      } else {
-        console.warn('🗺️ Coordinates outside NYC area for:', address, coords);
-      }
-    } else {
-      console.warn('🗺️ No results found for address:', address);
+      // Cache the result
+      geocodeCache.set(address, coords);
+      return coords;
     }
 
     return null;
   } catch (error) {
-    console.error('🗺️ Geocoding error for address:', address, error);
+    console.error('Geocoding error:', error);
     return null;
   }
 }
 
 // Batch geocode multiple addresses with proper rate limiting
 export async function geocodeAddresses(addresses: string[]): Promise<Map<string, Coordinates>> {
-  console.log('🗺️ Starting batch geocoding for', addresses.length, 'addresses');
   const results = new Map<string, Coordinates>();
   
   for (const address of addresses) {
-    if (address && address.trim() !== '') {
+    if (address) {
       const coords = await geocodeAddress(address);
       if (coords) {
         results.set(address, coords);
@@ -101,6 +79,5 @@ export async function geocodeAddresses(addresses: string[]): Promise<Map<string,
     }
   }
   
-  console.log('🗺️ Batch geocoding completed. Successfully geocoded', results.size, 'out of', addresses.length, 'addresses');
   return results;
 }

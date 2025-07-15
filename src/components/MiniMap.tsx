@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin } from 'lucide-react';
@@ -27,7 +27,7 @@ L.Icon.Default.mergeOptions({
 });
 
 interface MiniMapProps {
-  coordinates: Coordinates | null;
+  coordinates: Coordinates;
   address: string;
   onClick: () => void;
 }
@@ -35,70 +35,37 @@ interface MiniMapProps {
 const MiniMap: React.FC<MiniMapProps> = ({ coordinates, address, onClick }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log('🗺️ MiniMap useEffect triggered:', { coordinates, address });
-    
-    if (!mapRef.current) {
-      console.log('🗺️ MiniMap: mapRef not ready');
-      return;
-    }
+    if (!mapRef.current || !coordinates) return;
 
-    if (!coordinates) {
-      console.log('🗺️ MiniMap: no coordinates available for', address);
-      return;
-    }
+    // Initialize map
+    const map = L.map(mapRef.current, {
+      center: [coordinates.lat, coordinates.lng],
+      zoom: 15,
+      zoomControl: false,
+      dragging: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      scrollWheelZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      attributionControl: false
+    });
 
-    setIsLoading(true);
-    console.log('🗺️ MiniMap: Initializing map for coordinates:', coordinates);
+    mapInstanceRef.current = map;
 
-    // Clean up existing map
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
+    // Add dark tiles
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '',
+      maxZoom: 19
+    }).addTo(map);
 
-    try {
-      // Initialize map
-      const map = L.map(mapRef.current, {
-        center: [coordinates.lat, coordinates.lng],
-        zoom: 15,
-        zoomControl: false,
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        boxZoom: false,
-        keyboard: false,
-        attributionControl: false
-      });
+    // Add marker
+    const marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map);
 
-      mapInstanceRef.current = map;
-
-      // Add dark tiles
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '',
-        maxZoom: 19
-      }).addTo(map);
-
-      // Add marker
-      const marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map);
-      
-      // Add click handler to entire map
-      map.on('click', onClick);
-
-      // Handle map load event
-      map.whenReady(() => {
-        console.log('🗺️ MiniMap: Map is ready');
-        setIsLoading(false);
-      });
-
-      console.log('🗺️ MiniMap: Map initialized successfully');
-    } catch (error) {
-      console.error('🗺️ MiniMap: Error initializing map:', error);
-      setIsLoading(false);
-    }
+    // Add click handler to entire map
+    map.on('click', onClick);
 
     return () => {
       if (mapInstanceRef.current) {
@@ -106,7 +73,7 @@ const MiniMap: React.FC<MiniMapProps> = ({ coordinates, address, onClick }) => {
         mapInstanceRef.current = null;
       }
     };
-  }, [coordinates, onClick, address]);
+  }, [coordinates, onClick]);
 
   if (!coordinates) {
     return (
@@ -132,11 +99,6 @@ const MiniMap: React.FC<MiniMapProps> = ({ coordinates, address, onClick }) => {
           filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))',
         }}
       />
-      {isLoading && (
-        <div className="absolute inset-0 bg-gray-800/50 rounded-xl flex items-center justify-center">
-          <div className="text-white text-sm">Loading map...</div>
-        </div>
-      )}
       <div className="absolute bottom-2 left-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
         Click to expand
       </div>
