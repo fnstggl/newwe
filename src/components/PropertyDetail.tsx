@@ -7,42 +7,23 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown, ExternalLink } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
 import TourRequestForm from './TourRequestForm';
-import MiniMap from './MiniMap';
-import FullScreenMap from './FullScreenMap';
 import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { HoverButton } from '@/components/ui/hover-button';
-import { geocodeAddress, Coordinates } from '@/utils/geocoding';
-import { useGeocodedListings } from '@/hooks/useGeocodedListings';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
   isRental?: boolean;
   onClose: () => void;
-  allListings?: any[]; // All listings currently loaded on the page
 }
 
-const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose, allListings = [] }) => {
+const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showTourRequest, setShowTourRequest] = useState(false);
-  const [showFullMap, setShowFullMap] = useState(false);
-  const [propertyCoordinates, setPropertyCoordinates] = useState<Coordinates | null>(null);
-  
-  // Geocode all listings for the full map
-  const { geocodedListings } = useGeocodedListings(allListings);
-
-  // Geocode current property address on mount
-  React.useEffect(() => {
-    if (property.address) {
-      geocodeAddress(property.address).then(coords => {
-        setPropertyCoordinates(coords);
-      });
-    }
-  }, [property.address]);
 
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
@@ -214,12 +195,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   const discountPercent = getDiscountPercent();
   const annualSavings = getAnnualSavings();
-
-  // Prepare properties for full map
-  const mapProperties = geocodedListings.map(listing => ({
-    ...listing,
-    isCurrentProperty: listing.address === property.address
-  }));
 
   return (
     <>
@@ -515,20 +490,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       </CardContent>
                     </Card>
                   )}
-
-                  {/* Mini Map Section */}
-                  <Card className="bg-gray-800/50 border-gray-700">
-                    <CardHeader>
-                      <CardTitle className="text-white">Location</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <MiniMap
-                        coordinates={propertyCoordinates}
-                        address={property.address}
-                        onClick={() => setShowFullMap(true)}
-                      />
-                    </CardContent>
-                  </Card>
                 </div>
 
                 {/* Sidebar - Grade/Deal Score + About the Neighborhood + Stats */}
@@ -711,14 +672,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
           onClose={() => setShowTourRequest(false)}
         />
       )}
-
-      {/* Full Screen Map Modal */}
-      <FullScreenMap
-        isOpen={showFullMap}
-        onClose={() => setShowFullMap(false)}
-        properties={mapProperties}
-        centerProperty={mapProperties.find(p => p.isCurrentProperty)}
-      />
     </>
   );
 };
