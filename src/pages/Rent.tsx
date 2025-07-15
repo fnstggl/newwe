@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
@@ -21,6 +20,9 @@ const Rent = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
+  const [minDiscount, setMinDiscount] = useState("");
+  const [minSqft, setMinSqft] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [rentStabilizedOnly, setRentStabilizedOnly] = useState(false);
   const [properties, setProperties] = useState<any[]>([]);
@@ -47,7 +49,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly, minDiscount, minSqft, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -170,8 +172,7 @@ const Rent = () => {
         let rentStabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
-          .eq('display_status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('display_status', 'active');
 
         // Apply filters to rent-stabilized query
         if (searchTerm.trim()) {
@@ -196,9 +197,36 @@ const Rent = () => {
           }
         }
 
+        if (minDiscount.trim()) {
+          const discountValue = parseFloat(minDiscount.trim());
+          if (!isNaN(discountValue) && discountValue > 0) {
+            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
+          }
+        }
+
+        if (minSqft.trim()) {
+          const sqftValue = parseInt(minSqft.trim());
+          if (!isNaN(sqftValue) && sqftValue > 0) {
+            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue);
+          }
+        }
+
         if (selectedNeighborhoods.length > 0) {
           const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
           rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
+        }
+
+        // Apply sorting
+        if (sortBy === 'price_asc') {
+          rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
+        } else if (sortBy === 'price_desc') {
+          rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
+        } else if (sortBy === 'sqft_asc') {
+          rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true });
+        } else if (sortBy === 'sqft_desc') {
+          rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false });
+        } else {
+          rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
         }
 
         const { data, error } = await rentStabilizedQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
@@ -210,13 +238,13 @@ const Rent = () => {
         }
 
         const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
-        const shuffledData = normalizedData.sort(() => Math.random() - 0.5);
+        const finalData = sortBy ? normalizedData : normalizedData.sort(() => Math.random() - 0.5);
 
         if (reset) {
-          setProperties(shuffledData);
+          setProperties(finalData);
           setOffset(ITEMS_PER_PAGE);
         } else {
-          setProperties(prev => [...prev, ...shuffledData]);
+          setProperties(prev => [...prev, ...finalData]);
           setOffset(prev => prev + ITEMS_PER_PAGE);
         }
 
@@ -226,14 +254,12 @@ const Rent = () => {
         let rentalsQuery = supabase
           .from('undervalued_rentals')
           .select('*')
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('status', 'active');
 
         let rentStabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
-          .eq('display_status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('display_status', 'active');
 
         // Apply filters to both queries
         if (searchTerm.trim()) {
@@ -262,10 +288,44 @@ const Rent = () => {
           }
         }
 
+        if (minDiscount.trim()) {
+          const discountValue = parseFloat(minDiscount.trim());
+          if (!isNaN(discountValue) && discountValue > 0) {
+            rentalsQuery = rentalsQuery.gte('discount_percent', discountValue);
+            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
+          }
+        }
+
+        if (minSqft.trim()) {
+          const sqftValue = parseInt(minSqft.trim());
+          if (!isNaN(sqftValue) && sqftValue > 0) {
+            rentalsQuery = rentalsQuery.gte('sqft', sqftValue);
+            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue);
+          }
+        }
+
         if (selectedNeighborhoods.length > 0) {
           const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
           rentalsQuery = rentalsQuery.in('neighborhood', mappedNeighborhoods);
           rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
+        }
+
+        // Apply sorting
+        if (sortBy === 'price_asc') {
+          rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: true });
+          rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
+        } else if (sortBy === 'price_desc') {
+          rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: false });
+          rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
+        } else if (sortBy === 'sqft_asc') {
+          rentalsQuery = rentalsQuery.order('sqft', { ascending: true });
+          rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true });
+        } else if (sortBy === 'sqft_desc') {
+          rentalsQuery = rentalsQuery.order('sqft', { ascending: false });
+          rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false });
+        } else {
+          rentalsQuery = rentalsQuery.order('created_at', { ascending: false });
+          rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
         }
 
         // Execute both queries
@@ -290,13 +350,13 @@ const Rent = () => {
 
         // Combine and shuffle both types of properties
         const combinedData = [...rentalsData, ...normalizedRentStabilized];
-        const shuffledData = combinedData.sort(() => Math.random() - 0.5);
+        const finalData = sortBy ? combinedData : combinedData.sort(() => Math.random() - 0.5);
 
         if (reset) {
-          setProperties(shuffledData);
+          setProperties(finalData);
           setOffset(ITEMS_PER_PAGE);
         } else {
-          setProperties(prev => [...prev, ...shuffledData]);
+          setProperties(prev => [...prev, ...finalData]);
           setOffset(prev => prev + ITEMS_PER_PAGE);
         }
 
@@ -399,7 +459,7 @@ const Rent = () => {
 
         {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-6 gap-4">
+          <div className="grid md:grid-cols-4 gap-4 mb-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Neighborhoods
@@ -480,13 +540,24 @@ const Rent = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Max /month
               </label>
-              <input
-                type="text"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="$4,000"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  placeholder="$4,000"
+                  className="flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight text-xs"
+                >
+                  <option value="">Sort</option>
+                  <option value="price_asc" className="text-white">$ Low-High</option>
+                  <option value="price_desc" className="text-white">$ High-Low</option>
+                </select>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
@@ -505,6 +576,8 @@ const Rent = () => {
                 <option value="4" className="text-white">4+</option>
               </select>
             </div>
+          </div>
+          <div className="grid md:grid-cols-5 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Min Grade
@@ -521,6 +594,41 @@ const Rent = () => {
               </select>
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                Min Discount %
+              </label>
+              <input
+                type="text"
+                value={minDiscount}
+                onChange={(e) => setMinDiscount(e.target.value)}
+                placeholder="10"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                Min Sqft
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={minSqft}
+                  onChange={(e) => setMinSqft(e.target.value)}
+                  placeholder="500"
+                  className="flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight text-xs"
+                >
+                  <option value="">Sort</option>
+                  <option value="sqft_desc" className="text-white">Sqft Large-Small</option>
+                  <option value="sqft_asc" className="text-white">Sqft Small-Large</option>
+                </select>
+              </div>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight text-center">
                 Rent Stabilized
               </label>
@@ -533,6 +641,7 @@ const Rent = () => {
                 />
               </div>
             </div>
+            <div></div>
           </div>
         </div>
 
