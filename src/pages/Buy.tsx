@@ -19,9 +19,6 @@ const Buy = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
-  const [minDiscount, setMinDiscount] = useState("");
-  const [minSqft, setMinSqft] = useState("");
-  const [sortBy, setSortBy] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,7 +44,7 @@ const Buy = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, minDiscount, minSqft, sortBy]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -178,7 +175,8 @@ const Buy = () => {
         .from('undervalued_sales')
         .select('*')
         .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true')
+        .order('created_at', { ascending: false }); // Random-ish order instead of by score
 
       if (searchTerm.trim()) {
         query = query.ilike('address', `%${searchTerm.trim()}%`);
@@ -210,35 +208,8 @@ const Buy = () => {
         }
       }
 
-      if (minDiscount.trim()) {
-        const discountValue = parseFloat(minDiscount.trim());
-        if (!isNaN(discountValue) && discountValue > 0) {
-          query = query.gte('discount_percent', discountValue);
-        }
-      }
-
-      if (minSqft.trim()) {
-        const sqftValue = parseInt(minSqft.trim());
-        if (!isNaN(sqftValue) && sqftValue > 0) {
-          query = query.gte('sqft', sqftValue);
-        }
-      }
-
       if (selectedNeighborhoods.length > 0) {
         query = query.in('neighborhood', selectedNeighborhoods);
-      }
-
-      // Apply sorting
-      if (sortBy === 'price_asc') {
-        query = query.order('price', { ascending: true });
-      } else if (sortBy === 'price_desc') {
-        query = query.order('price', { ascending: false });
-      } else if (sortBy === 'sqft_asc') {
-        query = query.order('sqft', { ascending: true });
-      } else if (sortBy === 'sqft_desc') {
-        query = query.order('sqft', { ascending: false });
-      } else {
-        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
@@ -255,14 +226,14 @@ const Buy = () => {
         return;
       }
 
-      // Only shuffle if no specific sorting is applied
-      const finalData = sortBy ? data : data.sort(() => Math.random() - 0.5);
+      // Shuffle the results to make them appear random
+      const shuffledData = data.sort(() => Math.random() - 0.5);
 
       if (reset) {
-        setProperties(finalData);
+        setProperties(shuffledData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...finalData]);
+        setProperties(prev => [...prev, ...shuffledData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -354,7 +325,7 @@ const Buy = () => {
 
         {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-4 gap-4 mb-4">
+          <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Neighborhoods
@@ -435,24 +406,13 @@ const Buy = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Max Price
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  placeholder="$1,500,000"
-                  className="flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight text-xs"
-                >
-                  <option value="">Sort</option>
-                  <option value="price_asc" className="text-white">$ Low-High</option>
-                  <option value="price_desc" className="text-white">$ High-Low</option>
-                </select>
-              </div>
+              <input
+                type="text"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="$1,500,000"
+                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
@@ -471,8 +431,6 @@ const Buy = () => {
                 <option value="4" className="text-white">4+</option>
               </select>
             </div>
-          </div>
-          <div className="grid md:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Min Grade
@@ -488,42 +446,6 @@ const Buy = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Min Discount %
-              </label>
-              <input
-                type="text"
-                value={minDiscount}
-                onChange={(e) => setMinDiscount(e.target.value)}
-                placeholder="10"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Min Sqft
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={minSqft}
-                  onChange={(e) => setMinSqft(e.target.value)}
-                  placeholder="500"
-                  className="flex-1 px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight text-xs"
-                >
-                  <option value="">Sort</option>
-                  <option value="sqft_desc" className="text-white">Sqft Large-Small</option>
-                  <option value="sqft_asc" className="text-white">Sqft Small-Large</option>
-                </select>
-              </div>
-            </div>
-            <div></div>
           </div>
         </div>
 
