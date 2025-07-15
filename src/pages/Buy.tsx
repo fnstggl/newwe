@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
+import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,8 +30,30 @@ const Buy = () => {
   const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Additional filters state
+  const [showAdditionalFilters, setShowAdditionalFilters] = useState(false);
+  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
+  const [minSqft, setMinSqft] = useState("");
+  const [addressSearch, setAddressSearch] = useState("");
+  const [minDiscount, setMinDiscount] = useState("");
+  const [sortBy, setSortBy] = useState("Featured");
+  const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
+  const boroughDropdownRef = useRef<HTMLDivElement>(null);
+
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+  const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
+  const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
+  const sortOptions = [
+    'Featured',
+    'Price: Low to High',
+    'Price: High to Low',
+    'Sqft: Low to High',
+    'Sqft: High to Low',
+    'Score: Low to High',
+    'Score: High to Low',
+    'Newest Listed'
+  ];
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -44,12 +66,15 @@ const Buy = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowNeighborhoodDropdown(false);
+      }
+      if (boroughDropdownRef.current && !boroughDropdownRef.current.contains(event.target as Node)) {
+        setShowBoroughDropdown(false);
       }
     };
 
@@ -175,8 +200,7 @@ const Buy = () => {
         .from('undervalued_sales')
         .select('*')
         .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true')
-        .order('created_at', { ascending: false }); // Random-ish order instead of by score
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
 
       if (searchTerm.trim()) {
         query = query.ilike('address', `%${searchTerm.trim()}%`);
@@ -212,6 +236,57 @@ const Buy = () => {
         query = query.in('neighborhood', selectedNeighborhoods);
       }
 
+      // Additional filters
+      if (selectedBoroughs.length > 0) {
+        query = query.in('borough', selectedBoroughs);
+      }
+
+      if (minSqft.trim()) {
+        const sqftValue = parseInt(minSqft.trim());
+        if (!isNaN(sqftValue) && sqftValue > 0) {
+          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
+        }
+      }
+
+      if (addressSearch.trim()) {
+        query = query.ilike('address', `%${addressSearch.trim()}%`);
+      }
+
+      if (minDiscount.trim()) {
+        const discountValue = parseInt(minDiscount.replace('%', ''));
+        if (!isNaN(discountValue) && discountValue > 0) {
+          query = query.gte('discount_percent', discountValue);
+        }
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case 'Price: Low to High':
+          query = query.order('price', { ascending: true });
+          break;
+        case 'Price: High to Low':
+          query = query.order('price', { ascending: false });
+          break;
+        case 'Sqft: Low to High':
+          query = query.order('sqft', { ascending: true, nullsFirst: true });
+          break;
+        case 'Sqft: High to Low':
+          query = query.order('sqft', { ascending: false, nullsLast: true });
+          break;
+        case 'Score: Low to High':
+          query = query.order('score', { ascending: true });
+          break;
+        case 'Score: High to Low':
+          query = query.order('score', { ascending: false });
+          break;
+        case 'Newest Listed':
+          query = query.order('days_on_market', { ascending: true });
+          break;
+        default: // Featured
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
+
       const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
       if (error) {
@@ -226,14 +301,14 @@ const Buy = () => {
         return;
       }
 
-      // Shuffle the results to make them appear random
-      const shuffledData = data.sort(() => Math.random() - 0.5);
+      // Only shuffle if Featured sorting
+      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
 
       if (reset) {
-        setProperties(shuffledData);
+        setProperties(resultData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...shuffledData]);
+        setProperties(prev => [...prev, ...resultData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -268,31 +343,47 @@ const Buy = () => {
     setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
   };
 
+  const toggleBorough = (borough: string) => {
+    setSelectedBoroughs(prev => 
+      prev.includes(borough) 
+        ? prev.filter(b => b !== borough)
+        : [...prev, borough]
+    );
+  };
+
+  const clearBoroughs = () => {
+    setSelectedBoroughs([]);
+  };
+
+  const removeBorough = (borough: string) => {
+    setSelectedBoroughs(prev => prev.filter(b => b !== borough));
+  };
+
   const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-yellow-400',
         scoreBorder: 'border-yellow-600',
         hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-purple-400',
         scoreBorder: 'border-purple-600',
         hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
       };
     } else if (grade.startsWith('B')) {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-blue-400',
         scoreBorder: 'border-blue-600',
         hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white text-black border-gray-300', // White background, black text
+        badge: 'bg-white text-black border-gray-300',
         scoreText: 'text-gray-300',
         scoreBorder: 'border-gray-600',
         hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
@@ -447,6 +538,139 @@ const Buy = () => {
               </select>
             </div>
           </div>
+
+          {/* Additional Filters Dropdown Toggle */}
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setShowAdditionalFilters(!showAdditionalFilters)}
+              className="flex items-center text-gray-400 hover:text-white transition-colors"
+            >
+              {showAdditionalFilters ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Additional Filters Section */}
+          {showAdditionalFilters && (
+            <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4 border-t border-gray-700">
+              <div className="relative" ref={boroughDropdownRef}>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Borough
+                </label>
+                <div className="relative">
+                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                    {selectedBoroughs.length > 0 && (
+                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                        {selectedBoroughs.map((borough) => (
+                          <div
+                            key={borough}
+                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
+                            onClick={() => removeBorough(borough)}
+                          >
+                            {borough}
+                            <X className="ml-1 h-3 w-3" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div
+                      className="flex-1 cursor-pointer text-gray-500"
+                      onClick={() => setShowBoroughDropdown(true)}
+                    >
+                      {selectedBoroughs.length === 0 ? "Manhattan" : ""}
+                    </div>
+                  </div>
+                  
+                  {showBoroughDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm font-medium text-gray-300">Filter by Borough</span>
+                        {selectedBoroughs.length > 0 && (
+                          <button
+                            onClick={clearBoroughs}
+                            className="text-xs text-blue-400 hover:text-blue-300"
+                          >
+                            Clear all
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {boroughs.map((borough) => (
+                          <button
+                            key={borough}
+                            onClick={() => toggleBorough(borough)}
+                            className={`px-3 py-1 rounded-full text-sm transition-all ${
+                              selectedBoroughs.includes(borough)
+                                ? 'bg-white text-black'
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            }`}
+                          >
+                            {borough}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Min Sqft
+                </label>
+                <input
+                  type="text"
+                  value={minSqft}
+                  onChange={(e) => setMinSqft(e.target.value)}
+                  placeholder="1,100"
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  value={addressSearch}
+                  onChange={(e) => setAddressSearch(e.target.value)}
+                  placeholder="123 Carroll St"
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Min Discount
+                </label>
+                <select
+                  value={minDiscount}
+                  onChange={(e) => setMinDiscount(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                >
+                  <option value="" className="text-gray-500">Any</option>
+                  {discountOptions.map((discount) => (
+                    <option key={discount} value={discount} className="text-white">{discount}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Sort by
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option} value={option} className="text-white">{option}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Properties Grid */}

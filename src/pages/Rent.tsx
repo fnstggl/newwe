@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
+import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
 import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,8 +32,30 @@ const Rent = () => {
   const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Additional filters state
+  const [showAdditionalFilters, setShowAdditionalFilters] = useState(false);
+  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
+  const [minSqft, setMinSqft] = useState("");
+  const [addressSearch, setAddressSearch] = useState("");
+  const [minDiscount, setMinDiscount] = useState("");
+  const [sortBy, setSortBy] = useState("Featured");
+  const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
+  const boroughDropdownRef = useRef<HTMLDivElement>(null);
+
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+  const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
+  const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
+  const sortOptions = [
+    'Featured',
+    'Price: Low to High',
+    'Price: High to Low',
+    'Sqft: Low to High',
+    'Sqft: High to Low',
+    'Score: Low to High',
+    'Score: High to Low',
+    'Newest Listed'
+  ];
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -47,12 +68,15 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowNeighborhoodDropdown(false);
+      }
+      if (boroughDropdownRef.current && !boroughDropdownRef.current.contains(event.target as Node)) {
+        setShowBoroughDropdown(false);
       }
     };
 
@@ -170,8 +194,7 @@ const Rent = () => {
         let rentStabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
-          .eq('display_status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('display_status', 'active');
 
         // Apply filters to rent-stabilized query
         if (searchTerm.trim()) {
@@ -201,6 +224,57 @@ const Rent = () => {
           rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
         }
 
+        // Additional filters for rent-stabilized
+        if (selectedBoroughs.length > 0) {
+          rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
+        }
+
+        if (minSqft.trim()) {
+          const sqftValue = parseInt(minSqft.trim());
+          if (!isNaN(sqftValue) && sqftValue > 0) {
+            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
+          }
+        }
+
+        if (addressSearch.trim()) {
+          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
+        }
+
+        if (minDiscount.trim()) {
+          const discountValue = parseInt(minDiscount.replace('%', ''));
+          if (!isNaN(discountValue) && discountValue > 0) {
+            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
+          }
+        }
+
+        // Apply sorting for rent-stabilized
+        switch (sortBy) {
+          case 'Price: Low to High':
+            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
+            break;
+          case 'Price: High to Low':
+            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
+            break;
+          case 'Sqft: Low to High':
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
+            break;
+          case 'Sqft: High to Low':
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsLast: true });
+            break;
+          case 'Score: Low to High':
+            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: true });
+            break;
+          case 'Score: High to Low':
+            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: false });
+            break;
+          case 'Newest Listed':
+            rentStabilizedQuery = rentStabilizedQuery.order('discovered_at', { ascending: false });
+            break;
+          default: // Featured
+            rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
+            break;
+        }
+
         const { data, error } = await rentStabilizedQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
         if (error) {
@@ -210,13 +284,13 @@ const Rent = () => {
         }
 
         const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
-        const shuffledData = normalizedData.sort(() => Math.random() - 0.5);
+        const resultData = sortBy === 'Featured' ? normalizedData.sort(() => Math.random() - 0.5) : normalizedData;
 
         if (reset) {
-          setProperties(shuffledData);
+          setProperties(resultData);
           setOffset(ITEMS_PER_PAGE);
         } else {
-          setProperties(prev => [...prev, ...shuffledData]);
+          setProperties(prev => [...prev, ...resultData]);
           setOffset(prev => prev + ITEMS_PER_PAGE);
         }
 
@@ -226,14 +300,12 @@ const Rent = () => {
         let rentalsQuery = supabase
           .from('undervalued_rentals')
           .select('*')
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('status', 'active');
 
         let rentStabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
-          .eq('display_status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('display_status', 'active');
 
         // Apply filters to both queries
         if (searchTerm.trim()) {
@@ -268,6 +340,69 @@ const Rent = () => {
           rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
         }
 
+        // Additional filters for both queries
+        if (selectedBoroughs.length > 0) {
+          rentalsQuery = rentalsQuery.in('borough', selectedBoroughs);
+          rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
+        }
+
+        if (minSqft.trim()) {
+          const sqftValue = parseInt(minSqft.trim());
+          if (!isNaN(sqftValue) && sqftValue > 0) {
+            rentalsQuery = rentalsQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
+            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
+          }
+        }
+
+        if (addressSearch.trim()) {
+          rentalsQuery = rentalsQuery.ilike('address', `%${addressSearch.trim()}%`);
+          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
+        }
+
+        if (minDiscount.trim()) {
+          const discountValue = parseInt(minDiscount.replace('%', ''));
+          if (!isNaN(discountValue) && discountValue > 0) {
+            rentalsQuery = rentalsQuery.gte('discount_percent', discountValue);
+            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
+          }
+        }
+
+        // Apply sorting to both queries
+        switch (sortBy) {
+          case 'Price: Low to High':
+            rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
+            break;
+          case 'Price: High to Low':
+            rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: false });
+            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
+            break;
+          case 'Sqft: Low to High':
+            rentalsQuery = rentalsQuery.order('sqft', { ascending: true, nullsFirst: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
+            break;
+          case 'Sqft: High to Low':
+            rentalsQuery = rentalsQuery.order('sqft', { ascending: false, nullsLast: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsLast: true });
+            break;
+          case 'Score: Low to High':
+            rentalsQuery = rentalsQuery.order('score', { ascending: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: true });
+            break;
+          case 'Score: High to Low':
+            rentalsQuery = rentalsQuery.order('score', { ascending: false });
+            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: false });
+            break;
+          case 'Newest Listed':
+            rentalsQuery = rentalsQuery.order('days_on_market', { ascending: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('discovered_at', { ascending: false });
+            break;
+          default: // Featured
+            rentalsQuery = rentalsQuery.order('created_at', { ascending: false });
+            rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
+            break;
+        }
+
         // Execute both queries
         const [rentalsResult, rentStabilizedResult] = await Promise.all([
           rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
@@ -290,13 +425,13 @@ const Rent = () => {
 
         // Combine and shuffle both types of properties
         const combinedData = [...rentalsData, ...normalizedRentStabilized];
-        const shuffledData = combinedData.sort(() => Math.random() - 0.5);
+        const resultData = sortBy === 'Featured' ? combinedData.sort(() => Math.random() - 0.5) : combinedData;
 
         if (reset) {
-          setProperties(shuffledData);
+          setProperties(resultData);
           setOffset(ITEMS_PER_PAGE);
         } else {
-          setProperties(prev => [...prev, ...shuffledData]);
+          setProperties(prev => [...prev, ...resultData]);
           setOffset(prev => prev + ITEMS_PER_PAGE);
         }
 
@@ -331,6 +466,22 @@ const Rent = () => {
 
   const clearNeighborhoods = () => {
     setSelectedNeighborhoods([]);
+  };
+
+  const toggleBorough = (borough: string) => {
+    setSelectedBoroughs(prev => 
+      prev.includes(borough) 
+        ? prev.filter(b => b !== borough)
+        : [...prev, borough]
+    );
+  };
+
+  const clearBoroughs = () => {
+    setSelectedBoroughs([]);
+  };
+
+  const removeBorough = (borough: string) => {
+    setSelectedBoroughs(prev => prev.filter(b => b !== borough));
   };
 
   const getGradeColors = (grade: string, isRentStabilized?: boolean) => {
@@ -534,6 +685,139 @@ const Rent = () => {
               </div>
             </div>
           </div>
+
+          {/* Additional Filters Dropdown Toggle */}
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setShowAdditionalFilters(!showAdditionalFilters)}
+              className="flex items-center text-gray-400 hover:text-white transition-colors"
+            >
+              {showAdditionalFilters ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Additional Filters Section */}
+          {showAdditionalFilters && (
+            <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4 border-t border-gray-700">
+              <div className="relative" ref={boroughDropdownRef}>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Borough
+                </label>
+                <div className="relative">
+                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                    {selectedBoroughs.length > 0 && (
+                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                        {selectedBoroughs.map((borough) => (
+                          <div
+                            key={borough}
+                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
+                            onClick={() => removeBorough(borough)}
+                          >
+                            {borough}
+                            <X className="ml-1 h-3 w-3" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div
+                      className="flex-1 cursor-pointer text-gray-500"
+                      onClick={() => setShowBoroughDropdown(true)}
+                    >
+                      {selectedBoroughs.length === 0 ? "Manhattan" : ""}
+                    </div>
+                  </div>
+                  
+                  {showBoroughDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm font-medium text-gray-300">Filter by Borough</span>
+                        {selectedBoroughs.length > 0 && (
+                          <button
+                            onClick={clearBoroughs}
+                            className="text-xs text-blue-400 hover:text-blue-300"
+                          >
+                            Clear all
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {boroughs.map((borough) => (
+                          <button
+                            key={borough}
+                            onClick={() => toggleBorough(borough)}
+                            className={`px-3 py-1 rounded-full text-sm transition-all ${
+                              selectedBoroughs.includes(borough)
+                                ? 'bg-white text-black'
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            }`}
+                          >
+                            {borough}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Min Sqft
+                </label>
+                <input
+                  type="text"
+                  value={minSqft}
+                  onChange={(e) => setMinSqft(e.target.value)}
+                  placeholder="1,100"
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Address
+                </label>
+                <input
+                  type="text"
+                  value={addressSearch}
+                  onChange={(e) => setAddressSearch(e.target.value)}
+                  placeholder="123 Carroll St"
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Min Discount
+                </label>
+                <select
+                  value={minDiscount}
+                  onChange={(e) => setMinDiscount(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                >
+                  <option value="" className="text-gray-500">Any</option>
+                  {discountOptions.map((discount) => (
+                    <option key={discount} value={discount} className="text-white">{discount}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                  Sort by
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option} value={option} className="text-white">{option}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Properties Grid */}
