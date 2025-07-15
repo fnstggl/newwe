@@ -702,7 +702,7 @@ const Rent = () => {
 
           {/* Additional Filters Section */}
           {showAdditionalFilters && (
-            <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4 border-t border-gray-700">
+            <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4">
               <div className="relative" ref={boroughDropdownRef}>
                 <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                   Borough
