@@ -3,7 +3,6 @@ import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useEffect } from "react";
-import Footer from "../components/Footer";
 
 const Index = () => {
   useEffect(() => {
@@ -41,8 +40,7 @@ const Index = () => {
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org');
   }, []);
 
-  return (
-    <div className="min-h-screen bg-black text-white">
+  return <div className="font-inter">
       {/* Hero Section */}
 <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
         <div className="absolute inset-0 w-full h-full">
@@ -173,10 +171,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
-  );
+    </div>;
 };
 
 export default Index;
