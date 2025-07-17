@@ -44,15 +44,20 @@ const Press = () => {
           </p>
         </div>
         
-        {/* Featured Image */}
-        <div className="mb-16">
+        {/* Featured Image - Smaller */}
+        <div className="mb-16 flex justify-center">
           <img 
             src="/lovable-uploads/597ec888-0d60-4237-b3ad-e13e0b23b4a2.png" 
             alt="Realer Estate Founders" 
-            className="w-full max-w-4xl mx-auto rounded-2xl"
+            className="w-full max-w-2xl rounded-2xl"
           />
         </div>
       </section>
+
+      {/* Clean Blue Gradient Line */}
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-20"></div>
+      </div>
 
       {/* Our Story Section */}
       <section className="py-20 px-4 bg-gray-900/50">
@@ -72,37 +77,36 @@ const Press = () => {
         </div>
       </section>
 
+      {/* Clean Blue Gradient Line */}
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-20"></div>
+      </div>
+
       {/* At a Glance Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <h2 className="text-4xl font-semibold mb-12 tracking-tight text-center">At a Glance</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="text-center p-6">
-            <Brain className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">16</div>
             <div className="text-gray-400 text-sm">Built by a 16-year-old solo founder</div>
           </div>
           <div className="text-center p-6">
-            <Home className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">6,000+</div>
             <div className="text-gray-400 text-sm">users served</div>
           </div>
           <div className="text-center p-6">
-            <DollarSign className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">$500K+</div>
             <div className="text-gray-400 text-sm">in estimated rent savings surfaced</div>
           </div>
           <div className="text-center p-6">
-            <MapPin className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">170+</div>
             <div className="text-gray-400 text-sm">NYC zip codes covered</div>
           </div>
           <div className="text-center p-6">
-            <Bot className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">Real-time</div>
             <div className="text-gray-400 text-sm">AI deal analysis + rent stabilization detection</div>
           </div>
           <div className="text-center p-6">
-            <CheckCircle className="w-12 h-12 text-blue-400 mx-auto mb-4" />
             <div className="text-3xl font-bold mb-2">100%</div>
             <div className="text-gray-400 text-sm">free to find undervalued homes</div>
           </div>
@@ -117,6 +121,11 @@ const Press = () => {
           className="w-full rounded-2xl"
         />
       </section>
+
+      {/* Clean Blue Gradient Line */}
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-20"></div>
+      </div>
 
       {/* Real User Reviews Section */}
       <section className="py-20 px-4 bg-gray-900/50">
@@ -152,6 +161,11 @@ const Press = () => {
           className="w-full max-w-4xl mx-auto"
         />
       </section>
+
+      {/* Clean Blue Gradient Line */}
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-20"></div>
+      </div>
 
       {/* Media Assets Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
@@ -241,29 +255,11 @@ const Press = () => {
         <div className="text-center">
           <HoverButton 
             onClick={handleDownloadAllAssets}
-            className="text-white font-semibold tracking-tight"
+            className="text-white font-semibold tracking-tight inline-flex items-center"
           >
             <Download className="w-4 h-4 mr-2" />
             Download All Assets
           </HoverButton>
-        </div>
-      </section>
-
-      {/* Press Coverage Section */}
-      <section className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-semibold mb-8 tracking-tight">Press Coverage</h2>
-          <p className="text-xl text-gray-300 mb-4">
-            Want to break the story? We're happy to give you a first look.
-          </p>
-          <p className="text-gray-400">
-            Reach out to: <a href="mailto:press@realerestate.org" className="text-blue-400 hover:text-blue-300 transition-colors">press@realerestate.org</a>
-          </p>
-          
-          {/* Space for future press logos and quotes */}
-          <div className="mt-16 min-h-32 border-2 border-dashed border-gray-700 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500 text-sm">Future press coverage will appear here</p>
-          </div>
         </div>
       </section>
 
