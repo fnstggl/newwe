@@ -1,8 +1,10 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useEffect } from "react";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   useEffect(() => {
@@ -157,20 +159,11 @@ const Index = () => {
           <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
             Join now.
           </Link>
-          
-          {/* Footer Links */}
-          <div className="mt-16 mb-2">
-            <div className="flex justify-center space-x-8 text-xs text-gray-400">
-              <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-gray-300 transition-colors">
-                Terms of Service
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>;
 };
 
