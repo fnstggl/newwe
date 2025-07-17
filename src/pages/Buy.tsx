@@ -1,754 +1,444 @@
-import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
-import { GooeyFilter } from "@/components/ui/liquid-toggle";
-import { HoverButton } from "@/components/ui/hover-button";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-import PropertyCard from "@/components/PropertyCard";
-import PropertyDetail from "@/components/PropertyDetail";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-
-type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../lib/supabaseClient';
+import PropertyCard from '../components/PropertyCard';
+import { BeatLoader } from 'react-spinners';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Slider } from "@/components/ui/slider"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const Buy = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [bedrooms, setBedrooms] = useState("");
-  const [minGrade, setMinGrade] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
-  const [properties, setProperties] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
-  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
-  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
-  const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Additional filters state
-  const [showAdditionalFilters, setShowAdditionalFilters] = useState(false);
+  const [selectedZipCodes, setSelectedZipCodes] = useState<string[]>([]);
+  const [maxPrice, setMaxPrice] = useState<number>(10000000);
+  const [selectedBedrooms, setSelectedBedrooms] = useState<string[]>([]);
+  const [minGrade, setMinGrade] = useState<number>(0);
   const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
-  const [minSqft, setMinSqft] = useState("");
-  const [addressSearch, setAddressSearch] = useState("");
-  const [minDiscount, setMinDiscount] = useState("");
-  const [sortBy, setSortBy] = useState("Featured");
-  const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
-  const boroughDropdownRef = useRef<HTMLDivElement>(null);
+  const [minSqft, setMinSqft] = useState<number>(0);
+  const [addressSearch, setAddressSearch] = useState<string>('');
+  const [minDiscount, setMinDiscount] = useState<number>(0);
+  const [sortBy, setSortBy] = useState<string>('featured');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const ITEMS_PER_PAGE = 30;
-  const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
-  const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
-  const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
-  const sortOptions = [
-    'Featured',
-    'Price: Low to High',
-    'Price: High to Low',
-    'Sqft: Low to High',
-    'Sqft: High to Low',
-    'Score: Low to High',
-    'Score: High to Low',
-    'Newest Listed'
+  const neighborhoods = [
+    "Midwood", "Sheepshead Bay", "Gravesend", "Brighton Beach", "Kensington",
+    "Bensonhurst", "Borough Park", "Flatbush", "Sunset Park", "Bay Ridge",
+    "Park Slope", "Greenwood Heights", "Windsor Terrace", "Kips Bay", "Murray Hill",
+    "Gramercy Park", "Flatiron", "Chelsea", "West Village", "Tribeca",
+    "Financial District", "Battery Park", "Upper East Side", "Lenox Hill", "Yorkville",
+    "Upper West Side", "Lincoln Square", "Manhattan Valley", "Morningside Heights", "Harlem",
+    "East Harlem", "Washington Heights", "Inwood", "Astoria", "Long Island City",
+    "Sunnyside", "Woodside", "Jackson Heights", "Elmhurst", "Rego Park", "Forest Hills",
+    "Kew Gardens", "Richmond Hill", "Woodhaven", "Ozone Park", "South Ozone Park",
+    "Howard Beach", "Kew Gardens Hills", "Flushing", "Murray Hill (Queens)", "Whitestone",
+    "Bayside", "Little Neck", "Douglaston", "Riverdale", "Fieldston",
+    "Spuyten Duyvil", "Pelham Bay", "City Island", "Throgs Neck", "Country Club",
+    "Parkchester", "Pelham Gardens", "Morris Park", "Fordham", "University Heights",
+    "Kingsbridge Heights", "Bedford Park", "Norwood", "Eastchester", "Williamsbridge",
+    "Wakefield", "Co-op City", "Soundview", "Clason Point", "Hunts Point",
+    "Longwood", "Melrose", "Mott Haven", "Port Morris", "Highbridge",
+    "Concourse", "Mount Eden", "Mount Hope", "Morrisania", "Crotona Park East",
+    "Belmont", "East Tremont", "Bronxdale", "Allerton", "Van Nest",
+    "Morris Heights", "Claremont Village", "Concourse Village", "Unionport", "West Farms",
+    "Bath Beach", "Bergen Beach", "Boerum Hill", "Brooklyn Heights", "Bushwick",
+    "Canarsie", "Carroll Gardens", "Clinton Hill", "Cobble Hill", "Columbia St Waterfront District",
+    "Crown Heights", "Ditmas Park", "DUMBO", "East Flatbush", "Fort Greene",
+    "Gowanus", "Greenpoint", "Manhattan Beach", "Marine Park", "Mill Basin",
+    "Ocean Hill", "Ocean Parkway", "Prospect Heights", "Prospect Lefferts Gardens", "Red Hook",
+    "Sea Gate", "South Slope", "Spring Creek", "Starrett City", "Stuyvesant Heights",
+    "Sunset Park", "Vinegar Hill", "Weeksville", "Williamsburg", "Windsor Terrace",
+    "Arden Heights", "Arrochar", "Bloomfield", "Brighton Heights", "Bull's Head",
+    "Castleton Corners", "Charleston", "Chelsea (Staten Island)", "Clifton", "Dongan Hills",
+    "Elm Park", "Emerson Hill", "Graniteville", "Grant City", "Grasmere",
+    "Great Kills", "Greenridge", "Grymes Hill", "Hamilton Park", "Heartland Village",
+    "Huguenot", "Livingston", "Manor Heights", "Mariners Harbor", "Midland Beach",
+    "New Brighton", "New Dorp", "New Springville", "Oakwood", "Old Town",
+    "Pleasant Plains", "Port Richmond", "Prince's Bay", "Randall Manor", "Richmond Town",
+    "Rosebank", "Rossville", "Saint George", "Sandy Ground", "Shore Acres",
+    "Silver Lake", "South Beach", "Stapleton", "Sunnyside (Staten Island)", "Todt Hill",
+    "Tompkinsville", "Tottenville", "Travis", "West Brighton", "Westerleigh",
+    "Willowbrook", "Woodrow"
   ];
 
-  useEffect(() => {
-    fetchNeighborhoods();
-    fetchProperties(true);
-  }, []);
+  const zipCodes = [
+    "10001", "10002", "10003", "10004", "10005", "10006", "10007", "10009", "10010", "10011",
+    "10012", "10013", "10014", "10016", "10017", "10018", "10019", "10020", "10021", "10022",
+    "10023", "10024", "10025", "10026", "10027", "10028", "10029", "10030", "10031", "10032",
+    "10033", "10034", "10035", "10036", "10037", "10038", "10039", "10040", "10065", "10069",
+    "10075", "10128", "10280", "10301", "10302", "10303", "10304", "10305", "10306", "10307",
+    "10308", "10309", "10310", "10312", "10314", "11001", "11004", "11005", "11040", "11101",
+    "11102", "11103", "11104", "11105", "11106", "11109", "11201", "11203", "11204", "11205",
+    "11206", "11207", "11208", "11209", "11210", "11211", "11212", "11213", "11214", "11215",
+    "11216", "11217", "11218", "11219", "11220", "11221", "11222", "11223", "11224", "11225",
+    "11226", "11228", "11229", "11230", "11231", "11232", "11233", "11234", "11235", "11236",
+    "11237", "11238", "11249", "11354", "11355", "11356", "11357", "11358", "11360", "11361",
+    "11362", "11363", "11364", "11365", "11366", "11367", "11368", "11369", "11370", "11372",
+    "11373", "11374", "11375", "11377", "11378", "11379", "11385", "11411", "11412", "11413",
+    "11414", "11415", "11416", "11417", "11418", "11419", "11420", "11421", "11422", "11423",
+    "11426", "11427", "11428", "11429", "11430", "11432", "11433", "11434", "11435", "11436",
+    "11691", "11692", "11693", "11694"
+  ];
 
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      fetchProperties(true);
-    }, 500);
+  const boroughs = ["Brooklyn", "Manhattan", "Queens", "Bronx", "Staten Island"];
 
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+  const grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowNeighborhoodDropdown(false);
-      }
-      if (boroughDropdownRef.current && !boroughDropdownRef.current.contains(event.target as Node)) {
-        setShowBoroughDropdown(false);
-      }
-    };
+  const applyFilters = (data: any[]) => {
+    let filtered = data;
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    // Update meta tags for SEO
-    document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
-    
-    // Update meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
-    } else {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
-      document.head.appendChild(metaDescription);
+    if (selectedNeighborhoods.length > 0) {
+      filtered = filtered.filter(item => selectedNeighborhoods.includes(item.neighborhood));
     }
 
-    // Update canonical URL
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) {
-      canonical.setAttribute('href', 'https://realerestate.org/buy');
-    } else {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      canonical.setAttribute('href', 'https://realerestate.org/buy');
-      document.head.appendChild(canonical);
+    if (selectedZipCodes.length > 0) {
+      filtered = filtered.filter(item => selectedZipCodes.includes(item.zip_code));
     }
 
-    // Update Open Graph tags
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-    } else {
-      ogTitle = document.createElement('meta');
-      ogTitle.setAttribute('property', 'og:title');
-      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-      document.head.appendChild(ogTitle);
-    }
-    
-    let ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) {
-      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-    } else {
-      ogDescription = document.createElement('meta');
-      ogDescription.setAttribute('property', 'og:description');
-      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-      document.head.appendChild(ogDescription);
-    }
-    
-    let ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) {
-      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
-    } else {
-      ogUrl = document.createElement('meta');
-      ogUrl.setAttribute('property', 'og:url');
-      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
-      document.head.appendChild(ogUrl);
+    if (maxPrice < 10000000) {
+      filtered = filtered.filter(item => item.price <= maxPrice);
     }
 
-    // Update Twitter tags
-    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) {
-      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-    } else {
-      twitterTitle = document.createElement('meta');
-      twitterTitle.setAttribute('name', 'twitter:title');
-      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-      document.head.appendChild(twitterTitle);
+    if (selectedBedrooms.length > 0) {
+      filtered = filtered.filter(item => selectedBedrooms.includes(item.beds));
     }
-    
-    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) {
-      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-    } else {
-      twitterDescription = document.createElement('meta');
-      twitterDescription.setAttribute('name', 'twitter:description');
-      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-      document.head.appendChild(twitterDescription);
-    }
-    
-    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
-    if (twitterUrl) {
-      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
-    } else {
-      twitterUrl = document.createElement('meta');
-      twitterUrl.setAttribute('name', 'twitter:url');
-      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
-      document.head.appendChild(twitterUrl);
-    }
-  }, []);
 
-  const fetchNeighborhoods = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('undervalued_sales')
-        .select('neighborhood')
-        .not('neighborhood', 'is', null)
-        .order('neighborhood');
-
-      if (error) {
-        console.error('Error fetching neighborhoods:', error);
-        return;
-      }
-
-      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
-      setNeighborhoods(uniqueNeighborhoods);
-    } catch (error) {
-      console.error('Error fetching neighborhoods:', error);
+    if (minGrade > 0) {
+      filtered = filtered.filter(item => item.grade >= minGrade);
     }
+
+    if (selectedBoroughs.length > 0) {
+      filtered = filtered.filter(item => selectedBoroughs.includes(item.borough));
+    }
+
+    if (minSqft > 0) {
+      filtered = filtered.filter(item => item.sqft >= minSqft);
+    }
+
+    if (addressSearch) {
+      const searchTerm = addressSearch.toLowerCase();
+      filtered = filtered.filter(item =>
+        item.address.toLowerCase().includes(searchTerm) ||
+        item.neighborhood.toLowerCase().includes(searchTerm) ||
+        item.borough.toLowerCase().includes(searchTerm) ||
+        item.zip_code.includes(searchTerm)
+      );
+    }
+
+    if (minDiscount > 0) {
+      filtered = filtered.filter(item => item.discount >= minDiscount);
+    }
+
+    // Apply sorting
+    if (sortBy === 'price-low-high') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high-low') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'sqft-low-high') {
+      filtered.sort((a, b) => {
+        const aValue = a.sqft || 0;
+        const bValue = b.sqft || 0;
+        return aValue - bValue;
+      });
+    } else if (sortBy === 'sqft-high-low') {
+      filtered.sort((a, b) => {
+        const aValue = a.sqft || 0;
+        const bValue = b.sqft || 0;
+        return bValue - aValue;
+      });
+    } else if (sortBy === 'score-low-high') {
+      filtered.sort((a, b) => a.score - b.score);
+    } else if (sortBy === 'score-high-low') {
+      filtered.sort((a, b) => b.score - a.score);
+    } else if (sortBy === 'newest-listed') {
+      filtered.sort((a, b) => {
+        const aDays = a.days_on_market || 999;
+        const bDays = b.days_on_market || 999;
+        return aDays - bDays;
+      });
+    }
+
+    return filtered;
   };
 
-  const fetchProperties = async (reset = false) => {
-    setLoading(true);
-    const currentOffset = reset ? 0 : offset;
+  const { data: salesData, isLoading, error } = useQuery({
+    queryKey: ['undervalued-sales', selectedNeighborhoods, selectedZipCodes, maxPrice, selectedBedrooms, minGrade, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy],
+    queryFn: async () => {
+      console.log('Fetching sales data with filters:', {
+        selectedNeighborhoods,
+        selectedZipCodes,
+        maxPrice,
+        selectedBedrooms,
+        minGrade,
+        selectedBoroughs,
+        minSqft,
+        addressSearch,
+        minDiscount,
+        sortBy
+      });
 
-    try {
       let query = supabase
         .from('undervalued_sales')
         .select('*')
-        .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+        .eq('likely_sold', false);
 
-      if (searchTerm.trim()) {
-        query = query.ilike('address', `%${searchTerm.trim()}%`);
+      // Apply base sorting for consistent results
+      if (sortBy === 'price-low-high') {
+        query = query.order('price', { ascending: true });
+      } else if (sortBy === 'price-high-low') {
+        query = query.order('price', { ascending: false });
+      } else if (sortBy === 'score-low-high') {
+        query = query.order('score', { ascending: true });
+      } else if (sortBy === 'score-high-low') {
+        query = query.order('score', { ascending: false });
+      } else if (sortBy === 'newest-listed') {
+        query = query.order('days_on_market', { ascending: true, nullsFirst: true });
+      } else {
+        // Default "Featured" sorting
+        query = query.order('score', { ascending: false });
       }
 
-      if (zipCode.trim()) {
-        query = query.ilike('zipcode', `${zipCode.trim()}%`);
-      }
-
-      if (maxPrice.trim()) {
-        const priceValue = parseInt(maxPrice.trim());
-        if (!isNaN(priceValue) && priceValue > 0) {
-          query = query.lte('price', priceValue);
-        }
-      }
-
-      if (bedrooms.trim()) {
-        const bedroomValue = parseInt(bedrooms.trim());
-        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-          query = query.gte('bedrooms', bedroomValue);
-        }
-      }
-
-      if (minGrade.trim()) {
-        const gradeIndex = gradeOptions.indexOf(minGrade);
-        if (gradeIndex !== -1) {
-          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-          query = query.in('grade', allowedGrades);
-        }
-      }
-
-      if (selectedNeighborhoods.length > 0) {
-        query = query.in('neighborhood', selectedNeighborhoods);
-      }
-
-      // Additional filters
-      if (selectedBoroughs.length > 0) {
-        query = query.in('borough', selectedBoroughs);
-      }
-
-      if (minSqft.trim()) {
-        const sqftValue = parseInt(minSqft.trim());
-        if (!isNaN(sqftValue) && sqftValue > 0) {
-          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
-        }
-      }
-
-      if (addressSearch.trim()) {
-        query = query.ilike('address', `%${addressSearch.trim()}%`);
-      }
-
-      if (minDiscount.trim()) {
-        const discountValue = parseInt(minDiscount.replace('%', ''));
-        if (!isNaN(discountValue) && discountValue > 0) {
-          query = query.gte('discount_percent', discountValue);
-        }
-      }
-
-      // Apply sorting
-      switch (sortBy) {
-        case 'Price: Low to High':
-          query = query.order('price', { ascending: true });
-          break;
-        case 'Price: High to Low':
-          query = query.order('price', { ascending: false });
-          break;
-        case 'Sqft: Low to High':
-          query = query.order('sqft', { ascending: true, nullsFirst: true });
-          break;
-        case 'Sqft: High to Low':
-          query = query.order('sqft', { ascending: false, nullsLast: true });
-          break;
-        case 'Score: Low to High':
-          query = query.order('score', { ascending: true });
-          break;
-        case 'Score: High to Low':
-          query = query.order('score', { ascending: false });
-          break;
-        case 'Newest Listed':
-          query = query.order('days_on_market', { ascending: true });
-          break;
-        default: // Featured
-          query = query.order('created_at', { ascending: false });
-          break;
-      }
-
-      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      const { data, error } = await query;
 
       if (error) {
-        console.error('❌ SUPABASE ERROR:', error);
-        setProperties([]);
-        return;
+        console.error('Error fetching sales data:', error);
+        throw error;
       }
 
-      if (!data || !Array.isArray(data)) {
-        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
-        setProperties([]);
-        return;
-      }
+      console.log('Raw sales data:', data);
+      return applyFilters(data || []);
+    },
+  });
 
-      // Only shuffle if Featured sorting
-      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
-
-      if (reset) {
-        setProperties(resultData);
-        setOffset(ITEMS_PER_PAGE);
-      } else {
-        setProperties(prev => [...prev, ...resultData]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
-      }
-
-      setHasMore(data.length === ITEMS_PER_PAGE);
-    } catch (error) {
-      console.error('💥 CATCH ERROR:', error);
-      setProperties([]);
-    } finally {
-      setLoading(false);
-    }
+  const toggleFilterVisibility = () => {
+    setShowFilters(!showFilters);
   };
-
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      fetchProperties(false);
-    }
-  };
-
-  const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => 
-      prev.includes(neighborhood) 
-        ? prev.filter(n => n !== neighborhood)
-        : [...prev, neighborhood]
-    );
-  };
-
-  const clearNeighborhoods = () => {
-    setSelectedNeighborhoods([]);
-  };
-
-  const removeNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
-  };
-
-  const toggleBorough = (borough: string) => {
-    setSelectedBoroughs(prev => 
-      prev.includes(borough) 
-        ? prev.filter(b => b !== borough)
-        : [...prev, borough]
-    );
-  };
-
-  const clearBoroughs = () => {
-    setSelectedBoroughs([]);
-  };
-
-  const removeBorough = (borough: string) => {
-    setSelectedBoroughs(prev => prev.filter(b => b !== borough));
-  };
-
-  const getGradeColors = (grade: string) => {
-    if (grade === 'A+') {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-yellow-400',
-        scoreBorder: 'border-yellow-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
-      };
-    } else if (grade === 'A' || grade === 'A-') {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-purple-400',
-        scoreBorder: 'border-purple-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
-      };
-    } else if (grade.startsWith('B')) {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-blue-400',
-        scoreBorder: 'border-blue-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
-      };
-    } else {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-gray-300',
-        scoreBorder: 'border-gray-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
-      };
-    }
-  };
-
-  const handlePropertyClick = (property: any, index: number) => {
-    setSelectedProperty(property);
-  };
-
-  // Filter neighborhoods based on search term
-  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
-    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
-  );
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
-      <GooeyFilter />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Find the best deals to buy. Actually.
-          </h1>
-          <p className="text-xl text-gray-400 tracking-tight">
-            Stop wasting time on overpriced listings.
-          </p>
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold mb-4">Buy Real Estate</h1>
+
+        {/* Search and Filter Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6">
+          <div className="w-full md:w-1/2 mb-4 md:mb-0">
+            <Input
+              type="text"
+              placeholder="Search by address, neighborhood, or zip code"
+              value={addressSearch}
+              onChange={(e) => setAddressSearch(e.target.value)}
+              className="bg-gray-800 text-white border-gray-700 rounded-md py-2 px-3 w-full"
+            />
+          </div>
+          <button
+            onClick={toggleFilterVisibility}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </button>
         </div>
 
-        {/* Search Filters */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-5 gap-4">
-            <div className="relative" ref={dropdownRef}>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Neighborhoods
-              </label>
-              <div className="relative">
-                <div className="relative flex items-center">
-                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                    {selectedNeighborhoods.length > 0 && (
-                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
-                        {selectedNeighborhoods.map((neighborhood) => (
-                          <div
-                            key={neighborhood}
-                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
-                            onClick={() => removeNeighborhood(neighborhood)}
-                          >
-                            {neighborhood}
-                            <X className="ml-1 h-3 w-3" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={neighborhoodSearchTerm}
-                      onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
-                      onFocus={() => setShowNeighborhoodDropdown(true)}
-                      placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
-                      className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 min-w-0"
-                    />
-                  </div>
-                </div>
-                
-                {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
-                      {selectedNeighborhoods.length > 0 && (
-                        <button
-                          onClick={clearNeighborhoods}
-                          className="text-xs text-blue-400 hover:text-blue-300"
-                        >
-                          Clear all
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {filteredNeighborhoods.map((neighborhood) => (
-                        <button
-                          key={neighborhood}
-                          onClick={() => toggleNeighborhood(neighborhood)}
-                          className={`px-3 py-1 rounded-full text-sm transition-all ${
-                            selectedNeighborhoods.includes(neighborhood)
-                              ? 'bg-white text-black'
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
-                        >
-                          {neighborhood}
-                        </button>
+        {/* Filters Accordion */}
+        {showFilters && (
+          <Accordion type="single" collapsible className="mb-6">
+            <AccordionItem value="filters">
+              <AccordionTrigger className="text-xl font-semibold">Filters</AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Neighborhoods Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Neighborhoods</Label>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                      {neighborhoods.map((neighborhood) => (
+                        <div key={neighborhood} className="flex items-center">
+                          <Checkbox
+                            id={`neighborhood-${neighborhood}`}
+                            checked={selectedNeighborhoods.includes(neighborhood)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedNeighborhoods([...selectedNeighborhoods, neighborhood]);
+                              } else {
+                                setSelectedNeighborhoods(selectedNeighborhoods.filter((n) => n !== neighborhood));
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          <Label htmlFor={`neighborhood-${neighborhood}`} className="text-gray-400">{neighborhood}</Label>
+                        </div>
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Zip Code
-              </label>
-              <input
-                type="text"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-                placeholder="10009"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Max Price
-              </label>
-              <input
-                type="text"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="$1,500,000"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Bedrooms
-              </label>
-              <select
-                value={bedrooms}
-                onChange={(e) => setBedrooms(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              >
-                <option value="" className="text-gray-500">Any</option>
-                <option value="0" className="text-white">Studio</option>
-                <option value="1" className="text-white">1+</option>
-                <option value="2" className="text-white">2+</option>
-                <option value="3" className="text-white">3+</option>
-                <option value="4" className="text-white">4+</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Min Grade
-              </label>
-              <select
-                value={minGrade}
-                onChange={(e) => setMinGrade(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              >
-                <option value="" className="text-gray-500">Any Grade</option>
-                {gradeOptions.map((grade) => (
-                  <option key={grade} value={grade} className="text-white">{grade}</option>
-                ))}
-              </select>
-            </div>
-          </div>
 
-          {/* Additional Filters Dropdown Toggle */}
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setShowAdditionalFilters(!showAdditionalFilters)}
-              className="flex items-center text-gray-400 hover:text-white transition-colors"
-            >
-              {showAdditionalFilters ? (
-                <ChevronUp className="h-5 w-5" />
-              ) : (
-                <ChevronDown className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-
-          {/* Additional Filters Section */}
-          {showAdditionalFilters && (
-          <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4">
-              <div className="relative" ref={boroughDropdownRef}>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Borough
-                </label>
-                <div className="relative">
-                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                    {selectedBoroughs.length > 0 && (
-                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
-                        {selectedBoroughs.map((borough) => (
-                          <div
-                            key={borough}
-                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
-                            onClick={() => removeBorough(borough)}
-                          >
-                            {borough}
-                            <X className="ml-1 h-3 w-3" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div
-                      className="flex-1 cursor-pointer text-gray-500"
-                      onClick={() => setShowBoroughDropdown(true)}
-                    >
-                      {selectedBoroughs.length === 0 ? "Manhattan" : ""}
+                  {/* Zip Codes Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Zip Codes</Label>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                      {zipCodes.map((zipCode) => (
+                        <div key={zipCode} className="flex items-center">
+                          <Checkbox
+                            id={`zipcode-${zipCode}`}
+                            checked={selectedZipCodes.includes(zipCode)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedZipCodes([...selectedZipCodes, zipCode]);
+                              } else {
+                                setSelectedZipCodes(selectedZipCodes.filter((z) => z !== zipCode));
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          <Label htmlFor={`zipcode-${zipCode}`} className="text-gray-400">{zipCode}</Label>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  
-                  {showBoroughDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-sm font-medium text-gray-300">Filter by Borough</span>
-                        {selectedBoroughs.length > 0 && (
-                          <button
-                            onClick={clearBoroughs}
-                            className="text-xs text-blue-400 hover:text-blue-300"
-                          >
-                            Clear all
-                          </button>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {boroughs.map((borough) => (
-                          <button
-                            key={borough}
-                            onClick={() => toggleBorough(borough)}
-                            className={`px-3 py-1 rounded-full text-sm transition-all ${
-                              selectedBoroughs.includes(borough)
-                                ? 'bg-white text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                            }`}
-                          >
-                            {borough}
-                          </button>
-                        ))}
-                      </div>
+
+                  {/* Max Price Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Max Price: ${maxPrice.toLocaleString()}</Label>
+                    <Slider
+                      defaultValue={[maxPrice]}
+                      max={10000000}
+                      step={100000}
+                      onValueChange={(value) => setMaxPrice(value[0])}
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* Bedrooms Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Bedrooms</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {['1', '2', '3', '4+'].map((bedroom) => (
+                        <div key={bedroom} className="flex items-center">
+                          <Checkbox
+                            id={`bedroom-${bedroom}`}
+                            checked={selectedBedrooms.includes(bedroom)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedBedrooms([...selectedBedrooms, bedroom]);
+                              } else {
+                                setSelectedBedrooms(selectedBedrooms.filter((b) => b !== bedroom));
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          <Label htmlFor={`bedroom-${bedroom}`} className="text-gray-400">{bedroom}</Label>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Min Sqft
-                </label>
-                <input
-                  type="text"
-                  value={minSqft}
-                  onChange={(e) => setMinSqft(e.target.value)}
-                  placeholder="1,100"
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  value={addressSearch}
-                  onChange={(e) => setAddressSearch(e.target.value)}
-                  placeholder="123 Carroll St"
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Min Discount
-                </label>
-                <select
-                  value={minDiscount}
-                  onChange={(e) => setMinDiscount(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                >
-                  <option value="" className="text-gray-500">Any</option>
-                  {discountOptions.map((discount) => (
-                    <option key={discount} value={discount} className="text-white">{discount}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Sort by
-                </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option} value={option} className="text-white">{option}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
+                  </div>
 
-        {/* Properties Grid */}
-        <div className="relative">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade);
-              
-              return (
-                <div
-                  key={`${property.id}-${index}`}
-                  className="relative"
-                >
-                  <PropertyCard
-                    property={property}
-                    isRental={false}
-                    onClick={() => handlePropertyClick(property, index)}
-                    gradeColors={gradeColors}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  {/* Minimum Grade Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Minimum Grade: {minGrade}</Label>
+                    <Slider
+                      defaultValue={[minGrade]}
+                      max={10}
+                      step={1}
+                      onValueChange={(value) => setMinGrade(value[0])}
+                      className="w-full"
+                    />
+                  </div>
 
-        {/* Loading state */}
-        {loading && (
-          <div className="text-center py-8">
-            <div className="text-gray-400">Loading properties...</div>
-          </div>
+                  {/* Boroughs Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Boroughs</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {boroughs.map((borough) => (
+                        <div key={borough} className="flex items-center">
+                          <Checkbox
+                            id={`borough-${borough}`}
+                            checked={selectedBoroughs.includes(borough)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedBoroughs([...selectedBoroughs, borough]);
+                              } else {
+                                setSelectedBoroughs(selectedBoroughs.filter((b) => b !== borough));
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          <Label htmlFor={`borough-${borough}`} className="text-gray-400">{borough}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Minimum Square Footage Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Minimum Sqft: {minSqft}</Label>
+                    <Slider
+                      defaultValue={[minSqft]}
+                      max={5000}
+                      step={100}
+                      onValueChange={(value) => setMinSqft(value[0])}
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* Minimum Discount Filter */}
+                  <div>
+                    <Label className="block text-sm font-medium text-gray-300 mb-2">Minimum Discount: {minDiscount}%</Label>
+                    <Slider
+                      defaultValue={[minDiscount]}
+                      max={50}
+                      step={5}
+                      onValueChange={(value) => setMinDiscount(value[0])}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
 
-        {/* Load More Button */}
-        {!loading && hasMore && properties.length > 0 && (
-          <div className="text-center py-8">
-            <HoverButton onClick={loadMore} textColor="text-white">
-              Load More Properties
-            </HoverButton>
-          </div>
-        )}
+        {/* Sorting Select */}
+        <div className="mb-4">
+          <Select onValueChange={setSortBy}>
+            <SelectTrigger className="w-[200px] bg-gray-800 text-white border-gray-700 rounded-md">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-800 text-white border-gray-700 rounded-md">
+              <SelectItem value="featured">Featured</SelectItem>
+              <SelectItem value="price-low-high">Price (Low to High)</SelectItem>
+              <SelectItem value="price-high-low">Price (High to Low)</SelectItem>
+              <SelectItem value="sqft-low-high">Sqft (Low to High)</SelectItem>
+              <SelectItem value="sqft-high-low">Sqft (High to Low)</SelectItem>
+              <SelectItem value="score-low-high">Score (Low to High)</SelectItem>
+              <SelectItem value="score-high-low">Score (High to Low)</SelectItem>
+              <SelectItem value="newest-listed">Newest Listed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-        {/* Empty State */}
-        {!loading && properties.length === 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
-              No properties found matching your criteria
-            </h3>
-            <p className="text-gray-500 tracking-tight mb-16">
-              Try adjusting your search filters to see more results.
-            </p>
-            
-            {/* Early Access Section - same as bottom section */}
-            <div className="text-center">
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
-                Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
-              </h3>
-              <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
-                The best deals in the city get bought in days. Don't miss them.
-              </p>
-              <button 
-                onClick={() => navigate('/pricing')}
-                className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
-              >
-                Early Access
-              </button>
-            </div>
+        {/* Property Listings */}
+        {isLoading ? (
+          <div className="flex justify-center">
+            <BeatLoader color="#ffffff" />
+          </div>
+        ) : error ? (
+          <p>Error: {error.message}</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {salesData && salesData.length > 0 ? (
+              salesData.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))
+            ) : (
+              <p>No properties found matching your criteria.</p>
+            )}
           </div>
         )}
       </div>
-
-      {/* Property Detail Modal */}
-      {selectedProperty && (
-        <PropertyDetail
-          property={selectedProperty}
-          isRental={false}
-          onClose={() => setSelectedProperty(null)}
-        />
-      )}
     </div>
   );
 };
