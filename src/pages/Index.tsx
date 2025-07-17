@@ -167,9 +167,6 @@ const Index = () => {
               <Link to="/terms" className="hover:text-gray-300 transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/press" className="hover:text-gray-300 transition-colors">
-                Press
-              </Link>
             </div>
           </div>
         </div>
