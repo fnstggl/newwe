@@ -133,21 +133,21 @@ const Press = () => {
           <h2 className="text-4xl font-semibold mb-4 tracking-tight text-center">Real User Reviews</h2>
           <p className="text-gray-400 text-center mb-12">From our reddit</p>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-black/50 p-6 rounded-xl border border-gray-800">
-              <Quote className="w-6 h-6 text-blue-400 mb-4" />
-              <p className="text-gray-300 mb-4">"Thank you so much for making this, I just joined and am loving the smooth interface!"</p>
+            <div className="p-6 text-center">
+              <div className="text-4xl text-white mb-4">"</div>
+              <p className="text-gray-300 mb-4">Thank you so much for making this, I just joined and am loving the smooth interface!</p>
             </div>
-            <div className="bg-black/50 p-6 rounded-xl border border-gray-800">
-              <Quote className="w-6 h-6 text-blue-400 mb-4" />
-              <p className="text-gray-300 mb-4">"I love this tool & what you're doing to help bc it's a real struggle out here"</p>
+            <div className="p-6 text-center">
+              <div className="text-4xl text-white mb-4">"</div>
+              <p className="text-gray-300 mb-4">I love this tool & what you're doing to help bc it's a real struggle out here</p>
             </div>
-            <div className="bg-black/50 p-6 rounded-xl border border-gray-800">
-              <Quote className="w-6 h-6 text-blue-400 mb-4" />
-              <p className="text-gray-300 mb-4">"I will definitely be using this as I plan my move in the future."</p>
+            <div className="p-6 text-center">
+              <div className="text-4xl text-white mb-4">"</div>
+              <p className="text-gray-300 mb-4">I will definitely be using this as I plan my move in the future.</p>
             </div>
-            <div className="bg-black/50 p-6 rounded-xl border border-gray-800">
-              <Quote className="w-6 h-6 text-blue-400 mb-4" />
-              <p className="text-gray-300 mb-4">"Hi! This is a really great tool, thanks for sharing and creating this."</p>
+            <div className="p-6 text-center">
+              <div className="text-4xl text-white mb-4">"</div>
+              <p className="text-gray-300 mb-4">Hi! This is a really great tool, thanks for sharing and creating this.</p>
             </div>
           </div>
         </div>

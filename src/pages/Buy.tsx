@@ -1,336 +1,325 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyCard from "@/components/PropertyCard";
-import { Loader2, SlidersHorizontal, X, Home, DollarSign, MapPin, Calendar } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, DollarSign, Home, TrendingDown, Building2, Calendar } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-interface Property {
-  id: number;
+interface SalesProperty {
+  id: string;
   address: string;
   neighborhood: string;
   price: number;
   bedrooms: number;
   bathrooms: number;
-  square_feet: number;
-  potential_savings: number;
+  sqft: number;
   discount_percent: number;
-  image_url: string;
-  listing_url: string;
+  images: string[];
+  description: string;
+  created_at: string;
   likely_sold: boolean;
+  grade: string;
+  score: number;
+  lat: number;
+  lng: number;
+  building_type: string;
+  year_built: number;
+  monthly_taxes: number;
+  monthly_hoa: number;
+  days_on_market: number;
+  price_history: any[];
+  walk_score: number;
+  transit_score: number;
+  bike_score: number;
+  address_score: number;
+  safety_score: number;
+  school_score: number;
+  quality_of_life_score: number;
+  deal_score: number;
+  [key: string]: any;
+}
+
+interface Filters {
+  neighborhood: string;
+  bedrooms: string;
+  bathrooms: string;
+  priceRange: number[];
+  sqftRange: number[];
+  discountRange: number[];
 }
 
 const Buy = () => {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    neighborhood: "",
-    bedrooms: "",
-    bathrooms: "",
-    priceRange: [0, 10000000],
-    minSavings: 0,
-    sortBy: "discount_percent",
+  const [filters, setFilters] = useState<Filters>({
+    neighborhood: 'all',
+    bedrooms: 'all',
+    bathrooms: 'all',
+    priceRange: [0, 5000000],
+    sqftRange: [0, 10000],
+    discountRange: [0, 100],
   });
+  const [sortBy, setSortBy] = useState('score');
+  const [selectedProperty, setSelectedProperty] = useState<SalesProperty | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const { toast } = useToast();
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
+  const handleFilterChange = (key: keyof Filters, value: any) => {
+    setFilters(prevFilters => ({
       ...prevFilters,
-      [name]: value,
+      [key]: value,
     }));
   };
 
-  const handlePriceRangeChange = (value: number[]) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      priceRange: value,
-    }));
-  };
-
-  const handleMinSavingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      minSavings: parseInt(value, 10) || 0,
-    }));
-  };
-
-  const handleSortByChange = (value: string) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      sortBy: value,
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      neighborhood: "",
-      bedrooms: "",
-      bathrooms: "",
-      priceRange: [0, 10000000],
-      minSavings: 0,
-      sortBy: "discount_percent",
-    });
-  };
-
-  const { data: properties, isLoading, error } = useQuery({
-    queryKey: ["undervalued-sales", filters],
+  const { data: salesData, isLoading, error } = useQuery({
+    queryKey: ['sales', filters],
     queryFn: async () => {
-      console.log("Fetching undervalued sales with filters:", filters);
-      
       let query = supabase
-        .from("undervalued_sales")
-        .select("*")
-        .eq("likely_sold", false);
+        .from('undervalued_sales')
+        .select('*')
+        .eq('likely_sold', false);
 
-      // Apply filters
-      if (filters.neighborhood) {
-        query = query.ilike("neighborhood", `%${filters.neighborhood}%`);
-      }
-      
-      if (filters.bedrooms) {
-        query = query.eq("bedrooms", filters.bedrooms);
-      }
-      
-      if (filters.bathrooms) {
-        query = query.eq("bathrooms", filters.bathrooms);
-      }
-      
-      if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000) {
-        query = query.gte("price", filters.priceRange[0]).lte("price", filters.priceRange[1]);
-      }
-      
-      if (filters.minSavings > 0) {
-        query = query.gte("potential_savings", filters.minSavings);
+      if (filters.neighborhood && filters.neighborhood !== 'all') {
+        query = query.eq('neighborhood', filters.neighborhood);
       }
 
-      // Apply sorting - removed nullsLast and handle sorting manually
-      query = query.order(filters.sortBy, { ascending: filters.sortBy === "price" });
+      if (filters.bedrooms && filters.bedrooms !== 'all') {
+        const bedroomValue = Number(filters.bedrooms);
+        query = query.eq('bedrooms', bedroomValue);
+      }
 
-      const { data, error } = await query.limit(50);
+      if (filters.bathrooms && filters.bathrooms !== 'all') {
+        const bathroomValue = Number(filters.bathrooms);
+        query = query.eq('bathrooms', bathroomValue);
+      }
+
+      if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000000) {
+        query = query.gte('price', filters.priceRange[0]).lte('price', filters.priceRange[1]);
+      }
+
+      if (filters.sqftRange[0] > 0 || filters.sqftRange[1] < 10000) {
+        query = query.gte('sqft', filters.sqftRange[0]).lte('sqft', filters.sqftRange[1]);
+      }
+
+      if (filters.discountRange[0] > 0 || filters.discountRange[1] < 100) {
+        query = query.gte('discount_percent', filters.discountRange[0]).lte('discount_percent', filters.discountRange[1]);
+      }
+
+      const { data, error } = await query;
       
       if (error) {
-        console.error("Error fetching properties:", error);
+        console.error('Error fetching sales data:', error);
         throw error;
       }
 
-      // Handle manual sorting for null values if needed
+      // Client-side sorting
       let sortedData = data || [];
-      if (filters.sortBy === "discount_percent") {
-        sortedData = sortedData.sort((a, b) => {
-          const aVal = a.discount_percent || 0;
-          const bVal = b.discount_percent || 0;
-          return bVal - aVal; // descending order
-        });
+      switch (sortBy) {
+        case 'price-low':
+          sortedData = sortedData.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          sortedData = sortedData.sort((a, b) => b.price - a.price);
+          break;
+        case 'discount':
+          sortedData = sortedData.sort((a, b) => b.discount_percent - a.discount_percent);
+          break;
+        case 'newest':
+          sortedData = sortedData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          break;
+        default:
+          sortedData = sortedData.sort((a, b) => b.score - a.score);
       }
 
-      console.log("Fetched properties:", sortedData);
       return sortedData;
     },
+    enabled: true
   });
 
-  if (error) {
-    toast({
-      title: "Error",
-      description: "Failed to fetch properties. Please try again.",
-      variant: "destructive",
-    });
-  }
+  const neighborhoods = [
+    "All", "SoHo", "Tribeca", "Greenwich Village", "East Village", "Lower East Side",
+    "Chelsea", "Midtown", "Upper West Side", "Upper East Side", "Harlem", "Brooklyn Heights",
+    "DUMBO", "Williamsburg", "Greenpoint", "Park Slope", "Fort Greene", "Bushwick",
+    "Astoria", "Long Island City", "Jackson Heights", "Flushing", "Forest Hills", "Kew Gardens"
+  ];
+
+  if (isLoading) return <div className="min-h-screen bg-black text-white">Loading...</div>;
+  if (error) return <div className="min-h-screen bg-black text-white">Error: {error.message}</div>;
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter">
-      {/* Filter Bar */}
-      <div className="bg-gray-900/50 py-4 px-4 sticky top-16 z-40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Button
-            variant="outline"
-            className="md:hidden"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-          >
-            {isFilterOpen ? (
-              <>
-                <X className="w-4 h-4 mr-2" />
-                Close Filters
-              </>
-            ) : (
-              <>
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Open Filters
-              </>
-            )}
-          </Button>
-          <div className="text-sm text-gray-400">
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin inline-block" />
-                Loading properties...
-              </>
-            ) : (
-              <>
-                <Home className="w-4 h-4 mr-2 inline-block" />
-                {properties?.length || 0} properties found
-              </>
-            )}
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <header className="py-6 px-4 border-b border-gray-800">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <h1 className="text-2xl font-semibold tracking-tight">Undervalued Sales</h1>
+          <div className="space-x-4">
+            <select
+              className="bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-sm"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="score">Best Match</option>
+              <option value="price-low">Price (Low to High)</option>
+              <option value="price-high">Price (High to Low)</option>
+              <option value="discount">Discount</option>
+              <option value="newest">Newest</option>
+            </select>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Filters (Initially Hidden on Small Screens) */}
-      <div
-        className={`bg-gray-900/50 py-8 px-4 ${
-          isFilterOpen ? "block" : "hidden"
-        } md:block sticky top-[76px] z-30 backdrop-blur-md`}
-      >
-        <div className="max-w-6xl mx-auto grid gap-4 md:grid-cols-5">
+      {/* Filters */}
+      <section className="py-8 px-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Neighborhood Filter */}
           <div>
-            <label
-              htmlFor="neighborhood"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Neighborhood
-            </label>
-            <Input
-              type="text"
-              id="neighborhood"
-              name="neighborhood"
-              value={filters.neighborhood}
-              onChange={handleFilterChange}
-              className="mt-1"
-              placeholder="e.g., SoHo"
-            />
-          </div>
-
-          {/* Bedrooms Filter */}
-          <div>
-            <label
-              htmlFor="bedrooms"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Bedrooms
-            </label>
-            <Select onValueChange={(value) => setFilters(prev => ({...prev, bedrooms: value}))}>
-              <SelectTrigger className="mt-1 w-full">
-                <SelectValue placeholder="Any" />
+            <label className="block text-sm font-medium text-gray-300 mb-2">Neighborhood</label>
+            <Select onValueChange={(value) => handleFilterChange('neighborhood', value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a neighborhood" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4+</SelectItem>
+                {neighborhoods.map((neighborhood) => (
+                  <SelectItem key={neighborhood} value={neighborhood.toLowerCase() === 'all' ? 'all' : neighborhood}>
+                    {neighborhood}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Bathrooms Filter */}
+          {/* Bedrooms Filter */}
           <div>
-            <label
-              htmlFor="bathrooms"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Bathrooms
-            </label>
-            <Select onValueChange={(value) => setFilters(prev => ({...prev, bathrooms: value}))}>
-              <SelectTrigger className="mt-1 w-full">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Bedrooms</label>
+            <Select onValueChange={(value) => handleFilterChange('bedrooms', value)}>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any</SelectItem>
+                <SelectItem value="all">Any</SelectItem>
+                <SelectItem value="0">Studio</SelectItem>
                 <SelectItem value="1">1</SelectItem>
-                <SelectItem value="1.5">1.5</SelectItem>
                 <SelectItem value="2">2</SelectItem>
                 <SelectItem value="3">3+</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Price Range Filter */}
+          {/* Bathrooms Filter */}
           <div>
-            <label
-              htmlFor="priceRange"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Price Range (${filters.priceRange[0]} - ${filters.priceRange[1]})
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Bathrooms</label>
+            <Select onValueChange={(value) => handleFilterChange('bathrooms', value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Any" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="1.5">1.5</SelectItem>
+                <SelectItem value="2">2+</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Price Range Filter */}
+          <div className="md:col-span-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Price Range (${filters.priceRange[0]} - ${filters.priceRange[1]})</label>
             <Slider
               defaultValue={filters.priceRange}
-              max={10000000}
-              step={100000}
-              onValueChange={handlePriceRangeChange}
-              className="mt-1"
+              max={5000000}
+              step={10000}
+              onValueChange={(value) => handleFilterChange('priceRange', value)}
             />
           </div>
 
-          {/* Min Savings Filter */}
-          <div>
-            <label
-              htmlFor="minSavings"
-              className="block text-sm font-medium text-gray-300"
-            >
-              Min Savings (${filters.minSavings})
-            </label>
-            <Input
-              type="number"
-              id="minSavings"
-              name="minSavings"
-              value={filters.minSavings}
-              onChange={handleMinSavingsChange}
-              className="mt-1"
-              placeholder="e.g., 50000"
+          {/* Sqft Range Filter */}
+          <div className="md:col-span-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Square Footage ({filters.sqftRange[0]} - {filters.sqftRange[1]} sqft)</label>
+            <Slider
+              defaultValue={filters.sqftRange}
+              max={10000}
+              step={100}
+              onValueChange={(value) => handleFilterChange('sqftRange', value)}
+            />
+          </div>
+
+          {/* Discount Range Filter */}
+          <div className="md:col-span-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Discount ({filters.discountRange[0]}% - {filters.discountRange[1]}%)</label>
+            <Slider
+              defaultValue={filters.discountRange}
+              max={100}
+              step={1}
+              onValueChange={(value) => handleFilterChange('discountRange', value)}
             />
           </div>
         </div>
+      </section>
 
-        {/* Filter Actions */}
-        <div className="max-w-6xl mx-auto mt-4 flex justify-end">
-          <Button variant="ghost" onClick={clearFilters} className="mr-2">
-            Clear Filters
-          </Button>
-          <Select onValueChange={handleSortByChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by Discount" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="discount_percent">Discount %</SelectItem>
-              <SelectItem value="price">Price</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Property Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6 max-w-7xl mx-auto">
+        {salesData?.map((property) => (
+          <PropertyCard 
+            key={property.id} 
+            property={property}
+            onClick={() => setSelectedProperty(property)}
+          />
+        ))}
       </div>
 
-      {/* Property List */}
-      <section className="py-12 px-4 max-w-6xl mx-auto">
-        {isLoading ? (
-          <div className="text-center">
-            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-4" />
-            <p className="text-gray-400">Loading undervalued sales...</p>
+      {/* Property Detail Modal */}
+      {selectedProperty && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="bg-gray-900 rounded-2xl max-w-3xl w-full mx-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl font-semibold">{selectedProperty.address}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <img src={selectedProperty.images[0]} alt={selectedProperty.address} className="w-full rounded-md h-64 object-cover" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <MapPin className="w-4 h-4" />
+                    <span>{selectedProperty.neighborhood}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <DollarSign className="w-4 h-4" />
+                    <span>${selectedProperty.price}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <Home className="w-4 h-4" />
+                    <span>{selectedProperty.bedrooms} Beds / {selectedProperty.bathrooms} Baths</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <Building2 className="w-4 h-4" />
+                    <span>{selectedProperty.sqft} sqft</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <Calendar className="w-4 h-4" />
+                    <span>{selectedProperty.days_on_market} Days on Market</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-400">
+                    <TrendingDown className="w-4 h-4" />
+                    <span>{selectedProperty.discount_percent}% Discount</span>
+                  </div>
+                </div>
+                <p className="text-gray-300">{selectedProperty.description}</p>
+                <button onClick={() => setSelectedProperty(null)} className="bg-blue-500 text-white rounded-md px-4 py-2 mt-4">Close</button>
+              </CardContent>
+            </Card>
           </div>
-        ) : properties && properties.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center">
-            <p className="text-gray-400">No undervalued sales found with the current filters.</p>
-          </div>
-        )}
-      </section>
+        </div>
+      )}
     </div>
   );
 };
