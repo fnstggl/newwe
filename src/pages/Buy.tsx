@@ -1,753 +1,188 @@
-import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
-import { GooeyFilter } from "@/components/ui/liquid-toggle";
-import { HoverButton } from "@/components/ui/hover-button";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-import PropertyCard from "@/components/PropertyCard";
-import PropertyDetail from "@/components/PropertyDetail";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '../utils/supabaseClient';
+import { Filter } from '../components/Filter';
+import PropertyCard from '../components/PropertyCard';
+import AdditionalFilters from '../components/AdditionalFilters';
+import { neighborhoodsByBorough } from '../utils/constants';
 
-type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
+const ITEMS_PER_PAGE = 12;
 
 const Buy = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [bedrooms, setBedrooms] = useState("");
-  const [minGrade, setMinGrade] = useState("");
-  const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    neighborhoods: [] as string[],
+    zipCode: '',
+    maxPrice: '',
+    bedrooms: 'any',
+    minGrade: 'any',
+    rentStabilized: false,
+  });
+  const [additionalFilters, setAdditionalFilters] = useState({
+    boroughs: [] as string[],
+    minSqft: '',
+    address: '',
+    minDiscount: '',
+    sortBy: 'score_high_low',
+  });
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
-  const [showNeighborhoodDropdown, setShowNeighborhoodDropdown] = useState(false);
-  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
-  const [neighborhoodSearchTerm, setNeighborhoodSearchTerm] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [totalCount, setTotalCount] = useState(0);
 
-  // Additional filters state
-  const [showAdditionalFilters, setShowAdditionalFilters] = useState(false);
-  const [selectedBoroughs, setSelectedBoroughs] = useState<string[]>([]);
-  const [minSqft, setMinSqft] = useState("");
-  const [addressSearch, setAddressSearch] = useState("");
-  const [minDiscount, setMinDiscount] = useState("");
-  const [sortBy, setSortBy] = useState("Featured");
-  const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
-  const boroughDropdownRef = useRef<HTMLDivElement>(null);
-
-  const ITEMS_PER_PAGE = 30;
-  const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
-  const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
-  const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
-  const sortOptions = [
-    'Featured',
-    'Price: Low to High',
-    'Price: High to Low',
-    'Sqft: Low to High',
-    'Sqft: High to Low',
-    'Score: Low to High',
-    'Score: High to Low',
-    'Newest Listed'
-  ];
-
-  useEffect(() => {
-    fetchNeighborhoods();
-    fetchProperties(true);
-  }, []);
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      fetchProperties(true);
-    }, 500);
-
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowNeighborhoodDropdown(false);
-      }
-      if (boroughDropdownRef.current && !boroughDropdownRef.current.contains(event.target as Node)) {
-        setShowBoroughDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    // Update meta tags for SEO
-    document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
-    
-    // Update meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
-    } else {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
-      document.head.appendChild(metaDescription);
-    }
-
-    // Update canonical URL
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) {
-      canonical.setAttribute('href', 'https://realerestate.org/buy');
-    } else {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      canonical.setAttribute('href', 'https://realerestate.org/buy');
-      document.head.appendChild(canonical);
-    }
-
-    // Update Open Graph tags
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-    } else {
-      ogTitle = document.createElement('meta');
-      ogTitle.setAttribute('property', 'og:title');
-      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-      document.head.appendChild(ogTitle);
-    }
-    
-    let ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) {
-      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-    } else {
-      ogDescription = document.createElement('meta');
-      ogDescription.setAttribute('property', 'og:description');
-      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-      document.head.appendChild(ogDescription);
-    }
-    
-    let ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) {
-      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
-    } else {
-      ogUrl = document.createElement('meta');
-      ogUrl.setAttribute('property', 'og:url');
-      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
-      document.head.appendChild(ogUrl);
-    }
-
-    // Update Twitter tags
-    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) {
-      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-    } else {
-      twitterTitle = document.createElement('meta');
-      twitterTitle.setAttribute('name', 'twitter:title');
-      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
-      document.head.appendChild(twitterTitle);
-    }
-    
-    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) {
-      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-    } else {
-      twitterDescription = document.createElement('meta');
-      twitterDescription.setAttribute('name', 'twitter:description');
-      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
-      document.head.appendChild(twitterDescription);
-    }
-    
-    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
-    if (twitterUrl) {
-      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
-    } else {
-      twitterUrl = document.createElement('meta');
-      twitterUrl.setAttribute('name', 'twitter:url');
-      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
-      document.head.appendChild(twitterUrl);
-    }
-  }, []);
-
-  const fetchNeighborhoods = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('undervalued_sales')
-        .select('neighborhood')
-        .not('neighborhood', 'is', null)
-        .order('neighborhood');
-
-      if (error) {
-        console.error('Error fetching neighborhoods:', error);
-        return;
-      }
-
-      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
-      setNeighborhoods(uniqueNeighborhoods);
-    } catch (error) {
-      console.error('Error fetching neighborhoods:', error);
+  const handleLoadMore = () => {
+    if (hasMore && !loading) {
+      setPage(prevPage => prevPage + 1);
     }
   };
 
-  const fetchProperties = async (reset = false) => {
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+    setPage(0);
+    setProperties([]);
+    setHasMore(true);
+  };
+
+  const handleAdditionalFilterChange = (newFilters: any) => {
+    setAdditionalFilters(newFilters);
+    setPage(0);
+    setProperties([]);
+    setHasMore(true);
+  };
+
+  const fetchProperties = useCallback(async () => {
+    if (loading) return;
+    
     setLoading(true);
-    const currentOffset = reset ? 0 : offset;
+    setError(null);
 
     try {
       let query = supabase
         .from('undervalued_sales')
         .select('*')
-        .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+        .eq('likely_sold', false);
 
-      if (searchTerm.trim()) {
-        query = query.ilike('address', `%${searchTerm.trim()}%`);
+      // Apply filters
+      if (filters.neighborhoods.length > 0) {
+        query = query.in('neighborhood', filters.neighborhoods);
       }
 
-      if (zipCode.trim()) {
-        query = query.ilike('zipcode', `${zipCode.trim()}%`);
+      if (filters.zipCode) {
+        query = query.eq('zipcode', filters.zipCode);
       }
 
-      if (maxPrice.trim()) {
-        const priceValue = parseInt(maxPrice.trim());
-        if (!isNaN(priceValue) && priceValue > 0) {
-          query = query.lte('price', priceValue);
-        }
+      if (filters.maxPrice) {
+        query = query.lte('price', filters.maxPrice);
       }
 
-      if (bedrooms.trim()) {
-        const bedroomValue = parseInt(bedrooms.trim());
-        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-          query = query.gte('bedrooms', bedroomValue);
-        }
+      if (filters.bedrooms && filters.bedrooms !== 'any') {
+        query = query.eq('bedrooms', parseInt(filters.bedrooms));
       }
 
-      if (minGrade.trim()) {
-        const gradeIndex = gradeOptions.indexOf(minGrade);
-        if (gradeIndex !== -1) {
-          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-          query = query.in('grade', allowedGrades);
-        }
-      }
-
-      if (selectedNeighborhoods.length > 0) {
-        query = query.in('neighborhood', selectedNeighborhoods);
+      if (filters.minGrade && filters.minGrade !== 'any') {
+        const gradeToScore = { 'A+': 95, 'A': 85, 'B': 75, 'C': 65 };
+        query = query.gte('score', gradeToScore[filters.minGrade as keyof typeof gradeToScore]);
       }
 
       // Additional filters
-      if (selectedBoroughs.length > 0) {
-        query = query.in('borough', selectedBoroughs);
+      if (additionalFilters.boroughs.length > 0) {
+        const boroughNeighborhoods = neighborhoodsByBorough
+          .filter(b => additionalFilters.boroughs.includes(b.borough))
+          .flatMap(b => b.neighborhoods);
+        query = query.in('neighborhood', boroughNeighborhoods);
       }
 
-      if (minSqft.trim()) {
-        const sqftValue = parseInt(minSqft.trim());
-        if (!isNaN(sqftValue) && sqftValue > 0) {
-          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
-        }
+      if (additionalFilters.minSqft) {
+        query = query.gte('sqft', additionalFilters.minSqft).not('sqft', 'is', null);
       }
 
-      if (addressSearch.trim()) {
-        query = query.ilike('address', `%${addressSearch.trim()}%`);
+      if (additionalFilters.address) {
+        query = query.ilike('address', `%${additionalFilters.address}%`);
       }
 
-      if (minDiscount.trim()) {
-        const discountValue = parseInt(minDiscount.replace('%', ''));
-        if (!isNaN(discountValue) && discountValue > 0) {
-          query = query.gte('discount_percent', discountValue);
-        }
+      if (additionalFilters.minDiscount) {
+        query = query.gte('discount_percent', additionalFilters.minDiscount);
       }
 
-      // Apply sorting
-      switch (sortBy) {
-        case 'Price: Low to High':
-          query = query.order('price', { ascending: true });
-          break;
-        case 'Price: High to Low':
-          query = query.order('price', { ascending: false });
-          break;
-        case 'Sqft: Low to High':
-          query = query.order('sqft', { ascending: true, nullsFirst: true });
-          break;
-        case 'Sqft: High to Low':
-          query = query.order('sqft', { ascending: false, nullsLast: true });
-          break;
-        case 'Score: Low to High':
-          query = query.order('score', { ascending: true });
-          break;
-        case 'Score: High to Low':
-          query = query.order('score', { ascending: false });
-          break;
-        case 'Newest Listed':
-          query = query.order('days_on_market', { ascending: true });
-          break;
-        default: // Featured
-          query = query.order('created_at', { ascending: false });
-          break;
-      }
-
-      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
-
-      if (error) {
-        console.error('❌ SUPABASE ERROR:', error);
-        setProperties([]);
-        return;
-      }
-
-      if (!data || !Array.isArray(data)) {
-        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
-        setProperties([]);
-        return;
-      }
-
-      // Only shuffle if Featured sorting
-      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
-
-      if (reset) {
-        setProperties(resultData);
-        setOffset(ITEMS_PER_PAGE);
+      // Apply sorting with client-side fallback for complex sorts
+      if (additionalFilters.sortBy === 'price_low_high') {
+        query = query.order('price', { ascending: true });
+      } else if (additionalFilters.sortBy === 'price_high_low') {
+        query = query.order('price', { ascending: false });
+      } else if (additionalFilters.sortBy === 'score_low_high') {
+        query = query.order('score', { ascending: true });
+      } else if (additionalFilters.sortBy === 'score_high_low') {
+        query = query.order('score', { ascending: false });
+      } else if (additionalFilters.sortBy === 'newest_listed') {
+        query = query.order('days_on_market', { ascending: true });
       } else {
-        setProperties(prev => [...prev, ...resultData]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
+        query = query.order('score', { ascending: false });
       }
 
-      setHasMore(data.length === ITEMS_PER_PAGE);
-    } catch (error) {
-      console.error('💥 CATCH ERROR:', error);
-      setProperties([]);
+      // Add pagination
+      const from = page * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+
+      let processedData = data || [];
+
+      // Client-side sorting for sqft (to handle null values properly)
+      if (additionalFilters.sortBy === 'sqft_low_high') {
+        processedData = processedData.sort((a, b) => {
+          const aVal = a.sqft || 0;
+          const bVal = b.sqft || 0;
+          return aVal - bVal;
+        });
+      } else if (additionalFilters.sortBy === 'sqft_high_low') {
+        processedData = processedData.sort((a, b) => {
+          const aVal = a.sqft || 0;
+          const bVal = b.sqft || 0;
+          return bVal - aVal;
+        });
+      }
+
+      setProperties(page === 0 ? processedData : [...properties, ...processedData]);
+      setTotalCount(count || 0);
+      setHasMore((count || 0) > (page + 1) * ITEMS_PER_PAGE);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, additionalFilters, page, loading, properties]);
 
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      fetchProperties(false);
-    }
-  };
-
-  const toggleNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => 
-      prev.includes(neighborhood) 
-        ? prev.filter(n => n !== neighborhood)
-        : [...prev, neighborhood]
-    );
-  };
-
-  const clearNeighborhoods = () => {
-    setSelectedNeighborhoods([]);
-  };
-
-  const removeNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
-  };
-
-  const toggleBorough = (borough: string) => {
-    setSelectedBoroughs(prev => 
-      prev.includes(borough) 
-        ? prev.filter(b => b !== borough)
-        : [...prev, borough]
-    );
-  };
-
-  const clearBoroughs = () => {
-    setSelectedBoroughs([]);
-  };
-
-  const removeBorough = (borough: string) => {
-    setSelectedBoroughs(prev => prev.filter(b => b !== borough));
-  };
-
-  const getGradeColors = (grade: string) => {
-    if (grade === 'A+') {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-yellow-400',
-        scoreBorder: 'border-yellow-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
-      };
-    } else if (grade === 'A' || grade === 'A-') {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-purple-400',
-        scoreBorder: 'border-purple-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
-      };
-    } else if (grade.startsWith('B')) {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-blue-400',
-        scoreBorder: 'border-blue-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
-      };
-    } else {
-      return {
-        badge: 'bg-white text-black border-gray-300',
-        scoreText: 'text-gray-300',
-        scoreBorder: 'border-gray-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
-      };
-    }
-  };
-
-  const handlePropertyClick = (property: any, index: number) => {
-    setSelectedProperty(property);
-  };
-
-  // Filter neighborhoods based on search term
-  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
-    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
-      <GooeyFilter />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Find the best deals to buy. Actually.
-          </h1>
-          <p className="text-xl text-gray-400 tracking-tight">
-            Stop wasting time on overpriced listings.
-          </p>
-        </div>
+      <Filter onChange={handleFilterChange} />
+      <AdditionalFilters onChange={handleAdditionalFilterChange} />
+      
+      {loading && <div className="text-center py-4">Loading...</div>}
+      {error && <div className="text-center py-4 text-red-500">Error: {error}</div>}
 
-        {/* Search Filters */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-5 gap-4">
-            <div className="relative" ref={dropdownRef}>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Neighborhoods
-              </label>
-              <div className="relative">
-                <div className="relative flex items-center">
-                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                    {selectedNeighborhoods.length > 0 && (
-                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
-                        {selectedNeighborhoods.map((neighborhood) => (
-                          <div
-                            key={neighborhood}
-                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
-                            onClick={() => removeNeighborhood(neighborhood)}
-                          >
-                            {neighborhood}
-                            <X className="ml-1 h-3 w-3" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={neighborhoodSearchTerm}
-                      onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
-                      onFocus={() => setShowNeighborhoodDropdown(true)}
-                      placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
-                      className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 min-w-0"
-                    />
-                  </div>
-                </div>
-                
-                {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
-                      {selectedNeighborhoods.length > 0 && (
-                        <button
-                          onClick={clearNeighborhoods}
-                          className="text-xs text-blue-400 hover:text-blue-300"
-                        >
-                          Clear all
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {filteredNeighborhoods.map((neighborhood) => (
-                        <button
-                          key={neighborhood}
-                          onClick={() => toggleNeighborhood(neighborhood)}
-                          className={`px-3 py-1 rounded-full text-sm transition-all ${
-                            selectedNeighborhoods.includes(neighborhood)
-                              ? 'bg-white text-black'
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
-                        >
-                          {neighborhood}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Zip Code
-              </label>
-              <input
-                type="text"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-                placeholder="10009"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Max Price
-              </label>
-              <input
-                type="text"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="$1,500,000"
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Bedrooms
-              </label>
-              <select
-                value={bedrooms}
-                onChange={(e) => setBedrooms(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              >
-                <option value="" className="text-gray-500">Any</option>
-                <option value="0" className="text-white">Studio</option>
-                <option value="1" className="text-white">1+</option>
-                <option value="2" className="text-white">2+</option>
-                <option value="3" className="text-white">3+</option>
-                <option value="4" className="text-white">4+</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Min Grade
-              </label>
-              <select
-                value={minGrade}
-                onChange={(e) => setMinGrade(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-              >
-                <option value="" className="text-gray-500">Any Grade</option>
-                {gradeOptions.map((grade) => (
-                  <option key={grade} value={grade} className="text-white">{grade}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Additional Filters Dropdown Toggle */}
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setShowAdditionalFilters(!showAdditionalFilters)}
-              className="flex items-center text-gray-400 hover:text-white transition-colors"
-            >
-              {showAdditionalFilters ? (
-                <ChevronUp className="h-5 w-5" />
-              ) : (
-                <ChevronDown className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-
-          {/* Additional Filters Section */}
-          {showAdditionalFilters && (
-          <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4">
-              <div className="relative" ref={boroughDropdownRef}>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Borough
-                </label>
-                <div className="relative">
-                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                    {selectedBoroughs.length > 0 && (
-                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
-                        {selectedBoroughs.map((borough) => (
-                          <div
-                            key={borough}
-                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
-                            onClick={() => removeBorough(borough)}
-                          >
-                            {borough}
-                            <X className="ml-1 h-3 w-3" />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div
-                      className="flex-1 cursor-pointer text-gray-500"
-                      onClick={() => setShowBoroughDropdown(true)}
-                    >
-                      {selectedBoroughs.length === 0 ? "Manhattan" : ""}
-                    </div>
-                  </div>
-                  
-                  {showBoroughDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-sm font-medium text-gray-300">Filter by Borough</span>
-                        {selectedBoroughs.length > 0 && (
-                          <button
-                            onClick={clearBoroughs}
-                            className="text-xs text-blue-400 hover:text-blue-300"
-                          >
-                            Clear all
-                          </button>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {boroughs.map((borough) => (
-                          <button
-                            key={borough}
-                            onClick={() => toggleBorough(borough)}
-                            className={`px-3 py-1 rounded-full text-sm transition-all ${
-                              selectedBoroughs.includes(borough)
-                                ? 'bg-white text-black'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                            }`}
-                          >
-                            {borough}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Min Sqft
-                </label>
-                <input
-                  type="text"
-                  value={minSqft}
-                  onChange={(e) => setMinSqft(e.target.value)}
-                  placeholder="1,100"
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  value={addressSearch}
-                  onChange={(e) => setAddressSearch(e.target.value)}
-                  placeholder="123 Carroll St"
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Min Discount
-                </label>
-                <select
-                  value={minDiscount}
-                  onChange={(e) => setMinDiscount(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                >
-                  <option value="" className="text-gray-500">Any</option>
-                  {discountOptions.map((discount) => (
-                    <option key={discount} value={discount} className="text-white">{discount}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                  Sort by
-                </label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option} value={option} className="text-white">{option}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Properties Grid */}
-        <div className="relative">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade);
-              
-              return (
-                <div
-                  key={`${property.id}-${index}`}
-                  className="relative"
-                >
-                  <PropertyCard
-                    property={property}
-                    isRental={false}
-                    onClick={() => handlePropertyClick(property, index)}
-                    gradeColors={gradeColors}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Loading state */}
-        {loading && (
-          <div className="text-center py-8">
-            <div className="text-gray-400">Loading properties...</div>
-          </div>
-        )}
-
-        {/* Load More Button */}
-        {!loading && hasMore && properties.length > 0 && (
-          <div className="text-center py-8">
-            <HoverButton onClick={loadMore} textColor="text-white">
-              Load More Properties
-            </HoverButton>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && properties.length === 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
-              No properties found matching your criteria
-            </h3>
-            <p className="text-gray-500 tracking-tight mb-16">
-              Try adjusting your search filters to see more results.
-            </p>
-            
-            {/* Early Access Section - same as bottom section */}
-            <div className="text-center">
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
-                Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
-              </h3>
-              <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
-                The best deals in the city get bought in days. Don't miss them.
-              </p>
-              <button 
-                onClick={() => navigate('/pricing')}
-                className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
-              >
-                Early Access
-              </button>
-            </div>
-          </div>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {properties.map(property => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
       </div>
 
-      {/* Property Detail Modal */}
-      {selectedProperty && (
-        <PropertyDetail
-          property={selectedProperty}
-          isRental={false}
-          onClose={() => setSelectedProperty(null)}
-        />
+      {hasMore && (
+        <div className="text-center py-4">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {loading ? 'Loading...' : 'Load More'}
+          </button>
+        </div>
       )}
     </div>
   );
