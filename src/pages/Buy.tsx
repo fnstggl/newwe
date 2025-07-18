@@ -725,7 +725,7 @@ const Buy = () => {
             {/* Early Access Section - same as bottom section */}
             <div className="text-center">
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
-                Want to be the first to know when new properties in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
+                Want to be the first to know when new deals in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
               </h3>
               <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
                 The best deals in the city get bought in days. Don't miss them.
