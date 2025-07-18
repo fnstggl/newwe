@@ -881,12 +881,17 @@ const Rent = () => {
         {/* Empty State */}
         {!loading && properties.length === 0 && (
           <div className="text-center py-16">
-            <h3 className="text-xl text-gray-400 mb-4 tracking-tight">
-              No properties found matching your criteria
+            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">
+              No properties found matching your search criteria
             </h3>
-            <p className="text-gray-500 tracking-tight mb-16">
-              Try adjusting your search filters to see more results.
+            <p className="text-gray-400 tracking-tight mb-6">
+              Try adjusting your filters
             </p>
+            
+            {/* Red glow line */}
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60 mb-12 relative">
+              <div className="absolute inset-0 w-full h-px bg-gradient-to-r from-transparent via-red-400 to-transparent blur-sm"></div>
+            </div>
             
             {/* Early Access Section - same as bottom section */}
             <div className="text-center">
