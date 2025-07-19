@@ -178,7 +178,7 @@ const Join = () => {
           </HoverButton>
 
           <p className="text-center text-gray-500 text-sm tracking-tight">
-            Early access. Zero spam. Unsubscribe anytime.
+            
           </p>
         </form>
 
