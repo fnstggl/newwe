@@ -82,7 +82,12 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
               title: "Subscription successful!",
               description: "Welcome to the Unlimited plan.",
             });
+            
+            // Navigate to pricing page and force refresh to show updated plan
             navigate('/pricing?success=true');
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
           }
         } catch (activationError) {
           console.error('Error activating subscription:', activationError);
