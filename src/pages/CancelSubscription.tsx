@@ -100,8 +100,11 @@ const CancelSubscription = () => {
         description: "Your subscription has been cancelled and you're now on the free plan.",
       });
 
-      // Redirect to pricing page
+      // Redirect to pricing page and force refresh to show updated plan
       navigate('/pricing');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
       
     } catch (error) {
       console.error('Cancellation error:', error);
