@@ -184,8 +184,36 @@ const Buy = () => {
         return;
       }
 
-      const uniqueNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
-      setNeighborhoods(uniqueNeighborhoods);
+      const dbNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
+      
+      // Add missing neighborhoods that should be available
+      const additionalNeighborhoods = [
+        // Manhattan
+        'west-village',
+        'lower-east-side', 
+        'little-italy',
+        'nolita',
+        'soho',
+        'tribeca',
+        'two-bridges',
+        'murray-hill',
+        // Brooklyn
+        'williamsburg',
+        'prospect-heights',
+        'park-slope',
+        // Queens
+        'long-island-city',
+        'sunnyside',
+        'woodside',
+        // Bronx
+        'mott-haven',
+        'melrose',
+        'south-bronx'
+      ];
+
+      // Combine database neighborhoods with additional ones, removing duplicates
+      const allNeighborhoods = [...new Set([...dbNeighborhoods, ...additionalNeighborhoods])].sort();
+      setNeighborhoods(allNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
     }
@@ -271,7 +299,7 @@ const Buy = () => {
           query = query.order('sqft', { ascending: true, nullsFirst: true });
           break;
         case 'Sqft: High to Low':
-          query = query.order('sqft', { ascending: false, nullsLast: true });
+          query = query.order('sqft', { ascending: false, nullsFirst: false });
           break;
         case 'Score: Low to High':
           query = query.order('score', { ascending: true });
