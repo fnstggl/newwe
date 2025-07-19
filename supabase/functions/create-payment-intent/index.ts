@@ -67,20 +67,37 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create a simple payment intent for subscription setup
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Create price for the subscription
+    const price = await stripe.prices.create({
+      unit_amount: amount,
+      currency: 'usd',
+      recurring: {
+        interval: billing_cycle === 'annual' ? 'year' : 'month',
+      },
+      product_data: {
+        name: 'Realer Estate Unlimited Plan',
+      },
+    });
+    logStep("Price created", { priceId: price.id });
+
+    // Create subscription
+    const subscription = await stripe.subscriptions.create({
       customer: customerId,
-      amount: amount,
-      currency: "usd",
-      setup_future_usage: 'off_session',
+      items: [
+        {
+          price: price.id,
+        },
+      ],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
       metadata: {
         user_id: user.id,
         billing_cycle,
-        subscription_type: "realer_estate_unlimited",
       },
     });
 
-    logStep("Payment intent created", { paymentIntentId: paymentIntent.id });
+    logStep("Subscription created", { subscriptionId: subscription.id });
 
     // Update profiles table with stripe_customer_id
     const { error: profileError } = await supabaseClient
@@ -96,8 +113,13 @@ serve(async (req) => {
       logStep("Profile updated successfully");
     }
 
+    // Get the payment intent from the subscription
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
     return new Response(JSON.stringify({ 
       client_secret: paymentIntent.client_secret,
+      subscription_id: subscription.id,
       payment_intent_id: paymentIntent.id
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

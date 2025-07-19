@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,6 +9,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CheckoutFormProps {
   billingCycle: 'monthly' | 'annual';
@@ -33,32 +35,72 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
     setLoading(true);
     setMessage('');
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/pricing?success=true`,
-        receipt_email: user?.email || '',
-      },
-    });
+    try {
+      // Confirm payment without return_url to handle response directly
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          // Don't include return_url to handle response directly
+        },
+        redirect: 'if_required',
+      });
 
-    if (error) {
-      if (error.type === "card_error" || error.type === "validation_error") {
-        setMessage(error.message || 'An error occurred.');
-      } else {
-        setMessage("An unexpected error occurred.");
+      if (error) {
+        if (error.type === "card_error" || error.type === "validation_error") {
+          setMessage(error.message || 'An error occurred.');
+        } else {
+          setMessage("An unexpected error occurred.");
+        }
+        
+        toast({
+          title: "Payment failed",
+          description: error.message || 'An error occurred during payment.',
+          variant: "destructive",
+        });
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // Payment succeeded, now activate subscription
+        try {
+          const { error: subscriptionError } = await supabase.functions.invoke('activate-subscription', {
+            body: {
+              payment_intent_id: paymentIntent.id,
+              billing_cycle: billingCycle,
+            },
+            headers: {
+              Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+            },
+          });
+
+          if (subscriptionError) {
+            console.error('Subscription activation error:', subscriptionError);
+            toast({
+              title: "Payment succeeded but subscription activation failed",
+              description: "Please contact support.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Subscription successful!",
+              description: "Welcome to the Unlimited plan.",
+            });
+            navigate('/pricing?success=true');
+          }
+        } catch (activationError) {
+          console.error('Error activating subscription:', activationError);
+          toast({
+            title: "Payment succeeded but subscription activation failed",
+            description: "Please contact support.",
+            variant: "destructive",
+          });
+        }
       }
-      
+    } catch (confirmError) {
+      console.error('Payment confirmation error:', confirmError);
+      setMessage("An unexpected error occurred during payment confirmation.");
       toast({
         title: "Payment failed",
-        description: error.message || 'An error occurred during payment.',
+        description: 'An unexpected error occurred during payment confirmation.',
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Subscription successful!",
-        description: "Welcome to the Unlimited plan.",
-      });
-      navigate('/pricing?success=true');
     }
 
     setLoading(false);
