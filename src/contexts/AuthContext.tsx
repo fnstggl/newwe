@@ -8,6 +8,7 @@ interface AuthContextType {
   session: Session | null;
   signUp: (email: string, password: string, name: string) => Promise<{ error: any; needsOnboarding?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   userProfile: { 
     name: string; 
@@ -225,6 +226,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const signInWithGoogle = async () => {
+    // Reset the fetch tracking for actual login
+    hasEverFetchedProfileRef.current = false;
+    
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`
+      }
+    });
+    
+    return { error };
+  };
+
   const signOut = async () => {
     // Clear cached subscription state on sign out
     if (user?.id) {
@@ -243,6 +258,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     userProfile,
     updateOnboardingStatus
