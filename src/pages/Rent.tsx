@@ -526,6 +526,10 @@ const Rent = () => {
   };
 
   const handlePropertyClick = (property: any, index: number) => {
+    // Only allow clicks on first 6 properties if user is not logged in
+    if (!user && index >= 6) {
+      return;
+    }
     setSelectedProperty(property);
   };
 
@@ -825,18 +829,36 @@ const Rent = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
+              const isBlurred = !user && index >= 6;
               
               return (
                 <div
                   key={`${property.id}-${index}`}
                   className="relative"
                 >
-                  <PropertyCard
-                    property={property}
-                    isRental={true}
-                    onClick={() => handlePropertyClick(property, index)}
-                    gradeColors={gradeColors}
-                  />
+                  <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
+                    <PropertyCard
+                      property={property}
+                      isRental={true}
+                      onClick={() => handlePropertyClick(property, index)}
+                      gradeColors={gradeColors}
+                    />
+                  </div>
+                  
+                  {/* Show CTA button on 8th property (index 7) for non-logged users */}
+                  {!user && index === 7 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
+                        Want to see the best deals in NYC?
+                      </h3>
+                      <button
+                        onClick={() => navigate('/join')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                      >
+                        Create free account
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
