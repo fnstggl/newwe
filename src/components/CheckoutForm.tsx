@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -36,11 +35,17 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
     setMessage('');
 
     try {
-      // Confirm payment without return_url to handle response directly
+      // Get the payment element to check the payment method type
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        throw submitError;
+      }
+
+      // Confirm payment with conditional return_url for payment methods that require it
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          // Don't include return_url to handle response directly
+          return_url: `${window.location.origin}/pricing?success=true`,
         },
         redirect: 'if_required',
       });
