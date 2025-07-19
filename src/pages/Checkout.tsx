@@ -155,7 +155,7 @@ const Checkout = () => {
               <img
                 src="/lovable-uploads/447e6b63-12c7-4df7-80df-9b403b88b587.png"
                 alt="NYC Real Estate Platform"
-                className="w-full max-w-md rounded-xl border border-gray-800"
+                className="w-full max-w-md rounded-xl"
               />
             </div>
 
