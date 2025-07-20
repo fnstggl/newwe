@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
@@ -8,14 +7,13 @@ import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
 const Buy = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { listingId } = useParams();
-  
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -43,6 +41,19 @@ const Buy = () => {
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
 
   const ITEMS_PER_PAGE = 30;
+  const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+  const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
+  const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
+  const sortOptions = [
+    'Featured',
+    'Price: Low to High',
+    'Price: High to Low',
+    'Sqft: Low to High',
+    'Sqft: High to Low',
+    'Score: Low to High',
+    'Score: High to Low',
+    'Newest Listed'
+  ];
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -50,31 +61,115 @@ const Buy = () => {
   }, []);
 
   useEffect(() => {
-    if (listingId) {
-      fetchPropertyByListingId(listingId);
-    }
-  }, [listingId]);
+    const debounceTimer = setTimeout(() => {
+      fetchProperties(true);
+    }, 500);
 
-  const fetchPropertyByListingId = async (listing_id: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('undervalued_sales')
-        .select('*')
-        .eq('listing_id', listing_id)
-        .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true')
-        .maybeSingle();
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
-      if (data) {
-        setSelectedProperty(data);
-      } else {
-        navigate('/buy');
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNeighborhoodDropdown(false);
       }
-    } catch (error) {
-      console.error('Error fetching property by listing ID:', error);
-      navigate('/buy');
+      if (boroughDropdownRef.current && !boroughDropdownRef.current.contains(event.target as Node)) {
+        setShowBoroughDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    // Update meta tags for SEO
+    document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
+    
+    // Update meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
+    } else {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
+      document.head.appendChild(metaDescription);
     }
-  };
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://realerestate.org/buy');
+    } else {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('href', 'https://realerestate.org/buy');
+      document.head.appendChild(canonical);
+    }
+
+    // Update Open Graph tags
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    } else {
+      ogTitle = document.createElement('meta');
+      ogTitle.setAttribute('property', 'og:title');
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+      document.head.appendChild(ogTitle);
+    }
+    
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    } else {
+      ogDescription = document.createElement('meta');
+      ogDescription.setAttribute('property', 'og:description');
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+      document.head.appendChild(ogDescription);
+    }
+    
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
+    } else {
+      ogUrl = document.createElement('meta');
+      ogUrl.setAttribute('property', 'og:url');
+      ogUrl.setAttribute('content', 'https://realerestate.org/buy');
+      document.head.appendChild(ogUrl);
+    }
+
+    // Update Twitter tags
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+    } else {
+      twitterTitle = document.createElement('meta');
+      twitterTitle.setAttribute('name', 'twitter:title');
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
+      document.head.appendChild(twitterTitle);
+    }
+    
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+    } else {
+      twitterDescription = document.createElement('meta');
+      twitterDescription.setAttribute('name', 'twitter:description');
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
+      document.head.appendChild(twitterDescription);
+    }
+    
+    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (twitterUrl) {
+      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
+    } else {
+      twitterUrl = document.createElement('meta');
+      twitterUrl.setAttribute('name', 'twitter:url');
+      twitterUrl.setAttribute('content', 'https://realerestate.org/buy');
+      document.head.appendChild(twitterUrl);
+    }
+  }, []);
 
   const fetchNeighborhoods = async () => {
     try {
@@ -90,7 +185,10 @@ const Buy = () => {
       }
 
       const dbNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
+      
+      // Add missing neighborhoods that should be available
       const additionalNeighborhoods = [
+        // Manhattan
         'west-village',
         'lower-east-side', 
         'little-italy',
@@ -99,17 +197,21 @@ const Buy = () => {
         'tribeca',
         'two-bridges',
         'murray-hill',
+        // Brooklyn
         'williamsburg',
         'prospect-heights',
         'park-slope',
+        // Queens
         'long-island-city',
         'sunnyside',
         'woodside',
+        // Bronx
         'mott-haven',
         'melrose',
         'south-bronx'
       ];
 
+      // Combine database neighborhoods with additional ones, removing duplicates
       const allNeighborhoods = [...new Set([...dbNeighborhoods, ...additionalNeighborhoods])].sort();
       setNeighborhoods(allNeighborhoods);
     } catch (error) {
@@ -162,6 +264,7 @@ const Buy = () => {
         query = query.in('neighborhood', selectedNeighborhoods);
       }
 
+      // Additional filters
       if (selectedBoroughs.length > 0) {
         query = query.in('borough', selectedBoroughs);
       }
@@ -184,6 +287,7 @@ const Buy = () => {
         }
       }
 
+      // Apply sorting
       switch (sortBy) {
         case 'Price: Low to High':
           query = query.order('price', { ascending: true });
@@ -206,7 +310,7 @@ const Buy = () => {
         case 'Newest Listed':
           query = query.order('days_on_market', { ascending: true });
           break;
-        default:
+        default: // Featured
           query = query.order('created_at', { ascending: false });
           break;
       }
@@ -225,11 +329,14 @@ const Buy = () => {
         return;
       }
 
+      // Only shuffle if Featured sorting
+      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
+
       if (reset) {
-        setProperties(data);
+        setProperties(resultData);
         setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...data]);
+        setProperties(prev => [...prev, ...resultData]);
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
@@ -242,24 +349,94 @@ const Buy = () => {
     }
   };
 
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchProperties(false);
+    }
+  };
+
+  const toggleNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => 
+      prev.includes(neighborhood) 
+        ? prev.filter(n => n !== neighborhood)
+        : [...prev, neighborhood]
+    );
+  };
+
+  const clearNeighborhoods = () => {
+    setSelectedNeighborhoods([]);
+  };
+
+  const removeNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
+  };
+
+  const toggleBorough = (borough: string) => {
+    setSelectedBoroughs(prev => 
+      prev.includes(borough) 
+        ? prev.filter(b => b !== borough)
+        : [...prev, borough]
+    );
+  };
+
+  const clearBoroughs = () => {
+    setSelectedBoroughs([]);
+  };
+
+  const removeBorough = (borough: string) => {
+    setSelectedBoroughs(prev => prev.filter(b => b !== borough));
+  };
+
+  const getGradeColors = (grade: string) => {
+    if (grade === 'A+') {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-yellow-400',
+        scoreBorder: 'border-yellow-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
+      };
+    } else if (grade === 'A' || grade === 'A-') {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-purple-400',
+        scoreBorder: 'border-purple-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
+      };
+    } else if (grade.startsWith('B')) {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-blue-400',
+        scoreBorder: 'border-blue-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
+      };
+    } else {
+      return {
+        badge: 'bg-white text-black border-gray-300',
+        scoreText: 'text-gray-300',
+        scoreBorder: 'border-gray-600',
+        hover: 'hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:border-white/40'
+      };
+    }
+  };
+
   const handlePropertyClick = (property: any, index: number) => {
+    // Only allow clicks on first 6 properties if user is not logged in
     if (!user && index >= 6) {
       return;
     }
-    
-    navigate(`/buy/${property.listing_id}`);
     setSelectedProperty(property);
   };
 
-  const handleClosePropertyDetail = () => {
-    navigate('/buy');
-    setSelectedProperty(null);
-  };
+  // Filter neighborhoods based on search term
+  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
+    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
             Find the best deals to buy. Actually.
@@ -269,8 +446,73 @@ const Buy = () => {
           </p>
         </div>
 
+        {/* Search Filters */}
         <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
           <div className="grid md:grid-cols-5 gap-4">
+            <div className="relative" ref={dropdownRef}>
+              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
+                Neighborhoods
+              </label>
+              <div className="relative">
+                <div className="relative flex items-center">
+                  <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                    {selectedNeighborhoods.length > 0 && (
+                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                        {selectedNeighborhoods.map((neighborhood) => (
+                          <div
+                            key={neighborhood}
+                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center cursor-pointer flex-shrink-0"
+                            onClick={() => removeNeighborhood(neighborhood)}
+                          >
+                            {neighborhood}
+                            <X className="ml-1 h-3 w-3" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      value={neighborhoodSearchTerm}
+                      onChange={(e) => setNeighborhoodSearchTerm(e.target.value)}
+                      onFocus={() => setShowNeighborhoodDropdown(true)}
+                      placeholder={selectedNeighborhoods.length === 0 ? "East Village" : ""}
+                      className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 min-w-0"
+                    />
+                  </div>
+                </div>
+                
+                {showNeighborhoodDropdown && (
+                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
+                      {selectedNeighborhoods.length > 0 && (
+                        <button
+                          onClick={clearNeighborhoods}
+                          className="text-xs text-blue-400 hover:text-blue-300"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {filteredNeighborhoods.map((neighborhood) => (
+                        <button
+                          key={neighborhood}
+                          onClick={() => toggleNeighborhood(neighborhood)}
+                          className={`px-3 py-1 rounded-full text-sm transition-all ${
+                            selectedNeighborhoods.includes(neighborhood)
+                              ? 'bg-white text-black'
+                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          }`}
+                        >
+                          {neighborhood}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Zip Code
@@ -322,15 +564,9 @@ const Buy = () => {
                 className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               >
                 <option value="" className="text-gray-500">Any Grade</option>
-                <option value="A+" className="text-white">A+</option>
-                <option value="A" className="text-white">A</option>
-                <option value="A-" className="text-white">A-</option>
-                <option value="B+" className="text-white">B+</option>
-                <option value="B" className="text-white">B</option>
-                <option value="B-" className="text-white">B-</option>
-                <option value="C+" className="text-white">C+</option>
-                <option value="C" className="text-white">C</option>
-                <option value="C-" className="text-white">C-</option>
+                {gradeOptions.map((grade) => (
+                  <option key={grade} value={grade} className="text-white">{grade}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -469,6 +705,7 @@ const Buy = () => {
           )}
         </div>
 
+        {/* Properties Grid */}
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
@@ -489,6 +726,7 @@ const Buy = () => {
                     />
                   </div>
                   
+                  {/* Show CTA button on 8th property (index 7) for non-logged users */}
                   {!user && index === 7 && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
                       <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
@@ -508,12 +746,14 @@ const Buy = () => {
           </div>
         </div>
 
+        {/* Loading state */}
         {loading && (
           <div className="text-center py-8">
             <div className="text-gray-400">Loading properties...</div>
           </div>
         )}
 
+        {/* Load More Button */}
         {!loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
@@ -522,6 +762,7 @@ const Buy = () => {
           </div>
         )}
 
+        {/* Empty State */}
         {!loading && properties.length === 0 && (
           <div className="text-center py-16">
             <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">
@@ -530,9 +771,13 @@ const Buy = () => {
             <p className="text-gray-400 tracking-tight mb-6">
               Try adjusting your filters
             </p>
+            
+            {/* Red glow line */}
             <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60 mb-12 relative">
               <div className="absolute inset-0 w-full h-px bg-gradient-to-r from-transparent via-red-400 to-transparent blur-sm"></div>
             </div>
+            
+            {/* Early Access Section - same as bottom section */}
             <div className="text-center">
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
                 Want to be the first to know when new deals in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
@@ -551,11 +796,12 @@ const Buy = () => {
         )}
       </div>
 
+      {/* Property Detail Modal */}
       {selectedProperty && (
         <PropertyDetail
           property={selectedProperty}
           isRental={false}
-          onClose={handleClosePropertyDetail}
+          onClose={() => setSelectedProperty(null)}
         />
       )}
     </div>
