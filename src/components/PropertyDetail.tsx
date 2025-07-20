@@ -286,18 +286,30 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </div>
                   </div>
 
-                  {/* Property Details - Updated to hide 0 values */}
+                  {/* Property Details - Updated to show "Studio" for 0 bedrooms and change null value color */}
                   <Card className="bg-gray-800/50 border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bedrooms:</span>
-                            <span className="text-white">{property.bedrooms && property.bedrooms > 0 ? property.bedrooms : 'N/A'}</span>
+                            <span className="text-white">
+                              {property.bedrooms && property.bedrooms > 0 
+                                ? property.bedrooms 
+                                : property.bedrooms === 0 
+                                  ? 'Studio' 
+                                  : <span style={{ color: '#19202D' }}>N/A</span>
+                              }
+                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bathrooms:</span>
-                            <span className="text-white">{property.bathrooms && property.bathrooms > 0 ? property.bathrooms : 'N/A'}</span>
+                            <span className="text-white">
+                              {property.bathrooms && property.bathrooms > 0 
+                                ? property.bathrooms 
+                                : <span style={{ color: '#19202D' }}>N/A</span>
+                              }
+                            </span>
                           </div>
                         </div>
                         <div className="space-y-2">
