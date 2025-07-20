@@ -57,12 +57,37 @@ const Rent = () => {
     'Newest Listed'
   ];
 
-  // Helper function to check if a grade meets the minimum requirement
-  const meetsMinGrade = (propertyGrade: string, minGradeRequired: string) => {
+  // Helper function to calculate grade from score for rent-stabilized properties
+  const calculateGradeFromScore = (score: number): string => {
+    if (score >= 98) return 'A+';
+    if (score >= 93) return 'A';
+    if (score >= 88) return 'B+';
+    if (score >= 83) return 'B';
+    if (score >= 75) return 'C+';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'D';
+    return 'F';
+  };
+
+  // Helper function to get minimum score required for a grade
+  const getMinScoreForGrade = (grade: string): number => {
+    switch (grade) {
+      case 'A+': return 98;
+      case 'A': return 93;
+      case 'A-': return 93; // A- maps to A (93+)
+      case 'B+': return 88;
+      case 'B': return 83;
+      case 'B-': return 83; // B- maps to B (83+)
+      case 'C+': return 75;
+      case 'C': return 70;
+      case 'C-': return 70; // C- maps to C (70+)
+      default: return 0;
+    }
+  };
+
+  // Helper function to check if a regular rental grade meets minimum requirement
+  const meetsMinGradeRegularRental = (propertyGrade: string, minGradeRequired: string) => {
     if (!minGradeRequired || !propertyGrade) return true;
-    
-    // Handle rent-stabilized properties (grade = 'RS')
-    if (propertyGrade === 'RS') return true;
     
     const gradeValues: { [key: string]: number } = {
       'A+': 9, 'A': 8, 'A-': 7,
@@ -238,6 +263,12 @@ const Rent = () => {
           }
         }
 
+        // Apply min grade filter for rent-stabilized (filter by score)
+        if (minGrade.trim()) {
+          const minScore = getMinScoreForGrade(minGrade.trim());
+          rentStabilizedQuery = rentStabilizedQuery.gte('rent_stabilized_confidence', minScore);
+        }
+
         if (selectedNeighborhoods.length > 0) {
           const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
           rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
@@ -302,15 +333,7 @@ const Rent = () => {
           return;
         }
 
-        let normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
-        
-        // Apply min grade filter after fetching (since rent-stabilized properties have grade 'RS')
-        if (minGrade.trim()) {
-          normalizedData = normalizedData.filter(property => 
-            meetsMinGrade(property.grade, minGrade.trim())
-          );
-        }
-        
+        const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
         const resultData = sortBy === 'Featured' ? normalizedData.sort(() => Math.random() - 0.5) : normalizedData;
 
         if (reset) {
@@ -361,9 +384,37 @@ const Rent = () => {
           }
         }
 
-        // Apply min grade filter to regular rentals query
+        // Apply min grade filter differently for each table
         if (minGrade.trim()) {
-          rentalsQuery = rentalsQuery.gte('grade', minGrade.trim());
+          // For regular rentals: filter by grade column directly
+          const gradeValues: { [key: string]: string } = {
+            'A+': 'A+', 'A': 'A', 'A-': 'A-',
+            'B+': 'B+', 'B': 'B', 'B-': 'B-',
+            'C+': 'C+', 'C': 'C', 'C-': 'C-'
+          };
+          
+          const allowedGrades = [];
+          const minGradeValue = {
+            'A+': 9, 'A': 8, 'A-': 7,
+            'B+': 6, 'B': 5, 'B-': 4,
+            'C+': 3, 'C': 2, 'C-': 1
+          }[minGrade.trim()] || 0;
+
+          for (const [grade, value] of Object.entries({
+            'A+': 9, 'A': 8, 'A-': 7,
+            'B+': 6, 'B': 5, 'B-': 4,
+            'C+': 3, 'C': 2, 'C-': 1
+          })) {
+            if (value >= minGradeValue) {
+              allowedGrades.push(grade);
+            }
+          }
+
+          rentalsQuery = rentalsQuery.in('grade', allowedGrades);
+
+          // For rent-stabilized: filter by score
+          const minScore = getMinScoreForGrade(minGrade.trim());
+          rentStabilizedQuery = rentStabilizedQuery.gte('rent_stabilized_confidence', minScore);
         }
 
         if (selectedNeighborhoods.length > 0) {
@@ -450,17 +501,10 @@ const Rent = () => {
         }
 
         const rentalsData = rentalsResult.data || [];
-        let rentStabilizedData = rentStabilizedResult.data || [];
+        const rentStabilizedData = rentStabilizedResult.data || [];
 
         // Normalize rent-stabilized properties
-        let normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
-        
-        // Apply min grade filter to rent-stabilized properties after normalization
-        if (minGrade.trim()) {
-          normalizedRentStabilized = normalizedRentStabilized.filter(property => 
-            meetsMinGrade(property.grade, minGrade.trim())
-          );
-        }
+        const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
 
         // Combine and shuffle both types of properties
         const combinedData = [...rentalsData, ...normalizedRentStabilized];
