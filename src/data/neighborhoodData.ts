@@ -180,7 +180,7 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
     pros: ['Great shopping', 'Excellent dining', 'Historic charm'],
     cons: ['Very expensive', 'Tourist crowds', 'Limited space']
   },
-  'park slope': {
+    'park slope': {
     description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
     pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
     cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
@@ -238,7 +238,31 @@ export const getNeighborhoodInfo = (neighborhood: string | null): NeighborhoodIn
   // Convert to lowercase for lookup and handle the case matching
   const normalizedNeighborhood = neighborhood.toLowerCase().trim();
   
-  return neighborhoodData[normalizedNeighborhood] || {
+  // Try direct lookup first
+  if (neighborhoodData[normalizedNeighborhood]) {
+    return neighborhoodData[normalizedNeighborhood];
+  }
+  
+  // Try with hyphens replaced by spaces
+  const withSpaces = normalizedNeighborhood.replace(/-/g, ' ');
+  if (neighborhoodData[withSpaces]) {
+    return neighborhoodData[withSpaces];
+  }
+  
+  // Try with spaces replaced by hyphens
+  const withHyphens = normalizedNeighborhood.replace(/\s+/g, '-');
+  if (neighborhoodData[withHyphens]) {
+    return neighborhoodData[withHyphens];
+  }
+  
+  // Try removing 'the' prefix if it exists
+  const withoutThe = normalizedNeighborhood.replace(/^the\s+/, '');
+  if (neighborhoodData[withoutThe]) {
+    return neighborhoodData[withoutThe];
+  }
+  
+  // Fallback to generic description
+  return {
     description: `${neighborhood} is a distinctive New York neighborhood with its own unique character and charm, offering residents a blend of urban convenience and local community feel.`,
     pros: ['Good transportation', 'Local character', 'Urban convenience'],
     cons: ['Varies by location', 'City noise', 'Parking challenges']
