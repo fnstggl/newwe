@@ -7,7 +7,7 @@ import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UndervaluedRentStabilized } from "@/types/database";
 
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
@@ -15,6 +15,8 @@ type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 const Rent = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { listingId } = useParams();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -86,7 +88,7 @@ const Rent = () => {
   };
 
   // Helper function to check if a regular rental grade meets minimum requirement
-  const meetsMinGradeRegularRental = (propertyGrade: string, minGradeRequired: string) => {
+  const meetsMinGrade = (propertyGrade: string, minGradeRequired: string) => {
     if (!minGradeRequired || !propertyGrade) return true;
     
     const gradeValues: { [key: string]: number } = {
@@ -100,6 +102,16 @@ const Rent = () => {
     
     return propertyValue >= minValue;
   };
+
+  // Load property from URL parameter if present
+  useEffect(() => {
+    if (listingId && properties.length > 0) {
+      const property = properties.find(p => p.listing_id === listingId);
+      if (property) {
+        setSelectedProperty(property);
+      }
+    }
+  }, [listingId, properties]);
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -386,30 +398,18 @@ const Rent = () => {
 
         // Apply min grade filter differently for each table
         if (minGrade.trim()) {
-          // For regular rentals: filter by grade column directly
-          const gradeValues: { [key: string]: string } = {
-            'A+': 'A+', 'A': 'A', 'A-': 'A-',
-            'B+': 'B+', 'B': 'B', 'B-': 'B-',
-            'C+': 'C+', 'C': 'C', 'C-': 'C-'
+          // For regular rentals: filter by grade column using hierarchical comparison
+          const gradeHierarchy: { [key: string]: number } = {
+            'A+': 9, 'A': 8, 'A-': 7,
+            'B+': 6, 'B': 5, 'B-': 4,
+            'C+': 3, 'C': 2, 'C-': 1
           };
           
-          const allowedGrades = [];
-          const minGradeValue = {
-            'A+': 9, 'A': 8, 'A-': 7,
-            'B+': 6, 'B': 5, 'B-': 4,
-            'C+': 3, 'C': 2, 'C-': 1
-          }[minGrade.trim()] || 0;
-
-          for (const [grade, value] of Object.entries({
-            'A+': 9, 'A': 8, 'A-': 7,
-            'B+': 6, 'B': 5, 'B-': 4,
-            'C+': 3, 'C': 2, 'C-': 1
-          })) {
-            if (value >= minGradeValue) {
-              allowedGrades.push(grade);
-            }
-          }
-
+          const minGradeValue = gradeHierarchy[minGrade.trim()] || 0;
+          const allowedGrades = Object.keys(gradeHierarchy).filter(
+            grade => gradeHierarchy[grade] >= minGradeValue
+          );
+          
           rentalsQuery = rentalsQuery.in('grade', allowedGrades);
 
           // For rent-stabilized: filter by score
@@ -613,7 +613,16 @@ const Rent = () => {
     if (!user && index >= 6) {
       return;
     }
+    
+    // Update URL with listing ID
+    navigate(`/rent/${property.listing_id}`, { replace: true });
     setSelectedProperty(property);
+  };
+
+  const handleClosePropertyDetail = () => {
+    // Navigate back to main rent page
+    navigate('/rent', { replace: true });
+    setSelectedProperty(null);
   };
 
   // Filter neighborhoods based on search term and display Bed-Stuy instead of Bedford-Stuyvesant
@@ -1022,7 +1031,7 @@ const Rent = () => {
         <PropertyDetail
           property={selectedProperty}
           isRental={true}
-          onClose={() => setSelectedProperty(null)}
+          onClose={handleClosePropertyDetail}
         />
       )}
     </div>

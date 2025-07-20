@@ -38,7 +38,9 @@ const AppContent = () => {
         <Route path="/" element={<Index />} />
         <Route path="/search" element={<Search />} />
         <Route path="/buy" element={<Buy />} />
+        <Route path="/buy/:listingId" element={<Buy />} />
         <Route path="/rent" element={<Rent />} />
+        <Route path="/rent/:listingId" element={<Rent />} />
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/manifesto" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />

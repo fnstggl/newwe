@@ -7,13 +7,15 @@ import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
 const Buy = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { listingId } = useParams();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -54,6 +56,16 @@ const Buy = () => {
     'Score: High to Low',
     'Newest Listed'
   ];
+
+  // Load property from URL parameter if present
+  useEffect(() => {
+    if (listingId && properties.length > 0) {
+      const property = properties.find(p => p.listing_id === listingId);
+      if (property) {
+        setSelectedProperty(property);
+      }
+    }
+  }, [listingId, properties]);
 
   useEffect(() => {
     fetchNeighborhoods();
@@ -424,7 +436,16 @@ const Buy = () => {
     if (!user && index >= 6) {
       return;
     }
+    
+    // Update URL with listing ID
+    navigate(`/buy/${property.listing_id}`, { replace: true });
     setSelectedProperty(property);
+  };
+
+  const handleClosePropertyDetail = () => {
+    // Navigate back to main buy page
+    navigate('/buy', { replace: true });
+    setSelectedProperty(null);
   };
 
   // Filter neighborhoods based on search term
@@ -801,7 +822,7 @@ const Buy = () => {
         <PropertyDetail
           property={selectedProperty}
           isRental={false}
-          onClose={() => setSelectedProperty(null)}
+          onClose={handleClosePropertyDetail}
         />
       )}
     </div>
