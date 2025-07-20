@@ -76,13 +76,13 @@ const Rent = () => {
     switch (grade) {
       case 'A+': return 98;
       case 'A': return 93;
-      case 'A-': return 93; // A- maps to A (93+)
+      case 'A-': return 93;
       case 'B+': return 88;
       case 'B': return 83;
-      case 'B-': return 83; // B- maps to B (83+)
+      case 'B-': return 83;
       case 'C+': return 75;
       case 'C': return 70;
-      case 'C-': return 70; // C- maps to C (70+)
+      case 'C-': return 70;
       default: return 0;
     }
   };
@@ -103,14 +103,59 @@ const Rent = () => {
     return propertyValue >= minValue;
   };
 
+  // Function to fetch specific property by listing ID
+  const fetchPropertyByListingId = async (targetListingId: string) => {
+    try {
+      // Try to fetch from undervalued_rentals first
+      const { data: rentalData, error: rentalError } = await supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('listing_id', targetListingId)
+        .eq('status', 'active')
+        .single();
+
+      if (rentalData && !rentalError) {
+        return rentalData;
+      }
+
+      // If not found, try undervalued_rent_stabilized
+      const { data: rentStabilizedData, error: rentStabilizedError } = await supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('listing_id', targetListingId)
+        .eq('display_status', 'active')
+        .single();
+
+      if (rentStabilizedData && !rentStabilizedError) {
+        return normalizeRentStabilizedProperty(rentStabilizedData);
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error fetching property by listing ID:', error);
+      return null;
+    }
+  };
+
   // Load property from URL parameter if present
   useEffect(() => {
-    if (listingId && properties.length > 0) {
-      const property = properties.find(p => p.listing_id === listingId);
-      if (property) {
-        setSelectedProperty(property);
+    const loadPropertyFromUrl = async () => {
+      if (listingId) {
+        // First check if the property is already in our loaded properties
+        const property = properties.find(p => p.listing_id === listingId);
+        if (property) {
+          setSelectedProperty(property);
+        } else {
+          // If not found in loaded properties, fetch it directly
+          const fetchedProperty = await fetchPropertyByListingId(listingId);
+          if (fetchedProperty) {
+            setSelectedProperty(fetchedProperty);
+          }
+        }
       }
-    }
+    };
+
+    loadPropertyFromUrl();
   }, [listingId, properties]);
 
   useEffect(() => {
