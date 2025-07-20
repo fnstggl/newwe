@@ -1,4 +1,3 @@
-
 export interface NeighborhoodInfo {
   description: string;
   pros: string[];
@@ -180,6 +179,11 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
     description: 'A trendy Manhattan neighborhood with boutique shopping, upscale dining, and a mix of old-world Italian charm with modern sophistication.',
     pros: ['Great shopping', 'Excellent dining', 'Historic charm'],
     cons: ['Very expensive', 'Tourist crowds', 'Limited space']
+  },
+  'park slope': {
+    description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
+    pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
+    cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
   },
   'prospect heights': {
     description: 'A diverse Brooklyn neighborhood adjacent to Prospect Park, known for its cultural institutions like the Brooklyn Museum and Botanic Garden.',
