@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
-import { GooeyFilter, Toggle } from "@/components/ui/liquid-toggle";
+import { Search as SearchIcon, ChevronDown, ChevronUp, X, Filter } from "lucide-react";
+import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -8,7 +8,7 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { UndervaluedRentStabilized } from "@/types/database";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 
@@ -16,6 +16,7 @@ const Rent = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
+  const isMobile = useIsMobile();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -23,7 +24,6 @@ const Rent = () => {
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
-  const [rentStabilizedOnly, setRentStabilizedOnly] = useState(false);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -44,6 +44,9 @@ const Rent = () => {
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
 
+  // Mobile filters state
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
   const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
@@ -59,103 +62,14 @@ const Rent = () => {
     'Newest Listed'
   ];
 
-  // Helper function to calculate grade from score for rent-stabilized properties
-  const calculateGradeFromScore = (score: number): string => {
-    if (score >= 98) return 'A+';
-    if (score >= 93) return 'A';
-    if (score >= 88) return 'B+';
-    if (score >= 83) return 'B';
-    if (score >= 75) return 'C+';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
-    return 'F';
-  };
-
-  // Helper function to get minimum score required for a grade
-  const getMinScoreForGrade = (grade: string): number => {
-    switch (grade) {
-      case 'A+': return 98;
-      case 'A': return 93;
-      case 'A-': return 93;
-      case 'B+': return 88;
-      case 'B': return 83;
-      case 'B-': return 83;
-      case 'C+': return 75;
-      case 'C': return 70;
-      case 'C-': return 70;
-      default: return 0;
-    }
-  };
-
-  // Helper function to check if a regular rental grade meets minimum requirement
-  const meetsMinGrade = (propertyGrade: string, minGradeRequired: string) => {
-    if (!minGradeRequired || !propertyGrade) return true;
-    
-    const gradeValues: { [key: string]: number } = {
-      'A+': 9, 'A': 8, 'A-': 7,
-      'B+': 6, 'B': 5, 'B-': 4,
-      'C+': 3, 'C': 2, 'C-': 1
-    };
-    
-    const propertyValue = gradeValues[propertyGrade] || 0;
-    const minValue = gradeValues[minGradeRequired] || 0;
-    
-    return propertyValue >= minValue;
-  };
-
-  // Function to fetch specific property by listing ID
-  const fetchPropertyByListingId = async (targetListingId: string) => {
-    try {
-      // Try to fetch from undervalued_rentals first
-      const { data: rentalData, error: rentalError } = await supabase
-        .from('undervalued_rentals')
-        .select('*')
-        .eq('listing_id', targetListingId)
-        .eq('status', 'active')
-        .single();
-
-      if (rentalData && !rentalError) {
-        return rentalData;
-      }
-
-      // If not found, try undervalued_rent_stabilized
-      const { data: rentStabilizedData, error: rentStabilizedError } = await supabase
-        .from('undervalued_rent_stabilized')
-        .select('*')
-        .eq('listing_id', targetListingId)
-        .eq('display_status', 'active')
-        .single();
-
-      if (rentStabilizedData && !rentStabilizedError) {
-        return normalizeRentStabilizedProperty(rentStabilizedData);
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Error fetching property by listing ID:', error);
-      return null;
-    }
-  };
-
   // Load property from URL parameter if present
   useEffect(() => {
-    const loadPropertyFromUrl = async () => {
-      if (listingId) {
-        // First check if the property is already in our loaded properties
-        const property = properties.find(p => p.listing_id === listingId);
-        if (property) {
-          setSelectedProperty(property);
-        } else {
-          // If not found in loaded properties, fetch it directly
-          const fetchedProperty = await fetchPropertyByListingId(listingId);
-          if (fetchedProperty) {
-            setSelectedProperty(fetchedProperty);
-          }
-        }
+    if (listingId && properties.length > 0) {
+      const property = properties.find(p => p.listing_id === listingId);
+      if (property) {
+        setSelectedProperty(property);
       }
-    };
-
-    loadPropertyFromUrl();
+    }
   }, [listingId, properties]);
 
   useEffect(() => {
@@ -169,7 +83,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, rentStabilizedOnly, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -187,102 +101,139 @@ const Rent = () => {
 
   useEffect(() => {
     // Update meta tags for SEO
-    document.title = "NYC Rental Apartments - Find Undervalued Rentals | Realer Estate";
+    document.title = "Rent NYC Apartments - Find Undervalued Rentals | Realer Estate";
     
     // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
+    let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Rent smarter with real-time market analysis and transparent pricing data.');
     } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Find undervalued NYC rental apartments with advanced algorithms. Rent smarter with real-time market analysis and transparent pricing data.';
-      document.head.appendChild(meta);
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      metaDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Rent smarter with real-time market analysis and transparent pricing data.');
+      document.head.appendChild(metaDescription);
+    }
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://realerestate.org/rent');
+    } else {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('href', 'https://realerestate.org/rent');
+      document.head.appendChild(canonical);
     }
 
     // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', 'NYC Rental Apartments - Find Undervalued Rentals | Realer Estate');
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', 'Rent NYC Apartments - Find Undervalued Rentals | Realer Estate');
+    } else {
+      ogTitle = document.createElement('meta');
+      ogTitle.setAttribute('property', 'og:title');
+      ogTitle.setAttribute('content', 'Rent NYC Apartments - Find Undervalued Rentals | Realer Estate');
+      document.head.appendChild(ogTitle);
+    }
     
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) ogDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    } else {
+      ogDescription = document.createElement('meta');
+      ogDescription.setAttribute('property', 'og:description');
+      ogDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+      document.head.appendChild(ogDescription);
+    }
     
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/rent');
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://realerestate.org/rent');
+    } else {
+      ogUrl = document.createElement('meta');
+      ogUrl.setAttribute('property', 'og:url');
+      ogUrl.setAttribute('content', 'https://realerestate.org/rent');
+      document.head.appendChild(ogUrl);
+    }
 
     // Update Twitter tags
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) twitterTitle.setAttribute('content', 'NYC Rental Apartments - Find Undervalued Rentals | Realer Estate');
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', 'Rent NYC Apartments - Find Undervalued Rentals | Realer Estate');
+    } else {
+      twitterTitle = document.createElement('meta');
+      twitterTitle.setAttribute('name', 'twitter:title');
+      twitterTitle.setAttribute('content', 'Rent NYC Apartments - Find Undervalued Rentals | Realer Estate');
+      document.head.appendChild(twitterTitle);
+    }
     
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) twitterDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+    } else {
+      twitterDescription = document.createElement('meta');
+      twitterDescription.setAttribute('name', 'twitter:description');
+      twitterDescription.setAttribute('content', 'Find undervalued NYC rental apartments with advanced algorithms. Your unfair advantage in rentals.');
+      document.head.appendChild(twitterDescription);
+    }
     
-    const twitterUrl = document.querySelector('meta[name="twitter:url"]');
-    if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/rent');
-
-    // Update canonical URL
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute('href', 'https://realerestate.org/rent');
+    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (twitterUrl) {
+      twitterUrl.setAttribute('content', 'https://realerestate.org/rent');
+    } else {
+      twitterUrl = document.createElement('meta');
+      twitterUrl.setAttribute('name', 'twitter:url');
+      twitterUrl.setAttribute('content', 'https://realerestate.org/rent');
+      document.head.appendChild(twitterUrl);
+    }
   }, []);
 
   const fetchNeighborhoods = async () => {
     try {
-      // Fetch neighborhoods from both tables
-      const [rentalsResult, rentStabilizedResult] = await Promise.all([
-        supabase
-          .from('undervalued_rentals')
-          .select('neighborhood')
-          .not('neighborhood', 'is', null)
-          .order('neighborhood'),
-        supabase
-          .from('undervalued_rent_stabilized')
-          .select('neighborhood')
-          .not('neighborhood', 'is', null)
-          .order('neighborhood')
-      ]);
+      const { data, error } = await supabase
+        .from('undervalued_rentals')
+        .select('neighborhood')
+        .not('neighborhood', 'is', null)
+        .order('neighborhood');
 
-      const rentalNeighborhoods = rentalsResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
-      const rentStabilizedNeighborhoods = rentStabilizedResult.data?.map(item => item.neighborhood).filter(Boolean) || [];
+      if (error) {
+        console.error('Error fetching neighborhoods:', error);
+        return;
+      }
+
+      const dbNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
       
-      const allNeighborhoods = [...rentalNeighborhoods, ...rentStabilizedNeighborhoods];
-      const uniqueNeighborhoods = [...new Set(allNeighborhoods)].map(neighborhood => 
-        neighborhood === 'Bedford-Stuyvesant' ? 'Bed-Stuy' : neighborhood
-      );
-      setNeighborhoods(uniqueNeighborhoods);
+      // Add missing neighborhoods that should be available
+      const additionalNeighborhoods = [
+        // Manhattan
+        'west-village',
+        'lower-east-side', 
+        'little-italy',
+        'nolita',
+        'soho',
+        'tribeca',
+        'two-bridges',
+        'murray-hill',
+        // Brooklyn
+        'williamsburg',
+        'prospect-heights',
+        'park-slope',
+        // Queens
+        'long-island-city',
+        'sunnyside',
+        'woodside',
+        // Bronx
+        'mott-haven',
+        'melrose',
+        'south-bronx'
+      ];
+
+      // Combine database neighborhoods with additional ones, removing duplicates
+      const allNeighborhoods = [...new Set([...dbNeighborhoods, ...additionalNeighborhoods])].sort();
+      setNeighborhoods(allNeighborhoods);
     } catch (error) {
       console.error('Error fetching neighborhoods:', error);
     }
-  };
-
-  const normalizeRentStabilizedProperty = (property: any): any => {
-    return {
-      ...property,
-      // Map rent-stabilized fields to match regular rental fields
-      zipcode: property.zip_code,
-      rent_per_sqft: property.sqft ? property.monthly_rent / property.sqft : null,
-      grade: 'RS', // Special grade for rent-stabilized
-      score: property.rent_stabilized_confidence,
-      discount_percent: property.undervaluation_percent,
-      reasoning: `Rent-stabilized property with ${property.rent_stabilized_confidence}% confidence`,
-      listed_at: property.discovered_at,
-      days_on_market: null,
-      built_in: property.year_built,
-      no_fee: false,
-      pet_friendly: false,
-      laundry_available: false,
-      gym_available: false,
-      doorman_building: false,
-      elevator_building: false,
-      rooftop_access: false,
-      agents: [],
-      building_info: {},
-      status: property.display_status || 'active',
-      likely_rented: false,
-      last_seen_in_search: property.last_verified,
-      analysis_date: property.analysis_date || property.created_at,
-      annual_savings: property.potential_annual_savings,
-      isRentStabilized: true // Flag to identify rent-stabilized properties
-    };
   };
 
   const fetchProperties = async (reset = false) => {
@@ -290,294 +241,129 @@ const Rent = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      if (rentStabilizedOnly) {
-        // Only fetch rent-stabilized properties
-        let rentStabilizedQuery = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
+      let query = supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('status', 'active')
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
 
-        // Apply filters to rent-stabilized query
-        if (searchTerm.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
-        }
-
-        if (zipCode.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
-        }
-
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
-          }
-        }
-
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              // Studio: filter for exactly 0 bedrooms
-              rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
-            } else {
-              // For other values: filter for that number or more bedrooms
-              rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
-            }
-          }
-        }
-
-        // Apply min grade filter for rent-stabilized (filter by score)
-        if (minGrade.trim()) {
-          const minScore = getMinScoreForGrade(minGrade.trim());
-          rentStabilizedQuery = rentStabilizedQuery.gte('rent_stabilized_confidence', minScore);
-        }
-
-        if (selectedNeighborhoods.length > 0) {
-          const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
-          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
-        }
-
-        // Additional filters for rent-stabilized
-        if (selectedBoroughs.length > 0) {
-          rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
-        }
-
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
-
-        if (addressSearch.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
-        }
-
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
-          }
-        }
-
-        // Apply sorting for rent-stabilized
-        switch (sortBy) {
-          case 'Price: Low to High':
-            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
-            break;
-          case 'Price: High to Low':
-            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
-            break;
-          case 'Sqft: Low to High':
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
-            break;
-          case 'Sqft: High to Low':
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsFirst: false });
-            break;
-          case 'Score: Low to High':
-            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: true });
-            break;
-          case 'Score: High to Low':
-            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: false });
-            break;
-          case 'Newest Listed':
-            rentStabilizedQuery = rentStabilizedQuery.order('discovered_at', { ascending: false });
-            break;
-          default: // Featured
-            rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
-            break;
-        }
-
-        const { data, error } = await rentStabilizedQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
-
-        if (error) {
-          console.error('❌ RENT STABILIZED ERROR:', error);
-          setProperties([]);
-          return;
-        }
-
-        const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
-        const resultData = sortBy === 'Featured' ? normalizedData.sort(() => Math.random() - 0.5) : normalizedData;
-
-        if (reset) {
-          setProperties(resultData);
-          setOffset(ITEMS_PER_PAGE);
-        } else {
-          setProperties(prev => [...prev, ...resultData]);
-          setOffset(prev => prev + ITEMS_PER_PAGE);
-        }
-
-        setHasMore(data?.length === ITEMS_PER_PAGE);
-      } else {
-        // Build queries for both tables
-        let rentalsQuery = supabase
-          .from('undervalued_rentals')
-          .select('*')
-          .eq('status', 'active');
-
-        let rentStabilizedQuery = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
-
-        // Apply filters to both queries
-        if (searchTerm.trim()) {
-          rentalsQuery = rentalsQuery.ilike('address', `%${searchTerm.trim()}%`);
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
-        }
-
-        if (zipCode.trim()) {
-          rentalsQuery = rentalsQuery.ilike('zipcode', `${zipCode.trim()}%`);
-          rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
-        }
-
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            rentalsQuery = rentalsQuery.lte('monthly_rent', priceValue);
-            rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
-          }
-        }
-
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              // Studio: filter for exactly 0 bedrooms
-              rentalsQuery = rentalsQuery.eq('bedrooms', 0);
-              rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
-            } else {
-              // For other values: filter for that number or more bedrooms
-              rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
-              rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
-            }
-          }
-        }
-
-        // Apply min grade filter differently for each table
-        if (minGrade.trim()) {
-          // For regular rentals: filter by grade column using hierarchical comparison
-          const gradeHierarchy: { [key: string]: number } = {
-            'A+': 9, 'A': 8, 'A-': 7,
-            'B+': 6, 'B': 5, 'B-': 4,
-            'C+': 3, 'C': 2, 'C-': 1
-          };
-          
-          const minGradeValue = gradeHierarchy[minGrade.trim()] || 0;
-          const allowedGrades = Object.keys(gradeHierarchy).filter(
-            grade => gradeHierarchy[grade] >= minGradeValue
-          );
-          
-          rentalsQuery = rentalsQuery.in('grade', allowedGrades);
-
-          // For rent-stabilized: filter by score
-          const minScore = getMinScoreForGrade(minGrade.trim());
-          rentStabilizedQuery = rentStabilizedQuery.gte('rent_stabilized_confidence', minScore);
-        }
-
-        if (selectedNeighborhoods.length > 0) {
-          const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
-          rentalsQuery = rentalsQuery.in('neighborhood', mappedNeighborhoods);
-          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', mappedNeighborhoods);
-        }
-
-        // Additional filters for both queries
-        if (selectedBoroughs.length > 0) {
-          rentalsQuery = rentalsQuery.in('borough', selectedBoroughs);
-          rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
-        }
-
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            rentalsQuery = rentalsQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
-            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
-
-        if (addressSearch.trim()) {
-          rentalsQuery = rentalsQuery.ilike('address', `%${addressSearch.trim()}%`);
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
-        }
-
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            rentalsQuery = rentalsQuery.gte('discount_percent', discountValue);
-            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
-          }
-        }
-
-        // Apply sorting to both queries
-        switch (sortBy) {
-          case 'Price: Low to High':
-            rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: true });
-            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
-            break;
-          case 'Price: High to Low':
-            rentalsQuery = rentalsQuery.order('monthly_rent', { ascending: false });
-            rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: false });
-            break;
-          case 'Sqft: Low to High':
-            rentalsQuery = rentalsQuery.order('sqft', { ascending: true, nullsFirst: true });
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
-            break;
-          case 'Sqft: High to Low':
-            rentalsQuery = rentalsQuery.order('sqft', { ascending: false, nullsFirst: false });
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsFirst: false });
-            break;
-          case 'Score: Low to High':
-            rentalsQuery = rentalsQuery.order('score', { ascending: true });
-            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: true });
-            break;
-          case 'Score: High to Low':
-            rentalsQuery = rentalsQuery.order('score', { ascending: false });
-            rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: false });
-            break;
-          case 'Newest Listed':
-            rentalsQuery = rentalsQuery.order('days_on_market', { ascending: true });
-            rentStabilizedQuery = rentStabilizedQuery.order('discovered_at', { ascending: false });
-            break;
-          default: // Featured
-            rentalsQuery = rentalsQuery.order('created_at', { ascending: false });
-            rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
-            break;
-        }
-
-        // Execute both queries
-        const [rentalsResult, rentStabilizedResult] = await Promise.all([
-          rentalsQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
-          rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
-        ]);
-
-        if (rentalsResult.error) {
-          console.error('❌ RENTALS ERROR:', rentalsResult.error);
-        }
-
-        if (rentStabilizedResult.error) {
-          console.error('❌ RENT STABILIZED ERROR:', rentStabilizedResult.error);
-        }
-
-        const rentalsData = rentalsResult.data || [];
-        const rentStabilizedData = rentStabilizedResult.data || [];
-
-        // Normalize rent-stabilized properties
-        const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
-
-        // Combine and shuffle both types of properties
-        const combinedData = [...rentalsData, ...normalizedRentStabilized];
-        const resultData = sortBy === 'Featured' ? combinedData.sort(() => Math.random() - 0.5) : combinedData;
-
-        if (reset) {
-          setProperties(resultData);
-          setOffset(ITEMS_PER_PAGE);
-        } else {
-          setProperties(prev => [...prev, ...resultData]);
-          setOffset(prev => prev + ITEMS_PER_PAGE);
-        }
-
-        setHasMore(combinedData.length === ITEMS_PER_PAGE);
+      if (searchTerm.trim()) {
+        query = query.ilike('address', `%${searchTerm.trim()}%`);
       }
+
+      if (zipCode.trim()) {
+        query = query.ilike('zipcode', `${zipCode.trim()}%`);
+      }
+
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          query = query.lte('monthly_rent', priceValue);
+        }
+      }
+
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue)) {
+          if (bedroomValue === 0) {
+            // Studio: filter for exactly 0 bedrooms
+            query = query.eq('bedrooms', 0);
+          } else {
+            // For other values: filter for that number or more bedrooms
+            query = query.gte('bedrooms', bedroomValue);
+          }
+        }
+      }
+
+      if (minGrade.trim()) {
+        const gradeIndex = gradeOptions.indexOf(minGrade);
+        if (gradeIndex !== -1) {
+          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
+          query = query.in('grade', allowedGrades);
+        }
+      }
+
+      if (selectedNeighborhoods.length > 0) {
+        query = query.in('neighborhood', selectedNeighborhoods);
+      }
+
+      // Additional filters
+      if (selectedBoroughs.length > 0) {
+        query = query.in('borough', selectedBoroughs);
+      }
+
+      if (minSqft.trim()) {
+        const sqftValue = parseInt(minSqft.trim());
+        if (!isNaN(sqftValue) && sqftValue > 0) {
+          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
+        }
+      }
+
+      if (addressSearch.trim()) {
+        query = query.ilike('address', `%${addressSearch.trim()}%`);
+      }
+
+      if (minDiscount.trim()) {
+        const discountValue = parseInt(minDiscount.replace('%', ''));
+        if (!isNaN(discountValue) && discountValue > 0) {
+          query = query.gte('discount_percent', discountValue);
+        }
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case 'Price: Low to High':
+          query = query.order('monthly_rent', { ascending: true });
+          break;
+        case 'Price: High to Low':
+          query = query.order('monthly_rent', { ascending: false });
+          break;
+        case 'Sqft: Low to High':
+          query = query.order('sqft', { ascending: true, nullsFirst: true });
+          break;
+        case 'Sqft: High to Low':
+          query = query.order('sqft', { ascending: false, nullsFirst: false });
+          break;
+        case 'Score: Low to High':
+          query = query.order('score', { ascending: true });
+          break;
+        case 'Score: High to Low':
+          query = query.order('score', { ascending: false });
+          break;
+        case 'Newest Listed':
+          query = query.order('days_on_market', { ascending: true });
+          break;
+        default: // Featured
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
+
+      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+
+      if (error) {
+        console.error('❌ SUPABASE ERROR:', error);
+        setProperties([]);
+        return;
+      }
+
+      if (!data || !Array.isArray(data)) {
+        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+        setProperties([]);
+        return;
+      }
+
+      // Only shuffle if Featured sorting
+      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
+
+      if (reset) {
+        setProperties(resultData);
+        setOffset(ITEMS_PER_PAGE);
+      } else {
+        setProperties(prev => [...prev, ...resultData]);
+        setOffset(prev => prev + ITEMS_PER_PAGE);
+      }
+
+      setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
       setProperties([]);
@@ -598,15 +384,14 @@ const Rent = () => {
         ? prev.filter(n => n !== neighborhood)
         : [...prev, neighborhood]
     );
-    setNeighborhoodSearchTerm("");
-  };
-
-  const removeNeighborhood = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
   };
 
   const clearNeighborhoods = () => {
     setSelectedNeighborhoods([]);
+  };
+
+  const removeNeighborhood = (neighborhood: string) => {
+    setSelectedNeighborhoods(prev => prev.filter(n => n !== neighborhood));
   };
 
   const toggleBorough = (borough: string) => {
@@ -625,16 +410,7 @@ const Rent = () => {
     setSelectedBoroughs(prev => prev.filter(b => b !== borough));
   };
 
-  const getGradeColors = (grade: string, isRentStabilized?: boolean) => {
-    if (isRentStabilized) {
-      return {
-        badge: 'bg-green-500 text-white border-green-600',
-        scoreText: 'text-green-400',
-        scoreBorder: 'border-green-600',
-        hover: 'hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:border-green-400/40'
-      };
-    }
-    
+  const getGradeColors = (grade: string) => {
     if (grade === 'A+') {
       return {
         badge: 'bg-white text-black border-gray-300',
@@ -683,7 +459,7 @@ const Rent = () => {
     setSelectedProperty(null);
   };
 
-  // Filter neighborhoods based on search term and display Bed-Stuy instead of Bedford-Stuyvesant
+  // Filter neighborhoods based on search term
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
@@ -702,9 +478,27 @@ const Rent = () => {
           </p>
         </div>
 
+        {/* Mobile Filters Button */}
+        {isMobile && (
+          <div className="mb-6">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-4 text-white hover:border-blue-500/40 transition-all"
+            >
+              <Filter className="h-5 w-5" />
+              <span className="font-medium">Filters</span>
+              {showMobileFilters ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Search Filters */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
-          <div className="grid md:grid-cols-6 gap-4">
+        <div className={`bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10 ${isMobile && !showMobileFilters ? 'hidden' : ''}`}>
+          <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Neighborhoods
@@ -738,7 +532,7 @@ const Rent = () => {
                 </div>
                 
                 {showNeighborhoodDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mb-1 bg-gray-900 border border-gray-700 rounded-xl p-4 z-[100] max-h-80 overflow-y-auto">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-sm font-medium text-gray-300">Filter by Neighborhoods</span>
                       {selectedNeighborhoods.length > 0 && (
@@ -825,19 +619,6 @@ const Rent = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight text-center">
-                Rent Stabilized
-              </label>
-              <div className="flex justify-center mt-4">
-                <Toggle 
-                  checked={rentStabilizedOnly} 
-                  onCheckedChange={setRentStabilizedOnly} 
-                  variant="default"
-                  className={rentStabilizedOnly ? '[--c-background:#000000]' : ''}
-                />
-              </div>
-            </div>
           </div>
 
           {/* Additional Filters Dropdown Toggle */}
@@ -856,7 +637,7 @@ const Rent = () => {
 
           {/* Additional Filters Section */}
           {showAdditionalFilters && (
-            <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4">
+          <div className="grid md:grid-cols-5 gap-4 mt-6 pt-4">
               <div className="relative" ref={boroughDropdownRef}>
                 <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                   Borough
@@ -978,7 +759,7 @@ const Rent = () => {
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade, property.isRentStabilized);
+              const gradeColors = getGradeColors(property.grade);
               const isBlurred = !user && index >= 6;
               
               return (
@@ -1013,7 +794,6 @@ const Rent = () => {
               );
             })}
           </div>
-
         </div>
 
         {/* Loading state */}
@@ -1029,24 +809,6 @@ const Rent = () => {
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
             </HoverButton>
-          </div>
-        )}
-
-        {/* Early Access Section - only show when there are no more properties to load */}
-        {user && !loading && !hasMore && properties.length > 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tighter font-inter">
-              Want to be the first to know when new deals in {selectedNeighborhoods.length > 0 ? selectedNeighborhoods.join(', ') : 'NYC'} are listed?
-            </h3>
-            <p className="text-2xl text-gray-400 mb-12 tracking-tight font-inter">
-              The best deals in the city get bought in days. Don't miss them.
-            </p>
-            <button 
-              onClick={() => navigate('/pricing')}
-              className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:border hover:border-white shadow-lg font-inter tracking-tight"
-            >
-              Early Access
-            </button>
           </div>
         )}
 

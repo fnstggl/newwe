@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search as SearchIcon, ChevronDown, ChevronUp, X } from "lucide-react";
+import { Search as SearchIcon, ChevronDown, ChevronUp, X, Filter } from "lucide-react";
 import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
@@ -15,6 +16,7 @@ const Buy = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
+  const isMobile = useIsMobile();
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -41,6 +43,9 @@ const Buy = () => {
   const [sortBy, setSortBy] = useState("Featured");
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Mobile filters state
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -473,8 +478,26 @@ const Buy = () => {
           </p>
         </div>
 
+        {/* Mobile Filters Button */}
+        {isMobile && (
+          <div className="mb-6">
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-4 text-white hover:border-blue-500/40 transition-all"
+            >
+              <Filter className="h-5 w-5" />
+              <span className="font-medium">Filters</span>
+              {showMobileFilters ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Search Filters */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10">
+        <div className={`bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10 ${isMobile && !showMobileFilters ? 'hidden' : ''}`}>
           <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
