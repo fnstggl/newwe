@@ -244,8 +244,7 @@ const Rent = () => {
       let query = supabase
         .from('undervalued_rentals')
         .select('*')
-        .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+        .eq('status', 'active');
 
       if (searchTerm.trim()) {
         query = query.ilike('address', `%${searchTerm.trim()}%`);
