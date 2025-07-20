@@ -57,6 +57,25 @@ const Rent = () => {
     'Newest Listed'
   ];
 
+  // Helper function to check if a grade meets the minimum requirement
+  const meetsMinGrade = (propertyGrade: string, minGradeRequired: string) => {
+    if (!minGradeRequired || !propertyGrade) return true;
+    
+    // Handle rent-stabilized properties (grade = 'RS')
+    if (propertyGrade === 'RS') return true;
+    
+    const gradeValues: { [key: string]: number } = {
+      'A+': 9, 'A': 8, 'A-': 7,
+      'B+': 6, 'B': 5, 'B-': 4,
+      'C+': 3, 'C': 2, 'C-': 1
+    };
+    
+    const propertyValue = gradeValues[propertyGrade] || 0;
+    const minValue = gradeValues[minGradeRequired] || 0;
+    
+    return propertyValue >= minValue;
+  };
+
   useEffect(() => {
     fetchNeighborhoods();
     fetchProperties(true);
@@ -259,7 +278,7 @@ const Rent = () => {
             rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
             break;
           case 'Sqft: High to Low':
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsLast: true });
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsFirst: false });
             break;
           case 'Score: Low to High':
             rentStabilizedQuery = rentStabilizedQuery.order('rent_stabilized_confidence', { ascending: true });
@@ -283,7 +302,15 @@ const Rent = () => {
           return;
         }
 
-        const normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
+        let normalizedData = data?.map(normalizeRentStabilizedProperty) || [];
+        
+        // Apply min grade filter after fetching (since rent-stabilized properties have grade 'RS')
+        if (minGrade.trim()) {
+          normalizedData = normalizedData.filter(property => 
+            meetsMinGrade(property.grade, minGrade.trim())
+          );
+        }
+        
         const resultData = sortBy === 'Featured' ? normalizedData.sort(() => Math.random() - 0.5) : normalizedData;
 
         if (reset) {
@@ -334,6 +361,11 @@ const Rent = () => {
           }
         }
 
+        // Apply min grade filter to regular rentals query
+        if (minGrade.trim()) {
+          rentalsQuery = rentalsQuery.gte('grade', minGrade.trim());
+        }
+
         if (selectedNeighborhoods.length > 0) {
           const mappedNeighborhoods = selectedNeighborhoods.map(n => n === 'Bed-Stuy' ? 'Bedford-Stuyvesant' : n);
           rentalsQuery = rentalsQuery.in('neighborhood', mappedNeighborhoods);
@@ -382,8 +414,8 @@ const Rent = () => {
             rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: true, nullsFirst: true });
             break;
           case 'Sqft: High to Low':
-            rentalsQuery = rentalsQuery.order('sqft', { ascending: false, nullsLast: true });
-            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsLast: true });
+            rentalsQuery = rentalsQuery.order('sqft', { ascending: false, nullsFirst: false });
+            rentStabilizedQuery = rentStabilizedQuery.order('sqft', { ascending: false, nullsFirst: false });
             break;
           case 'Score: Low to High':
             rentalsQuery = rentalsQuery.order('score', { ascending: true });
@@ -418,10 +450,17 @@ const Rent = () => {
         }
 
         const rentalsData = rentalsResult.data || [];
-        const rentStabilizedData = rentStabilizedResult.data || [];
+        let rentStabilizedData = rentStabilizedResult.data || [];
 
         // Normalize rent-stabilized properties
-        const normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
+        let normalizedRentStabilized = rentStabilizedData.map(normalizeRentStabilizedProperty);
+        
+        // Apply min grade filter to rent-stabilized properties after normalization
+        if (minGrade.trim()) {
+          normalizedRentStabilized = normalizedRentStabilized.filter(property => 
+            meetsMinGrade(property.grade, minGrade.trim())
+          );
+        }
 
         // Combine and shuffle both types of properties
         const combinedData = [...rentalsData, ...normalizedRentStabilized];
