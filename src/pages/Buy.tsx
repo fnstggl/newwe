@@ -259,8 +259,14 @@ const Buy = () => {
 
       if (bedrooms.trim()) {
         const bedroomValue = parseInt(bedrooms.trim());
-        if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-          query = query.gte('bedrooms', bedroomValue);
+        if (!isNaN(bedroomValue)) {
+          if (bedroomValue === 0) {
+            // Studio: filter for exactly 0 bedrooms
+            query = query.eq('bedrooms', 0);
+          } else {
+            // For other values: filter for that number or more bedrooms
+            query = query.gte('bedrooms', bedroomValue);
+          }
         }
       }
 

@@ -315,8 +315,14 @@ const Rent = () => {
 
         if (bedrooms.trim()) {
           const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-            rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+          if (!isNaN(bedroomValue)) {
+            if (bedroomValue === 0) {
+              // Studio: filter for exactly 0 bedrooms
+              rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
+            } else {
+              // For other values: filter for that number or more bedrooms
+              rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+            }
           }
         }
 
@@ -435,9 +441,16 @@ const Rent = () => {
 
         if (bedrooms.trim()) {
           const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue) && bedroomValue >= 0) {
-            rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
-            rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+          if (!isNaN(bedroomValue)) {
+            if (bedroomValue === 0) {
+              // Studio: filter for exactly 0 bedrooms
+              rentalsQuery = rentalsQuery.eq('bedrooms', 0);
+              rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
+            } else {
+              // For other values: filter for that number or more bedrooms
+              rentalsQuery = rentalsQuery.gte('bedrooms', bedroomValue);
+              rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
+            }
           }
         }
 
