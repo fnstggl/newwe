@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Press from "./pages/Press";
 import NotFound from "./pages/NotFound";
 import CancelSubscription from "./pages/CancelSubscription";
 import ManageSubscription from "./pages/ManageSubscription";
@@ -52,6 +53,7 @@ const AppContent = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/press" element={<Press />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <MobileNavigation />

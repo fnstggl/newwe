@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -166,6 +167,9 @@ const Index = () => {
               </Link>
               <Link to="/terms" className="hover:text-gray-300 transition-colors">
                 Terms of Service
+              </Link>
+              <Link to="/press" className="hover:text-gray-300 transition-colors">
+                Press
               </Link>
             </div>
           </div>
