@@ -14,11 +14,11 @@ const Press = () => {
     const assets = [
       { url: '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', name: 'realer-estate-founders.png' },
       { url: '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', name: 'realer-estate-platform-screenshot.png' },
-      { url: '/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png', name: 'realer-estate-save-thousands.png' },
+      { url: '/lovable-uploads/81dfa622-d136-49f1-bfa2-6cf1e63ee82d.png', name: 'realer-estate-never-overpay.png' },
       { url: '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', name: 'realer-estate-logo-black.png' },
       { url: '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png', name: 'realer-estate-logo-white.png' },
       { url: '/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png', name: 'realer-estate-logo-gradient.png' },
-      { url: '/lovable-uploads/1f741d6d-8992-412b-b8d1-e78eb5a8434b.png', name: 'realer-estate-never-overpay.png' },
+      { url: '/lovable-uploads/1f741d6d-8992-412b-b8d1-e78eb5a8434b.png', name: 'realer-estate-never-overpay-text.png' },
       { url: '/lovable-uploads/bbc73f16-b007-4cb7-be6b-c38f863b85d0.png', name: 'realer-estate-circle-logo-black.png' },
       { url: '/lovable-uploads/80f5f787-48b0-48d6-b1cf-11b051ff1254.png', name: 'realer-estate-circle-logo-white.png' }
     ];
@@ -26,9 +26,15 @@ const Press = () => {
     try {
       // Fetch all images and add to ZIP
       for (const asset of assets) {
-        const response = await fetch(asset.url);
-        const blob = await response.blob();
-        zip.file(asset.name, blob);
+        try {
+          const response = await fetch(asset.url);
+          if (response.ok) {
+            const blob = await response.blob();
+            zip.file(asset.name, blob);
+          }
+        } catch (error) {
+          console.warn(`Failed to fetch ${asset.name}:`, error);
+        }
       }
 
       // Generate ZIP file
@@ -182,8 +188,8 @@ const Press = () => {
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
-              src="/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png" 
-              alt="Save thousands on your apartment" 
+              src="/lovable-uploads/81dfa622-d136-49f1-bfa2-6cf1e63ee82d.png" 
+              alt="Never overpay in NYC again" 
               className="w-full h-full object-cover"
               loading="eager"
               decoding="async"
