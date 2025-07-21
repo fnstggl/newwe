@@ -8,11 +8,22 @@ const Press = () => {
   }, []);
 
   const downloadMediaKit = () => {
-    // Create a ZIP file download with the media assets
-    const link = document.createElement('a');
-    link.href = '/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png';
-    link.download = 'realer-estate-media-kit.zip';
-    link.click();
+    // Download individual assets since ZIP wasn't working
+    const assets = [
+      '/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png',
+      '/lovable-uploads/14a45727-4f05-4b01-b610-9d59c0c8b88b.png',
+      '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png',
+      '/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png',
+      '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png',
+      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png'
+    ];
+    
+    assets.forEach((asset, index) => {
+      const link = document.createElement('a');
+      link.href = asset;
+      link.download = `realer-estate-asset-${index + 1}.png`;
+      link.click();
+    });
   };
 
   return (
@@ -62,32 +73,26 @@ const Press = () => {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">🧠</div>
             <div className="text-2xl font-bold mb-2">16-year-old solo founder</div>
             <div className="text-gray-400 text-sm">Building the future of real estate</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">🏠</div>
             <div className="text-2xl font-bold mb-2">6,000+ users served</div>
             <div className="text-gray-400 text-sm">And growing every day</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">💸</div>
             <div className="text-2xl font-bold mb-2">$500K+ rent savings surfaced</div>
             <div className="text-gray-400 text-sm">Real money back in pockets</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">🏙️</div>
             <div className="text-2xl font-bold mb-2">170+ NYC zip codes</div>
             <div className="text-gray-400 text-sm">Comprehensive city coverage</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">🤖</div>
             <div className="text-2xl font-bold mb-2">Real-time AI detection</div>
             <div className="text-gray-400 text-sm">Deal & rent stabilization analysis</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl mb-2">✅</div>
             <div className="text-2xl font-bold mb-2">100% free to find homes</div>
             <div className="text-gray-400 text-sm">No hidden costs or barriers</div>
           </div>
@@ -131,14 +136,32 @@ const Press = () => {
         <h2 className="text-3xl md:text-4xl font-semibold mb-12 tracking-tighter text-center">
           Media Kit
         </h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {/* Founder Photo - rectangular */}
+          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png" 
               alt="Realer Estate Founders" 
               className="w-full h-full object-cover"
             />
           </div>
+          {/* Platform Screenshot - rectangular */}
+          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+            <img 
+              src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
+              alt="Realer Estate Platform" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {/* Tagline Image - rectangular */}
+          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+            <img 
+              src="/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png" 
+              alt="Realer Estate Tagline" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {/* Logo - square */}
           <div className="aspect-square rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/14a45727-4f05-4b01-b610-9d59c0c8b88b.png" 
@@ -146,18 +169,20 @@ const Press = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800">
+          {/* Black Logo - square */}
+          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-white p-8">
             <img 
-              src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
-              alt="Realer Estate Platform" 
-              className="w-full h-full object-cover"
+              src="/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png" 
+              alt="Realer Estate Black Logo" 
+              className="w-full h-full object-contain"
             />
           </div>
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800">
+          {/* White Logo - square */}
+          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-black p-8">
             <img 
-              src="/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png" 
-              alt="Realer Estate Tagline" 
-              className="w-full h-full object-cover"
+              src="/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png" 
+              alt="Realer Estate White Logo" 
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
@@ -184,22 +209,6 @@ const Press = () => {
             </p>
             <p className="text-gray-400">
               Reach out to: <a href="mailto:press@realerestate.org" className="text-blue-400 hover:text-blue-300">press@realerestate.org</a>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20 px-4 max-w-4xl mx-auto">
-        <div className="text-center">
-          <div className="p-8 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <h3 className="text-2xl font-semibold mb-4 tracking-tight">Press Inquiries</h3>
-            <p className="text-xl text-gray-300 mb-2">Beckett Zahedi</p>
-            <p className="text-blue-400 hover:text-blue-300 mb-4">
-              <a href="mailto:press@realerestate.org">press@realerestate.org</a>
-            </p>
-            <p className="text-gray-400 text-sm">
-              Available for interviews, founder quotes, and custom data.
             </p>
           </div>
         </div>
