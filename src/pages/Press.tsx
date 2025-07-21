@@ -1,35 +1,52 @@
+
 import { useEffect } from "react";
 import { Download } from "lucide-react";
+import JSZip from "jszip";
 
 const Press = () => {
   useEffect(() => {
     document.title = "Press & Media Kit - Realer Estate";
   }, []);
 
-  const downloadMediaKit = () => {
-    // Download all media assets including the new ones
-    const assets = [
-      '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', // Founders photo
-      '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', // Platform screenshot
-      '/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png', // Save thousands screenshot
-      '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', // Black logo
-      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png', // White logo
-      '/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png', // Gradient logo
-      '/lovable-uploads/1f741d6d-8992-412b-b8d1-e78eb5a8434b.png', // Never overpay tagline
-      '/lovable-uploads/bbc73f16-b007-4cb7-be6b-c38f863b85d0.png', // Circle logo black
-      '/lovable-uploads/80f5f787-48b0-48d6-b1cf-11b051ff1254.png'  // Circle logo white
-    ];
+  const downloadMediaKit = async () => {
+    const zip = new JSZip();
     
-    assets.forEach((asset, index) => {
-      setTimeout(() => {
-        const link = document.createElement('a');
-        link.href = asset;
-        link.download = `realer-estate-asset-${index + 1}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }, index * 200); // Stagger downloads to avoid browser blocking
-    });
+    const assets = [
+      { url: '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', name: 'realer-estate-founders.png' },
+      { url: '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', name: 'realer-estate-platform-screenshot.png' },
+      { url: '/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png', name: 'realer-estate-save-thousands.png' },
+      { url: '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', name: 'realer-estate-logo-black.png' },
+      { url: '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png', name: 'realer-estate-logo-white.png' },
+      { url: '/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png', name: 'realer-estate-logo-gradient.png' },
+      { url: '/lovable-uploads/1f741d6d-8992-412b-b8d1-e78eb5a8434b.png', name: 'realer-estate-never-overpay.png' },
+      { url: '/lovable-uploads/bbc73f16-b007-4cb7-be6b-c38f863b85d0.png', name: 'realer-estate-circle-logo-black.png' },
+      { url: '/lovable-uploads/80f5f787-48b0-48d6-b1cf-11b051ff1254.png', name: 'realer-estate-circle-logo-white.png' }
+    ];
+
+    try {
+      // Fetch all images and add to ZIP
+      for (const asset of assets) {
+        const response = await fetch(asset.url);
+        const blob = await response.blob();
+        zip.file(asset.name, blob);
+      }
+
+      // Generate ZIP file
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = 'realer-estate-media-kit.zip';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL object
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Error creating ZIP file:', error);
+    }
   };
 
   return (
@@ -150,6 +167,8 @@ const Press = () => {
               src="/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png" 
               alt="Realer Estate Founders" 
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
             />
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
@@ -157,6 +176,8 @@ const Press = () => {
               src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
               alt="Realer Estate Platform" 
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
             />
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
@@ -164,6 +185,8 @@ const Press = () => {
               src="/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png" 
               alt="Save thousands on your apartment" 
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
             />
           </div>
         </div>
@@ -175,6 +198,8 @@ const Press = () => {
               src="/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png" 
               alt="Realer Estate Black Logo" 
               className="w-full h-full object-contain"
+              loading="eager"
+              decoding="async"
             />
           </div>
           <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-black p-4">
@@ -182,6 +207,8 @@ const Press = () => {
               src="/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png" 
               alt="Realer Estate White Logo" 
               className="w-full h-full object-contain"
+              loading="eager"
+              decoding="async"
             />
           </div>
           <div className="aspect-square">
@@ -189,6 +216,8 @@ const Press = () => {
               src="/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png" 
               alt="Realer Estate Gradient Logo" 
               className="w-full h-full object-contain rounded-xl"
+              loading="eager"
+              decoding="async"
             />
           </div>
         </div>
