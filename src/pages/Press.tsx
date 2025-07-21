@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Download } from "lucide-react";
 
@@ -8,22 +7,28 @@ const Press = () => {
   }, []);
 
   const downloadMediaKit = () => {
-    // Download individual assets since ZIP wasn't working
+    // Download all media assets including the new ones
     const assets = [
-      '/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png',
-      '/lovable-uploads/14a45727-4f05-4b01-b610-9d59c0c8b88b.png',
-      '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png',
-      '/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png',
-      '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png',
-      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png',
-      '/lovable-uploads/52cfcd99-b688-49af-bab4-cdbf7f96942b.png'
+      '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', // Founders photo
+      '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', // Platform screenshot
+      '/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png', // Save thousands screenshot
+      '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', // Black logo
+      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png', // White logo
+      '/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png', // Gradient logo
+      '/lovable-uploads/1f741d6d-8992-412b-b8d1-e78eb5a8434b.png', // Never overpay tagline
+      '/lovable-uploads/bbc73f16-b007-4cb7-be6b-c38f863b85d0.png', // Circle logo black
+      '/lovable-uploads/80f5f787-48b0-48d6-b1cf-11b051ff1254.png'  // Circle logo white
     ];
     
     assets.forEach((asset, index) => {
-      const link = document.createElement('a');
-      link.href = asset;
-      link.download = `realer-estate-asset-${index + 1}.png`;
-      link.click();
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.href = asset;
+        link.download = `realer-estate-asset-${index + 1}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, index * 200); // Stagger downloads to avoid browser blocking
     });
   };
 
@@ -142,7 +147,7 @@ const Press = () => {
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
-              src="/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png" 
+              src="/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png" 
               alt="Realer Estate Founders" 
               className="w-full h-full object-cover"
             />
@@ -156,8 +161,8 @@ const Press = () => {
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
-              src="/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png" 
-              alt="Realer Estate Tagline" 
+              src="/lovable-uploads/b988a744-e16d-48d9-ab23-c37b9a3a7dd8.png" 
+              alt="Save thousands on your apartment" 
               className="w-full h-full object-cover"
             />
           </div>
@@ -181,7 +186,7 @@ const Press = () => {
           </div>
           <div className="aspect-square">
             <img 
-              src="/lovable-uploads/52cfcd99-b688-49af-bab4-cdbf7f96942b.png" 
+              src="/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png" 
               alt="Realer Estate Gradient Logo" 
               className="w-full h-full object-contain rounded-xl"
             />
