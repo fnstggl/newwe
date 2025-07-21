@@ -38,7 +38,7 @@ const Press = () => {
             Everything you need to cover Realer Estate—the AI tool helping New Yorkers find the rent-stabilized and undervalued homes the city missed.
           </p>
           <p className="text-gray-400 text-sm tracking-tight">
-            Reach out at <a href="mailto:press@realerestate.org" className="text-blue-400 hover:text-blue-300">press@realerestate.org</a> for interviews, data, or quotes.
+            Reach out at <a href="mailto:info@realerestate.org" className="text-blue-400 hover:text-blue-300">info@realerestate.org</a> for interviews, data, or quotes.
           </p>
         </div>
         
@@ -209,7 +209,7 @@ const Press = () => {
               Want to break the story? We're happy to give you a first look.
             </p>
             <p className="text-gray-400">
-              Reach out to: <a href="mailto:press@realerestate.org" className="text-blue-400 hover:text-blue-300">press@realerestate.org</a>
+              Reach out to: <a href="mailto:info@realerestate.org" className="text-blue-400 hover:text-blue-300">info@realerestate.org</a>
             </p>
           </div>
         </div>
