@@ -179,11 +179,11 @@ const Press = () => {
               className="w-full h-full object-contain"
             />
           </div>
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-br from-blue-900 to-black p-4">
+          <div className="aspect-square">
             <img 
               src="/lovable-uploads/52cfcd99-b688-49af-bab4-cdbf7f96942b.png" 
               alt="Realer Estate Gradient Logo" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain rounded-xl"
             />
           </div>
         </div>
