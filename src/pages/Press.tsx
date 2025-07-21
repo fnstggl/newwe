@@ -15,7 +15,8 @@ const Press = () => {
       '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png',
       '/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png',
       '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png',
-      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png'
+      '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png',
+      '/lovable-uploads/52cfcd99-b688-49af-bab4-cdbf7f96942b.png'
     ];
     
     assets.forEach((asset, index) => {
@@ -139,21 +140,21 @@ const Press = () => {
         
         {/* Top row - Rectangular images */}
         <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+          <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png" 
               alt="Realer Estate Founders" 
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+          <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
               alt="Realer Estate Platform" 
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
+          <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png" 
               alt="Realer Estate Tagline" 
@@ -178,10 +179,10 @@ const Press = () => {
               className="w-full h-full object-contain"
             />
           </div>
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-gray-100 p-4">
+          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-gradient-to-br from-blue-900 to-black p-4">
             <img 
-              src="/lovable-uploads/14a45727-4f05-4b01-b610-9d59c0c8b88b.png" 
-              alt="Realer Estate Logo" 
+              src="/lovable-uploads/52cfcd99-b688-49af-bab4-cdbf7f96942b.png" 
+              alt="Realer Estate Gradient Logo" 
               className="w-full h-full object-contain"
             />
           </div>
