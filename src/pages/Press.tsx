@@ -136,8 +136,9 @@ const Press = () => {
         <h2 className="text-3xl md:text-4xl font-semibold mb-12 tracking-tighter text-center">
           Media Kit
         </h2>
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {/* Founder Photo - rectangular */}
+        
+        {/* Top row - Rectangular images */}
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/5bd91eba-07b5-420f-9c56-19a7fc519ef1.png" 
@@ -145,7 +146,6 @@ const Press = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Platform Screenshot - rectangular */}
           <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
@@ -153,7 +153,10 @@ const Press = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Tagline Image - rectangular */}
+        </div>
+        
+        {/* Second row - More rectangular images */}
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/8496bb74-c4bc-498a-b89b-80b944a6c7fa.png" 
@@ -161,24 +164,25 @@ const Press = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Logo - square */}
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800">
+          <div className="aspect-[4/3] rounded-xl overflow-hidden border border-gray-800">
             <img 
               src="/lovable-uploads/14a45727-4f05-4b01-b610-9d59c0c8b88b.png" 
               alt="Realer Estate Logo" 
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Black Logo - square */}
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-white p-8">
+        </div>
+        
+        {/* Bottom row - Square logos */}
+        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-12">
+          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-white p-4">
             <img 
               src="/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png" 
               alt="Realer Estate Black Logo" 
               className="w-full h-full object-contain"
             />
           </div>
-          {/* White Logo - square */}
-          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-black p-8">
+          <div className="aspect-square rounded-xl overflow-hidden border border-gray-800 bg-black p-4">
             <img 
               src="/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png" 
               alt="Realer Estate White Logo" 
@@ -186,6 +190,7 @@ const Press = () => {
             />
           </div>
         </div>
+        
         <div className="text-center">
           <button 
             onClick={downloadMediaKit}
