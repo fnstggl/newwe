@@ -138,7 +138,7 @@ const Press = () => {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-6 rounded-xl bg-black/50 border border-gray-800">
               <p className="text-gray-300 italic">
-                "This is great. In my dreams I am able to move back to NYC and keep on checking all the time as rents keep hiking in Philly."
+                "This is great. In my dreams I am able to move back to NYC and keep checking all the time as rents keep hiking in Philly."
               </p>
             </div>
             <div className="p-6 rounded-xl bg-black/50 border border-gray-800">
