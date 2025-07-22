@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Download } from "lucide-react";
 import JSZip from "jszip";
@@ -15,6 +14,7 @@ const Press = () => {
       { url: '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', name: 'realer-estate-founders.png' },
       { url: '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', name: 'realer-estate-platform-screenshot.png' },
       { url: '/lovable-uploads/81dfa622-d136-49f1-bfa2-6cf1e63ee82d.png', name: 'realer-estate-never-overpay.png' },
+      { url: '/lovable-uploads/e0856c30-f6b7-49d8-a596-88bdb09cc616.png', name: 'realer-estate-nyc-broken-game.png' },
       { url: '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', name: 'realer-estate-logo-black.png' },
       { url: '/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png', name: 'realer-estate-logo-white.png' },
       { url: '/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png', name: 'realer-estate-logo-gradient.png' },
@@ -188,8 +188,8 @@ const Press = () => {
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
-              src="/lovable-uploads/81dfa622-d136-49f1-bfa2-6cf1e63ee82d.png" 
-              alt="Never overpay in NYC again" 
+              src="/lovable-uploads/e0856c30-f6b7-49d8-a596-88bdb09cc616.png" 
+              alt="The NYC real estate game is broken" 
               className="w-full h-full object-cover"
               loading="eager"
               decoding="async"
