@@ -62,55 +62,31 @@ const CancelSubscription = () => {
 
     setIsLoading(true);
     try {
-      // Cancel the Stripe subscription using our edge function
-      const { data: cancelData, error: cancelError } = await supabase.functions.invoke('cancel-subscription');
+      // Open Stripe customer portal for subscription management
+      const { data, error } = await supabase.functions.invoke('customer-portal');
       
-      if (cancelError) {
-        console.error('Subscription cancellation error:', cancelError);
+      if (error) {
+        console.error('Customer portal error:', error);
         toast({
           title: "Error",
-          description: "Failed to cancel subscription. Please contact support.",
+          description: "Failed to open subscription management. Please contact support.",
           variant: "destructive",
         });
         return;
       }
 
-      // Update user's profile to free plan
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          subscription_plan: 'free',
-          subscription_renewal: null,
-          stripe_customer_id: null
-        })
-        .eq('id', user?.id);
-
-      if (updateError) {
-        console.error('Error updating profile:', updateError);
-        toast({
-          title: "Error",
-          description: "Failed to update your plan. Please contact support.",
-          variant: "destructive",
-        });
-        return;
+      if (data?.url) {
+        // Open the Stripe customer portal where users can properly cancel their subscription
+        window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL returned');
       }
-
-      toast({
-        title: "Subscription Cancelled",
-        description: "Your subscription has been cancelled and you're now on the free plan.",
-      });
-
-      // Redirect to pricing page and force refresh to show updated plan
-      navigate('/pricing');
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
       
     } catch (error) {
-      console.error('Cancellation error:', error);
+      console.error('Customer portal error:', error);
       toast({
         title: "Error",
-        description: "Failed to cancel subscription. Please contact support.",
+        description: "Failed to open subscription management. Please contact support.",
         variant: "destructive",
       });
     } finally {
@@ -207,6 +183,12 @@ const CancelSubscription = () => {
                 No, I'm going to search the old-fashioned way
               </button>
             </div>
+
+            <div className="bg-blue-500/10 rounded-lg p-4 mb-6 border border-blue-500/20">
+              <p className="text-sm text-blue-400 tracking-tight">
+                Note: You'll maintain access to your unlimited plan until the end of your billing period, even after cancellation.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -215,7 +197,7 @@ const CancelSubscription = () => {
               disabled={isLoading || !selectedReason}
               className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Cancelling...' : 'Cancel Subscription'}
+              {isLoading ? 'Opening Stripe Portal...' : 'Manage Subscription in Stripe'}
             </button>
             
             <button
