@@ -68,32 +68,54 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // Check for both active and canceled subscriptions
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
-      limit: 1,
+      status: "all",
+      limit: 10,
     });
-    const hasActiveSub = subscriptions.data.length > 0;
+
     let subscriptionTier = 'free';
     let subscriptionRenewal = 'monthly';
     let subscriptionEnd = null;
+    let hasActiveSub = false;
 
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
+    // Find the most recent subscription (active or canceled)
+    const validSubscriptions = subscriptions.data.filter(sub => 
+      sub.status === 'active' || 
+      (sub.status === 'canceled' && sub.current_period_end * 1000 > Date.now())
+    );
+
+    if (validSubscriptions.length > 0) {
+      const subscription = validSubscriptions[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      subscriptionTier = 'unlimited';
       
-      // Determine renewal type from subscription interval
-      const interval = subscription.items.data[0]?.price?.recurring?.interval;
-      subscriptionRenewal = interval === 'year' ? 'annual' : 'monthly';
+      // Check if subscription is still valid (not expired)
+      const isStillValid = subscription.current_period_end * 1000 > Date.now();
       
-      logStep("Active subscription found", { 
-        subscriptionId: subscription.id, 
-        endDate: subscriptionEnd,
-        interval: interval
-      });
+      if (isStillValid) {
+        hasActiveSub = true;
+        subscriptionTier = 'unlimited';
+        
+        // Determine renewal type from subscription interval
+        const interval = subscription.items.data[0]?.price?.recurring?.interval;
+        subscriptionRenewal = interval === 'year' ? 'annual' : 'monthly';
+        
+        logStep("Valid subscription found", { 
+          subscriptionId: subscription.id, 
+          status: subscription.status,
+          endDate: subscriptionEnd,
+          interval: interval,
+          isStillValid
+        });
+      } else {
+        logStep("Subscription expired, reverting to free", { 
+          subscriptionId: subscription.id, 
+          endDate: subscriptionEnd 
+        });
+      }
     } else {
-      logStep("No active subscription found");
+      logStep("No valid subscription found");
     }
 
     // Update profiles table

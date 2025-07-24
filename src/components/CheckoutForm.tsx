@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -62,45 +63,38 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
           description: error.message || 'An error occurred during payment.',
           variant: "destructive",
         });
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Payment succeeded, now activate subscription
-        try {
-          const { error: subscriptionError } = await supabase.functions.invoke('activate-subscription', {
-            body: {
-              payment_intent_id: paymentIntent.id,
-              billing_cycle: billingCycle,
-            },
-            headers: {
-              Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-            },
-          });
-
-          if (subscriptionError) {
-            console.error('Subscription activation error:', subscriptionError);
-            toast({
-              title: "Payment succeeded but subscription activation failed",
-              description: "Please contact support.",
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: "Subscription successful!",
-              description: "Welcome to the Unlimited plan.",
-            });
-            
-            // Navigate to pricing page and force refresh to show updated plan
-            navigate('/pricing?success=true');
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
-        } catch (activationError) {
-          console.error('Error activating subscription:', activationError);
+      } else if (paymentIntent) {
+        // Handle different payment intent statuses
+        if (paymentIntent.status === 'succeeded') {
+          // Immediate success - activate subscription
+          await activateSubscription(paymentIntent.id);
+        } else if (paymentIntent.status === 'processing') {
+          // Payment is processing (e.g., Cash App) - show success message
+          // The webhook will handle activation when payment completes
           toast({
-            title: "Payment succeeded but subscription activation failed",
-            description: "Please contact support.",
-            variant: "destructive",
+            title: "Payment processing",
+            description: "Your payment is being processed. You'll be upgraded once it's complete.",
           });
+          
+          navigate('/pricing?processing=true');
+          
+          // Poll for subscription activation
+          pollForSubscriptionActivation();
+        } else if (paymentIntent.status === 'requires_action') {
+          // Payment requires additional action - let Stripe handle it
+          toast({
+            title: "Payment requires action",
+            description: "Please complete the payment process.",
+          });
+        } else {
+          // Handle other statuses
+          toast({
+            title: "Payment status: " + paymentIntent.status,
+            description: "Your payment is being processed.",
+          });
+          
+          navigate('/pricing?processing=true');
+          pollForSubscriptionActivation();
         }
       }
     } catch (confirmError) {
@@ -114,6 +108,91 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
     }
 
     setLoading(false);
+  };
+
+  const activateSubscription = async (paymentIntentId: string) => {
+    try {
+      const { error: subscriptionError } = await supabase.functions.invoke('activate-subscription', {
+        body: {
+          payment_intent_id: paymentIntentId,
+          billing_cycle: billingCycle,
+        },
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+        },
+      });
+
+      if (subscriptionError) {
+        console.error('Subscription activation error:', subscriptionError);
+        toast({
+          title: "Payment succeeded but subscription activation failed",
+          description: "Please contact support.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Subscription successful!",
+          description: "Welcome to the Unlimited plan.",
+        });
+        
+        // Navigate to pricing page and force refresh to show updated plan
+        navigate('/pricing?success=true');
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    } catch (activationError) {
+      console.error('Error activating subscription:', activationError);
+      toast({
+        title: "Payment succeeded but subscription activation failed",
+        description: "Please contact support.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const pollForSubscriptionActivation = () => {
+    let attempts = 0;
+    const maxAttempts = 30; // Poll for 5 minutes (10 second intervals)
+    
+    const checkSubscription = async () => {
+      attempts++;
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('check-subscription', {
+          headers: {
+            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          },
+        });
+
+        if (!error && data?.subscribed) {
+          toast({
+            title: "Subscription activated!",
+            description: "Welcome to the Unlimited plan.",
+          });
+          
+          // Force refresh to show updated plan
+          window.location.reload();
+          return;
+        }
+
+        if (attempts < maxAttempts) {
+          setTimeout(checkSubscription, 10000); // Check every 10 seconds
+        } else {
+          toast({
+            title: "Subscription pending",
+            description: "Your payment is still processing. Please check back in a few minutes.",
+          });
+        }
+      } catch (error) {
+        console.error('Error checking subscription:', error);
+        if (attempts < maxAttempts) {
+          setTimeout(checkSubscription, 10000);
+        }
+      }
+    };
+
+    setTimeout(checkSubscription, 10000); // Start checking after 10 seconds
   };
 
   return (
