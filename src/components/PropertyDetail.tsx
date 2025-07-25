@@ -7,6 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { X, ChevronLeft, ChevronRight, MapPin, Calendar, Home, DollarSign, ChevronDown, ExternalLink } from 'lucide-react';
 import BookmarkButton from './BookmarkButton';
 import TourRequestForm from './TourRequestForm';
+import QuestionForm from './QuestionForm';
 import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showTourRequest, setShowTourRequest] = useState(false);
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
 
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
@@ -635,7 +637,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </div>
                   )}
                   
-                  {/* Request Tour Button moved here for Sales Properties Only */}
+                  {/* Request Tour Button for Sales Properties Only */}
                   {!isRental && (
                     <Button
                       onClick={() => setShowTourRequest(true)}
@@ -645,7 +647,17 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     </Button>
                   )}
 
-                  {/* Early Access CTA Box for Sales - positioned below Request Tour */}
+                  {/* Ask a Question Button for Sales Properties Only */}
+                  {!isRental && (
+                    <Button
+                      onClick={() => setShowQuestionForm(true)}
+                      className="w-full bg-[#494e52] text-white hover:bg-[#3a3f42] rounded-full font-semibold px-6 py-3 border border-white"
+                    >
+                      Ask a Question
+                    </Button>
+                  )}
+
+                  {/* Early Access CTA Box for Sales - positioned below Ask a Question */}
                   {!isRental && userProfile?.subscription_plan !== 'unlimited' && (
                     <div 
                       className="rounded-2xl border-2 p-6 text-center space-y-3"
@@ -682,6 +694,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
           propertyAddress={property.address}
           propertyType={isRental ? 'rental' : 'sale'}
           onClose={() => setShowTourRequest(false)}
+        />
+      )}
+
+      {/* Question Form Modal */}
+      {showQuestionForm && (
+        <QuestionForm
+          propertyId={property.id}
+          propertyAddress={property.address}
+          propertyType={isRental ? 'rental' : 'sale'}
+          onClose={() => setShowQuestionForm(false)}
         />
       )}
     </>
