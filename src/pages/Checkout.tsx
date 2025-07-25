@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -25,14 +26,11 @@ const Checkout = () => {
 
   useEffect(() => {
     if (!user) {
-      // Only show the toast notification for users who aren't logged in
-      if (!session) {
-        toast({
-          title: "Please log in",
-          description: "You need to be logged in to subscribe.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
       navigate('/pricing');
       return;
     }
