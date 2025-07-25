@@ -202,11 +202,6 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         <PaymentElement 
           options={{
             layout: 'tabs',
-            defaultValues: {
-              paymentMethod: {
-                type: 'card',
-              },
-            },
             paymentMethodOrder: ['card', 'apple_pay', 'cashapp', 'amazon_pay'],
             wallets: {
               applePay: 'auto',
