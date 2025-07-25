@@ -31,7 +31,7 @@ const Checkout = () => {
         description: "You need to be logged in to subscribe.",
         variant: "destructive",
       });
-      navigate('/login');
+      navigate('/pricing');
       return;
     }
 
