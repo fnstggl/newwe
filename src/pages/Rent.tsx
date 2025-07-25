@@ -831,37 +831,19 @@ const Rent = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
-                Rent Stabilized
-              </label>
-              <div className="flex items-center justify-center h-[48px]">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    id="rent-stabilized-toggle"
-                    checked={rentStabilizedOnly}
-                    onChange={(e) => setRentStabilizedOnly(e.target.checked)}
-                    className="sr-only"
-                  />
-                  <label
-                    htmlFor="rent-stabilized-toggle"
-                    className={`block w-12 h-6 rounded-full cursor-pointer transition-all duration-300 ${
-                      rentStabilizedOnly
-                        ? 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]'
-                        : 'bg-gray-600'
-                    }`}
-                  >
-                    <div
-                      className={`w-5 h-5 bg-white rounded-full shadow-lg transition-all duration-300 ${
-                        rentStabilizedOnly ? 'translate-x-6' : 'translate-x-0.5'
-                      } translate-y-0.5`}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
+           <div>
+  <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight text-center">
+    Rent Stabilized
+  </label>
+  <div className="flex justify-center mt-4">
+    <Toggle 
+      checked={rentStabilizedOnly} 
+      onCheckedChange={setRentStabilizedOnly} 
+      variant="default"
+      className={rentStabilizedOnly ? '[--c-background:#000000]' : ''}
+    />
+  </div>
+</div>
 
           {/* Additional Filters Dropdown Toggle */}
           <div className="flex justify-center mt-4">
