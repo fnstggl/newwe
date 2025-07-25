@@ -42,13 +42,20 @@ const Checkout = () => {
       try {
         console.log('Creating payment intent with billing cycle:', billingCycle);
         
+        // Get the current session token directly
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        if (!currentSession?.access_token) {
+          throw new Error('No valid session found');
+        }
+
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
             billing_cycle: billingCycle,
             amount: billingCycle === 'annual' ? 1900 : 300, // in cents
           },
           headers: {
-            Authorization: `Bearer ${session?.access_token}`,
+            Authorization: `Bearer ${currentSession.access_token}`,
           },
         });
 
@@ -76,10 +83,9 @@ const Checkout = () => {
       }
     };
 
-    if (session) {
-      createPaymentIntent();
-    }
-  }, [user, session, billingCycle, navigate, toast]);
+    // Call createPaymentIntent immediately when user exists
+    createPaymentIntent();
+  }, [user, billingCycle, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
