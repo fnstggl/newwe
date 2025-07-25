@@ -80,7 +80,7 @@ serve(async (req) => {
     });
     logStep("Price created", { priceId: price.id });
 
-    // Create subscription with specified payment method types
+    // Create subscription without payment method restrictions
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
@@ -91,7 +91,6 @@ serve(async (req) => {
       payment_behavior: 'default_incomplete',
       payment_settings: { 
         save_default_payment_method: 'on_subscription',
-        payment_method_types: ['card', 'apple_pay', 'cashapp', 'amazon_pay'],
       },
       expand: ['latest_invoice.payment_intent'],
       metadata: {
