@@ -36,8 +36,6 @@ serve(async (req) => {
     logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
-    logStep("Authenticating user with token");
-    
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
@@ -79,6 +77,7 @@ serve(async (req) => {
     let subscriptionRenewal = 'monthly';
     let subscriptionEnd = null;
     let hasActiveSub = false;
+    let isCanceled = false;
 
     // Find the most recent subscription (active or canceled)
     const validSubscriptions = subscriptions.data.filter(sub => 
@@ -96,6 +95,7 @@ serve(async (req) => {
       if (isStillValid) {
         hasActiveSub = true;
         subscriptionTier = 'unlimited';
+        isCanceled = subscription.status === 'canceled';
         
         // Determine renewal type from subscription interval
         const interval = subscription.items.data[0]?.price?.recurring?.interval;
@@ -106,7 +106,8 @@ serve(async (req) => {
           status: subscription.status,
           endDate: subscriptionEnd,
           interval: interval,
-          isStillValid
+          isStillValid,
+          isCanceled
         });
       } else {
         logStep("Subscription expired, reverting to free", { 
@@ -132,14 +133,16 @@ serve(async (req) => {
     logStep("Updated profile with subscription info", { 
       subscribed: hasActiveSub, 
       subscriptionTier,
-      subscriptionRenewal
+      subscriptionRenewal,
+      isCanceled
     });
     
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_renewal: subscriptionRenewal,
-      subscription_end: subscriptionEnd
+      subscription_end: subscriptionEnd,
+      is_canceled: isCanceled
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

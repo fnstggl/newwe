@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +14,8 @@ interface AuthContextType {
     hasCompletedOnboarding?: boolean;
     subscription_plan?: string;
     subscription_renewal?: string;
+    subscription_end?: string;
+    is_canceled?: boolean;
   } | null;
   updateOnboardingStatus: (completed: boolean) => Promise<void>;
 }
@@ -37,6 +38,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     hasCompletedOnboarding?: boolean;
     subscription_plan?: string;
     subscription_renewal?: string;
+    subscription_end?: string;
+    is_canceled?: boolean;
   } | null>(null);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   
@@ -151,23 +154,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
-        // CRITICAL FIX: Remove automatic 'free' fallback - preserve existing state if DB returns null
-        const currentSubscriptionPlan = data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan;
-        const currentSubscriptionRenewal = data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal;
+        // Check subscription status via edge function
+        const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
+        
+        let subscriptionInfo = {
+          subscription_plan: data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan,
+          subscription_renewal: data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal,
+          subscription_end: null,
+          is_canceled: false
+        };
+        
+        if (!subscriptionError && subscriptionData) {
+          subscriptionInfo = {
+            subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
+            subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
+            subscription_end: subscriptionData.subscription_end,
+            is_canceled: subscriptionData.is_canceled || false
+          };
+        }
         
         const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
-          subscription_plan: currentSubscriptionPlan,
-          subscription_renewal: currentSubscriptionRenewal
+          ...subscriptionInfo
         };
         
         // Cache the successful subscription state
-        if (currentSubscriptionPlan) {
-          cacheSubscriptionState(userId, {
-            subscription_plan: currentSubscriptionPlan,
-            subscription_renewal: currentSubscriptionRenewal
-          });
+        if (subscriptionInfo.subscription_plan) {
+          cacheSubscriptionState(userId, subscriptionInfo);
         }
         
         console.log('Setting user profile:', profileData);

@@ -82,6 +82,17 @@ const Pricing = () => {
 
   // Check if user is on unlimited plan using userProfile from AuthContext
   const isOnUnlimitedPlan = userProfile?.subscription_plan === 'unlimited';
+  const isCanceled = userProfile?.is_canceled || false;
+
+  // Format subscription end date for display
+  const formatSubscriptionEndDate = (endDate: string) => {
+    const date = new Date(endDate);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+    });
+  };
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
@@ -143,7 +154,7 @@ const Pricing = () => {
                   onClick={handleCancelSubscription}
                   className="w-full bg-gray-800 text-white py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-700"
                 >
-                  Lose Access
+                  {isCanceled ? 'Renew Subscription' : 'Lose Access'}
                 </button>
               ) : (
                 <button 
@@ -215,10 +226,14 @@ const Pricing = () => {
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
             <div className="mt-8 text-center">
-              <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-blue-400 font-medium">
-                  Active {userProfile?.subscription_plan === 'unlimited' ? 'Unlimited' : userProfile?.subscription_plan} Subscription ({userProfile?.subscription_renewal || 'monthly'})
+              <div className={`inline-flex items-center gap-2 ${isCanceled ? 'bg-red-500/10 border-red-500/20' : 'bg-blue-500/10 border-blue-500/20'} rounded-full px-4 py-2`}>
+                <div className={`w-2 h-2 ${isCanceled ? 'bg-red-500' : 'bg-blue-500'} rounded-full`}></div>
+                <span className={`${isCanceled ? 'text-red-400' : 'text-blue-400'} font-medium`}>
+                  {isCanceled ? (
+                    `Losing early access ${userProfile?.subscription_end ? formatSubscriptionEndDate(userProfile.subscription_end) : ''}`
+                  ) : (
+                    `Active ${userProfile?.subscription_plan === 'unlimited' ? 'Unlimited' : userProfile?.subscription_plan} Subscription (${userProfile?.subscription_renewal || 'monthly'})`
+                  )}
                 </span>
               </div>
             </div>

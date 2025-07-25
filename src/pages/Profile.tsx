@@ -177,6 +177,37 @@ const Profile = () => {
     }
   };
 
+  const handleManageSubscription = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      
+      if (error) {
+        console.error('Customer portal error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to open subscription management. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    } catch (error) {
+      console.error('Customer portal error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open subscription management. Please contact support.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -311,11 +342,12 @@ const Profile = () => {
                 </p>
               </div>
               
-              <Link to="/pricing">
-                <HoverButton className="text-white font-semibold tracking-tight">
-                  Manage Subscription
-                </HoverButton>
-              </Link>
+              <HoverButton 
+                className="text-white font-semibold tracking-tight"
+                onClick={handleManageSubscription}
+              >
+                Manage Subscription
+              </HoverButton>
             </div>
           </div>
 
