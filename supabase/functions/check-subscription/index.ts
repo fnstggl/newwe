@@ -50,13 +50,15 @@ serve(async (req) => {
       await supabaseClient.from("profiles").update({
         subscription_plan: 'free',
         subscription_renewal: 'monthly',
-        stripe_customer_id: null
+        stripe_customer_id: null,
+        is_canceled: false
       }).eq('id', user.id);
       
       return new Response(JSON.stringify({ 
         subscribed: false, 
         subscription_tier: 'free',
-        subscription_renewal: 'monthly'
+        subscription_renewal: 'monthly',
+        is_canceled: false
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -119,11 +121,12 @@ serve(async (req) => {
       logStep("No valid subscription found");
     }
 
-    // Update profiles table
+    // Update profiles table with cancellation status
     const { error: updateError } = await supabaseClient.from("profiles").update({
       subscription_plan: subscriptionTier,
       subscription_renewal: subscriptionRenewal,
-      stripe_customer_id: customerId
+      stripe_customer_id: customerId,
+      is_canceled: isCanceled
     }).eq('id', user.id);
 
     if (updateError) {

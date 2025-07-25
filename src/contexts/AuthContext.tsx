@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -134,7 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('name, subscription_plan, subscription_renewal')
+        .select('name, subscription_plan, subscription_renewal, is_canceled')
         .eq('id', userId)
         .single();
       
@@ -161,7 +162,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           subscription_plan: data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan,
           subscription_renewal: data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal,
           subscription_end: null,
-          is_canceled: false
+          is_canceled: data.is_canceled || cachedState?.is_canceled || false
         };
         
         if (!subscriptionError && subscriptionData) {
@@ -169,7 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
             subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
             subscription_end: subscriptionData.subscription_end,
-            is_canceled: subscriptionData.is_canceled || false
+            is_canceled: subscriptionData.is_canceled || subscriptionInfo.is_canceled
           };
         }
         
