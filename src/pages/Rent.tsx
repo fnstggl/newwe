@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, ChevronUp, X, Filter } from "lucide-react";
-import { GooeyFilter } from "@/components/ui/liquid-toggle";
+import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -840,10 +840,11 @@ const Rent = () => {
       checked={rentStabilizedOnly} 
       onCheckedChange={setRentStabilizedOnly} 
       variant="default"
-      className={rentStabilizedOnly ? '[--c-background:#000000]' : ''}
     />
   </div>
 </div>
+
+          </div>
 
           {/* Additional Filters Dropdown Toggle */}
           <div className="flex justify-center mt-4">
