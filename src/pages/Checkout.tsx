@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -25,14 +26,11 @@ const Checkout = () => {
 
   useEffect(() => {
     if (!user) {
-      // Only show toast if user is actually not logged in
-      if (user === null) {
-        toast({
-          title: "Please log in",
-          description: "You need to be logged in to subscribe.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
       navigate('/pricing');
       return;
     }
@@ -42,20 +40,13 @@ const Checkout = () => {
       try {
         console.log('Creating payment intent with billing cycle:', billingCycle);
         
-        // Get the current session token directly
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        if (!currentSession?.access_token) {
-          throw new Error('No valid session found');
-        }
-
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
             billing_cycle: billingCycle,
             amount: billingCycle === 'annual' ? 1900 : 300, // in cents
           },
           headers: {
-            Authorization: `Bearer ${currentSession.access_token}`,
+            Authorization: `Bearer ${session?.access_token}`,
           },
         });
 
@@ -83,9 +74,10 @@ const Checkout = () => {
       }
     };
 
-    // Call createPaymentIntent immediately when user exists
-    createPaymentIntent();
-  }, [user, billingCycle, navigate, toast]);
+    if (session) {
+      createPaymentIntent();
+    }
+  }, [user, session, billingCycle, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
