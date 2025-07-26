@@ -133,10 +133,10 @@ const Join = () => {
       <div className="max-w-md w-full mx-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            NYC's best deals don't stay online for long.
+            You’re one step away from NYC’s best hidden deals.
           </h1>
           <p className="text-gray-400 text-lg tracking-tight">
-            Access the full data for all of the best deals in the city. For free.
+            Homes up to 60% below-market. 6,000+ New Yorkers already inside.
           </p>
         </div>
 
