@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
-import SoftGateModal from "@/components/SoftGateModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -47,10 +46,6 @@ const Buy = () => {
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-
-  // Soft-gate modal state
-  const [showSoftGateModal, setShowSoftGateModal] = useState(false);
-  const [softGateProperty, setSoftGateProperty] = useState<any | null>(null);
 
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -459,12 +454,6 @@ const Buy = () => {
     
     // Only allow clicks on visible properties
     if (index >= visibilityLimit) {
-      // For free plan users, show soft-gate modal instead of blocking
-      if (isFreeUser) {
-        setSoftGateProperty(property);
-        setShowSoftGateModal(true);
-        return;
-      }
       return;
     }
     
@@ -791,7 +780,7 @@ const Buy = () => {
                   key={`${property.id}-${index}`}
                   className="relative"
                 >
-                  <div className={isBlurred ? 'filter blur-sm' : ''}>
+                  <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
                     <PropertyCard
                       property={property}
                       isRental={false}
@@ -913,14 +902,6 @@ const Buy = () => {
           onClose={handleClosePropertyDetail}
         />
       )}
-
-      {/* Soft Gate Modal */}
-      <SoftGateModal
-        isOpen={showSoftGateModal}
-        onClose={() => setShowSoftGateModal(false)}
-        property={softGateProperty}
-        isRental={false}
-      />
     </div>
   );
 };
