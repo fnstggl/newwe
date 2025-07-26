@@ -792,7 +792,7 @@ const Buy = () => {
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
+                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
@@ -812,7 +812,7 @@ const Buy = () => {
                   {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
                   {isFreeUser && index === 10 && properties.length > 10 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
+                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be past this point.
                         </h3>
