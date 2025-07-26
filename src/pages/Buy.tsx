@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon, ChevronDown, ChevronUp, X, Filter } from "lucide-react";
-import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
+import { GooeyFilter } from "@/components/ui/liquid-toggle";
 import { HoverButton } from "@/components/ui/hover-button";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
@@ -11,11 +11,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
-type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
-type SupabaseUndervaluedRentStabilized = Tables<'undervalued_rent_stabilized'>;
 
 const Buy = () => {
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
@@ -85,7 +83,7 @@ const Buy = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -103,16 +101,16 @@ const Buy = () => {
 
   useEffect(() => {
     // Update meta tags for SEO
-    document.title = "Buy NYC Apartments - Find Undervalued Sales | Realer Estate";
+    document.title = "Buy NYC Real Estate - Find Undervalued Properties for Sale | Realer Estate";
     
     // Update meta description
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
     } else {
       metaDescription = document.createElement('meta');
       metaDescription.setAttribute('name', 'description');
-      metaDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
+      metaDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Buy smarter with real-time market analysis and transparent pricing data.');
       document.head.appendChild(metaDescription);
     }
 
@@ -130,21 +128,21 @@ const Buy = () => {
     // Update Open Graph tags
     let ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) {
-      ogTitle.setAttribute('content', 'Buy NYC Apartments - Find Undervalued Sales | Realer Estate');
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
     } else {
       ogTitle = document.createElement('meta');
       ogTitle.setAttribute('property', 'og:title');
-      ogTitle.setAttribute('content', 'Buy NYC Apartments - Find Undervalued Sales | Realer Estate');
+      ogTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
       document.head.appendChild(ogTitle);
     }
     
     let ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogDescription) {
-      ogDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in buying.');
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
     } else {
       ogDescription = document.createElement('meta');
       ogDescription.setAttribute('property', 'og:description');
-      ogDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in buying.');
+      ogDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
       document.head.appendChild(ogDescription);
     }
     
@@ -161,21 +159,21 @@ const Buy = () => {
     // Update Twitter tags
     let twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) {
-      twitterTitle.setAttribute('content', 'Buy NYC Apartments - Find Undervalued Sales | Realer Estate');
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
     } else {
       twitterTitle = document.createElement('meta');
       twitterTitle.setAttribute('name', 'twitter:title');
-      twitterTitle.setAttribute('content', 'Buy NYC Apartments - Find Undervalued Sales | Realer Estate');
+      twitterTitle.setAttribute('content', 'Buy NYC Real Estate - Find Undervalued Properties | Realer Estate');
       document.head.appendChild(twitterTitle);
     }
     
     let twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterDescription) {
-      twitterDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in buying.');
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
     } else {
       twitterDescription = document.createElement('meta');
       twitterDescription.setAttribute('name', 'twitter:description');
-      twitterDescription.setAttribute('content', 'Find undervalued NYC apartments for sale with advanced algorithms. Your unfair advantage in buying.');
+      twitterDescription.setAttribute('content', 'Find undervalued NYC properties for sale with advanced algorithms. Your unfair advantage in real estate.');
       document.head.appendChild(twitterDescription);
     }
     
@@ -243,26 +241,24 @@ const Buy = () => {
     const currentOffset = reset ? 0 : offset;
 
     try {
-      let allProperties: any[] = [];
-
-      // Fetch regular sales
-      let regularQuery = supabase
+      let query = supabase
         .from('undervalued_sales')
         .select('*')
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
 
       if (searchTerm.trim()) {
-        regularQuery = regularQuery.ilike('address', `%${searchTerm.trim()}%`);
+        query = query.ilike('address', `%${searchTerm.trim()}%`);
       }
 
       if (zipCode.trim()) {
-        regularQuery = regularQuery.ilike('zipcode', `${zipCode.trim()}%`);
+        query = query.ilike('zipcode', `${zipCode.trim()}%`);
       }
 
       if (maxPrice.trim()) {
         const priceValue = parseInt(maxPrice.trim());
         if (!isNaN(priceValue) && priceValue > 0) {
-          regularQuery = regularQuery.lte('price', priceValue);
+          query = query.lte('price', priceValue);
         }
       }
 
@@ -270,9 +266,11 @@ const Buy = () => {
         const bedroomValue = parseInt(bedrooms.trim());
         if (!isNaN(bedroomValue)) {
           if (bedroomValue === 0) {
-            regularQuery = regularQuery.eq('bedrooms', 0);
+            // Studio: filter for exactly 0 bedrooms
+            query = query.eq('bedrooms', 0);
           } else {
-            regularQuery = regularQuery.gte('bedrooms', bedroomValue);
+            // For other values: filter for that number or more bedrooms
+            query = query.gte('bedrooms', bedroomValue);
           }
         }
       }
@@ -281,79 +279,81 @@ const Buy = () => {
         const gradeIndex = gradeOptions.indexOf(minGrade);
         if (gradeIndex !== -1) {
           const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-          regularQuery = regularQuery.in('grade', allowedGrades);
+          query = query.in('grade', allowedGrades);
         }
       }
 
       if (selectedNeighborhoods.length > 0) {
-        regularQuery = regularQuery.in('neighborhood', selectedNeighborhoods);
+        query = query.in('neighborhood', selectedNeighborhoods);
       }
 
+      // Additional filters
       if (selectedBoroughs.length > 0) {
-        regularQuery = regularQuery.in('borough', selectedBoroughs);
+        query = query.in('borough', selectedBoroughs);
       }
 
       if (minSqft.trim()) {
         const sqftValue = parseInt(minSqft.trim());
         if (!isNaN(sqftValue) && sqftValue > 0) {
-          regularQuery = regularQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
+          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
         }
       }
 
       if (addressSearch.trim()) {
-        regularQuery = regularQuery.ilike('address', `%${addressSearch.trim()}%`);
+        query = query.ilike('address', `%${addressSearch.trim()}%`);
       }
 
       if (minDiscount.trim()) {
         const discountValue = parseInt(minDiscount.replace('%', ''));
         if (!isNaN(discountValue) && discountValue > 0) {
-          regularQuery = regularQuery.gte('discount_percent', discountValue);
+          query = query.gte('discount_percent', discountValue);
         }
       }
 
-      // Apply sorting for regular sales
+      // Apply sorting
       switch (sortBy) {
         case 'Price: Low to High':
-          regularQuery = regularQuery.order('price', { ascending: true });
+          query = query.order('price', { ascending: true });
           break;
         case 'Price: High to Low':
-          regularQuery = regularQuery.order('price', { ascending: false });
+          query = query.order('price', { ascending: false });
           break;
         case 'Sqft: Low to High':
-          regularQuery = regularQuery.order('sqft', { ascending: true, nullsFirst: true });
+          query = query.order('sqft', { ascending: true, nullsFirst: true });
           break;
         case 'Sqft: High to Low':
-          regularQuery = regularQuery.order('sqft', { ascending: false, nullsFirst: false });
+          query = query.order('sqft', { ascending: false, nullsFirst: false });
           break;
         case 'Score: Low to High':
-          regularQuery = regularQuery.order('score', { ascending: true });
+          query = query.order('score', { ascending: true });
           break;
         case 'Score: High to Low':
-          regularQuery = regularQuery.order('score', { ascending: false });
+          query = query.order('score', { ascending: false });
           break;
         case 'Newest Listed':
-          regularQuery = regularQuery.order('days_on_market', { ascending: true });
+          query = query.order('days_on_market', { ascending: true });
           break;
         default: // Featured
-          regularQuery = regularQuery.order('created_at', { ascending: false });
+          query = query.order('created_at', { ascending: false });
           break;
       }
 
-      const { data: regularData, error: regularError } = await regularQuery.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      if (regularError) {
-        console.error('❌ REGULAR SALES ERROR:', regularError);
+      if (error) {
+        console.error('❌ SUPABASE ERROR:', error);
         setProperties([]);
         return;
       }
 
-      allProperties = (regularData || []).map(property => ({
-        ...property,
-        isRentStabilized: false
-      }));
+      if (!data || !Array.isArray(data)) {
+        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+        setProperties([]);
+        return;
+      }
 
       // Only shuffle if Featured sorting
-      const resultData = sortBy === 'Featured' ? allProperties.sort(() => Math.random() - 0.5) : allProperties;
+      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
 
       if (reset) {
         setProperties(resultData);
@@ -363,7 +363,7 @@ const Buy = () => {
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
-      setHasMore(allProperties.length === ITEMS_PER_PAGE);
+      setHasMore(data.length === ITEMS_PER_PAGE);
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
       setProperties([]);
@@ -442,23 +442,9 @@ const Buy = () => {
     }
   };
 
-  const getVisibleListingsCount = () => {
-    if (!user) return 3; // Signed out users see 3
-    if (userProfile?.subscription_plan === 'unlimited') return properties.length; // Unlimited users see all
-    return 9; // Free plan users see 9
-  };
-
-  const getTotalDealsText = () => {
-    const visibleCount = getVisibleListingsCount();
-    const totalCount = "2,193"; // You can make this dynamic later
-    return { visibleCount, totalCount };
-  };
-
   const handlePropertyClick = (property: any, index: number) => {
-    const visibleCount = getVisibleListingsCount();
-    
-    // Only allow clicks on visible properties
-    if (index >= visibleCount) {
+    // Only allow clicks on first 6 properties if user is not logged in
+    if (!user && index >= 6) {
       return;
     }
     
@@ -467,16 +453,16 @@ const Buy = () => {
     setSelectedProperty(property);
   };
 
-  // Filter neighborhoods based on search term
-  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
-    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
-  );
-
   const handleClosePropertyDetail = () => {
     // Navigate back to main buy page
     navigate('/buy', { replace: true });
     setSelectedProperty(null);
   };
+
+  // Filter neighborhoods based on search term
+  const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
+    neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -485,10 +471,10 @@ const Buy = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Buy apartments worth more than you pay. Actually.
+            Find the best deals to buy. Actually.
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
-            Stop overpaying for overpriced listings.
+            Stop wasting time on overpriced listings.
           </p>
         </div>
 
@@ -512,7 +498,7 @@ const Buy = () => {
 
         {/* Search Filters */}
         <div className={`bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 mb-8 relative z-10 ${isMobile && !showMobileFilters ? 'hidden' : ''}`}>
-          <div className="grid md:grid-cols-6 gap-4">
+          <div className="grid md:grid-cols-5 gap-4">
             <div className="relative" ref={dropdownRef}>
               <label className="block text-sm font-medium text-gray-400 mb-2 tracking-tight">
                 Neighborhoods
@@ -597,7 +583,7 @@ const Buy = () => {
                 type="text"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="$1,000,000"
+                placeholder="$1,500,000"
                 className="w-full px-4 py-3 bg-black/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all tracking-tight"
               />
             </div>
@@ -774,11 +760,13 @@ const Buy = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
-              const visibleCount = getVisibleListingsCount();
-              const isBlurred = index >= visibleCount;
+              const isBlurred = !user && index >= 6;
               
               return (
-                <div key={`${property.id}-${index}`} className="relative">
+                <div
+                  key={`${property.id}-${index}`}
+                  className="relative"
+                >
                   <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
                     <PropertyCard
                       property={property}
@@ -788,46 +776,18 @@ const Buy = () => {
                     />
                   </div>
                   
-                  {/* Show CTA for signed out users on 4th property (index 3) */}
-                  {!user && index === 3 && (
+                  {/* Show CTA button on 8th property (index 7) for non-logged users */}
+                  {!user && index === 7 && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <div className="text-center px-4">
-                        <p className="text-sm text-white mb-4">
-                          You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">{getTotalDealsText().totalCount}</span> deals
-                        </p>
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          Want to see the best deals in NYC?
-                        </h3>
-                        <button
-                          onClick={() => navigate('/join')}
-                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                        >
-                          Create free account
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Show CTA for free plan users on 10th property (index 9) */}
-                  {user && userProfile?.subscription_plan !== 'unlimited' && index === 9 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <div className="text-center px-4">
-                        <p className="text-sm text-white mb-4">
-                          You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">{getTotalDealsText().totalCount}</span> deals
-                        </p>
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          See unlimited below-market listings
-                        </h3>
-                        <p className="text-white mb-4">
-                          The best deals only last a few days.
-                        </p>
-                        <button
-                          onClick={() => navigate('/pricing')}
-                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors border-2 border-transparent hover:border-blue-400 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                        >
-                          Get Unlimited Access
-                        </button>
-                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
+                        Want to see the best deals in NYC?
+                      </h3>
+                      <button
+                        onClick={() => navigate('/join')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                      >
+                        Create free account
+                      </button>
                     </div>
                   )}
                 </div>

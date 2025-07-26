@@ -14,7 +14,7 @@ type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 type SupabaseUndervaluedRentStabilized = Tables<'undervalued_rent_stabilized'>;
 
 const Rent = () => {
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
@@ -85,7 +85,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, rentStabilizedOnly]);
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, rentStabilizedOnly]);
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -654,23 +654,9 @@ const Rent = () => {
     }
   };
 
-  const getVisibleListingsCount = () => {
-    if (!user) return 3; // Signed out users see 3
-    if (userProfile?.subscription_plan === 'unlimited') return properties.length; // Unlimited users see all
-    return 9; // Free plan users see 9
-  };
-
-  const getTotalDealsText = () => {
-    const visibleCount = getVisibleListingsCount();
-    const totalCount = "2,193"; // You can make this dynamic later
-    return { visibleCount, totalCount };
-  };
-
   const handlePropertyClick = (property: any, index: number) => {
-    const visibleCount = getVisibleListingsCount();
-    
-    // Only allow clicks on visible properties
-    if (index >= visibleCount) {
+    // Only allow clicks on first 6 properties if user is not logged in
+    if (!user && index >= 6) {
       return;
     }
     
@@ -999,11 +985,13 @@ const Rent = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
-              const visibleCount = getVisibleListingsCount();
-              const isBlurred = index >= visibleCount;
+              const isBlurred = !user && index >= 6;
               
               return (
-                <div key={`${property.id}-${index}`} className="relative">
+                <div
+                  key={`${property.id}-${index}`}
+                  className="relative"
+                >
                   <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
                     <PropertyCard
                       property={property}
@@ -1013,46 +1001,18 @@ const Rent = () => {
                     />
                   </div>
                   
-                  {/* Show CTA for signed out users on 4th property (index 3) */}
-                  {!user && index === 3 && (
+                  {/* Show CTA button on 8th property (index 7) for non-logged users */}
+                  {!user && index === 7 && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <div className="text-center px-4">
-                        <p className="text-sm text-white mb-4">
-                          You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">{getTotalDealsText().totalCount}</span> deals
-                        </p>
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          Want to see the best deals in NYC?
-                        </h3>
-                        <button
-                          onClick={() => navigate('/join')}
-                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                        >
-                          Create free account
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Show CTA for free plan users on 10th property (index 9) */}
-                  {user && userProfile?.subscription_plan !== 'unlimited' && index === 9 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <div className="text-center px-4">
-                        <p className="text-sm text-white mb-4">
-                          You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">{getTotalDealsText().totalCount}</span> deals
-                        </p>
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          See unlimited below-market listings
-                        </h3>
-                        <p className="text-white mb-4">
-                          The best deals only last a few days.
-                        </p>
-                        <button
-                          onClick={() => navigate('/pricing')}
-                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors border-2 border-transparent hover:border-blue-400 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                        >
-                          Get Unlimited Access
-                        </button>
-                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
+                        Want to see the best deals in NYC?
+                      </h3>
+                      <button
+                        onClick={() => navigate('/join')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                      >
+                        Create free account
+                      </button>
                     </div>
                   )}
                 </div>
