@@ -1021,13 +1021,16 @@ const Rent = () => {
                         You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">2,193</span> deals
                       </p>
                       <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
-                        Want to see the best deals in NYC?
+                        Want to see more of the best deals in NYC?
                       </h3>
+                      <p className="text-white mb-4 text-center px-4">
+                        You've seen 3 of 2,193 listings. Create a free account to continue hunting.
+                      </p>
                       <button
                         onClick={() => navigate('/join')}
                         className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                       >
-                        Create free account
+                        🔓 See More Deals
                       </button>
                     </div>
                   )}
@@ -1039,16 +1042,16 @@ const Rent = () => {
                         You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
                       </p>
                       <h3 className="text-2xl font-bold text-white mb-2 text-center px-4">
-                        See unlimited below-market listings
+                        Your next home could be past this point.
                       </h3>
-                      <p className="text-white mb-4 text-center">
-                        The best deals only last a few days.
+                      <p className="text-white font-bold mb-4 text-center">
+                        You're seeing 9 of 2,193 listings. Go unlimited for just $3.
                       </p>
                       <button
                         onClick={() => navigate('/pricing')}
                         className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
                       >
-                        Get Unlimited Access
+                        🔥 Unlock Access
                       </button>
                     </div>
                   )}
