@@ -825,6 +825,9 @@ const Buy = () => {
                         >
                           🔥 Unlock the rest for just $3
                         </button>
+                          <p className="text-sm text-gray-400 mt-3">
+  Trusted by 6,000+ NYC renters · As seen on CBS & AP News
+</p>
                       </div>
                     </div>
                   )}
