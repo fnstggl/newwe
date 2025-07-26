@@ -108,6 +108,13 @@ const Pricing = () => {
             <p className="text-xl text-gray-400 tracking-tight">
               The best deals disappear in days. Get notified first.
             </p>
+            {!isOnUnlimitedPlan && (
+  <div className="text-center mt-4">
+    <p className="text-sm text-gray-400">
+      6,000+ New Yorkers finding deals · As seen on CBS & AP
+    </p>
+  </div>
+)}
             
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
@@ -217,6 +224,10 @@ const Pricing = () => {
                     >
                       {`Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
                     </button>
+      {!isOnUnlimitedPlan && (
+  <p className="text-xs text-gray-500 mt-2 text-center">
+    Cancel anytime. Instant access.
+  </p>
                   )}
                 </div>
               </div>
