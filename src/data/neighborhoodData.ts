@@ -72,7 +72,7 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
   'bedford-stuyvesant': {
     description: 'A historic Brooklyn neighborhood experiencing rapid gentrification, known for its beautiful brownstones, rich African-American heritage, and emerging food scene.',
     pros: ['Beautiful architecture', 'Rich culture', 'More affordable'],
-    cons: ['Gentrification issues', 'Safety concerns', 'Limited subway access']
+    cons: ['Gentrification issues', 'Safety varies', 'Limited subway access']
   },
   'boerum hill': {
     description: 'A quiet residential Brooklyn neighborhood with tree-lined streets, historic brownstones, and a small-town feel within the city.',
@@ -87,7 +87,7 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
   'bushwick': {
     description: 'A rapidly gentrifying Brooklyn neighborhood known for its vibrant street art, industrial spaces converted to lofts, and thriving nightlife scene.',
     pros: ['Great nightlife', 'Artist community', 'More affordable'],
-    cons: ['Safety concerns', 'Gentrification', 'Industrial feel']
+    cons: ['Safety varies', 'Gentrification', 'Industrial feel']
   },
   'carroll gardens': {
     description: 'A charming Brooklyn neighborhood known for its Italian heritage, tree-lined streets, and strong community feel with excellent restaurants.',
@@ -112,7 +112,7 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
   'concourse': {
     description: 'A South Bronx neighborhood known for its proximity to Yankee Stadium, diverse Latino culture, and affordable housing options.',
     pros: ['Affordable housing', 'Cultural diversity', 'Sports access'],
-    cons: ['Commute times', 'Limited amenities', 'Commute times']
+    cons: ['Safety varies', 'Limited amenities', 'Commute times']
   },
   'crown heights': {
     description: 'A diverse Brooklyn neighborhood with a rich Caribbean and Jewish heritage, beautiful architecture, and emerging food scene.',
@@ -162,12 +162,12 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
   'melrose': {
     description: 'A South Bronx neighborhood known for its Latino culture, affordable housing, and proximity to Yankee Stadium and the Harlem River.',
     pros: ['Affordable living', 'Cultural diversity', 'River access'],
-    cons: ['Safety concerns', 'Limited amenities', 'Economic challenges']
+    cons: ['Safety varies', 'Limited amenities', 'Economic challenges']
   },
   'mott haven': {
     description: 'An emerging South Bronx neighborhood experiencing gentrification, known for its art galleries, waterfront development, and affordable housing.',
     pros: ['Emerging arts scene', 'Affordable housing', 'Waterfront development'],
-    cons: ['Safety concerns', 'Limited amenities', 'Gentrification']
+    cons: ['Safety varies', 'Limited amenities', 'Gentrification']
   },
   'murray hill': {
     description: 'A Midtown Manhattan neighborhood popular with young professionals, known for its high-rise buildings, restaurant scene, and central location.',
