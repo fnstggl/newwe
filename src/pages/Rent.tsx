@@ -1016,7 +1016,7 @@ const Rent = () => {
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                      <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm pointer-events-auto mx-[7px]">
+                      <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
