@@ -42,6 +42,13 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
     }
   };
 
+  const capitalizeNeighborhood = (neighborhood: string) => {
+    return neighborhood
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const displayPrice = isRental 
     ? `$${property.monthly_rent?.toLocaleString()}/mo`
     : formatPrice(property.price || 0);
@@ -51,6 +58,8 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
   const bedroomText = property.bedrooms === 0 ? 'Studio' : 
     property.bedrooms === 1 ? '1 BR' : `${property.bedrooms} BR`;
+
+  const capitalizedNeighborhood = property.neighborhood ? capitalizeNeighborhood(property.neighborhood) : '';
 
   const discountText = isRentStabilized 
     ? `This home is ${Math.round(property.discount_percent || 0)}% below-market and rent-stabilized`
@@ -77,7 +86,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
           <div className="bg-gray-900/50 rounded-xl p-4 mb-6 border border-gray-700/30">
             <p className="text-white font-medium font-inter">
-              🏠 {bedroomText} · {property.neighborhood} · {displayPrice}
+              🏠 {bedroomText} · {capitalizedNeighborhood} · {displayPrice}
             </p>
           </div>
 
