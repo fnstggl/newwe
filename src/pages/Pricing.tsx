@@ -210,25 +210,29 @@ const Pricing = () => {
                     </li>
                   </ul>
                   
-                  {isOnUnlimitedPlan ? (
-                    <button
-                      className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight cursor-not-allowed"
-                      disabled
-                    >
-                      Current Plan
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-                      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
-                    >
-                      {`Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
-                    </button>
-      {!isOnUnlimitedPlan && (
-  <p className="text-xs text-gray-500 mt-2 text-center">
-    Cancel anytime. Instant access.
-  </p>
-                  )}
+{isOnUnlimitedPlan ? (
+  <button
+    className="w-full bg-blue-600 text-white py-3 rounded-full font-medium tracking-tight cursor-not-allowed"
+    disabled
+  >
+    Current Plan
+  </button>
+) : (
+  <>
+    <button
+      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
+      className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
+    >
+      {`Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
+    </button>
+    <p className="text-xs text-gray-500 mt-2 text-center">
+      Cancel anytime. Instant access.
+    </p>
+    <p className="text-xs text-gray-500 mt-1 text-center">
+      6,000+ New Yorkers already searching.
+    </p>
+  </>
+)}
                 </div>
               </div>
             </div>
