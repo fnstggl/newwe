@@ -337,7 +337,7 @@ const Profile = () => {
                 <p className="text-gray-400 text-sm tracking-tight">
                   {profileData.subscription_plan === 'unlimited' 
                     ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
-                    : 'Limited to 3 deals per day'
+                    : 'Limited to 9 deals per day'
                   }
                 </p>
               </div>
