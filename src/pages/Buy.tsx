@@ -768,7 +768,7 @@ const Buy = () => {
           )}
         </div>
 
-        {/* Properties Grid */}
+        {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
@@ -788,52 +788,50 @@ const Buy = () => {
                       gradeColors={gradeColors}
                     />
                   </div>
-                  
-                  {/* CTA for signed out users - show on 4th property (index 3) positioned in middle on desktop */}
-                  {!user && index === 3 && (
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
-                      <p className="text-sm text-white mb-2 text-center">
-                        You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-2">
-                        Want to see more of the best deals in NYC?
-                      </h3>
-                      <p className="text-white mb-4 text-center px-2">
-                        You've seen 3 of 2,193 listings. Create a free account to continue hunting.
-                      </p>
-                      <button
-                        onClick={() => navigate('/join')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                      >
-                        🔓 See More Deals
-                      </button>
-                    </div>
-                  )}
-
-                  {/* CTA for free plan users - show on 10th property (index 9) positioned in middle on desktop */}
-                  {isFreeUser && index === 9 && (
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
-                      <p className="text-sm text-white mb-4 text-center">
-                        You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-2 text-center px-2">
-                        Your next home could be past this point.
-                      </h3>
-                      <p className="text-white font-bold mb-4 text-center px-2">
-                        You're seeing 9 of 2,193 listings. Go unlimited for just $3.
-                      </p>
-                      <button
-                        onClick={() => navigate('/pricing')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
-                      >
-                        🔥 Unlock Access
-                      </button>
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
+
+          {/* Overlay CTA for signed out users - positioned over the middle (2nd) blurred card on desktop */}
+          {!user && properties.length > 3 && (
+            <div className={`absolute inset-0 flex items-start justify-center ${!isMobile ? 'lg:translate-x-[calc(33.333%-16px)]' : ''} pointer-events-none`}>
+              <div className={`mt-[200px] bg-black/70 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm pointer-events-auto ${!isMobile ? 'mx-auto' : 'mx-4'}`}>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  Want to see more of the best deals in NYC?
+                </h3>
+                <p className="text-white mb-4">
+                  You've seen 3 of 2,193 listings. Create a free account to continue hunting.
+                </p>
+                <button
+                  onClick={() => navigate('/join')}
+                  className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  🔓 See More Deals
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Overlay CTA for free plan users - positioned over the middle (2nd) blurred card on desktop */}
+          {isFreeUser && properties.length > 9 && (
+            <div className={`absolute inset-0 flex items-start justify-center ${!isMobile ? 'lg:translate-x-[calc(33.333%-16px)]' : ''} pointer-events-none`}>
+              <div className={`mt-[800px] bg-black/70 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm pointer-events-auto ${!isMobile ? 'mx-auto' : 'mx-4'}`}>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  Your next home could be past this point.
+                </h3>
+                <p className="text-white font-bold mb-4">
+                  You're seeing 9 of 2,193 listings. Go unlimited for just $3.
+                </p>
+                <button
+                  onClick={() => navigate('/pricing')}
+                  className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
+                >
+                  🔥 Unlock Access
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Loading state */}
