@@ -250,7 +250,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
              hover:scale-105 hover:shadow-2xl"
   onClick={prevImage}
 >
-  <ChevronLeft className="w-5 h-5 stroke="white" />
+  <ChevronLeft className="w-5 h-5 stroke-white" />
 </Button>
                       <Button
   variant="ghost"
@@ -262,7 +262,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
              hover:scale-105 hover:shadow-2xl"
   onClick={nextImage}
 >
-  <ChevronRight className="w-5 h-5 stroke="white" />
+  <ChevronRight className="w-5 h-5 stroke-white" />
 </Button>
                       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
                         {currentImageIndex + 1} / {images.length}
