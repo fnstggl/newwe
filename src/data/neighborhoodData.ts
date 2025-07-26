@@ -3,733 +3,276 @@ export interface NeighborhoodInfo {
   pros: string[];
   cons: string[];
 }
-
-export const getNeighborhoodInfo = (neighborhood: string): NeighborhoodInfo | null => {
-  const normalizedNeighborhood = neighborhood?.toLowerCase().replace(/[^a-z0-9]/g, '-');
-  return neighborhoodData[normalizedNeighborhood] || null;
-};
-
-export const capitalizeNeighborhood = (neighborhood: string): string => {
-  if (!neighborhood) return '';
-  return neighborhood
-    .split(/[-\s]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ')
-    .replace(/\bNyc\b/g, 'NYC');
-};
-
-const neighborhoodData: Record<string, NeighborhoodInfo> = {
-  // Manhattan
-  "upper-east-side": {
-    description: "An affluent neighborhood known for its luxury shopping, museums, and classic pre-war buildings. Home to Central Park's east side and Museum Mile.",
-    pros: [
-      "Prestigious location with excellent schools",
-      "Close to Central Park and world-class museums",
-      "Safe, well-maintained streets with doorman buildings"
-    ],
-    cons: [
-      "Very expensive with limited nightlife",
-      "Can feel stuffy and less diverse"
-    ]
+export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
+  'upper east side': {
+    description: 'A sophisticated and upscale neighborhood known for its luxury shopping, world-class museums, and elegant pre-war buildings. Home to Museum Mile and Central Park\'s eastern border.',
+    pros: ['Great for families', 'Excellent schools', 'Beautiful architecture'],
+    cons: ['Limited nightlife', 'More expensive', 'Less diverse dining']
   },
-  "upper-west-side": {
-    description: "A family-friendly neighborhood with tree-lined streets, pre-war architecture, and proximity to Central Park and Lincoln Center.",
-    pros: [
-      "Great for families with excellent schools",
-      "Cultural attractions like Lincoln Center",
-      "Beautiful architecture and Central Park access"
-    ],
-    cons: [
-      "Expensive with limited late-night dining",
-      "Can be quiet for young professionals"
-    ]
+  'upper west side': {
+    description: 'A cultural hub with a neighborhood feel, featuring tree-lined streets, historic brownstones, and proximity to Central Park and Lincoln Center.',
+    pros: ['Family-friendly', 'Great culture scene', 'Good restaurants'],
+    cons: ['Can be quiet at night', 'Limited shopping', 'Tourist crowds']
   },
-  "midtown-east": {
-    description: "The business heart of Manhattan, featuring skyscrapers, corporate headquarters, and convenient transportation hubs.",
-    pros: [
-      "Excellent transportation connections",
-      "Close to major business centers",
-      "Convenient for commuting professionals"
-    ],
-    cons: [
-      "Very expensive and crowded during business hours",
-      "Limited residential feel and community atmosphere"
-    ]
+  'lower east side': {
+    description: 'A vibrant and eclectic neighborhood that blends historic immigrant culture with modern hipster appeal, known for its nightlife and diverse food scene.',
+    pros: ['Great nightlife', 'Excellent food scene', 'Rich history'],
+    cons: ['Can be noisy', 'Limited green space', 'Crowded on weekends']
   },
-  "midtown-west": {
-    description: "Home to Times Square, Broadway theaters, and Hell's Kitchen. A bustling area with entertainment and dining options.",
-    pros: [
-      "Vibrant nightlife and entertainment scene",
-      "Excellent restaurants and Broadway shows",
-      "Great transportation access"
-    ],
-    cons: [
-      "Very touristy and crowded",
-      "Expensive with noise and congestion"
-    ]
+  'soho': {
+    description: 'A trendy shopping district with cobblestone streets and cast-iron architecture, famous for high-end boutiques, art galleries, and loft-style living.',
+    pros: ['Amazing shopping', 'Beautiful architecture', 'Great for art lovers'],
+    cons: ['Very expensive', 'Tourist heavy', 'Limited local amenities']
   },
-  "chelsea": {
-    description: "A trendy neighborhood known for art galleries, the High Line park, and a vibrant LGBTQ+ community.",
-    pros: [
-      "Trendy area with great art scene",
-      "The High Line and Chelsea Market",
-      "Excellent restaurants and nightlife"
-    ],
-    cons: [
-      "Very expensive real estate",
-      "Can be crowded with tourists"
-    ]
+  'chelsea': {
+    description: 'A dynamic neighborhood known for its art galleries, the High Line park, and vibrant nightlife scene, with a mix of modern and historic architecture.',
+    pros: ['Great art scene', 'Excellent nightlife', 'Good transportation'],
+    cons: ['Can be expensive', 'Crowded streets', 'Limited parking']
   },
-  "greenwich-village": {
-    description: "A historic bohemian neighborhood with tree-lined streets, Washington Square Park, and a rich cultural heritage.",
-    pros: [
-      "Charming historic character and walkability",
-      "Great restaurants and cultural attractions",
-      "Strong sense of community"
-    ],
-    cons: [
-      "Very expensive with limited parking",
-      "Can be crowded and noisy"
-    ]
+  'greenwich village': {
+    description: 'A charming bohemian neighborhood with tree-lined streets, historic townhouses, and a rich artistic heritage, known for its cozy cafes and intimate venues.',
+    pros: ['Charming atmosphere', 'Great cafes', 'Rich history'],
+    cons: ['Very expensive', 'Limited space', 'Tourist crowds']
   },
-  "east-village": {
-    description: "A vibrant, eclectic neighborhood known for its nightlife, diverse dining scene, and artistic community.",
-    pros: [
-      "Excellent nightlife and restaurant scene",
-      "Diverse, artistic community",
-      "More affordable than other Manhattan areas"
-    ],
-    cons: [
-      "Can be noisy and gritty",
-      "Limited family-friendly amenities"
-    ]
+  'east village': {
+    description: 'A gritty and artistic neighborhood with a punk rock heritage, known for its dive bars, experimental restaurants, and young creative community.',
+    pros: ['Great nightlife', 'Diverse food scene', 'Artistic community'],
+    cons: ['Can be noisy', 'Less family-friendly', 'Limited green space']
   },
-  "lower-east-side": {
-    description: "A historically immigrant neighborhood now known for trendy bars, vintage shopping, and a mix of old and new culture.",
-    pros: [
-      "Great nightlife and trendy restaurant scene",
-      "Rich cultural history and diversity",
-      "More affordable than other Manhattan neighborhoods"
-    ],
-    cons: [
-      "Can be noisy and crowded on weekends",
-      "Limited green space and family amenities"
-    ]
+  'tribeca': {
+    description: 'An upscale neighborhood with cobblestone streets and converted industrial buildings, known for its celebrity residents and high-end dining scene.',
+    pros: ['Luxury living', 'Excellent restaurants', 'Quiet streets'],
+    cons: ['Very expensive', 'Limited nightlife', 'Can feel isolated']
   },
-  "soho": {
-    description: "An upscale shopping and arts district known for cast-iron architecture, high-end boutiques, and art galleries.",
-    pros: [
-      "World-class shopping and dining",
-      "Beautiful cast-iron architecture",
-      "Central location with great walkability"
-    ],
-    cons: [
-      "Extremely expensive real estate",
-      "Very crowded with tourists and shoppers"
-    ]
+  'williamsburg': {
+    description: 'A trendy Brooklyn neighborhood across the East River, known for its hipster culture, artisanal food scene, and stunning Manhattan skyline views.',
+    pros: ['Great food scene', 'Vibrant nightlife', 'Beautiful waterfront'],
+    cons: ['Can be pretentious', 'Expensive for Brooklyn', 'Limited subway access']
   },
-  "tribeca": {
-    description: "An exclusive neighborhood known for luxury living, cobblestone streets, and celebrity residents.",
-    pros: [
-      "Luxury living with excellent restaurants",
-      "Quiet, family-friendly atmosphere",
-      "Beautiful historic architecture"
-    ],
-    cons: [
-      "Extremely expensive with limited nightlife",
-      "Can feel isolated from other neighborhoods"
-    ]
+  'park slope': {
+    description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
+    pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
+    cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
   },
-  "financial-district": {
-    description: "The historic financial center of NYC, featuring Wall Street, historic sites, and waterfront views.",
-    pros: [
-      "Historic significance and waterfront access",
-      "Good transportation connections",
-      "Growing residential community"
-    ],
-    cons: [
-      "Quiet on weekends with limited nightlife",
-      "Can feel corporate and less residential"
-    ]
+  'midtown': {
+    description: 'The bustling heart of Manhattan, home to iconic landmarks like Times Square and the Empire State Building, with endless dining and entertainment options.',
+    pros: ['Great transportation', 'Amazing dining', 'Tourist attractions'],
+    cons: ['Very crowded', 'Expensive', 'Noisy']
   },
-  "chinatown": {
-    description: "A vibrant ethnic enclave known for authentic Chinese cuisine, markets, and cultural experiences.",
-    pros: [
-      "Authentic cuisine and cultural experiences",
-      "Affordable dining and shopping options",
-      "Rich cultural heritage and community"
-    ],
-    cons: [
-      "Can be crowded and chaotic",
-      "Language barriers and limited English signage"
-    ]
+  'financial district': {
+    description: 'The historic financial center of NYC with Wall Street at its core, featuring modern skyscrapers mixed with colonial-era buildings and waterfront views.',
+    pros: ['Historic significance', 'Waterfront access', 'Good restaurants'],
+    cons: ['Quiet on weekends', 'Limited nightlife', 'Tourist heavy']
   },
-  "little-italy": {
-    description: "A historic Italian-American neighborhood known for traditional restaurants and cultural festivals.",
-    pros: [
-      "Rich Italian-American culture and history",
-      "Excellent traditional Italian restaurants",
-      "Charming neighborhood festivals"
-    ],
-    cons: [
-      "Very touristy with inflated prices",
-      "Limited authentic local community"
-    ]
+  'astoria': {
+    description: 'A diverse Queens neighborhood known for its affordable housing, authentic Greek cuisine, and strong community feel with easy Manhattan access.',
+    pros: ['Affordable living', 'Great Greek food', 'Family-friendly'],
+    cons: ['Limited nightlife', 'Fewer amenities', 'Commute to Manhattan']
   },
-  "nolita": {
-    description: "North of Little Italy - a trendy neighborhood with boutique shopping, cafes, and a village-like feel.",
-    pros: [
-      "Trendy boutique shopping and cafes",
-      "Charming, village-like atmosphere",
-      "Great restaurants and nightlife"
-    ],
-    cons: [
-      "Very expensive real estate",
-      "Can be crowded with shoppers and tourists"
-    ]
+  'bedford-stuyvesant': {
+    description: 'A historic Brooklyn neighborhood experiencing rapid gentrification, known for its beautiful brownstones, rich African-American heritage, and emerging food scene.',
+    pros: ['Beautiful architecture', 'Rich culture', 'More affordable'],
+    cons: ['Gentrification issues', 'Safety concerns', 'Limited subway access']
   },
-  "west-village": {
-    description: "A picturesque neighborhood with tree-lined streets, historic brownstones, and a strong community feel.",
-    pros: [
-      "Beautiful tree-lined streets and architecture",
-      "Strong sense of community",
-      "Excellent restaurants and local charm"
-    ],
-    cons: [
-      "Extremely expensive real estate",
-      "Limited nightlife for younger crowds"
-    ]
+  'boerum hill': {
+    description: 'A quiet residential Brooklyn neighborhood with tree-lined streets, historic brownstones, and a small-town feel within the city.',
+    pros: ['Quiet residential', 'Beautiful homes', 'Family-friendly'],
+    cons: ['Limited nightlife', 'Expensive', 'Few amenities']
   },
-  "meatpacking-district": {
-    description: "A transformed industrial area now known for trendy nightlife, the High Line, and upscale dining.",
-    pros: [
-      "Trendy nightlife and upscale dining",
-      "The High Line and Whitney Museum",
-      "Modern luxury developments"
-    ],
-    cons: [
-      "Very expensive and can be pretentious",
-      "Limited community feel and daytime activity"
-    ]
+  'brooklyn heights': {
+    description: 'An elegant Brooklyn neighborhood with stunning Manhattan views, historic architecture, and the famous Brooklyn Heights Promenade.',
+    pros: ['Amazing views', 'Historic charm', 'Quiet streets'],
+    cons: ['Very expensive', 'Limited nightlife', 'Tourist crowds']
   },
-  "flatiron": {
-    description: "A bustling commercial district centered around the iconic Flatiron Building, with tech companies and dining.",
-    pros: [
-      "Central location with excellent transportation",
-      "Growing tech scene and business opportunities",
-      "Great restaurants and Union Square nearby"
-    ],
-    cons: [
-      "Very expensive and crowded",
-      "More commercial than residential feel"
-    ]
+  'bushwick': {
+    description: 'A rapidly gentrifying Brooklyn neighborhood known for its vibrant street art, industrial spaces converted to lofts, and thriving nightlife scene.',
+    pros: ['Great nightlife', 'Artist community', 'More affordable'],
+    cons: ['Safety concerns', 'Gentrification', 'Industrial feel']
   },
-  "gramercy": {
-    description: "An elegant neighborhood known for Gramercy Park, historic architecture, and a quiet residential feel.",
-    pros: [
-      "Quiet, elegant residential atmosphere",
-      "Beautiful historic architecture",
-      "Central location with good transportation"
-    ],
-    cons: [
-      "Very expensive with limited nightlife",
-      "Can feel exclusive and less diverse"
-    ]
+  'carroll gardens': {
+    description: 'A charming Brooklyn neighborhood known for its Italian heritage, tree-lined streets, and strong community feel with excellent restaurants.',
+    pros: ['Great restaurants', 'Community feel', 'Beautiful streets'],
+    cons: ['Limited nightlife', 'Expensive', 'Few bars']
   },
-  "murray-hill": {
-    description: "A residential neighborhood popular with young professionals, offering a mix of high-rises and brownstones.",
-    pros: [
-      "Popular with young professionals",
-      "Good restaurant and bar scene",
-      "More affordable than other Manhattan areas"
-    ],
-    cons: [
-      "Can feel generic and lacking character",
-      "Crowded with recent college graduates"
-    ]
+  'chinatown': {
+    description: 'A bustling Manhattan neighborhood with authentic Chinese culture, incredible dim sum, street markets, and affordable shopping.',
+    pros: ['Amazing food', 'Cultural experience', 'Affordable dining'],
+    cons: ['Very crowded', 'Language barriers', 'Tourist heavy']
   },
-  "kips-bay": {
-    description: "A residential neighborhood with modern high-rises, medical facilities, and convenient Midtown access.",
-    pros: [
-      "Modern amenities and high-rise living",
-      "Good transportation to Midtown",
-      "Growing restaurant and bar scene"
-    ],
-    cons: [
-      "Lacks distinct character and charm",
-      "Can feel sterile and overly commercial"
-    ]
+  'clinton hill': {
+    description: 'A diverse Brooklyn neighborhood known for its historic architecture, tree-lined streets, and proximity to both Fort Greene and Bed-Stuy.',
+    pros: ['Good architecture', 'Diverse community', 'Central location'],
+    cons: ['Gentrification', 'Limited amenities', 'Safety varies']
   },
-  "stuyvesant-town": {
-    description: "A large residential complex offering affordable housing with parks, playgrounds, and community amenities.",
-    pros: [
-      "Affordable housing with community amenities",
-      "Family-friendly with parks and playgrounds",
-      "Good transportation access"
-    ],
-    cons: [
-      "Can feel isolated from the rest of Manhattan",
-      "Limited dining and entertainment options nearby"
-    ]
+  'cobble hill': {
+    description: 'A small, upscale Brooklyn neighborhood known for its cobblestone streets, historic charm, and family-friendly atmosphere.',
+    pros: ['Family-friendly', 'Historic charm', 'Quiet streets'],
+    cons: ['Very expensive', 'Limited nightlife', 'Small area']
   },
-  "alphabet-city": {
-    description: "The easternmost part of the East Village, known for its diverse community, affordable options, and local bars.",
-    pros: [
-      "More affordable than other Manhattan areas",
-      "Diverse, artistic community",
-      "Good local bars and restaurants"
-    ],
-    cons: [
-      "Can feel rough around the edges",
-      "Limited upscale amenities and services"
-    ]
+  'concourse': {
+    description: 'A South Bronx neighborhood known for its proximity to Yankee Stadium, diverse Latino culture, and affordable housing options.',
+    pros: ['Affordable housing', 'Cultural diversity', 'Sports access'],
+    cons: ['Safety concerns', 'Limited amenities', 'Commute times']
   },
-  "two-bridges": {
-    description: "A small neighborhood between the Manhattan and Brooklyn Bridges, offering waterfront views and growing development.",
-    pros: [
-      "Waterfront location with bridge views",
-      "Growing development and investment",
-      "More affordable than other Lower Manhattan areas"
-    ],
-    cons: [
-      "Limited amenities and dining options",
-      "Can feel isolated from other neighborhoods"
-    ]
+  'crown heights': {
+    description: 'A diverse Brooklyn neighborhood with a rich Caribbean and Jewish heritage, beautiful architecture, and emerging food scene.',
+    pros: ['Cultural diversity', 'Beautiful buildings', 'More affordable'],
+    cons: ['Safety varies', 'Gentrification', 'Limited nightlife']
   },
-  "battery-park-city": {
-    description: "A planned waterfront community with parks, family amenities, and stunning harbor views.",
-    pros: [
-      "Beautiful waterfront parks and views",
-      "Family-friendly with excellent schools",
-      "Modern, well-planned community"
-    ],
-    cons: [
-      "Can feel sterile and lacking character",
-      "Limited nightlife and cultural attractions"
-    ]
+  'dumbo': {
+    description: 'A waterfront Brooklyn neighborhood with cobblestone streets, converted warehouses, and stunning views of Manhattan and the Brooklyn Bridge.',
+    pros: ['Amazing views', 'Waterfront parks', 'Unique architecture'],
+    cons: ['Very expensive', 'Tourist heavy', 'Limited housing']
   },
-  "inwood": {
-    description: "The northernmost Manhattan neighborhood offering affordable housing, parks, and a strong Dominican community.",
-    pros: [
-      "Most affordable Manhattan neighborhood",
-      "Large parks and green spaces",
-      "Strong sense of community"
-    ],
-    cons: [
-      "Far from Midtown and other attractions",
-      "Limited dining and entertainment options"
-    ]
+  'fort greene': {
+    description: 'A historic Brooklyn neighborhood known for its cultural institutions, beautiful brownstones, and strong African-American heritage.',
+    pros: ['Rich culture', 'Beautiful architecture', 'Good restaurants'],
+    cons: ['Expensive', 'Limited nightlife', 'Gentrification']
   },
-  "washington-heights": {
-    description: "A diverse, hilly neighborhood known for Fort Tryon Park, affordable housing, and Dominican culture.",
-    pros: [
-      "Affordable housing with park access",
-      "Rich Dominican culture and community",
-      "The Cloisters museum and Fort Tryon Park"
-    ],
-    cons: [
-      "Far from Midtown Manhattan",
-      "Limited upscale dining and shopping"
-    ]
+  'gowanus': {
+    description: 'An industrial Brooklyn neighborhood undergoing rapid development, known for its creative spaces, emerging food scene, and the Gowanus Canal.',
+    pros: ['Creative community', 'Emerging dining', 'More affordable'],
+    cons: ['Industrial feel', 'Environmental concerns', 'Limited amenities']
   },
-  "hamilton-heights": {
-    description: "A historic Harlem neighborhood with beautiful architecture, cultural sites, and a growing arts scene.",
-    pros: [
-      "Beautiful historic architecture",
-      "Growing arts and cultural scene",
-      "More affordable than other Manhattan areas"
-    ],
-    cons: [
-      "Still developing amenities and services",
-      "Can feel disconnected from other neighborhoods"
-    ]
+  'gramercy park': {
+    description: 'An elegant Manhattan neighborhood centered around a private park, known for its historic buildings, quiet streets, and upscale living.',
+    pros: ['Quiet elegance', 'Historic charm', 'Central location'],
+    cons: ['Very expensive', 'Limited nightlife', 'Exclusive feel']
   },
-  "morningside-heights": {
-    description: "Home to Columbia University, featuring academic atmosphere, affordable dining, and Morningside Park.",
-    pros: [
-      "Academic atmosphere with cultural events",
-      "Affordable dining and student-friendly options",
-      "Access to Morningside and Riverside Parks"
-    ],
-    cons: [
-      "Can feel too student-oriented for families",
-      "Limited upscale amenities and nightlife"
-    ]
+  'greenpoint': {
+    description: 'A Polish-influenced Brooklyn neighborhood known for its waterfront views, authentic pierogi, and growing arts scene along the East River.',
+    pros: ['Great Polish food', 'Waterfront access', 'Artist community'],
+    cons: ['Limited subway', 'Industrial areas', 'Gentrification']
   },
-  "harlem": {
-    description: "A historic neighborhood known for its rich African-American culture, jazz heritage, and ongoing gentrification.",
-    pros: [
-      "Rich cultural history and community",
-      "Growing restaurant and arts scene",
-      "More affordable than other Manhattan areas"
-    ],
-    cons: [
-      "Ongoing gentrification concerns",
-      "Some areas still developing safety and amenities"
-    ]
+  'kips bay': {
+    description: 'A Midtown East Manhattan neighborhood known for its high-rise buildings, medical facilities, and convenient location near major attractions.',
+    pros: ['Great location', 'Good transportation', 'Modern buildings'],
+    cons: ['Lacks character', 'Expensive', 'Tourist heavy']
   },
-  "east-harlem": {
-    description: "Also known as El Barrio, a predominantly Latino neighborhood with authentic culture and affordable housing.",
-    pros: [
-      "Authentic Latino culture and community",
-      "Affordable housing options",
-      "Growing arts and cultural scene"
-    ],
-    cons: [
-      "Some areas have safety concerns",
-      "Limited upscale amenities and services"
-    ]
+  'little italy': {
+    description: 'A historic Manhattan neighborhood celebrating Italian-American heritage with authentic restaurants, festivals, and Old World charm.',
+    pros: ['Great Italian food', 'Historic charm', 'Cultural events'],
+    cons: ['Tourist trap', 'Expensive dining', 'Limited housing']
   },
-  "yorkville": {
-    description: "Part of the Upper East Side with a more relaxed feel, good restaurants, and proximity to Central Park.",
-    pros: [
-      "More relaxed than other UES areas",
-      "Good restaurants and local bars",
-      "Close to Central Park and museums"
-    ],
-    cons: [
-      "Still expensive like other UES areas",
-      "Can feel quiet for younger residents"
-    ]
+  'long island city': {
+    description: 'A rapidly developing Queens neighborhood with stunning Manhattan skyline views, modern high-rises, and excellent transportation connections.',
+    pros: ['Amazing views', 'New developments', 'Great transportation'],
+    cons: ['Lacks character', 'Construction noise', 'Expensive for Queens']
   },
-  "lenox-hill": {
-    description: "An upscale Upper East Side neighborhood with luxury shopping, fine dining, and prestigious addresses.",
-    pros: [
-      "Luxury shopping and fine dining",
-      "Prestigious addresses and doorman buildings",
-      "Excellent schools and family amenities"
-    ],
-    cons: [
-      "Very expensive real estate",
-      "Can feel stuffy and less diverse"
-    ]
+  'melrose': {
+    description: 'A South Bronx neighborhood known for its Latino culture, affordable housing, and proximity to Yankee Stadium and the Harlem River.',
+    pros: ['Affordable living', 'Cultural diversity', 'River access'],
+    cons: ['Safety concerns', 'Limited amenities', 'Economic challenges']
   },
-  "carnegie-hill": {
-    description: "An affluent Upper East Side area near Central Park, known for museums, schools, and family-friendly atmosphere.",
-    pros: [
-      "Excellent schools and family amenities",
-      "Close to museums and Central Park",
-      "Safe, well-maintained neighborhood"
-    ],
-    cons: [
-      "Very expensive with limited nightlife",
-      "Can feel exclusive and less diverse"
-    ]
+  'mott haven': {
+    description: 'An emerging South Bronx neighborhood experiencing gentrification, known for its art galleries, waterfront development, and affordable housing.',
+    pros: ['Emerging arts scene', 'Affordable housing', 'Waterfront development'],
+    cons: ['Safety concerns', 'Limited amenities', 'Gentrification']
   },
-
-  // Brooklyn
-  "williamsburg": {
-    description: "A trendy neighborhood known for its hipster culture, artisanal food scene, and waterfront views of Manhattan.",
-    pros: [
-      "Vibrant arts and music scene",
-      "Excellent restaurants and craft breweries",
-      "Beautiful waterfront parks with Manhattan views"
-    ],
-    cons: [
-      "Very expensive and increasingly gentrified",
-      "Can feel pretentious and overcrowded"
-    ]
+  'murray hill': {
+    description: 'A Midtown Manhattan neighborhood popular with young professionals, known for its high-rise buildings, restaurant scene, and central location.',
+    pros: ['Great for young professionals', 'Good restaurants', 'Central location'],
+    cons: ['Expensive', 'Crowded', 'Lacks character']
   },
-  "dumbo": {
-    description: "Down Under the Manhattan Bridge Overpass - a waterfront neighborhood with cobblestone streets and stunning views.",
-    pros: [
-      "Stunning Manhattan skyline views",
-      "Beautiful waterfront parks and walkways",
-      "Unique historic architecture"
-    ],
-    cons: [
-      "Extremely expensive real estate",
-      "Limited nightlife and can feel touristy"
-    ]
+  'nolita': {
+    description: 'A trendy Manhattan neighborhood with boutique shopping, upscale dining, and a mix of old-world Italian charm with modern sophistication.',
+    pros: ['Great shopping', 'Excellent dining', 'Historic charm'],
+    cons: ['Very expensive', 'Tourist crowds', 'Limited space']
   },
-  "brooklyn-heights": {
-    description: "A historic, affluent neighborhood with tree-lined streets, brownstones, and the famous Promenade.",
-    pros: [
-      "Historic charm with beautiful architecture",
-      "The Promenade with incredible views",
-      "Quiet, family-friendly atmosphere"
-    ],
-    cons: [
-      "Very expensive and can feel stuffy",
-      "Limited nightlife and younger crowd"
-    ]
+    'park slope': {
+    description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
+    pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
+    cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
   },
-  "park-slope": {
-    description: "A family-friendly neighborhood known for Prospect Park, Victorian architecture, and excellent schools.",
-    pros: [
-      "Excellent schools and family amenities",
-      "Beautiful Victorian architecture",
-      "Prospect Park and great local businesses"
-    ],
-    cons: [
-      "Very expensive and competitive housing market",
-      "Can feel overly family-oriented for singles"
-    ]
+  'prospect heights': {
+    description: 'A diverse Brooklyn neighborhood adjacent to Prospect Park, known for its cultural institutions like the Brooklyn Museum and Botanic Garden.',
+    pros: ['Great culture', 'Park access', 'Diverse community'],
+    cons: ['Gentrification', 'Expensive', 'Limited parking']
   },
-  "fort-greene": {
-    description: "A historic neighborhood with beautiful architecture, Fort Greene Park, and a strong arts community.",
-    pros: [
-      "Rich history and beautiful architecture",
-      "Strong arts and cultural community",
-      "Fort Greene Park and good restaurants"
-    ],
-    cons: [
-      "Rapidly gentrifying with rising prices",
-      "Some areas still developing amenities"
-    ]
+  'ridgewood': {
+    description: 'A Queens neighborhood on the Brooklyn border, known for its affordable housing, German heritage, and authentic beer gardens.',
+    pros: ['Affordable living', 'Great beer gardens', 'Authentic culture'],
+    cons: ['Limited nightlife', 'Commute to Manhattan', 'Industrial areas']
   },
-  "boerum-hill": {
-    description: "A charming neighborhood with tree-lined streets, historic brownstones, and a village-like feel.",
-    pros: [
-      "Charming, village-like atmosphere",
-      "Beautiful historic brownstones",
-      "Good restaurants and local shops"
-    ],
-    cons: [
-      "Very expensive real estate",
-      "Limited nightlife and entertainment"
-    ]
+  'two bridges': {
+    description: 'A small Lower East Side neighborhood between the Manhattan and Brooklyn Bridges, known for its public housing and waterfront views.',
+    pros: ['Waterfront access', 'Affordable housing', 'Bridge views'],
+    cons: ['Limited amenities', 'Public housing concentration', 'Small area']
   },
-  "carroll-gardens": {
-    description: "A family-friendly neighborhood known for its Italian-American heritage, gardens, and brownstones.",
-    pros: [
-      "Family-friendly with great schools",
-      "Beautiful brownstones with front gardens",
-      "Strong sense of community"
-    ],
-    cons: [
-      "Very expensive and competitive market",
-      "Limited nightlife for younger residents"
-    ]
+  'west village': {
+    description: 'A picturesque Manhattan neighborhood with winding streets, historic townhouses, and a bohemian atmosphere perfect for strolling.',
+    pros: ['Beautiful streets', 'Great nightlife', 'Historic charm'],
+    cons: ['Very expensive', 'Tourist crowds', 'Limited parking']
   },
-  "cobble-hill": {
-    description: "A small, upscale neighborhood with cobblestone streets, historic charm, and boutique shopping.",
-    pros: [
-      "Historic charm with cobblestone streets",
-      "Boutique shopping and dining",
-      "Close to Brooklyn Bridge Park"
-    ],
-    cons: [
-      "Very expensive and limited inventory",
-      "Can feel small and lacking in amenities"
-    ]
+  'woodside': {
+    description: 'A diverse Queens neighborhood known for its Irish heritage, authentic pubs, and affordable family-friendly living.',
+    pros: ['Family-friendly', 'Affordable living', 'Great Irish pubs'],
+    cons: ['Limited nightlife', 'Commute to Manhattan', 'Few amenities']
   },
-  "red-hook": {
-    description: "A waterfront neighborhood with industrial charm, art studios, and growing food scene.",
-    pros: [
-      "Unique industrial charm and waterfront access",
-      "Growing arts and food scene",
-      "More affordable than other Brooklyn areas"
-    ],
-    cons: [
-      "Limited subway access and transportation",
-      "Can feel isolated and industrial"
-    ]
+  'corona': {
+    description: 'A diverse Queens neighborhood known for its Latino culture, authentic cuisine, and proximity to Flushing Meadows Corona Park.',
+    pros: ['Great Latino food', 'Cultural diversity', 'Park access'],
+    cons: ['Language barriers', 'Limited amenities', 'Crowded']
   },
-  "gowanus": {
-    description: "An industrial neighborhood undergoing rapid development, known for art spaces and new construction.",
-    pros: [
-      "Rapidly developing with new amenities",
-      "Growing arts and cultural scene",
-      "More affordable than nearby neighborhoods"
-    ],
-    cons: [
-      "Industrial area with environmental concerns",
-      "Limited established amenities and services"
-    ]
+  'elmhurst': {
+    description: 'One of the most diverse neighborhoods in the world, located in Queens, known for its incredible variety of authentic ethnic restaurants.',
+    pros: ['Amazing ethnic food', 'Cultural diversity', 'Affordable dining'],
+    cons: ['Very crowded', 'Language barriers', 'Limited parking']
   },
-  "prospect-heights": {
-    description: "A diverse neighborhood near Prospect Park and the Brooklyn Museum, with good dining and cultural attractions.",
-    pros: [
-      "Close to Prospect Park and cultural attractions",
-      "Diverse community with good restaurants",
-      "Good transportation connections"
-    ],
-    cons: [
-      "Rapidly gentrifying with rising prices",
-      "Can feel transitional in some areas"
-    ]
+  'jackson heights': {
+    description: 'A vibrant Queens neighborhood known as one of the most ethnically diverse areas in the world, with incredible South Asian and Latin American food.',
+    pros: ['Incredible food diversity', 'Cultural richness', 'Affordable living'],
+    cons: ['Very crowded', 'Noise levels', 'Limited parking']
   },
-  "crown-heights": {
-    description: "A diverse neighborhood with Caribbean culture, historic architecture, and growing arts scene.",
-    pros: [
-      "Rich Caribbean culture and community",
-      "More affordable than other Brooklyn areas",
-      "Growing arts and restaurant scene"
-    ],
-    cons: [
-      "Some areas have safety concerns",
-      "Ongoing gentrification tensions"
-    ]
-  },
-  "bedford-stuyvesant": {
-    description: "A historic African-American neighborhood with beautiful brownstones, cultural heritage, and ongoing gentrification.",
-    pros: [
-      "Beautiful historic brownstones",
-      "Rich cultural heritage and community",
-      "More affordable than other Brooklyn areas"
-    ],
-    cons: [
-      "Rapid gentrification and displacement concerns",
-      "Some areas still developing amenities"
-    ]
-  },
-  "bushwick": {
-    description: "An industrial neighborhood known for its street art, music venues, and young creative community.",
-    pros: [
-      "Vibrant arts and music scene",
-      "More affordable with creative community",
-      "Great street art and nightlife"
-    ],
-    cons: [
-      "Can feel gritty and industrial",
-      "Limited family amenities and services"
-    ]
-  },
-  "greenpoint": {
-    description: "A Polish-American neighborhood with waterfront views, local character, and growing food scene.",
-    pros: [
-      "Strong Polish-American community and culture",
-      "Waterfront access with Manhattan views",
-      "Growing restaurant and bar scene"
-    ],
-    cons: [
-      "Industrial pollution and environmental concerns",
-      "Limited subway access in some areas"
-    ]
-  },
-  "sunset-park": {
-    description: "A diverse neighborhood with a large Latino and Asian population, affordable housing, and great food.",
-    pros: [
-      "Very diverse with authentic international food",
-      "More affordable housing options",
-      "Growing arts scene and waterfront access"
-    ],
-    cons: [
-      "Limited subway access in some areas",
-      "Some areas still developing amenities"
-    ]
-  },
-  "bay-ridge": {
-    description: "A family-friendly neighborhood with a strong Italian-American community, good schools, and affordable housing.",
-    pros: [
-      "Family-friendly with good schools",
-      "Strong sense of community",
-      "More affordable than other Brooklyn areas"
-    ],
-    cons: [
-      "Far from Manhattan and limited nightlife",
-      "Can feel suburban and less diverse"
-    ]
-  },
-  "dyker-heights": {
-    description: "A residential neighborhood known for its Christmas lights display, family homes, and quiet atmosphere.",
-    pros: [
-      "Quiet, family-oriented neighborhood",
-      "Beautiful homes and Christmas displays",
-      "Good schools and community feel"
-    ],
-    cons: [
-      "Very far from Manhattan",
-      "Limited dining and entertainment options"
-    ]
-  },
-  "bensonhurst": {
-    description: "A diverse neighborhood with a large Italian and Chinese population, affordable housing, and authentic food.",
-    pros: [
-      "Very diverse with authentic ethnic food",
-      "Affordable housing options",
-      "Strong community feel"
-    ],
-    cons: [
-      "Far from Manhattan with limited nightlife",
-      "Some areas lack modern amenities"
-    ]
-  },
-  "sheepshead-bay": {
-    description: "A waterfront neighborhood known for its fishing boats, seafood restaurants, and Russian community.",
-    pros: [
-      "Waterfront location with fishing culture",
-      "Great seafood restaurants",
-      "More affordable housing"
-    ],
-    cons: [
-      "Very far from Manhattan",
-      "Limited cultural attractions and nightlife"
-    ]
-  },
-  "coney-island": {
-    description: "Famous for its boardwalk, amusement park, and beach, offering a unique seaside experience in NYC.",
-    pros: [
-      "Beach access and boardwalk",
-      "Historic amusement park and attractions",
-      "Affordable housing near the water"
-    ],
-    cons: [
-      "Can feel run-down and touristy",
-      "Limited year-round amenities and services"
-    ]
-  },
-  "brighton-beach": {
-    description: "Known as 'Little Odessa' for its large Russian and Ukrainian community, beachfront location, and authentic cuisine.",
-    pros: [
-      "Beach access and boardwalk",
-      "Authentic Russian and Ukrainian culture",
-      "Affordable housing near the water"
-    ],
-    cons: [
-      "Very far from Manhattan",
-      "Language barriers and limited English services"
-    ]
-  },
-
-  // Queens
-  "long-island-city": {
-    description: "A rapidly developing neighborhood with modern high-rises, art museums, and stunning Manhattan views.",
-    pros: [
-      "Modern amenities and luxury buildings",
-      "Excellent transportation to Manhattan",
-      "Growing arts scene and waterfront parks"
-    ],
-    cons: [
-      "Rapidly gentrifying with rising prices",
-      "Can feel sterile and lacking character"
-    ]
-  },
-  "astoria": {
-    description: "A diverse neighborhood known for its Greek heritage, excellent food scene, and young professional population.",
-    pros: [
-      "Excellent international food scene",
-      "More affordable than Manhattan",
-      "Good nightlife and young professional community"
-    ],
-    cons: [
-      "Can be crowded and noisy",
-      "Some areas lack green space"
-    ]
-  },
-  "sunnyside": {
-    description: "A quiet, residential neighborhood with garden apartments, diverse community, and good transportation.",
-    pros: [
-      "Quiet, residential feel with garden apartments",
-      "Diverse, family-friendly community",
-      "Good transportation to Manhattan"
-    ],
-    cons: [
-      "Limited nightlife and entertainment",
-      "Can feel suburban for some tastes"
-    ]
-  },
-  "woodside": {
-    description: "A diverse, family-friendly neighborhood in Queens known for its affordable housing options and strong sense of community.",
-    pros: [
-      "Affordable housing with good value",
-      "Diverse, welcoming community atmosphere",
-      "Convenient transportation to Manhattan"
-    ],
-    cons: [
-      "Limited nightlife and entertainment options",
-      "Can feel residential and quiet for some"
-    ]
+  'sunnyside': {
+    description: 'A quiet Queens neighborhood known for its garden community, tree-lined streets, and strong Irish and Latino populations.',
+    pros: ['Quiet residential', 'Garden community', 'Family-friendly'],
+    cons: ['Limited nightlife', 'Commute to Manhattan', 'Few amenities']
   }
 };
+
+export const getNeighborhoodInfo = (neighborhood: string | null): NeighborhoodInfo | null => {
+  if (!neighborhood) return null;
+  
+  // Convert to lowercase for lookup and handle the case matching
+  const normalizedNeighborhood = neighborhood.toLowerCase().trim();
+  
+  // Try direct lookup first
+  if (neighborhoodData[normalizedNeighborhood]) {
+    return neighborhoodData[normalizedNeighborhood];
+  }
+  
+  // Try with hyphens replaced by spaces
+  const withSpaces = normalizedNeighborhood.replace(/-/g, ' ');
+  if (neighborhoodData[withSpaces]) {
+    return neighborhoodData[withSpaces];
+  }
+  
+  // Try with spaces replaced by hyphens
+  const withHyphens = normalizedNeighborhood.replace(/\s+/g, '-');
+  if (neighborhoodData[withHyphens]) {
+    return neighborhoodData[withHyphens];
+  }
+  
+  // Try removing 'the' prefix if it exists
+  const withoutThe = normalizedNeighborhood.replace(/^the\s+/, '');
+  if (neighborhoodData[withoutThe]) {
+    return neighborhoodData[withoutThe];
+  }
+  
+  // Fallback to generic description
+  return {
+    description: `${neighborhood} is a distinctive New York neighborhood with its own unique character and charm, offering residents a blend of urban convenience and local community feel.`,
+    pros: ['Good transportation', 'Local character', 'Urban convenience'],
+    cons: ['Varies by location', 'City noise', 'Parking challenges']
+  };
+};
+
+export const capitalizeNeighborhood = (neighborhood: string | null): string => {
+  if (!neighborhood) return '';
+  
+  return neighborhood
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
