@@ -824,7 +824,7 @@ const Buy = () => {
   className="relative group bg-white text-black px-8 py-3 rounded-full font-semibold transition-all duration-300
              hover:shadow-[0_0_12px_rgba(255,255,255,0.4)]"
 >
-  <span className="inline-block mr-2 animate-none group-hover:animate-bounce">
+  <span className="inline-block mr-2 animate-none group-hover:animate-flicker">
     🔥
   </span>
   Unlock the rest for just $3

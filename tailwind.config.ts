@@ -116,6 +116,11 @@ export default {
 					"0%": { "background-position": "0%" },
 					"100%": { "background-position": "200%" },
 				},
+                // 🔥 ADD THIS:
+    flicker: {
+      '0%, 100%': { opacity: '1', transform: 'translateY(0)' },
+      '50%': { opacity: '0.8', transform: 'translateY(-1px)' },
+    },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -123,6 +128,7 @@ export default {
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
 				'fade-in': 'fade-in 3s ease-out',
 				rainbow: "rainbow var(--speed, 2s) infinite linear",
+                  flicker: 'flicker 0.5s infinite ease-in-out',
 			}
 		}
 	},
