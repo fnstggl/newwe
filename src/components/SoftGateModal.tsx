@@ -1,9 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { capitalizeNeighborhood } from '@/data/neighborhoodData';
 import { useNavigate } from 'react-router-dom';
 
 interface SoftGateModalProps {
@@ -15,97 +12,108 @@ interface SoftGateModalProps {
     monthly_rent?: number;
     price?: number;
     discount_percent?: number;
-    isRentStabilized?: boolean;
+    rent_stabilized_detected?: boolean;
+    rent_stabilized_confidence?: number;
   };
-  isRental?: boolean;
+  isRental: boolean;
 }
 
-const SoftGateModal: React.FC<SoftGateModalProps> = ({
-  isOpen,
-  onClose,
+const SoftGateModal: React.FC<SoftGateModalProps> = ({ 
+  isOpen, 
+  onClose, 
   property,
-  isRental = false
+  isRental 
 }) => {
   const navigate = useNavigate();
 
-  const handleUpgradeClick = () => {
+  if (!isOpen) return null;
+
+  const handleUpgrade = () => {
     navigate('/pricing');
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const getDiscountText = () => {
-    if (property.discount_percent) {
-      const percent = Math.round(Math.abs(property.discount_percent));
-      const rentStabilizedText = property.isRentStabilized ? ' and rent-stabilized' : '';
-      return `This home is ${percent}% below-market${rentStabilizedText}`;
+    if (price >= 1000000) {
+      return `$${(price / 1000000).toFixed(1)}M`;
+    } else if (price >= 1000) {
+      return `$${(price / 1000).toFixed(0)}K`;
+    } else {
+      return `$${price.toLocaleString()}`;
     }
-    return 'This home is below-market';
   };
 
-  const displayPrice = isRental ? property.monthly_rent : property.price;
-  const priceText = displayPrice ? formatPrice(displayPrice) : 'Price available';
-  const suffix = isRental ? '/mo' : '';
+  const capitalizeNeighborhood = (neighborhood: string) => {
+    return neighborhood
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const displayPrice = isRental 
+    ? `$${property.monthly_rent?.toLocaleString()}/mo`
+    : formatPrice(property.price || 0);
+
+  const isRentStabilized = property.rent_stabilized_detected || 
+    (property.rent_stabilized_confidence && property.rent_stabilized_confidence > 70);
+
+  const bedroomText = property.bedrooms === 0 ? 'Studio' : 
+    property.bedrooms === 1 ? '1 BR' : `${property.bedrooms} BR`;
+
+  const capitalizedNeighborhood = property.neighborhood ? capitalizeNeighborhood(property.neighborhood) : '';
+
+  const discountText = isRentStabilized 
+    ? `This home is ${Math.round(property.discount_percent || 0)}% below-market and rent-stabilized`
+    : `This home is ${Math.round(property.discount_percent || 0)}% below-market`;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 bg-black/90 backdrop-blur-xl border-white/10 text-white">
-        <div className="relative p-8">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-black/90 backdrop-blur-md border border-gray-700/50 rounded-2xl p-8 max-w-md w-full mx-4 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white mb-3 font-inter">
+            Upgrade to view listing
+          </h2>
+          
+          <p className="text-gray-300 mb-6 font-inter">
+            {discountText}
+          </p>
+
+          <div className="bg-gray-900/50 rounded-xl p-4 mb-6 border border-gray-700/30">
+            <p className="text-white font-medium font-inter">
+              🏠 {bedroomText} · {capitalizedNeighborhood} · {displayPrice}
+            </p>
+          </div>
+
+          <p className="text-gray-300 mb-8 font-inter">
+            Get full details, photos, and market analysis
+          </p>
+
           <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
+            onClick={handleUpgrade}
+            className="w-full bg-white text-black py-3 px-6 rounded-full font-semibold font-inter mb-4 hover:bg-gray-100 transition-colors"
           >
-            <X size={20} />
+            Unlock for $3/month
           </button>
 
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold tracking-tight">Upgrade to view listing</h2>
-              <p className="text-white/80 text-lg">
-                {getDiscountText()}
-              </p>
-            </div>
+          <p className="text-xs text-gray-400 mb-4 font-inter">
+            6,000+ New Yorkers already searching
+          </p>
 
-            <div className="space-y-4">
-              <div className="text-lg">
-                🏠 {property.bedrooms === 0 ? 'Studio' : `${property.bedrooms || 0} BR`} · {capitalizeNeighborhood(property.neighborhood)} · {priceText}{suffix}
-              </div>
-              
-              <p className="text-white/70">
-                Get full details, photos, and market analysis
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <Button 
-                onClick={handleUpgradeClick}
-                className="w-full bg-white text-black hover:bg-white/90 font-semibold py-3 rounded-xl"
-              >
-                Unlock for $3/month
-              </Button>
-              
-              <p className="text-center text-white/50 text-sm">
-                6000+ New Yorkers already searching
-              </p>
-              
-              <button
-                onClick={onClose}
-                className="w-full text-blue-400 hover:text-blue-300 transition-colors text-sm"
-              >
-                No thanks, take me back
-              </button>
-            </div>
-          </div>
+          <button
+            onClick={onClose}
+            className="text-blue-400 hover:text-blue-300 text-sm font-inter transition-colors"
+          >
+            No thanks, take me back
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
 
