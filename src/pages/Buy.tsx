@@ -814,16 +814,16 @@ const Buy = () => {
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                         <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
-                          Your next home could be past this point.
+                          Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
-                          You're seeing 9 of 2,193 listings. Go unlimited for just $3.
+                          You're only seeing 9 of 2,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/pricing')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
                         >
-                          🔥 Unlock Access
+                          🔥 Unlock the rest for just $3
                         </button>
                       </div>
                     </div>
