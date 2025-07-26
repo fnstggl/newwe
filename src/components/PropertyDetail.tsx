@@ -241,21 +241,21 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   {images.length > 1 && (
                     <>
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                        onClick={prevImage}
-                      >
-                        <ChevronLeft className="h-6 w-6" />
-                      </Button>
+  variant="ghost"
+  size="icon"
+  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full border border-white/20 shadow-md backdrop-blur-sm"
+  onClick={prevImage}
+>
+  <ChevronLeft className="h-5 w-5" />
+</Button>
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                        onClick={nextImage}
-                      >
-                        <ChevronRight className="h-6 w-6" />
-                      </Button>
+  variant="ghost"
+  size="icon"
+  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full border border-white/20 shadow-md backdrop-blur-sm"
+  onClick={nextImage}
+>
+  <ChevronRight className="h-5 w-5" />
+</Button>
                       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
                         {currentImageIndex + 1} / {images.length}
                       </div>
