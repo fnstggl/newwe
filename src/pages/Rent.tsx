@@ -1036,7 +1036,7 @@ const Rent = () => {
                   {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
                   {isFreeUser && index === 10 && properties.length > 10 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                      <div className="bg-black/10 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm pointer-events-auto">
+                        <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be past this point.
                         </h3>
