@@ -112,7 +112,7 @@ export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
   'concourse': {
     description: 'A South Bronx neighborhood known for its proximity to Yankee Stadium, diverse Latino culture, and affordable housing options.',
     pros: ['Affordable housing', 'Cultural diversity', 'Sports access'],
-    cons: ['Safety concerns', 'Limited amenities', 'Commute times']
+    cons: ['Commute times', 'Limited amenities', 'Commute times']
   },
   'crown heights': {
     description: 'A diverse Brooklyn neighborhood with a rich Caribbean and Jewish heritage, beautiful architecture, and emerging food scene.',
