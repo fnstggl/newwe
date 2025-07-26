@@ -244,9 +244,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   variant="ghost"
   size="icon"
   className="absolute left-4 top-1/2 transform -translate-y-1/2
-             bg-white/10 text-white rounded-full
+             bg-white/20 text-white rounded-full
              border border-white/20 shadow-xl backdrop-blur-md
-             transition duration-200 ease-in-out hover:bg-white/20
+             transition duration-200 ease-in-out hover:bg-white/30
              hover:scale-105 hover:shadow-2xl"
   onClick={prevImage}
 >
@@ -256,9 +256,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   variant="ghost"
   size="icon"
   className="absolute right-4 top-1/2 transform -translate-y-1/2
-             bg-white/10 text-white rounded-full
+             bg-white/20 text-white rounded-full
              border border-white/20 shadow-xl backdrop-blur-md
-             transition duration-200 ease-in-out hover:bg-white/20
+             transition duration-200 ease-in-out hover:bg-white/30
              hover:scale-105 hover:shadow-2xl"
   onClick={nextImage}
 >
