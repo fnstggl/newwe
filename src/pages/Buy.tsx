@@ -791,43 +791,41 @@ const Buy = () => {
                   
                   {/* CTA for signed out users - show on 4th property (index 3) */}
                   {!user && index === 3 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <p className="text-sm text-white mb-2 text-center">
-                        You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
-                        Want to see more of the best deals in NYC?
-                      </h3>
-                      <p className="text-white mb-4 text-center px-4">
-                        You've seen 3 of 2,193 listings. Create a free account to continue hunting.
-                      </p>
-                      <button
-                        onClick={() => navigate('/join')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                      >
-                        🔓 See More Deals
-                      </button>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 md:fixed md:inset-0 md:bg-black/50 md:z-50 md:flex md:items-center md:justify-center">
+                      <div className="text-center max-w-2xl">
+                        <h3 className="text-2xl font-bold text-white mb-4 text-center px-2">
+                          Want to see more of the best deals in NYC?
+                        </h3>
+                        <p className="text-white mb-4 text-center px-2">
+                          You've seen 3 of 2,193 listings. Create a free account to continue hunting.
+                        </p>
+                        <button
+                          onClick={() => navigate('/join')}
+                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                        >
+                          🔓 See More Deals
+                        </button>
+                      </div>
                     </div>
                   )}
 
                   {/* CTA for free plan users - show on 10th property (index 9) */}
                   {isFreeUser && index === 9 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
-                      <p className="text-sm text-white mb-4 text-center">
-                        You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-2 text-center px-4">
-                        Your next home could be past this point.
-                      </h3>
-                      <p className="text-white font-bold mb-4 text-center">
-                        You're seeing 9 of 2,193 listings. Go unlimited for just $3.
-                      </p>
-                      <button
-                        onClick={() => navigate('/pricing')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
-                      >
-                        🔥 Unlock Access
-                      </button>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 md:fixed md:inset-0 md:bg-black/50 md:z-50 md:flex md:items-center md:justify-center">
+                      <div className="text-center max-w-2xl">
+                        <h3 className="text-2xl font-bold text-white mb-2 text-center px-2">
+                          Your next home could be past this point.
+                        </h3>
+                        <p className="text-white font-bold mb-4 text-center px-2">
+                          You're seeing 9 of 2,193 listings. Go unlimited for just $3.
+                        </p>
+                        <button
+                          onClick={() => navigate('/pricing')}
+                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
+                        >
+                          🔥 Unlock Access
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
