@@ -819,12 +819,16 @@ const Buy = () => {
                         <p className="text-white font-bold mb-4">
                           You're only seeing 9 of 2,193 deals.
                         </p>
-                        <button
-                          onClick={() => navigate('/pricing')}
-                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
-                        >
-                          🔥 Unlock the rest for just $3
-                        </button>
+                     <button
+  onClick={() => navigate('/pricing')}
+  className="relative group bg-white text-black px-8 py-3 rounded-full font-semibold transition-all duration-300
+             hover:shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+>
+  <span className="inline-block mr-2 animate-none group-hover:animate-bounce">
+    🔥
+  </span>
+  Unlock the rest for just $3
+</button>
                           <p className="text-xs text-gray-400 mt-3">
   6,000+ New Yorkers · As seen on CBS & AP
 </p>
