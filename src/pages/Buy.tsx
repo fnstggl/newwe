@@ -792,19 +792,22 @@ const Buy = () => {
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-md w-full pointer-events-auto px-[3px]">
+                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          You've seen 3 of 2,193 listings. Create a free account to continue hunting.
+                          You're only seeing 3 of 2,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                         >
-                          🔓 See More Deals
+                          🔓 Create free account to continue hunting
                         </button>
+                           <p className="text-xs text-gray-400 mt-3">
+  6,000+ New Yorkers · As seen on CBS & AP
+</p>
                       </div>
                     </div>
                   )}
