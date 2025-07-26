@@ -13,7 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
 const Buy = () => {
-  const { user, userProfile } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
@@ -61,13 +61,6 @@ const Buy = () => {
     'Score: High to Low',
     'Newest Listed'
   ];
-
-  // Determine visibility limits based on user status
-  const getVisibilityLimit = () => {
-    if (!user) return 3; // Signed out users see 3
-    if (userProfile?.subscription_plan === 'unlimited') return Infinity; // Unlimited users see all
-    return 9; // Free plan users see 9
-  };
 
   // Load property from URL parameter if present
   useEffect(() => {
@@ -450,10 +443,8 @@ const Buy = () => {
   };
 
   const handlePropertyClick = (property: any, index: number) => {
-    const visibilityLimit = getVisibilityLimit();
-    
-    // Only allow clicks on visible properties
-    if (index >= visibilityLimit) {
+    // Only allow clicks on first 6 properties if user is not logged in
+    if (!user && index >= 6) {
       return;
     }
     
@@ -472,10 +463,6 @@ const Buy = () => {
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
-
-  const visibilityLimit = getVisibilityLimit();
-  const isUnlimitedUser = userProfile?.subscription_plan === 'unlimited';
-  const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited';
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -773,7 +760,7 @@ const Buy = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
-              const isBlurred = index >= visibilityLimit;
+              const isBlurred = !user && index >= 6;
               
               return (
                 <div
@@ -789,44 +776,17 @@ const Buy = () => {
                     />
                   </div>
                   
-                  {/* CTA for signed out users - show on 4th property (index 3) positioned in middle on desktop */}
-                  {!user && index === 3 && (
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
-                      <p className="text-sm text-white mb-2 text-center">
-                        You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-2">
-                        Want to see more of the best deals in NYC?
+                  {/* Show CTA button on 8th property (index 7) for non-logged users */}
+                  {!user && index === 7 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10">
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-4">
+                        Want to see the best deals in NYC?
                       </h3>
-                      <p className="text-white mb-4 text-center px-2">
-                        You've seen 3 of 2,193 listings. Create a free account to continue hunting.
-                      </p>
                       <button
                         onClick={() => navigate('/join')}
                         className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                       >
-                        🔓 See More Deals
-                      </button>
-                    </div>
-                  )}
-
-                  {/* CTA for free plan users - show on 10th property (index 9) positioned in middle on desktop */}
-                  {isFreeUser && index === 9 && (
-                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
-                      <p className="text-sm text-white mb-4 text-center">
-                        You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
-                      </p>
-                      <h3 className="text-2xl font-bold text-white mb-2 text-center px-2">
-                        Your next home could be past this point.
-                      </h3>
-                      <p className="text-white font-bold mb-4 text-center px-2">
-                        You're seeing 9 of 2,193 listings. Go unlimited for just $3.
-                      </p>
-                      <button
-                        onClick={() => navigate('/pricing')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
-                      >
-                        🔥 Unlock Access
+                        Create free account
                       </button>
                     </div>
                   )}
@@ -843,8 +803,8 @@ const Buy = () => {
           </div>
         )}
 
-        {/* Load More Button - only show for unlimited users or when there are visible properties */}
-        {!loading && hasMore && properties.length > 0 && isUnlimitedUser && (
+        {/* Load More Button */}
+        {!loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
