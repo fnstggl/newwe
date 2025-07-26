@@ -774,16 +774,7 @@ const Buy = () => {
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
               const isBlurred = index >= visibilityLimit;
-
-  // NEW: Get all indexes that are blurred
-  const blurredIndexes = properties
-    .map((_, i) => i)
-    .filter(i => i >= visibilityLimit);
-
-  // NEW: Get the middle blurred index
-  const middleBlurredIndex =
-    blurredIndexes[Math.floor(blurredIndexes.length / 2)];
-      
+              
               return (
                 <div
                   key={`${property.id}-${index}`}
