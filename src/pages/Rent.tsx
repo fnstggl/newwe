@@ -14,7 +14,7 @@ type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 type SupabaseUndervaluedRentStabilized = Tables<'undervalued_rent_stabilized'>;
 
 const Rent = () => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
@@ -64,7 +64,13 @@ const Rent = () => {
     'Newest Listed'
   ];
 
-  // Load property from URL parameter if present
+  // Determine visibility limits based on user status
+  const getVisibilityLimit = () => {
+    if (!user) return 3; // Signed out users see 3
+    if (userProfile?.subscription_plan === 'unlimited') return Infinity; // Unlimited users see all
+    return 9; // Free plan users see 9
+  };
+
   useEffect(() => {
     if (listingId && properties.length > 0) {
       const property = properties.find(p => p.listing_id === listingId);
@@ -85,7 +91,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, rentStabilizedOnly]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, rentStabilizedOnly]);
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -655,16 +661,8 @@ const Rent = () => {
   };
 
   const handlePropertyClick = (property: any, index: number) => {
-    // Determine visibility limits based on user status
-    let visibilityLimit;
-    if (!user) {
-      visibilityLimit = 3; // Signed out users see 3
-    } else if (user.subscription_status === 'free') {
-      visibilityLimit = 9; // Free plan users see 9
-    } else {
-      visibilityLimit = Infinity; // Unlimited users see all
-    }
-
+    const visibilityLimit = getVisibilityLimit();
+    
     // Only allow clicks on visible properties
     if (index >= visibilityLimit) {
       return;
@@ -685,6 +683,10 @@ const Rent = () => {
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(neighborhoodSearchTerm.toLowerCase())
   );
+
+  const visibilityLimit = getVisibilityLimit();
+  const isUnlimitedUser = userProfile?.subscription_plan === 'unlimited';
+  const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited';
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -995,24 +997,7 @@ const Rent = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {properties.map((property, index) => {
               const gradeColors = getGradeColors(property.grade);
-              
-              // Determine blur state based on user status
-              let isBlurred = false;
-              let showCTA = false;
-              let ctaIndex = -1;
-
-              if (!user) {
-                // Signed out users: blur after 3, show CTA on 4th (index 3)
-                isBlurred = index >= 3;
-                showCTA = index === 3;
-                ctaIndex = 3;
-              } else if (user.subscription_status === 'free') {
-                // Free plan users: blur after 9, show CTA on 10th (index 9)
-                isBlurred = index >= 9;
-                showCTA = index === 9;
-                ctaIndex = 9;
-              }
-              // Unlimited users: no blur, no CTA
+              const isBlurred = index >= visibilityLimit;
               
               return (
                 <div
@@ -1028,50 +1013,42 @@ const Rent = () => {
                     />
                   </div>
                   
-                  {/* CTA overlays */}
-                  {showCTA && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 text-center px-4">
-                      {/* Signed out users CTA */}
-                      {!user && (
-                        <>
-                          <p className="text-sm text-white mb-4">
-                            You're seeing <span className="text-blue-400">3</span> of <span className="text-blue-400">2,193</span> deals
-                          </p>
-                          <h3 className="text-2xl font-bold text-white mb-2">
-                            Want to see more of the best deals in NYC?
-                          </h3>
-                          <p className="text-lg text-white mb-6">
-                            You've seen 3 of 2,193 listings. Create a free account to continue hunting.
-                          </p>
-                          <button
-                            onClick={() => navigate('/join')}
-                            className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                          >
-                            🔓 See More Deals
-                          </button>
-                        </>
-                      )}
-                      
-                      {/* Free plan users CTA */}
-                      {user && user.subscription_status === 'free' && (
-                        <>
-                          <p className="text-sm text-white mb-4">
-                            You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
-                          </p>
-                          <h3 className="text-2xl font-bold text-white mb-2">
-                            See unlimited below-market listings
-                          </h3>
-                          <p className="text-lg text-white mb-6">
-                            The best deals only last a few days.
-                          </p>
-                          <button
-                            onClick={() => navigate('/pricing')}
-                            className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-lg transition-all border hover:border-blue-400"
-                          >
-                            Get Unlimited Access
-                          </button>
-                        </>
-                      )}
+                  {/* CTA for signed out users - show on 4th property (index 3) positioned in middle on desktop */}
+                  {!user && index === 3 && (
+                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
+                      <h3 className="text-2xl font-bold text-white mb-4 text-center px-2">
+                        Want to see more of the best deals in NYC?
+                      </h3>
+                      <p className="text-white mb-4 text-center px-2">
+                        You've seen 3 of 2,193 listings. Create a free account to continue hunting.
+                      </p>
+                      <button
+                        onClick={() => navigate('/join')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                      >
+                        🔓 See More Deals
+                      </button>
+                    </div>
+                  )}
+
+                  {/* CTA for free plan users - show on 10th property (index 9) positioned in middle on desktop */}
+                  {isFreeUser && index === 9 && (
+                    <div className={`absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-xl z-10 ${!isMobile ? 'col-start-2' : ''}`}>
+                      <p className="text-sm text-white mb-4 text-center">
+                        You're seeing <span className="text-blue-400">9</span> of <span className="text-blue-400">2,193</span> deals
+                      </p>
+                      <h3 className="text-2xl font-bold text-white mb-2 text-center px-2">
+                        Your next home could be past this point.
+                      </h3>
+                      <p className="text-white font-bold mb-4 text-center px-2">
+                        You're seeing 9 of 2,193 listings. Go unlimited for just $3.
+                      </p>
+                      <button
+                        onClick={() => navigate('/pricing')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border hover:border-blue-400 transition-all"
+                      >
+                        🔥 Unlock Access
+                      </button>
                     </div>
                   )}
                 </div>
@@ -1087,8 +1064,8 @@ const Rent = () => {
           </div>
         )}
 
-        {/* Load More Button */}
-        {!loading && hasMore && properties.length > 0 && (
+        {/* Load More Button - only show for unlimited users or when there are visible properties */}
+        {!loading && hasMore && properties.length > 0 && isUnlimitedUser && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
