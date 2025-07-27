@@ -292,7 +292,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
             <div className="space-y-8 text-center">
               <div className="space-y-4">
                 <h3 className="text-3xl font-bold text-white tracking-tighter">
-                  You're in. Time to find you a home.
+                  🎉 You're in. Time to find you a home.
                 </h3>
                 <p className="text-white/70 text-lg tracking-tighter">
                   Now you can find the best deals first. They don't stick around for long.
