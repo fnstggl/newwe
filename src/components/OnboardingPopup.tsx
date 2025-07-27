@@ -145,7 +145,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
             <div className="space-y-6 text-center">
               <div className="rounded-2xl overflow-hidden shadow-xl">
                 <img 
-                  src="/lovable-uploads/d51407e4-9cdf-47f8-a41f-40b1b8f7a094.png" 
+                  src="/lovable-uploads/bb4c7d31-b631-48f0-8d0c-736acd4c9827.png" 
                   alt="Realer Estate property listings"
                   className="w-full h-auto"
                 />
