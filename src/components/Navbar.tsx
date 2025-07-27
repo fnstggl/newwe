@@ -149,29 +149,30 @@ const Navbar = () => {
           <div className="flex items-center space-x-6">
             {user ? (
               <>
-                {/* Subscription Status */}
+                {/* Subscription Status with Name */}
                 {isUnlimited ? (
                   <span className="text-white text-xs tracking-tight" style={{
                     textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
                   }}>
-                    Unlimited
+                    Unlimited / {userProfile?.name || 'Profile'}
                   </span>
                 ) : (
-                  <Link 
-                    to="/pricing"
-                    className="text-white text-xs tracking-tight px-3 py-1 rounded-full border border-gray-400 bg-transparent hover:bg-gray-800/50 transition-colors"
-                  >
-                    Free
-                  </Link>
+                  <div className="text-white text-xs tracking-tight">
+                    <Link 
+                      to="/pricing"
+                      className="hover:text-gray-300 transition-colors"
+                    >
+                      Free
+                    </Link>
+                    <span className="mx-1">/</span>
+                    <Link 
+                      to="/profile"
+                      className="hover:text-gray-300 transition-colors"
+                    >
+                      {userProfile?.name || 'Profile'}
+                    </Link>
+                  </div>
                 )}
-                
-                {/* Profile */}
-                <Link 
-                  to="/profile"
-                  className="text-white hover:text-gray-300 transition-colors text-xs tracking-tight"
-                >
-                  {userProfile?.name || 'Profile'}
-                </Link>
               </>
             ) : (
               <>
