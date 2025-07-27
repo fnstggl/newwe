@@ -57,7 +57,7 @@ const Buy = () => {
     property: null
   });
 
-  const ITEMS_PER_PAGE = 30;
+  const ITEMS_PER_PAGE = 18;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
   const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
   const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];

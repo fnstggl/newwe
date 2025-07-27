@@ -13,7 +13,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
 
-  // Process images to handle different formats and apply optimized proxy for Zillow URLs
+  // Process images with much more aggressive compression for thumbnails
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
@@ -22,8 +22,8 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       
       // Check if it's a Zillow image URL
       if (url.startsWith('https://photos.zillowstatic.com/')) {
-        // Use optimized Supabase Edge Function proxy with compression
-        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=300&quality=50`;
+        // Use very aggressive compression for thumbnails
+        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=250&quality=25`;
       }
       
       return url;
@@ -48,37 +48,32 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Aggressive preloading for faster image switching
+  // Ultra-aggressive preloading for instant display
   useEffect(() => {
     if (processedImages.length > 0) {
-      // Preload first 2 images immediately with very low quality for instant display
-      const immediatePreloadCount = Math.min(2, processedImages.length);
+      // Preload first image immediately with ultra-low quality
+      const img = new Image();
+      const ultraLowQualityUrl = processedImages[0].replace('quality=25', 'quality=15').replace('width=250', 'width=200');
+      img.src = ultraLowQualityUrl;
       
-      for (let i = 0; i < immediatePreloadCount; i++) {
-        const img = new Image();
-        // Use even lower quality for immediate preload
-        const lowQualityUrl = processedImages[i].replace('quality=50', 'quality=30').replace('width=300', 'width=200');
-        img.src = lowQualityUrl;
-      }
-      
-      // Preload remaining images with slight delay at normal quality
-      if (processedImages.length > 2) {
+      // Preload next 2 images with tiny delay
+      if (processedImages.length > 1) {
         setTimeout(() => {
-          for (let i = 2; i < Math.min(6, processedImages.length); i++) {
+          for (let i = 1; i < Math.min(3, processedImages.length); i++) {
             const img = new Image();
             img.src = processedImages[i];
           }
-        }, 50);
+        }, 10);
       }
       
-      // Preload the rest with longer delay
-      if (processedImages.length > 6) {
+      // Preload remaining images with longer delay
+      if (processedImages.length > 3) {
         setTimeout(() => {
-          for (let i = 6; i < processedImages.length; i++) {
+          for (let i = 3; i < processedImages.length; i++) {
             const img = new Image();
             img.src = processedImages[i];
           }
-        }, 200);
+        }, 100);
       }
     }
   }, [processedImages]);
@@ -138,12 +133,13 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       <img
         src={getCurrentImageUrl()}
         alt={address}
-        className="w-full h-full object-cover transition-opacity duration-150"
+        className="w-full h-full object-cover transition-opacity duration-100"
         onError={handleImageError}
-        loading={currentImageIndex === 0 ? "eager" : "lazy"}
+        loading="eager"
         decoding="async"
         style={{ 
-          willChange: 'opacity'
+          willChange: 'opacity',
+          imageRendering: 'auto'
         }}
       />
       

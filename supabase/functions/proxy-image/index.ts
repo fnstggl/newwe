@@ -15,8 +15,8 @@ serve(async (req) => {
   try {
     const url = new URL(req.url);
     const imageUrl = url.searchParams.get('url');
-    const width = url.searchParams.get('width') || '400'; // Default thumbnail width
-    const quality = url.searchParams.get('quality') || '60'; // Lower quality for faster loading
+    const width = url.searchParams.get('width') || '250'; // Even smaller default
+    const quality = url.searchParams.get('quality') || '30'; // Much lower quality
 
     if (!imageUrl) {
       return new Response('Missing URL parameter', { 
@@ -33,22 +33,29 @@ serve(async (req) => {
       });
     }
 
-    // Modify Zillow URL to request smaller, compressed images
+    // Modify Zillow URL to request much smaller, highly compressed images
     let optimizedUrl = imageUrl;
     
-    // Replace common Zillow image size parameters with smaller ones
+    // Replace common Zillow image size parameters with much smaller ones
     optimizedUrl = optimizedUrl.replace(/cc_ft_\d+/, `cc_ft_${width}`);
-    optimizedUrl = optimizedUrl.replace(/cc_\d+_\d+_\d+/, `cc_${width}_${Math.round(parseInt(width) * 0.75)}_${quality}`);
+    optimizedUrl = optimizedUrl.replace(/cc_\d+_\d+_\d+/, `cc_${width}_${Math.round(parseInt(width) * 0.6)}_${quality}`);
     optimizedUrl = optimizedUrl.replace(/-full\.jpg/, `-${width}.jpg`);
-    optimizedUrl = optimizedUrl.replace(/-uncropped_scaled_within_\d+_\d+\./, `-uncropped_scaled_within_${width}_${Math.round(parseInt(width) * 0.75)}.`);
+    optimizedUrl = optimizedUrl.replace(/-uncropped_scaled_within_\d+_\d+\./, `-uncropped_scaled_within_${width}_${Math.round(parseInt(width) * 0.6)}.`);
     
-    // Add compression parameters if not already present
-    if (!optimizedUrl.includes('quality=') && !optimizedUrl.includes('q=')) {
+    // Force very low quality by adding/replacing quality parameters
+    if (optimizedUrl.includes('quality=') || optimizedUrl.includes('q=')) {
+      optimizedUrl = optimizedUrl.replace(/quality=\d+/g, `quality=${quality}`);
+      optimizedUrl = optimizedUrl.replace(/q=\d+/g, `q=${quality}`);
+    } else {
       const separator = optimizedUrl.includes('?') ? '&' : '?';
-      optimizedUrl += `${separator}quality=${quality}`;
+      optimizedUrl += `${separator}quality=${quality}&q=${quality}`;
     }
 
-    // Fetch the optimized image from Zillow with performance headers
+    // Add additional compression parameters
+    const separator2 = optimizedUrl.includes('?') ? '&' : '?';
+    optimizedUrl += `${separator2}format=webp&compress=1`;
+
+    // Fetch the highly optimized image from Zillow
     const imageResponse = await fetch(optimizedUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -77,7 +84,7 @@ serve(async (req) => {
         });
       }
       
-      // Set aggressive caching headers for fallback
+      // Set very aggressive caching headers for fallback
       const headers = new Headers(corsHeaders);
       headers.set('Cache-Control', 'public, max-age=31536000, immutable');
       headers.set('Content-Type', fallbackResponse.headers.get('Content-Type') || 'image/jpeg');
@@ -90,24 +97,18 @@ serve(async (req) => {
       });
     }
 
-    // Set aggressive caching headers for optimized image
+    // Set very aggressive caching headers for optimized image
     const headers = new Headers(corsHeaders);
     headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     headers.set('Content-Type', imageResponse.headers.get('Content-Type') || 'image/jpeg');
     headers.set('ETag', imageResponse.headers.get('ETag') || `"${Date.now()}"`);
     headers.set('Last-Modified', imageResponse.headers.get('Last-Modified') || new Date().toUTCString());
     
-    // Add compression indicator
+    // Add compression indicators
     headers.set('X-Image-Optimized', 'true');
+    headers.set('X-Image-Quality', quality);
+    headers.set('X-Image-Width', width);
     
-    // Copy other relevant headers for better caching
-    if (imageResponse.headers.get('Content-Length')) {
-      headers.set('Content-Length', imageResponse.headers.get('Content-Length')!);
-    }
-    if (imageResponse.headers.get('Content-Encoding')) {
-      headers.set('Content-Encoding', imageResponse.headers.get('Content-Encoding')!);
-    }
-
     return new Response(imageResponse.body, {
       status: 200,
       headers
