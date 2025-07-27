@@ -183,7 +183,7 @@ const SavedProperties = () => {
 
         {savedProperties.length === 0 ? (
           <div className="text-center py-16">
-
+<Heart className="h-12 w-12 text-red-500/30 mx-auto mb-6" />
             <h2 className="text-2xl font-bold mb-4 tracking-tight">Nothing saved... yet</h2>
             <p className="text-gray-400 mb-8 tracking-tight">
                   Click the <Heart size={16} className="inline-block -mt-1 text-red-500" /> to save listings you love.
