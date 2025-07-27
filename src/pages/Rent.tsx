@@ -91,7 +91,7 @@ const Rent = () => {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, rentStabilizedOnly]);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -353,7 +353,8 @@ const Rent = () => {
           grade: 'A+', // Rent-stabilized properties get A+ grade
           score: property.deal_quality_score || 95,
           discount_percent: property.undervaluation_percent,
-          images: property.images || []
+          images: property.images || [],
+          zipcode: property.zip_code // Map zip_code to zipcode for consistency
         }));
 
       } else {
@@ -564,7 +565,8 @@ const Rent = () => {
           grade: 'A+', // Rent-stabilized properties get A+ grade
           score: property.deal_quality_score || 95,
           discount_percent: property.undervaluation_percent,
-          images: property.images || []
+          images: property.images || [],
+          zipcode: property.zip_code // Map zip_code to zipcode for consistency
         }));
 
         allProperties = [...regularProperties, ...rentStabilizedProperties];
