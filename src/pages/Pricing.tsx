@@ -109,24 +109,12 @@ const Pricing = () => {
   Get notified first. Unlock every hidden deal. Save thousands on rent or purchase price.
 </p>
 
-    {/* Cost Comparison */}
-      <div className="mt-10 flex flex-col md:flex-row justify-center items-center gap-6">
-        {/* Broker Card */}
-        <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 w-[280px] shadow-xl">
-          <h3 className="text-xl font-semibold text-white mb-2">Typical Broker</h3>
-          <p className="text-3xl font-bold text-white mb-4">~$3,600</p>
-          <p className="text-gray-400 text-sm">Per lease or purchase</p>
-        </div>
-
-        {/* Realer Estate Card */}
-        <div className="backdrop-blur-md bg-blue-500/10 border border-blue-400/20 rounded-2xl p-6 w-[280px] shadow-xl">
-          <h3 className="text-xl font-semibold text-white mb-2">Realer Estate</h3>
-          <p className="text-3xl font-bold text-white mb-4">$3/mo</p>
-          <p className="text-gray-400 text-sm">Full access. No fees.</p>
-        </div>
-      </div>
-            </div> {/* ✅ <-- This is the missing closing div */}
-          
+  <div className="mt-6 space-y-2 text-lg text-gray-300">
+  <p><span className="text-white">Typical broker fee:</span> ~$3,600</p>
+  <p><span className="text-white">Realer Estate:</span> $3/month</p>
+  <p className="text-blue-400 font-medium">Built to beat the system.</p>
+</div>
+            
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
               <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
