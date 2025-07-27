@@ -179,13 +179,20 @@ const Pricing = () => {
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
                   </div>
-                  <p className="text-4xl font-semibold mb-6 tracking-tight">
-                    {isAnnual ? (
-                      <>$19<span className="text-lg text-gray-400">/yr</span></>
-                    ) : (
-                      <>$3<span className="text-lg text-gray-400">/mo</span></>
-                    )}
-                  </p>
+                 <div className="mb-6 flex items-center justify-between">
+  <p className="text-4xl font-semibold tracking-tight">
+    {isAnnual ? (
+      <>$19<span className="text-lg text-gray-400">/yr</span></>
+    ) : (
+      <>$3<span className="text-lg text-gray-400">/mo</span></>
+    )}
+  </p>
+  {!isAnnual && (
+    <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
+      Compared to ~$3,600 broker avg
+    </span>
+  )}
+</div>
                   <p className="text-gray-400 mb-4 tracking-tight"> For the serious apartment hunter</p>
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
