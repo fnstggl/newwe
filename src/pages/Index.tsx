@@ -80,13 +80,13 @@ const Index = () => {
       </section>
 
       {/* As Seen On Section */}
-      <section className="py-12 px-4 max-w-6xl mx-auto">
+   <section className="pt-4 pb-10 px-4 max-w-6xl mx-auto">
         <div className="text-center">
           <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
             <img 
               src="/lovable-uploads/027a7b47-dd06-44bc-8986-fd48b89c4b6a.png" 
               alt="As seen on CBS, ABC, AP News" 
-              className="h-16 mx-auto"
+              className="h-12 mx-auto"
             />
           </Link>
         </div>
