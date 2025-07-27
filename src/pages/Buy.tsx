@@ -835,9 +835,9 @@ const Buy = () => {
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
-                        <p className="text-white mb-4">
-                          You're only seeing 3 of 2,193 deals.
-                        </p>
+                      <p className="text-white font-bold mb-4">
+  You're only seeing <span className="text-orange-400">9</span> of <span className="text-orange-400">2,193</span> deals.
+</p>
                         <button
                           onClick={() => navigate('/join')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
