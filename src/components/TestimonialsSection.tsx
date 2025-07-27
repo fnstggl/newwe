@@ -82,7 +82,7 @@ const TestimonialsSection = () => {
   — {currentTestimonial.username}
   {verifiedUsers.includes(currentTestimonial.username) && (
     <img
-      src="/verified-icon.svg"
+      src="/verified.png"
       alt="Verified Reddit User"
       className="w-4 h-4 inline-block align-middle"
     />
