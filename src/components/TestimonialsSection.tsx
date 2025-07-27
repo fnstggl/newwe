@@ -93,12 +93,22 @@ const TestimonialsSection = () => {
                     alt={`Reddit screenshot from ${currentTestimonial.username}`}
                     className="w-full h-auto rounded-lg shadow-lg"
                   />
-                <button
-  onClick={handleScreenshotToggle}
-  className="absolute top-4 right-4 text-xs md:text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4 text-[10px] md:text-xs"
->
-  Back to text view
-</button>
+                  {/* Desktop button - top right */}
+                  <button
+                    onClick={handleScreenshotToggle}
+                    className="hidden md:block absolute top-4 right-4 text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
+                  >
+                    Back to text view
+                  </button>
+                  {/* Mobile button - centered below screenshot */}
+                  <div className="md:hidden mt-4 text-center">
+                    <button
+                      onClick={handleScreenshotToggle}
+                      className="text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
+                    >
+                      Back to text view
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
