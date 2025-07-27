@@ -83,13 +83,13 @@ const Press = () => {
           </h2>
           <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
             <p>
-              We're two high schoolers from Brooklyn who grew up watching friends, family, and neighbors get priced out of the city we love.
+              We're two teens from Brooklyn who grew up watching friends, family, and neighbors get priced out of the city we love.
             </p>
             <p>
-              After seeing first-hand how we were losing our community to rising rents, we built something we wished had existed sooner.
+              After seeing first-hand how we were losing our community to rising rents, and a background in real estate & software-dev we built something we wished had existed sooner.
             </p>
             <p>
-              Realer Estate is an AI-powered platform that scans NYC listings in real time to surface rent-stabilized and undervalued apartments—before they disappear. It's already helped over 6,000 New Yorkers save thousands on rent, and we're just getting started.
+              Realer Estate is an AI-powered platform that scans NYC listings in real time to surface rent-stabilized and undervalued apartments—before they disappear. It's already helped over 6,000 New Yorkers search for more affordable homes, and we're just getting started.
             </p>
           </div>
         </div>
@@ -102,11 +102,11 @@ const Press = () => {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">16-year-old solo founder</div>
-            <div className="text-gray-400 text-sm">Building the future of real estate</div>
+            <div className="text-2xl font-bold mb-2">Young founders</div>
+            <div className="text-gray-400 text-sm">Redefining the NYC real estate market</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">6,000+ users served</div>
+            <div className="text-2xl font-bold mb-2">Built by teens, used by thousands</div>
             <div className="text-gray-400 text-sm">And growing every day</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
@@ -122,8 +122,8 @@ const Press = () => {
             <div className="text-gray-400 text-sm">Deal & rent stabilization analysis</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">100% free to find homes</div>
-            <div className="text-gray-400 text-sm">No hidden costs or barriers</div>
+            <div className="text-2xl font-bold mb-2">Free to start</div>
+            <div className="text-gray-400 text-sm">Explore deals before paying a dollar</div>
           </div>
         </div>
       </section>
