@@ -111,7 +111,7 @@ const Pricing = () => {
             </p>
         <div className="mt-10 flex justify-center">
   <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
-    <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight italic">
+    <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight">
       “I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane.”
     </p>
     <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
