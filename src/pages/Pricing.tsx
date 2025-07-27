@@ -111,36 +111,36 @@ const Pricing = () => {
             </p>
           </div>
 
-          {/* Price Comparison Section */}
-          <div className="mb-16">
-            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {/* Typical Broker Card */}
-              <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50">
-                <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
-                  Typical Broker
-                </h3>
-                <p className="text-3xl font-bold mb-2 text-red-400 tracking-tight">
-                  ~$3,600
-                </p>
-                <p className="text-sm text-gray-400 tracking-tight">
-                  Per lease or purchase
-                </p>
-              </div>
+{/* Price Comparison Section */}
+<div className="mb-16 rotate-[0.3deg] scale-[0.98] transition-transform duration-300 ease-in-out">
+  <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+    {/* Typical Broker Card */}
+    <div className="bg-red-500/10 backdrop-blur-md border border-red-400/20 rounded-2xl p-6 shadow-xl">
+      <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
+        🏢 Typical Broker
+      </h3>
+      <p className="text-3xl font-bold mb-2 text-red-400 tracking-tight">
+        ~$3,600
+      </p>
+      <p className="text-sm text-gray-400 tracking-tight">
+        Per lease or purchase
+      </p>
+    </div>
 
-              {/* Realer Estate Card */}
-              <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
-                <h3 className="text-lg font-semibold mb-3 text-blue-400 tracking-tight">
-                  Realer Estate
-                </h3>
-                <p className="text-3xl font-bold mb-2 text-blue-400 tracking-tight">
-                  $3/mo
-                </p>
-                <p className="text-sm text-gray-400 tracking-tight">
-                  Full access. No fees.
-                </p>
-              </div>
-            </div>
-          </div>
+    {/* Realer Estate Card */}
+    <div className="bg-blue-500/10 backdrop-blur-md border border-blue-400/20 rounded-2xl p-6 shadow-xl">
+      <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
+        💻 Realer Estate
+      </h3>
+      <p className="text-3xl font-bold mb-2 text-blue-400 tracking-tight">
+        $3/mo
+      </p>
+      <p className="text-sm text-gray-400 tracking-tight">
+        Full access. No fees.
+      </p>
+    </div>
+  </div>
+</div>
 
           <div className="text-center mb-16">
             {/* Billing Toggle */}
