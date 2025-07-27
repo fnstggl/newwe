@@ -13,22 +13,34 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [preloadedThumbnails, setPreloadedThumbnails] = useState<string[]>([]);
 
-  // Process images to handle different formats
+  // Process images to handle different formats and apply proxy for Zillow URLs
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
+    const processImageUrl = (url: string) => {
+      if (typeof url !== 'string') return '/placeholder.svg';
+      
+      // Check if it's a Zillow image URL
+      if (url.startsWith('https://photos.zillowstatic.com/')) {
+        // Use Supabase Edge Function proxy for Zillow images
+        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}`;
+      }
+      
+      return url;
+    };
+
     if (Array.isArray(images) && images.length > 0) {
       return images.map((img: any) => {
-        if (typeof img === 'string') return img;
+        if (typeof img === 'string') return processImageUrl(img);
         if (typeof img === 'object' && img !== null) {
-          return img.url || img.image_url || '/placeholder.svg';
+          return processImageUrl(img.url || img.image_url || '/placeholder.svg');
         }
         return '/placeholder.svg';
       });
     }
 
     if (typeof images === 'string') {
-      return [images];
+      return [processImageUrl(images)];
     }
 
     return [];
@@ -39,7 +51,11 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   // Create thumbnail URL (smaller, optimized version)
   const getThumbnailUrl = useCallback((url: string) => {
     if (url === '/placeholder.svg') return url;
-    // Add thumbnail parameters for smaller, faster loading images
+    // For proxy URLs, add thumbnail parameters
+    if (url.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
+      return url; // Proxy already handles optimization
+    }
+    // Add thumbnail parameters for other images
     return url.includes('?') ? `${url}&w=300&h=200&q=80` : `${url}?w=300&h=200&q=80`;
   }, []);
 
@@ -51,7 +67,18 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
           const img = new Image();
           const thumbnailUrl = getThumbnailUrl(imageUrl);
           img.onload = () => resolve(thumbnailUrl);
-          img.onerror = () => resolve('/placeholder.svg');
+          img.onerror = () => {
+            // If proxy fails, try original URL
+            if (imageUrl.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
+              const originalUrl = decodeURIComponent(imageUrl.split('url=')[1]);
+              const fallbackImg = new Image();
+              fallbackImg.onload = () => resolve(originalUrl);
+              fallbackImg.onerror = () => resolve('/placeholder.svg');
+              fallbackImg.src = originalUrl;
+            } else {
+              resolve('/placeholder.svg');
+            }
+          };
           img.src = thumbnailUrl;
         });
       });
@@ -91,6 +118,19 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     return preloadedThumbnails[currentImageIndex] || processedImages[currentImageIndex] || '/placeholder.svg';
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const currentSrc = img.src;
+    
+    // If proxy failed, try original URL
+    if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
+      const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
+      img.src = originalUrl;
+    } else {
+      img.src = '/placeholder.svg';
+    }
+  };
+
   return (
     <div 
       className={`relative overflow-hidden group ${className || ''}`}
@@ -101,9 +141,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         src={getCurrentImageUrl()}
         alt={address}
         className="w-full h-full object-cover transition-opacity duration-150"
-        onError={(e) => {
-          e.currentTarget.src = '/placeholder.svg';
-        }}
+        onError={handleImageError}
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
