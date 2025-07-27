@@ -66,7 +66,13 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
       />
       
       {/* Modal */}
-      <div className="relative bg-black/90 backdrop-blur-lg border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+     <div
+  className="relative bg-black/90 backdrop-blur-lg border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4 text-center"
+  style={{
+    boxShadow:
+      '0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 1px rgba(255,255,255,0.06)',
+  }}
+>
         {/* Close button */}
         <button
           onClick={onClose}
