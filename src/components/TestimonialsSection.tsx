@@ -40,13 +40,14 @@ const TestimonialsSection = () => {
   const [showScreenshot, setShowScreenshot] = useState(false);
 
   useEffect(() => {
+  if (!showScreenshot) {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-      setShowScreenshot(false);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }
+}, [showScreenshot]);
 
   const currentTestimonial = testimonials[currentIndex];
 
