@@ -13,7 +13,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
 
-  // Process images to handle different formats and apply proxy for Zillow URLs
+  // Process images to handle different formats and apply optimized proxy for Zillow URLs
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
@@ -22,8 +22,8 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       
       // Check if it's a Zillow image URL
       if (url.startsWith('https://photos.zillowstatic.com/')) {
-        // Use Supabase Edge Function proxy for Zillow images
-        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}`;
+        // Use optimized Supabase Edge Function proxy with compression
+        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=300&quality=50`;
       }
       
       return url;
@@ -48,25 +48,37 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Preload all images for faster switching
+  // Aggressive preloading for faster image switching
   useEffect(() => {
     if (processedImages.length > 0) {
-      // Preload first 3 images immediately
-      const preloadCount = Math.min(3, processedImages.length);
+      // Preload first 2 images immediately with very low quality for instant display
+      const immediatePreloadCount = Math.min(2, processedImages.length);
       
-      for (let i = 0; i < preloadCount; i++) {
+      for (let i = 0; i < immediatePreloadCount; i++) {
         const img = new Image();
-        img.src = processedImages[i];
+        // Use even lower quality for immediate preload
+        const lowQualityUrl = processedImages[i].replace('quality=50', 'quality=30').replace('width=300', 'width=200');
+        img.src = lowQualityUrl;
       }
       
-      // Preload remaining images with slight delay
-      if (processedImages.length > 3) {
+      // Preload remaining images with slight delay at normal quality
+      if (processedImages.length > 2) {
         setTimeout(() => {
-          for (let i = 3; i < processedImages.length; i++) {
+          for (let i = 2; i < Math.min(6, processedImages.length); i++) {
             const img = new Image();
             img.src = processedImages[i];
           }
-        }, 100);
+        }, 50);
+      }
+      
+      // Preload the rest with longer delay
+      if (processedImages.length > 6) {
+        setTimeout(() => {
+          for (let i = 6; i < processedImages.length; i++) {
+            const img = new Image();
+            img.src = processedImages[i];
+          }
+        }, 200);
       }
     }
   }, [processedImages]);
@@ -99,21 +111,22 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     // Mark this image index as having an error
     setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
     
-    // If proxy failed, try original URL
+    // If optimized proxy failed, try original URL
     if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
       try {
-        const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
-        img.src = originalUrl;
+        const urlParams = new URLSearchParams(currentSrc.split('?')[1]);
+        const originalUrl = decodeURIComponent(urlParams.get('url') || '');
+        if (originalUrl) {
+          img.src = originalUrl;
+        }
       } catch (error) {
-        img.src = '/placeholder.svg';
+        console.error('Error parsing proxy URL:', error);
       }
-    } else {
-      img.src = '/placeholder.svg';
     }
   };
 
   const getCurrentImageUrl = () => {
-    return processedImages[currentImageIndex] || '/placeholder.svg';
+    return processedImages[currentImageIndex] || '';
   };
 
   return (
@@ -130,7 +143,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         loading={currentImageIndex === 0 ? "eager" : "lazy"}
         decoding="async"
         style={{ 
-          imageRendering: 'high-quality',
           willChange: 'opacity'
         }}
       />
