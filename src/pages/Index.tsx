@@ -3,6 +3,7 @@ import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useEffect } from "react";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
 const Index = () => {
   useEffect(() => {
@@ -163,6 +164,9 @@ const Index = () => {
           />
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Final CTA */}
       <section className="py-20 pb-0 px-4 relative overflow-hidden">
