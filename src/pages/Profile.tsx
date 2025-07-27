@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -180,6 +181,13 @@ const Profile = () => {
   const handleManageSubscription = async () => {
     if (!user) return;
     
+    // Check if user is on free plan - redirect to checkout
+    if (profileData?.subscription_plan !== 'unlimited') {
+      navigate('/checkout');
+      return;
+    }
+    
+    // For unlimited plan users, open billing portal
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal');
       
