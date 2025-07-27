@@ -6,10 +6,9 @@ interface PropertyImageProps {
   images: any;
   address: string;
   className?: string;
-  lowResolution?: boolean; // New prop for low-res images
 }
 
-const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, lowResolution = false }) => {
+const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [preloadedThumbnails, setPreloadedThumbnails] = useState<string[]>([]);
@@ -40,15 +39,9 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   // Create thumbnail URL (smaller, optimized version)
   const getThumbnailUrl = useCallback((url: string) => {
     if (url === '/placeholder.svg') return url;
-    
-    // Use much lower resolution for blurred listings
-    if (lowResolution) {
-      return url.includes('?') ? `${url}&w=200&h=130&q=40` : `${url}?w=200&h=130&q=40`;
-    }
-    
-    // Regular thumbnail parameters for normal listings
+    // Add thumbnail parameters for smaller, faster loading images
     return url.includes('?') ? `${url}&w=300&h=200&q=80` : `${url}?w=300&h=200&q=80`;
-  }, [lowResolution]);
+  }, []);
 
   // Preload thumbnail versions of all images for instant switching
   useEffect(() => {
@@ -90,11 +83,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   // Use full resolution for first image, thumbnails for others when navigating
   const getCurrentImageUrl = () => {
-    if (lowResolution) {
-      // Always use low resolution for blurred listings
-      return getThumbnailUrl(processedImages[currentImageIndex] || '/placeholder.svg');
-    }
-    
     if (currentImageIndex === 0) {
       return processedImages[0] || '/placeholder.svg';
     }

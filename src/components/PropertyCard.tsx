@@ -37,10 +37,9 @@ interface PropertyCardProps {
   isRental?: boolean;
   onClick: () => void;
   gradeColors?: GradeColors;
-  isBlurred?: boolean; // New prop to indicate if this is a blurred listing
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick, gradeColors, isBlurred = false }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick, gradeColors }) => {
   // EXTENSIVE DEBUG: Log the EXACT property data
   console.log(`🏠 PROPERTY CARD [${property.address}]:`, {
     fullProperty: property,
@@ -166,7 +165,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           images={property.images}
           address={property.address}
           className="h-56"
-          lowResolution={isBlurred} // Pass lowResolution prop for blurred listings
         />
         
         {/* Grade badge - positioned absolutely over the image, top left */}
