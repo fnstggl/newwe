@@ -239,6 +239,10 @@ const Pricing = () => {
             </div>
           </div>
 
+<p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+  Cancel anytime. No risk, just better rent.
+</p>
+          
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
             <div className="mt-8 text-center">
