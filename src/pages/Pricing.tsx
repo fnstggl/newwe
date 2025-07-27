@@ -141,6 +141,7 @@ const Pricing = () => {
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col h-full">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
+              <p className="text-gray-400 mb-4 tracking-tight"> For the everyday New Yorker</p>
               <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -188,22 +189,17 @@ const Pricing = () => {
                   </div>
                  <div className="mb-6 flex items-center justify-between">
     <p className="text-4xl font-semibold tracking-tight">
-{isAnnual ? (
-  <>
-    <p className="text-4xl font-semibold tracking-tight">
-      $1.6<span className="text-lg text-gray-400">/mo</span>
-    </p>
-    <p className="text-sm text-gray-400 -mt-1 mb-2">$19 billed annually</p>
-  </>
-) : (
-  <p className="text-4xl font-semibold tracking-tight">
-    $3<span className="text-lg text-gray-400">/mo</span>
+    {isAnnual ? (
+      <>$19<span className="text-lg text-gray-400">/yr</span></>
+    ) : (
+      <>$3<span className="text-lg text-gray-400">/mo</span></>
+    )}
   </p>
-)}
   <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
     Compared to ~$3,600 broker avg
   </span>
 </div>
+                  <p className="text-gray-400 mb-4 tracking-tight"> For the serious apartment hunter</p>
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
