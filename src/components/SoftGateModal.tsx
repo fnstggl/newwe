@@ -76,12 +76,12 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
         </button>
 
         {/* Header */}
-        <h2 className="text-2xl font-bold text-white mb-3 tracking-tight">
-          Upgrade to view listing
+        <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tighter">
+          You've found a deal
         </h2>
 
         {/* Subheader */}
-        <p className="text-white/90 mb-6 text-lg">
+      <p className="text-white font-medium text-lg mb-6 leading-snug">
           {subheaderText}
         </p>
 
@@ -92,7 +92,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Description */}
         <p className="text-white/70 mb-8 text-base">
-          Get full details, photos, and market analysis
+          See why this listing is undervalued, full details, and more
         </p>
 
         {/* CTA Button */}
