@@ -80,7 +80,7 @@ const Index = () => {
       </section>
 
       {/* As Seen On Section */}
-   <section className="pt-4 pb-10 px-4 max-w-6xl mx-auto">
+   <section className="pt-4 pb-0 px-4 max-w-6xl mx-auto">
         <div className="text-center">
           <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
             <img 
