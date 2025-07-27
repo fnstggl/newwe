@@ -11,7 +11,7 @@ interface PropertyImageProps {
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [preloadedThumbnails, setPreloadedThumbnails] = useState<string[]>([]);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
 
   // Process images to handle different formats and apply proxy for Zillow URLs
   const processedImages = React.useMemo(() => {
@@ -48,44 +48,28 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Create thumbnail URL (smaller, optimized version)
-  const getThumbnailUrl = useCallback((url: string) => {
-    if (url === '/placeholder.svg') return url;
-    // For proxy URLs, add thumbnail parameters
-    if (url.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
-      return url; // Proxy already handles optimization
-    }
-    // Add thumbnail parameters for other images
-    return url.includes('?') ? `${url}&w=300&h=200&q=80` : `${url}?w=300&h=200&q=80`;
-  }, []);
-
-  // Preload thumbnail versions of all images for instant switching
+  // Preload all images for faster switching
   useEffect(() => {
-    if (hasMultipleImages) {
-      const thumbnailPromises = processedImages.map((imageUrl) => {
-        return new Promise<string>((resolve) => {
-          const img = new Image();
-          const thumbnailUrl = getThumbnailUrl(imageUrl);
-          img.onload = () => resolve(thumbnailUrl);
-          img.onerror = () => {
-            // If proxy fails, try original URL
-            if (imageUrl.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
-              const originalUrl = decodeURIComponent(imageUrl.split('url=')[1]);
-              const fallbackImg = new Image();
-              fallbackImg.onload = () => resolve(originalUrl);
-              fallbackImg.onerror = () => resolve('/placeholder.svg');
-              fallbackImg.src = originalUrl;
-            } else {
-              resolve('/placeholder.svg');
-            }
-          };
-          img.src = thumbnailUrl;
-        });
-      });
-
-      Promise.all(thumbnailPromises).then(setPreloadedThumbnails);
+    if (processedImages.length > 0) {
+      // Preload first 3 images immediately
+      const preloadCount = Math.min(3, processedImages.length);
+      
+      for (let i = 0; i < preloadCount; i++) {
+        const img = new Image();
+        img.src = processedImages[i];
+      }
+      
+      // Preload remaining images with slight delay
+      if (processedImages.length > 3) {
+        setTimeout(() => {
+          for (let i = 3; i < processedImages.length; i++) {
+            const img = new Image();
+            img.src = processedImages[i];
+          }
+        }, 100);
+      }
     }
-  }, [processedImages, hasMultipleImages, getThumbnailUrl]);
+  }, [processedImages]);
 
   // Navigation functions with event.stopPropagation()
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -108,27 +92,28 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages]);
 
-  // Use full resolution for first image, thumbnails for others when navigating
-  const getCurrentImageUrl = () => {
-    if (currentImageIndex === 0) {
-      return processedImages[0] || '/placeholder.svg';
-    }
-    
-    // Use preloaded thumbnail if available, otherwise fallback to full image
-    return preloadedThumbnails[currentImageIndex] || processedImages[currentImageIndex] || '/placeholder.svg';
-  };
-
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
     const currentSrc = img.src;
     
+    // Mark this image index as having an error
+    setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
+    
     // If proxy failed, try original URL
     if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
-      const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
-      img.src = originalUrl;
+      try {
+        const originalUrl = decodeURIComponent(currentSrc.split('url=')[1]);
+        img.src = originalUrl;
+      } catch (error) {
+        img.src = '/placeholder.svg';
+      }
     } else {
       img.src = '/placeholder.svg';
     }
+  };
+
+  const getCurrentImageUrl = () => {
+    return processedImages[currentImageIndex] || '/placeholder.svg';
   };
 
   return (
@@ -142,6 +127,12 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         alt={address}
         className="w-full h-full object-cover transition-opacity duration-150"
         onError={handleImageError}
+        loading={currentImageIndex === 0 ? "eager" : "lazy"}
+        decoding="async"
+        style={{ 
+          imageRendering: 'high-quality',
+          willChange: 'opacity'
+        }}
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
