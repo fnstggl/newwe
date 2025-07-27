@@ -115,11 +115,11 @@ const Pricing = () => {
 <div className="mb-16 rotate-[0.3deg] scale-[0.98] transition-transform duration-300 ease-in-out">
   <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
     {/* Typical Broker Card */}
-    <div className="bg-red-500/10 backdrop-blur-md border border-red-400/20 rounded-2xl p-6 shadow-xl">
-      <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
+    <div className="bg-white/10 backdrop-blur-lg border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.2)]">
+      <h3 className="text-base font-medium text-gray-300 mb-2 tracking-tight">
         🏢 Typical Broker
       </h3>
-      <p className="text-3xl font-bold mb-2 text-red-400 tracking-tight">
+      <p className="text-3xl font-semibold mb-1 text-red-400 tracking-tight">
         ~$3,600
       </p>
       <p className="text-sm text-gray-400 tracking-tight">
@@ -128,18 +128,23 @@ const Pricing = () => {
     </div>
 
     {/* Realer Estate Card */}
-    <div className="bg-blue-500/10 backdrop-blur-md border border-blue-400/20 rounded-2xl p-6 shadow-xl">
-      <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
+    <div className="bg-white/10 backdrop-blur-lg border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(31,38,135,0.2)]">
+      <h3 className="text-base font-medium text-gray-300 mb-2 tracking-tight">
         💻 Realer Estate
       </h3>
-      <p className="text-3xl font-bold mb-2 text-blue-400 tracking-tight">
+      <p className="text-3xl font-semibold mb-1 text-blue-400 tracking-tight">
         $3/mo
       </p>
       <p className="text-sm text-gray-400 tracking-tight">
-        Full access. No fees.
+        Full access. No hidden fees.
       </p>
     </div>
   </div>
+
+  {/* Underline copy */}
+  <p className="text-center text-sm text-gray-400 mt-6">
+    Most people pay thousands. You don’t have to.
+  </p>
 </div>
 
           <div className="text-center mb-16">
