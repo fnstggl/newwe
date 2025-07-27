@@ -95,7 +95,7 @@ const TestimonialsSection = () => {
                   />
                 <button
   onClick={handleScreenshotToggle}
-  className="absolute top-4 right-4 text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
+  className="absolute top-4 right-4 text-xs md:text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4 text-[10px] md:text-xs"
 >
   Back to text view
 </button>
