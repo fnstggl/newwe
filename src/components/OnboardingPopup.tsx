@@ -49,7 +49,6 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
     if (!user) return;
 
     try {
-      // Save neighborhood preferences if email notifications are enabled
       const preferencesToSave = emailNotifications ? neighborhoods : [];
       
       const { error } = await supabase
@@ -82,10 +81,9 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   };
 
   const handleNext = async () => {
-    if (step < 3) {
+    if (step < 7) {
       setStep(step + 1);
     } else {
-      // Save preferences to database before completing
       const saved = await savePreferencesToDatabase();
       if (saved) {
         onComplete({
@@ -101,9 +99,13 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
 
   const canProceed = () => {
     switch (step) {
-      case 1: return lookingDuration !== "";
-      case 2: return experience !== "";
-      case 3: return neighborhoods.length > 0;
+      case 1: return true; // Emotional hook - no input required
+      case 2: return true; // Proof of value - no input required
+      case 3: return lookingDuration !== "";
+      case 4: return experience !== "";
+      case 5: return neighborhoods.length > 0;
+      case 6: return true; // Email alerts - no input required
+      case 7: return true; // Final step
       default: return false;
     }
   };
@@ -111,25 +113,58 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-900/95 backdrop-blur-xl border border-gray-800/50 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold text-white tracking-tight">
               Welcome to NYC's best deals
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 hover:text-white transition-colors p-2"
             >
               <X size={24} />
             </button>
           </div>
 
           {step === 1 && (
+            <div className="space-y-8 text-center">
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-white tracking-tight leading-tight">
+                  Still hunting for a place that isn't wildly overpriced?
+                </h3>
+                <p className="text-gray-300 text-lg tracking-tight">
+                  NYC rents are insane. We know. That's why we built Realer Estate.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-6 text-center">
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img 
+                  src="/lovable-uploads/d51407e4-9cdf-47f8-a41f-40b1b8f7a094.png" 
+                  alt="Realer Estate property listings"
+                  className="w-full h-auto"
+                />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  These are just a few of the deals we've found this week.
+                </h3>
+                <p className="text-gray-400 text-sm tracking-tight">
+                  20–50% below market. Rent-stabilized. Gone in days.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white tracking-tight">
-                How long have you been looking for a home in NYC?
+              <h3 className="text-xl font-bold text-white tracking-tight text-center">
+                How long have you been searching for a home in NYC?
               </h3>
               <div className="space-y-3">
                 {[
@@ -143,7 +178,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                     onClick={() => setLookingDuration(option)}
                     className={`w-full p-4 rounded-full border-2 transition-all tracking-tight ${
                       lookingDuration === option
-                        ? "border-white bg-white text-black"
+                        ? "border-blue-400 bg-blue-400/20 text-white"
                         : "border-gray-700 text-gray-300 hover:border-gray-600"
                     }`}
                   >
@@ -154,24 +189,24 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
             </div>
           )}
 
-          {step === 2 && (
+          {step === 4 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white tracking-tight">
-                How has your experience been while looking for a home in NYC?
+              <h3 className="text-xl font-bold text-white tracking-tight text-center">
+                What's been the hardest part?
               </h3>
               <div className="space-y-3">
                 {[
-                  "Exhausting. Too many wasted hours scrolling on Streeteasy to find a good deal",
-                  "Frustrating. Every home looks overpriced",
-                  "Cutthroat. Too much competition for every apartment",
-                  "Not too bad. I just started looking today"
+                  "Wasting hours on overpriced listings",
+                  "Losing deals to faster applicants",
+                  "Rent-stabilized apartments are impossible to find",
+                  "Just getting started, exploring"
                 ].map((option) => (
                   <button
                     key={option}
                     onClick={() => setExperience(option)}
                     className={`w-full p-4 rounded-full border-2 transition-all text-left tracking-tight ${
                       experience === option
-                        ? "border-white bg-white text-black"
+                        ? "border-blue-400 bg-blue-400/20 text-white"
                         : "border-gray-700 text-gray-300 hover:border-gray-600"
                     }`}
                   >
@@ -182,11 +217,16 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
             </div>
           )}
 
-          {step === 3 && (
+          {step === 5 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white tracking-tight">
-                What neighborhoods are you looking to buy/rent in?
-              </h3>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  Which neighborhoods are you most interested in?
+                </h3>
+                <p className="text-gray-400 text-sm tracking-tight">
+                  We'll prioritize deals in these areas first.
+                </p>
+              </div>
               <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto">
                 {neighborhoodList.map((neighborhood) => (
                   <button
@@ -194,7 +234,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                     onClick={() => handleNeighborhoodToggle(neighborhood)}
                     className={`p-3 rounded-full border-2 transition-all text-sm tracking-tight ${
                       neighborhoods.includes(neighborhood)
-                        ? "border-white bg-white text-black"
+                        ? "border-blue-400 bg-blue-400/20 text-white"
                         : "border-gray-700 text-gray-300 hover:border-gray-600"
                     }`}
                   >
@@ -202,12 +242,18 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {step === 6 && (
+            <div className="space-y-6 text-center">
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                Want to get notified the moment a hidden deal hits the market?
+              </h3>
               
-              <div className="pt-4 border-t border-gray-800">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white tracking-tight">
-                    Get email notifications for new undervalued deals
-                  </span>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-3">
+                  <span className="text-white tracking-tight">Email alerts</span>
                   <button
                     disabled
                     className="relative inline-flex h-6 w-11 shrink-0 cursor-not-allowed rounded-full border-2 bg-gray-700 border-gray-700 opacity-50"
@@ -215,40 +261,105 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                     <span className="pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out translate-x-0 bg-gray-400" />
                   </button>
                 </div>
+                
+                <p className="text-gray-300 text-sm tracking-tight">
+                  Instant email alerts = highest chance to lock it in before it's gone.
+                </p>
+                
                 <Link 
-                  to="/pricing" 
-                  className="text-blue-400 hover:text-blue-300 text-sm tracking-tight underline transition-colors"
+                  to="/pricing"
+                  className="inline-block w-full py-4 px-6 bg-white text-black rounded-full font-semibold tracking-tight hover:bg-gray-100 transition-colors"
                 >
-                  Be the first to know when new undervalued deals are listed
+                  🔓 Unlock alerts for $3/month
                 </Link>
+                
+                <div className="space-y-2">
+                  <p className="text-gray-500 text-xs tracking-tight">
+                    Cancel anytime · Helping 6,000+ New Yorkers · As seen on CBS & AP News
+                  </p>
+                  <button
+                    onClick={handleNext}
+                    className="text-blue-400 hover:text-blue-300 text-sm tracking-tight underline transition-colors"
+                  >
+                    No thanks — continue for free
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="flex justify-between items-center mt-8">
-            <div className="flex space-x-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full ${
-                    i <= step ? "bg-white" : "bg-gray-700"
-                  }`}
-                />
-              ))}
+          {step === 7 && (
+            <div className="space-y-8 text-center">
+              <div className="space-y-4">
+                <h3 className="text-3xl font-bold text-white tracking-tight">
+                  You're in. Time to find you a home.
+                </h3>
+                <p className="text-gray-300 text-lg tracking-tight">
+                  Now you can find the best deals first. They don't stick around for long.
+                </p>
+              </div>
+              
+              <div className="space-y-4 text-left">
+                <div className="flex items-center space-x-3 text-gray-300">
+                  <span>📍</span>
+                  <span className="tracking-tight">Rent · Buy · Search by neighborhood</span>
+                </div>
+                <div className="flex items-center space-x-3 text-gray-300">
+                  <span>🧠</span>
+                  <span className="tracking-tight">AI-powered deal scoring so you don't overpay</span>
+                </div>
+                <div className="flex items-center space-x-3 text-gray-300">
+                  <span>📬</span>
+                  <span className="tracking-tight">New undervalued listings found daily</span>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={handleNext}
+                  className="w-full py-4 px-6 bg-white text-black rounded-full font-bold text-lg tracking-tight hover:bg-gray-100 transition-colors"
+                >
+                  🔍 Start Browsing Listings
+                </button>
+                <p className="text-gray-500 text-sm tracking-tight">
+                  You'll start with 9 free listings. Upgrade anytime for unlimited access.
+                </p>
+              </div>
             </div>
-            
-            <HoverButton
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className={`px-8 py-3 rounded-full font-semibold tracking-tight ${
-                canProceed()
-                  ? "bg-white text-black hover:bg-gray-100"
-                  : "bg-gray-700 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              {step === 3 ? "Complete" : "Next"}
-            </HoverButton>
-          </div>
+          )}
+
+          {step < 7 && (
+            <div className="flex justify-between items-center mt-8">
+              <div className="flex space-x-2">
+                {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                  <div
+                    key={i}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === step 
+                        ? "w-8 bg-blue-400" 
+                        : i < step 
+                          ? "w-2 bg-blue-400" 
+                          : "w-2 bg-gray-700"
+                    }`}
+                  />
+                ))}
+              </div>
+              
+              {step !== 6 && (
+                <HoverButton
+                  onClick={handleNext}
+                  disabled={!canProceed()}
+                  className={`px-8 py-3 rounded-full font-semibold tracking-tight ${
+                    canProceed()
+                      ? "bg-white text-black hover:bg-gray-100"
+                      : "bg-gray-700 text-gray-500 cursor-not-allowed"
+                  }`}
+                >
+                  Next
+                </HoverButton>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
