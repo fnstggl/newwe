@@ -151,11 +151,20 @@ const Navbar = () => {
               <>
                 {/* Subscription Status with Name */}
                 {isUnlimited ? (
-                  <span className="text-white text-xs tracking-tight" style={{
-                    textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
-                  }}>
-                    Unlimited / {userProfile?.name || 'Profile'}
-                  </span>
+                  <div className="text-white text-xs tracking-tight">
+                    <span style={{
+                      textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+                    }}>
+                      Unlimited
+                    </span>
+                    <span className="mx-1">/</span>
+                    <Link 
+                      to="/profile"
+                      className="hover:text-gray-300 transition-colors"
+                    >
+                      {userProfile?.name || 'Profile'}
+                    </Link>
+                  </div>
                 ) : (
                   <div className="text-white text-xs tracking-tight">
                     <Link 
