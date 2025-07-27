@@ -806,7 +806,7 @@ const Buy = () => {
                   key={`${property.id}-${index}`}
                   className="relative"
                 >
-                  <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
+                  <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
                       isRental={false}
@@ -814,6 +814,19 @@ const Buy = () => {
                       gradeColors={gradeColors}
                     />
                   </div>
+
+                  {/* Make blurred listings clickable for free plan users */}
+                  {isFreeUser && isBlurred && (
+                    <div 
+                      className="absolute inset-0 cursor-pointer"
+                      onClick={() => {
+                        setSoftGateModal({
+                          isOpen: true,
+                          property: property
+                        });
+                      }}
+                    />
+                  )}
 
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
