@@ -35,6 +35,8 @@ const testimonials: Testimonial[] = [
   }
 ];
 
+const verifiedUsers = [ "u/2aware1", "u/strawberrireshi", "u/diahdem", "u/helpmychangedmind" ];
+
 const TestimonialsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showScreenshot, setShowScreenshot] = useState(false);
@@ -76,9 +78,16 @@ const TestimonialsSection = () => {
                   <blockquote className="text-xl md:text-2xl font-light italic text-white mb-6 leading-relaxed">
                     "{currentTestimonial.quote}"
                   </blockquote>
-                  <p className="text-gray-400 text-sm md:text-base mb-6">
-                    — {currentTestimonial.username}
-                  </p>
+                  <p className="text-gray-400 text-sm md:text-base mb-6 flex items-center justify-center gap-2">
+  — {currentTestimonial.username}
+  {verifiedUsers.includes(currentTestimonial.username) && (
+    <img 
+      src="/verified-icon.svg" 
+      alt="Verified Reddit user" 
+      className="w-4 h-4 inline-block"
+    />
+  )}
+</p>
                   <button
                     onClick={handleScreenshotToggle}
                     className="text-sm text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
