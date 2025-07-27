@@ -105,21 +105,15 @@ const Pricing = () => {
   <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
     Ready to finally find a home you can afford?
   </h1>
-  <p className="text-xl text-gray-400 tracking-tighter mb-4">
-    Unlock all listings. Get notified before anyone else. Finally beat the market.
-  </p>
+  <p className="text-xl text-gray-400 tracking-tight">
+  Get notified first. Unlock every hidden deal. Save thousands on rent or purchase price.
+</p>
 
-  <p className="text-lg text-green-400 font-medium tracking-tighter mb-2">
-    Save thousands in rent or purchase price.
-  </p>
-  <p className="text-lg text-pink-400 font-medium tracking-tighter mb-2">
-    The best homes are gone by the time most people see them. You won’t be most people.
-  </p>
-  <p className="text-lg text-yellow-400 font-medium tracking-tighter">
-    💸 1 broker fee = $5,000+<br />
-    💻 Realer Estate = $3/mo<br />
-    <span className="text-white font-semibold">→ Built to beat the system.</span>
-  </p>
+  <div className="mt-6 space-y-2 text-lg text-gray-300">
+  <p><span className="text-white">Typical broker fee:</span> ~$3,600</p>
+  <p><span className="text-white">Realer Estate:</span> $3/month</p>
+  <p className="text-blue-400 font-medium">Built to beat the system.</p>
+</div>
             
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
