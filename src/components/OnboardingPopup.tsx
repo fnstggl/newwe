@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import confetti from 'canvas-confetti';
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HoverButton } from "./ui/hover-button";
@@ -82,24 +81,21 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   };
 
   const handleNext = async () => {
-  if (step === 6) {
-    setStep(7);
-    fireConfetti(); // <-- TRIGGER CONFETTI ON FINAL STEP
-  } else if (step < 7) {
-    setStep(step + 1);
-  } else {
-    const saved = await savePreferencesToDatabase();
-    if (saved) {
-      onComplete({
-        lookingDuration,
-        experience,
-        neighborhoods,
-        emailNotifications
-      });
-      onClose();
+    if (step < 7) {
+      setStep(step + 1);
+    } else {
+      const saved = await savePreferencesToDatabase();
+      if (saved) {
+        onComplete({
+          lookingDuration,
+          experience,
+          neighborhoods,
+          emailNotifications
+        });
+        onClose();
+      }
     }
-  }
-};
+  };
 
   const canProceed = () => {
     switch (step) {
@@ -113,19 +109,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
       default: return false;
     }
   };
-// ✅ Confetti function goes here — BEFORE the return JSX
-const fireConfetti = () => {
-  confetti({
-    particleCount: 80,
-    spread: 70,
-    origin: { y: 0.6 },
-    colors: ['#ffffff', '#4f46e5', '#22d3ee'],
-    scalar: 0.8,
-    zIndex: 1000,
-    disableForReducedMotion: true
-  });
-};
-  
+
   if (!isOpen) return null;
 
   return (
