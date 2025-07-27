@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
+import SoftGateModal from "@/components/SoftGateModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -48,6 +49,15 @@ const Rent = () => {
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Soft-gate modal state
+  const [softGateModal, setSoftGateModal] = useState<{
+    isOpen: boolean;
+    property: any;
+  }>({
+    isOpen: false,
+    property: null
+  });
 
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -669,6 +679,15 @@ const Rent = () => {
     if (index >= visibilityLimit) {
       return;
     }
+
+    // For free plan users clicking on blurred listings, show soft-gate modal
+    if (isFreeUser && index >= 9) {
+      setSoftGateModal({
+        isOpen: true,
+        property: property
+      });
+      return;
+    }
     
     // Update URL with listing ID
     navigate(`/rent/${property.listing_id}`, { replace: true });
@@ -679,6 +698,13 @@ const Rent = () => {
     // Navigate back to main rent page
     navigate('/rent', { replace: true });
     setSelectedProperty(null);
+  };
+
+  const handleCloseSoftGate = () => {
+    setSoftGateModal({
+      isOpen: false,
+      property: null
+    });
   };
 
   // Filter neighborhoods based on search term
@@ -1006,7 +1032,7 @@ const Rent = () => {
                   key={`${property.id}-${index}`}
                   className="relative"
                 >
-                  <div className={isBlurred ? 'filter blur-sm pointer-events-none' : ''}>
+                  <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
                       isRental={true}
@@ -1015,10 +1041,10 @@ const Rent = () => {
                     />
                   </div>
 
-                     {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
+                  {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
+                      <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
@@ -1031,36 +1057,36 @@ const Rent = () => {
                         >
                           🔓 Create free account to continue hunting
                         </button>
-                           <p className="text-xs text-gray-400 mt-3">
-  6,000+ New Yorkers · As seen on CBS & AP
-</p>
+                        <p className="text-xs text-gray-400 mt-3">
+                          6,000+ New Yorkers · As seen on CBS & AP
+                        </p>
                       </div>
                     </div>
                   )}
 
-                   {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
+                  {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
                   {isFreeUser && index === 10 && properties.length > 10 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
+                      <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
                           You're only seeing 9 of 2,193 deals.
                         </p>
-                     <button
-  onClick={() => navigate('/pricing')}
-  className="relative group bg-white text-black px-8 py-3 rounded-full font-semibold transition-all duration-300
-             hover:shadow-[0_0_12px_rgba(255,255,255,0.4)]"
->
-  <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
-    🔥
-  </span>
-  Unlock the rest for just $3
-</button>
-                          <p className="text-xs text-gray-400 mt-3">
-  6,000+ New Yorkers · As seen on CBS & AP
-</p>
+                        <button
+                          onClick={() => navigate('/pricing')}
+                          className="relative group bg-white text-black px-8 py-3 rounded-full font-semibold transition-all duration-300
+                                     hover:shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+                        >
+                          <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
+                            🔥
+                          </span>
+                          Unlock the rest for just $3
+                        </button>
+                        <p className="text-xs text-gray-400 mt-3">
+                          6,000+ New Yorkers · As seen on CBS & AP
+                        </p>
                       </div>
                     </div>
                   )}
@@ -1128,6 +1154,14 @@ const Rent = () => {
           onClose={handleClosePropertyDetail}
         />
       )}
+
+      {/* Soft-gate Modal */}
+      <SoftGateModal
+        isOpen={softGateModal.isOpen}
+        onClose={handleCloseSoftGate}
+        property={softGateModal.property}
+        isRental={true}
+      />
     </div>
   );
 };

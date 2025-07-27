@@ -9,6 +9,7 @@ import PropertyDetail from "@/components/PropertyDetail";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import SoftGateModal from "@/components/SoftGateModal";
 
 type SupabaseUndervaluedSales = Tables<'undervalued_sales'>;
 
@@ -46,6 +47,15 @@ const Buy = () => {
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  // Soft-gate modal state
+  const [softGateModal, setSoftGateModal] = useState<{
+    isOpen: boolean;
+    property: any;
+  }>({
+    isOpen: false,
+    property: null
+  });
 
   const ITEMS_PER_PAGE = 30;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -456,10 +466,26 @@ const Buy = () => {
     if (index >= visibilityLimit) {
       return;
     }
+
+    // For free plan users clicking on blurred listings, show soft-gate modal
+    if (isFreeUser && index >= 9) {
+      setSoftGateModal({
+        isOpen: true,
+        property: property
+      });
+      return;
+    }
     
     // Update URL with listing ID
     navigate(`/buy/${property.listing_id}`, { replace: true });
     setSelectedProperty(property);
+  };
+
+  const handleCloseSoftGate = () => {
+    setSoftGateModal({
+      isOpen: false,
+      property: null
+    });
   };
 
   const handleClosePropertyDetail = () => {
@@ -902,6 +928,14 @@ const Buy = () => {
           onClose={handleClosePropertyDetail}
         />
       )}
+
+      {/* Soft-gate Modal */}
+      <SoftGateModal
+        isOpen={softGateModal.isOpen}
+        onClose={handleCloseSoftGate}
+        property={softGateModal.property}
+        isRental={false}
+      />
     </div>
   );
 };
