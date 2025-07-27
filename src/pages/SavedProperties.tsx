@@ -186,7 +186,7 @@ const SavedProperties = () => {
 
             <h2 className="text-2xl font-bold mb-4 tracking-tight">Nothing saved... yet</h2>
             <p className="text-gray-400 mb-8 tracking-tight">
-                  Click the <Heart size={16} className="inline-block -mt-1" /> to save listings you love.
+                  Click the <Heart size={16} className="inline-block -mt-1 text-red-500" /> to save listings you love.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
