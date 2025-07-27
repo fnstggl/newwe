@@ -78,13 +78,13 @@ const TestimonialsSection = () => {
                   <blockquote className="text-xl md:text-2xl font-light italic text-white mb-6 leading-relaxed">
                     "{currentTestimonial.quote}"
                   </blockquote>
-                  <p className="text-gray-400 text-sm md:text-base mb-6 flex items-center justify-center gap-2">
+                  <p className="text-gray-400 text-sm md:text-base mb-6 flex items-center justify-center gap-1">
   — {currentTestimonial.username}
   {verifiedUsers.includes(currentTestimonial.username) && (
-    <img 
-      src="/verified-icon.svg" 
-      alt="Verified Reddit user" 
-      className="w-4 h-4 inline-block"
+    <img
+      src="/verified.png"
+      alt="Verified Reddit User"
+      className="w-4 h-4 inline-block align-middle"
     />
   )}
 </p>
