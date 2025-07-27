@@ -288,7 +288,7 @@ const Pricing = () => {
               onClick={() => handleSubscribe('monthly')}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Start Finding Better Rent
+              Join 6000+ New Yorkers
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">
