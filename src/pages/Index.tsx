@@ -84,7 +84,7 @@ const Index = () => {
         <div className="text-center">
           <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
             <img 
-              src="/lovable-uploads/027a7b47-dd06-44bc-8986-fd48b89c4b6a.png" 
+              src="/lovable-uploads/ccb3bd82-5c57-4ba0-80af-4d8ce8d9306a.png" 
               alt="As seen on CBS, ABC, AP News" 
               className="h-10 mx-auto"
             />
