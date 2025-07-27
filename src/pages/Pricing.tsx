@@ -107,7 +107,7 @@ const Pricing = () => {
               Ready to finally find a home you can afford?
             </h1>
             <p className="text-xl text-gray-400 tracking-tight">
-              Get notified first. Unlock every hidden deal. Save thousands on rent or purchase price.
+              These deals don’t wait. People grab them before you even know they exist.
             </p>
           </div>
 
