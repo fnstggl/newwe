@@ -114,7 +114,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-<div className="bg-black/70 backdrop-blur-2xl border border-white/10 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-xl shadow-blue-500/20">
+<div className="bg-black/80 backdrop-blur-xl border border-white/10 ring-1 ring-blue-500/10 shadow-2xl shadow-blue-500/20 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold text-white tracking-tighter">
