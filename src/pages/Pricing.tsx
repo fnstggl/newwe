@@ -101,19 +101,13 @@ const Pricing = () => {
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
-<div className="text-center mb-16">
-  <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-    Ready to finally find a home you can afford?
-  </h1>
-  <p className="text-xl text-gray-400 tracking-tight">
-  Get notified first. Unlock every hidden deal. Save thousands on rent or purchase price.
-</p>
-
-  <div className="mt-6 space-y-2 text-lg text-gray-300">
-  <p><span className="text-white">Typical broker fee:</span> ~$3,600</p>
-  <p><span className="text-white">Realer Estate:</span> $3/month</p>
-  <p className="text-blue-400 font-medium">Built to beat the system.</p>
-</div>
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+              Real estate is all about being early.
+            </h1>
+            <p className="text-xl text-gray-400 tracking-tight">
+              The best deals disappear in days. Get notified first.
+            </p>
             
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
