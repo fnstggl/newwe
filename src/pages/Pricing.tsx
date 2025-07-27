@@ -186,9 +186,6 @@ const Pricing = () => {
                       <>$3<span className="text-lg text-gray-400">/mo</span></>
                     )}
                   </p>
-                  <p className="text-sm text-right text-gray-500 mb-4 italic">
-  Compared to ~$3,600 broker avg
-</p>
                   <p className="text-gray-400 mb-4 tracking-tight"> For the serious apartment hunter</p>
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
