@@ -183,9 +183,9 @@ const SavedProperties = () => {
         {savedProperties.length === 0 ? (
           <div className="text-center py-16">
             <Home className="h-16 w-16 mx-auto mb-6 text-gray-600" />
-            <h2 className="text-2xl font-bold mb-4 tracking-tight">No saved properties yet</h2>
+            <h2 className="text-2xl font-bold mb-4 tracking-tight">Nothing saved... yet</h2>
             <p className="text-gray-400 mb-8 tracking-tight">
-              Browse properties and click the bookmark icon to save them here.
+                Click the <Bookmark size={16} className="inline-block -mt-1" /> to save listings you love.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
