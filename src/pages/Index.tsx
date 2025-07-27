@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -80,6 +79,19 @@ const Index = () => {
         </div>
       </section>
 
+      {/* As Seen On Section */}
+      <section className="py-12 px-4 max-w-6xl mx-auto">
+        <div className="text-center">
+          <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
+            <img 
+              src="/lovable-uploads/e38a9e8a-d941-4f5a-8781-d9a9ca3b15e0.png" 
+              alt="As seen on CBS, ABC, AP News" 
+              className="h-16 mx-auto"
+            />
+          </Link>
+        </div>
+      </section>
+
       {/* Problem Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
@@ -91,7 +103,6 @@ const Index = () => {
           </p>
         </div>
         
-        {/* Clean Blue Gradient Line - matching manifesto style */}
         <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
       </section>
 
