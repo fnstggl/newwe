@@ -288,7 +288,7 @@ const Pricing = () => {
               onClick={() => handleSubscribe('monthly')}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Start Your Subscription
+              Start Finding Better Rent
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">
