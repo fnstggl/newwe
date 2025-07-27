@@ -93,7 +93,7 @@ const Index = () => {
       </section>
 
       {/* Problem Section */}
-      <section className="py-18 px-4 max-w-6xl mx-auto">
+      <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             It shouldn't be this hard to find a home in NYC.
