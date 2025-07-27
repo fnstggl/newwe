@@ -93,11 +93,11 @@ const TestimonialsSection = () => {
                     className="w-full h-auto rounded-lg shadow-lg"
                   />
                   <button
-                    onClick={handleScreenshotToggle}
-                    className="absolute bottom-4 right-4 text-sm text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4 bg-black/50 px-3 py-1 rounded"
-                  >
-                    Don't just take our word for it
-                  </button>
+  onClick={handleScreenshotToggle}
+  className="absolute top-4 right-4 text-xs text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4 bg-black/40 px-3 py-1 rounded shadow"
+>
+  Back to text view
+</button>
                 </div>
               )}
             </div>
