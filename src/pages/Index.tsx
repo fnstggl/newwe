@@ -86,7 +86,7 @@ const Index = () => {
             <img 
               src="/lovable-uploads/027a7b47-dd06-44bc-8986-fd48b89c4b6a.png" 
               alt="As seen on CBS, ABC, AP News" 
-              className="h-12 mx-auto"
+              className="h-10 mx-auto"
             />
           </Link>
         </div>
