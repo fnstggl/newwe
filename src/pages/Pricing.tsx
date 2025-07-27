@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -103,12 +104,45 @@ const Pricing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-              Real estate is all about being early.
+              Ready to finally find a home you can afford?
             </h1>
             <p className="text-xl text-gray-400 tracking-tight">
-              The best deals disappear in days. Get notified first.
+              Get notified first. Unlock every hidden deal. Save thousands on rent or purchase price.
             </p>
-            
+          </div>
+
+          {/* Price Comparison Section */}
+          <div className="mb-16">
+            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              {/* Typical Broker Card */}
+              <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-gray-800/50">
+                <h3 className="text-lg font-semibold mb-3 text-gray-300 tracking-tight">
+                  Typical Broker
+                </h3>
+                <p className="text-3xl font-bold mb-2 text-red-400 tracking-tight">
+                  ~$3,600
+                </p>
+                <p className="text-sm text-gray-400 tracking-tight">
+                  Per lease or purchase
+                </p>
+              </div>
+
+              {/* Realer Estate Card */}
+              <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
+                <h3 className="text-lg font-semibold mb-3 text-blue-400 tracking-tight">
+                  Realer Estate
+                </h3>
+                <p className="text-3xl font-bold mb-2 text-blue-400 tracking-tight">
+                  $3/mo
+                </p>
+                <p className="text-sm text-gray-400 tracking-tight">
+                  Full access. No fees.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mb-16">
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
               <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
