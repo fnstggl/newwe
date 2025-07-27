@@ -15,13 +15,15 @@ interface SoftGateModalProps {
     price?: number;
   };
   isRental?: boolean;
+  isLoggedOut?: boolean;
 }
 
 const SoftGateModal: React.FC<SoftGateModalProps> = ({ 
   isOpen, 
   onClose, 
   property, 
-  isRental = false 
+  isRental = false,
+  isLoggedOut = false
 }) => {
   const navigate = useNavigate();
 
@@ -53,9 +55,16 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
     ? `This home is ${discountPercent}% below-market and rent-stabilized`
     : `This home is ${discountPercent}% below-market`;
 
-  const handleUpgrade = () => {
-    navigate('/pricing');
+  const handleCTA = () => {
+    if (isLoggedOut) {
+      navigate('/join');
+    } else {
+      navigate('/pricing');
+    }
   };
+
+  const headerText = isLoggedOut ? "Sign in to view more listings" : "You've found a deal";
+  const ctaText = isLoggedOut ? "Create free account" : "Unlock for $3/month";
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
@@ -83,7 +92,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Header */}
         <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tighter">
-          You've found a deal
+          {headerText}
         </h2>
 
         {/* Subheader */}
@@ -103,10 +112,10 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* CTA Button */}
         <button
-          onClick={handleUpgrade}
+          onClick={handleCTA}
           className="w-full bg-white text-black py-4 px-6 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors mb-4"
         >
-          Unlock for $3/month
+          {ctaText}
         </button>
 
         {/* Social proof */}
