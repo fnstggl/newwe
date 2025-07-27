@@ -17,6 +17,8 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isUnlimited = userProfile?.subscription_plan === 'unlimited';
+
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
       isScrolled ? 'mx-6 mt-3 rounded-full border border-gray-800' : ''
@@ -144,14 +146,33 @@ const Navbar = () => {
           </div>
 
           {/* Auth Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             {user ? (
-              <Link 
-                to="/profile"
-                className="text-white hover:text-gray-300 transition-colors text-xs tracking-tight"
-              >
-                {userProfile?.name || 'Profile'}
-              </Link>
+              <>
+                {/* Subscription Status */}
+                {isUnlimited ? (
+                  <span className="text-white text-xs tracking-tight" style={{
+                    textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
+                  }}>
+                    Unlimited
+                  </span>
+                ) : (
+                  <Link 
+                    to="/pricing"
+                    className="text-white text-xs tracking-tight px-3 py-1 rounded-full border border-gray-400 bg-transparent hover:bg-gray-800/50 transition-colors"
+                  >
+                    Free
+                  </Link>
+                )}
+                
+                {/* Profile */}
+                <Link 
+                  to="/profile"
+                  className="text-white hover:text-gray-300 transition-colors text-xs tracking-tight"
+                >
+                  {userProfile?.name || 'Profile'}
+                </Link>
+              </>
             ) : (
               <>
                 <Link 
