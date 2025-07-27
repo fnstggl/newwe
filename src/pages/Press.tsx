@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Download } from "lucide-react";
 import JSZip from "jszip";
@@ -12,7 +13,7 @@ const Press = () => {
     
     const assets = [
       { url: '/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png', name: 'realer-estate-founders.png' },
-      { url: '/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png', name: 'realer-estate-platform-screenshot.png' },
+      { url: '/lovable-uploads/84439388-74a7-4c6d-8fe8-d5cb5f0108e0.png', name: 'realer-estate-platform-screenshot.png' },
       { url: '/lovable-uploads/81dfa622-d136-49f1-bfa2-6cf1e63ee82d.png', name: 'realer-estate-never-overpay.png' },
       { url: '/lovable-uploads/e0856c30-f6b7-49d8-a596-88bdb09cc616.png', name: 'realer-estate-nyc-broken-game.png' },
       { url: '/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png', name: 'realer-estate-logo-black.png' },
@@ -179,7 +180,7 @@ const Press = () => {
           </div>
           <div className="aspect-[16/10] rounded-xl overflow-hidden border border-gray-800">
             <img 
-              src="/lovable-uploads/882a1425-67b1-4f1e-873e-5986b3fc6a34.png" 
+              src="/lovable-uploads/84439388-74a7-4c6d-8fe8-d5cb5f0108e0.png" 
               alt="Realer Estate Platform" 
               className="w-full h-full object-cover"
               loading="eager"
