@@ -306,7 +306,17 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   {property.bedrooms === 0 ? (
     <span className="text-white/60">Studio</span>
   ) : property.bedrooms > 0 ? (
-    <span className="text-white/80">{property.bedrooms}</span>
+    <span className="text-white/80">
+  {String(property.bedrooms)
+    .split(' ')
+    .map((part, i) =>
+      part === '0' || part === '00' ? (
+        <span key={i} style={{ color: '#19202D' }}>0</span>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    )}
+</span>
   ) : (
     <span style={{ color: '#19202D' }}>N/A</span>
   )}
