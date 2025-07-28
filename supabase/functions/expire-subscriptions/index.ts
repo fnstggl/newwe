@@ -32,11 +32,12 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Get all profiles with unlimited subscriptions (but skip manual_unlimited)
+    // Get all profiles with unlimited subscriptions (but exclude manual_unlimited completely)
     const { data: profiles, error: profilesError } = await supabaseClient
       .from('profiles')
       .select('id, stripe_customer_id, subscription_plan, manual_unlimited')
-      .eq('subscription_plan', 'unlimited');
+      .eq('subscription_plan', 'unlimited')
+      .neq('subscription_plan', 'manual_unlimited');
 
     if (profilesError) {
       throw new Error(`Failed to fetch profiles: ${profilesError.message}`);
@@ -50,6 +51,12 @@ serve(async (req) => {
       // FIRST CHECK: Skip ALL processing for manually unlimited users
       if (profile.manual_unlimited === true) {
         logStep("Skipping ALL validation for manual unlimited user", { userId: profile.id });
+        continue;
+      }
+
+      // SECOND CHECK: Skip manual_unlimited subscription plan completely
+      if (profile.subscription_plan === 'manual_unlimited') {
+        logStep("Skipping manual_unlimited subscription plan", { userId: profile.id });
         continue;
       }
 
