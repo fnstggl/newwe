@@ -202,7 +202,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     <>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto">
         <div className="min-h-screen py-8 px-4">
-         <div className="max-w-6xl mx-auto bg-black backdrop-blur-md rounded-3xl border border-gray-700/50">
+        <div className="max-w-6xl mx-auto bg-black/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-lg ring-1 ring-white/5">
             {/* Header with close button */}
             <div className="flex justify-between items-center p-6 border-b border-gray-700/50">
               <h1 className="text-2xl font-bold text-white tracking-tight">Property Details</h1>
