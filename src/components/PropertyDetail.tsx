@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,6 @@ import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhood
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { HoverButton } from '@/components/ui/hover-button';
-import React, { useState, useEffect } from 'react';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
