@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,29 +28,6 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const [showQuestionForm, setShowQuestionForm] = useState(false);
 
   const [animatedSavings, setAnimatedSavings] = useState(0);
-  const savingsRef = useRef<HTMLSpanElement | null>(null);
-const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting && !hasAnimated) {
-        setHasAnimated(true);
-      }
-    },
-    { threshold: 0.6 }
-  );
-
-  if (savingsRef.current) {
-    observer.observe(savingsRef.current);
-  }
-
-  return () => {
-    if (savingsRef.current) {
-      observer.unobserve(savingsRef.current);
-    }
-  };
-}, [hasAnimated]);
 
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
@@ -223,7 +200,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
   const discountPercent = getDiscountPercent();
   const annualSavings = getAnnualSavings();
   useEffect(() => {
-  if (!hasAnimated || !annualSavings || animatedSavings >= annualSavings) return;
+  if (!annualSavings || animatedSavings >= annualSavings) return;
 
   let frameId: number;
   const duration = 1200;
@@ -231,7 +208,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
 
   const tick = (now: number) => {
     const progress = Math.min((now - start) / duration, 1);
-    const eased = Math.pow(progress, 0.75);
+    const eased = Math.pow(progress, 0.75); // smooth ease-out
     const value = Math.floor(eased * annualSavings);
     setAnimatedSavings(value);
 
@@ -242,7 +219,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
 
   frameId = requestAnimationFrame(tick);
   return () => cancelAnimationFrame(frameId);
-}, [hasAnimated, annualSavings]);
+}, [annualSavings]);
 
   return (
     <>
@@ -621,10 +598,8 @@ const [hasAnimated, setHasAnimated] = useState(false);
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-400">
                               {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-                            <span 
-  className="text-lg font-bold text-[#FFFFFF]" 
-  ref={savingsRef}
->
+                            </span>
+                           <span className="text-lg font-bold text-[#FFFFFF]">
   {formatPrice(animatedSavings || 0)}
 </span>
                           </div>
