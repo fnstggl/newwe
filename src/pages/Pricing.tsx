@@ -208,19 +208,19 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white">Unlock ALL deals</strong>
+                      <strong className="text-white"> Unlock all rental & sale deals</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Email alerts for new deals
+                      Instant alerts on new deals
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Select areas to be notified in
+                      Choose your target neighborhoods
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Get deals before they're gone
+                      Get in before brokers + investors do
                     </li>
                   </ul>
                   
