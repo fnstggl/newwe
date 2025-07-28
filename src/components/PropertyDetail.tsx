@@ -620,10 +620,11 @@ const [hasAnimated, setHasAnimated] = useState(false);
                         {annualSavings && (
                           <div className="flex justify-between items-center">
                             <div className="flex justify-between items-center">
- <div className="text-sm text-gray-400 flex items-baseline gap-1">
-  <span>{isRental ? 'Est Annual Savings:' : 'Est Savings:'}</span>
+  <span className="text-sm text-gray-400">
+    {isRental ? 'Est Annual Savings: ' : 'Est Savings: '}
+  </span>
   <span 
-    className="text-lg font-bold text-white" 
+    className="text-lg font-bold text-[#FFFFFF]" 
     ref={savingsRef}
   >
     {formatPrice(animatedSavings || 0)}
