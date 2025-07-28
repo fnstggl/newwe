@@ -1062,13 +1062,13 @@ const Rent = () => {
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          You're only seeing 3 of 2,193 deals.
+                          This is only 3 of 2,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                         >
-                          🔓 Create free account to continue hunting
+                          Create free account to see more
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
                           6,000+ New Yorkers · As seen on CBS & AP
