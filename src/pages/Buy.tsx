@@ -357,7 +357,8 @@ const Buy = () => {
           break;
       }
 
-      const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+      const RANDOM_POOL_SIZE = 100;
+const { data, error } = await query.range(0, RANDOM_POOL_SIZE - 1);
 
 if (error) {
   console.error('❌ SUPABASE ERROR:', error);
