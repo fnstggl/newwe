@@ -47,9 +47,9 @@ serve(async (req) => {
     let expiredCount = 0;
 
     for (const profile of profiles || []) {
-      // Skip Stripe validation for manually unlimited users
-      if (profile.manual_unlimited) {
-        logStep("Skipping Stripe validation for manual unlimited user", { userId: profile.id });
+      // FIRST CHECK: Skip ALL processing for manually unlimited users
+      if (profile.manual_unlimited === true) {
+        logStep("Skipping ALL validation for manual unlimited user", { userId: profile.id });
         continue;
       }
 
