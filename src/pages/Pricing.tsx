@@ -190,14 +190,11 @@ const Pricing = () => {
                  <div className="mb-6 flex items-center justify-between">
     <p className="text-4xl font-semibold tracking-tight">
     {isAnnual ? (
-      <>$1.6<span className="text-lg text-gray-400">/mo</span></>
+      <>$19<span className="text-lg text-gray-400">/yr</span></>
     ) : (
       <>$3<span className="text-lg text-gray-400">/mo</span></>
     )}
   </p>
-                   {isAnnual && (
-  <p className="text-sm text-gray-400 -mt-2 mb-2">$19/yr billed annually</p>
-)}
   <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
     Compared to ~$3,600 broker avg
   </span>
