@@ -193,7 +193,7 @@ const Pricing = () => {
     <p className="text-4xl font-semibold tracking-tight">
       $1.6<span className="text-lg text-gray-400">/mo</span>
     </p>
-    <p className="text-sm text-gray-400 mt-2 mb-1">$19 billed annually</p>
+    <p className="text-sm text-gray-400 mt-2 mb-0">$19 billed annually</p>
   </div>
 ) : (
   <p className="text-4xl font-semibold tracking-tight">
