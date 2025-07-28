@@ -27,6 +27,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const [showTourRequest, setShowTourRequest] = useState(false);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
 
+  const [animatedSavings, setAnimatedSavings] = useState(0);
+
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
     if (score >= 98) return 'A+';
@@ -197,6 +199,27 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   const discountPercent = getDiscountPercent();
   const annualSavings = getAnnualSavings();
+  useEffect(() => {
+  if (!annualSavings || animatedSavings >= annualSavings) return;
+
+  let frameId: number;
+  const duration = 1200;
+  const start = performance.now();
+
+  const tick = (now: number) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = Math.pow(progress, 0.75); // smooth ease-out
+    const value = Math.floor(eased * annualSavings);
+    setAnimatedSavings(value);
+
+    if (progress < 1) {
+      frameId = requestAnimationFrame(tick);
+    }
+  };
+
+  frameId = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(frameId);
+}, [annualSavings]);
 
   return (
     <>
@@ -576,9 +599,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                             <span className="text-sm text-gray-400">
                               {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
                             </span>
-                            <span className="text-lg font-bold text-[#FFFFFF]">
-                            {formatPrice(annualSavings)}
-                            </span>
+                           <span className="text-lg font-bold text-[#FFFFFF]">
+  {formatPrice(animatedSavings || 0)}
+</span>
                           </div>
                         )}
                         
