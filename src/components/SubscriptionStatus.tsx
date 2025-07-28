@@ -5,10 +5,21 @@ import { HoverButton } from "@/components/ui/hover-button";
 const SubscriptionStatus = () => {
   const { userProfile } = useAuth();
 
-  const isSubscribed = userProfile?.subscription_plan === 'unlimited';
+  // Treat both "unlimited" and "manual_unlimited" as subscribed
+  const isSubscribed = userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'manual_unlimited';
 
   const handleManageSubscription = () => {
     window.location.href = '/manage-subscription';
+  };
+
+  const getPlanDisplayName = () => {
+    if (userProfile?.subscription_plan === 'manual_unlimited') {
+      return 'Unlimited Plan (Manual)';
+    }
+    if (userProfile?.subscription_plan === 'unlimited') {
+      return 'Unlimited Plan';
+    }
+    return 'Free Plan';
   };
 
   return (
@@ -18,7 +29,7 @@ const SubscriptionStatus = () => {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-lg font-medium tracking-tight">
-            {isSubscribed ? `${userProfile?.subscription_plan} Plan` : 'Free Plan'}
+            {getPlanDisplayName()}
           </p>
           <p className="text-gray-400 text-sm tracking-tight">
             {isSubscribed 

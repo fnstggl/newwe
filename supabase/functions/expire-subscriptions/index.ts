@@ -32,7 +32,7 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
-    // Get all profiles with unlimited subscriptions
+    // Get all profiles with unlimited subscriptions (but skip manual_unlimited)
     const { data: profiles, error: profilesError } = await supabaseClient
       .from('profiles')
       .select('id, stripe_customer_id, subscription_plan, manual_unlimited')

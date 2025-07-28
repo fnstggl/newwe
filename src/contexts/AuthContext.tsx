@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -154,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
-        // Check subscription status via edge function
+        // Check subscription status via edge function - but skip for manual_unlimited
         const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
         
         let subscriptionInfo = {
@@ -164,7 +165,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           is_canceled: false
         };
         
-        if (!subscriptionError && subscriptionData) {
+        // Skip subscription check for manual_unlimited plan
+        if (data.subscription_plan !== 'manual_unlimited' && !subscriptionError && subscriptionData) {
           subscriptionInfo = {
             subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
             subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
