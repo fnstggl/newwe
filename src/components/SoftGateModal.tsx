@@ -2,7 +2,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface SoftGateModalProps {
   isOpen: boolean;
@@ -25,7 +24,6 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
   isRental = false 
 }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   if (!isOpen) return null;
 
@@ -56,18 +54,8 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
     : `This home is ${discountPercent}% below-market`;
 
   const handleUpgrade = () => {
-    if (user) {
-      navigate('/pricing');
-    } else {
-      navigate('/join');
-    }
+    navigate('/pricing');
   };
-
-  const headerText = user ? "You've found a deal" : "Sign in to view more listings";
-  const ctaText = user ? "Unlock for $3/month" : "Create free account";
-  const descriptionText = user 
-    ? "See why this listing is undervalued, full details, and more"
-    : "Get full details, photos, and market analysis";
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
@@ -95,7 +83,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Header */}
         <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tighter">
-          {headerText}
+          You've found a deal
         </h2>
 
         {/* Subheader */}
@@ -110,7 +98,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Description */}
         <p className="text-white/70 mb-8 text-base">
-          {descriptionText}
+          See why this listing is undervalued, full details, and more
         </p>
 
         {/* CTA Button */}
@@ -118,7 +106,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
           onClick={handleUpgrade}
           className="w-full bg-white text-black py-4 px-6 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors mb-4"
         >
-          {ctaText}
+          Unlock for $3/month
         </button>
 
         {/* Social proof */}
