@@ -12,6 +12,7 @@ import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhood
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { HoverButton } from '@/components/ui/hover-button';
+import React, { useState, useEffect } from 'react';
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
