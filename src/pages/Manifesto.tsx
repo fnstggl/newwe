@@ -76,7 +76,7 @@ const Manifesto = () => {
 
           <div className="bg-gray-900/50 rounded-2xl p-8 mb-12 border border-gray-800">
             <h2 className="text-3xl font-bold mb-6 tracking-tighter">
-              Using advanced algorithms to find you the BEST deal in the city.
+              Using advanced algorithms to find you the best deals in the city.
             </h2>
             <p className="text-lg text-gray-300 leading-relaxed tracking-tight">
               Realer Estate runs advanced models on real listings to find what's undervalued, 
