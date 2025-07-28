@@ -370,7 +370,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </Card>
 
                   {/* Market Analysis */}
-                  <Card className={`bg-gray-900/95 ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
+                  <Card className={`bg-black ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}>
                     <CardHeader>
                       <CardTitle className="text-white">Market Analysis</CardTitle>
                     </CardHeader>
