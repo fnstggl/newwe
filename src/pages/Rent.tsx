@@ -256,99 +256,111 @@ const Rent = () => {
     }
   };
 
-  const fetchProperties = async (reset = false) => {
-    setLoading(true);
-    const currentOffset = reset ? 0 : offset;
+ const fetchProperties = async () => {
+  setLoading(true);
 
-    try {
-      let allProperties: any[] = [];
+  let query = supabase.from('undervalued_rentals').select('*');
 
-      // If rent-stabilized only is selected, fetch only from rent-stabilized table
-      if (rentStabilizedOnly) {
-        let query = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
+  switch (sortBy) {
+    case 'Price (low to high)':
+      query = query.order('price', { ascending: true });
+      break;
+    case 'Price (high to low)':
+      query = query.order('price', { ascending: false });
+      break;
+    case 'Discount':
+      query = query.order('discount_percent', { ascending: false });
+      break;
+    case 'Newest':
+      query = query.order('created_at', { ascending: false });
+      break;
+    default: // Featured
+      query = query.order('score', { ascending: false });
+      break;
+  }
 
-        if (searchTerm.trim()) {
-          query = query.ilike('address', `%${searchTerm.trim()}%`);
-        }
+  const { data, error } = await query.limit(ITEMS_PER_PAGE).range(0, 99);
 
-        if (zipCode.trim()) {
-          query = query.ilike('zip_code', `${zipCode.trim()}%`);
-        }
+  if (error) {
+    console.error('❌ SUPABASE ERROR:', error);
+    setProperties([]);
+    setLoading(false);
+    return;
+  }
 
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            query = query.lte('monthly_rent', priceValue);
-          }
-        }
+  if (!data || !Array.isArray(data)) {
+    console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+    setProperties([]);
+    setLoading(false);
+    return;
+  }
 
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              query = query.eq('bedrooms', 0);
-            } else {
-              query = query.gte('bedrooms', bedroomValue);
-            }
-          }
-        }
+  const neighborhoodPriority: Record<string, number> = {
+    'soho': 1,
+    'tribeca': 1,
+    'west-village': 1,
+    'east-village': 1,
+    'park-slope': 1,
+    'williamsburg': 1,
+    'greenpoint': 1,
 
-        if (selectedNeighborhoods.length > 0) {
-          query = query.in('neighborhood', selectedNeighborhoods);
-        }
+    'boerum-hill': 2,
+    'cobble-hill': 2,
+    'carroll-gardens': 2,
+    'dumbo': 2,
+    'fort-greene': 2,
+    'gramercy-park': 2,
+    'chelsea': 2,
+    'lower-east-side': 2,
+    'financial-district': 2,
+    'long-island-city': 2,
+    'prospect-heights': 2,
 
-        if (selectedBoroughs.length > 0) {
-          query = query.in('borough', selectedBoroughs);
-        }
+    'crown-heights': 3,
+    'bedford-stuyvesant': 3,
+    'bushwick': 3,
+    'astoria': 3,
+    'sunnyside': 3,
+    'woodside': 3,
+    'jackson-heights': 3,
+    'elmhurst': 3,
+    'kips-bay': 3,
+    'murray-hill': 3,
+    'clinton-hill': 3,
 
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
+    'chinatown': 4,
+    'melrose': 4,
+    'mott-haven': 4,
+    'south-bronx': 4,
+    'concourse': 4,
+    'two-bridges': 4,
+    'nolita': 4,
+    'midtown': 4
+  };
 
-        if (addressSearch.trim()) {
-          query = query.ilike('address', `%${addressSearch.trim()}%`);
-        }
+  let resultData;
 
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            query = query.gte('undervaluation_percent', discountValue);
-          }
-        }
+  if (sortBy === 'Featured') {
+    const weighted = [...data].map(item => {
+      const baseScore = item.score || 0;
+      const neighborhoodBoost = 5 / (neighborhoodPriority[item.neighborhood] || 5); // Tier 1 = +5, Tier 4 = +1.25
+      const noise = Math.random();
+      return {
+        ...item,
+        _sortScore: baseScore + neighborhoodBoost + 0.2 * noise
+      };
+    });
 
-        // Apply sorting for rent-stabilized
-        switch (sortBy) {
-          case 'Price: Low to High':
-            query = query.order('monthly_rent', { ascending: true });
-            break;
-          case 'Price: High to Low':
-            query = query.order('monthly_rent', { ascending: false });
-            break;
-          case 'Sqft: Low to High':
-            query = query.order('sqft', { ascending: true, nullsFirst: true });
-            break;
-          case 'Sqft: High to Low':
-            query = query.order('sqft', { ascending: false, nullsFirst: false });
-            break;
-          case 'Score: Low to High':
-            query = query.order('deal_quality_score', { ascending: true });
-            break;
-          case 'Score: High to Low':
-            query = query.order('deal_quality_score', { ascending: false });
-            break;
-          case 'Newest Listed':
-            query = query.order('discovered_at', { ascending: false });
-            break;
-          default: // Featured
-              query = query.order('score', { ascending: false });
-            break;
-        }
+    resultData = weighted
+      .sort((a, b) => b._sortScore - a._sortScore)
+      .slice(0, ITEMS_PER_PAGE); // Now slice here
+  } else {
+    resultData = data;
+  }
+
+  setProperties(resultData);
+  setLoading(false);
+};
 
         const { data: rentStabilizedData, error: rentStabilizedError } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
