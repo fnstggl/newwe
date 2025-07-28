@@ -298,29 +298,13 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                   {/* Property Details - Updated to show "Studio" for 0 bedrooms and change null value color */}
                   <Card className="bg-black border-gray-700">
-                    <CardContent className="p-6">
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-  <span className="text-gray-400">Bedrooms:</span>
-  {property.bedrooms === 0 ? (
-    <span className="text-white/60">Studio</span>
-  ) : property.bedrooms > 0 ? (
-    <span className="text-white/80">
-  {String(property.bedrooms)
-    .split(' ')
-    .map((part, i) =>
-      part === '0' || part === '00' ? (
-        <span key={i} style={{ color: '#19202D' }}>0</span>
-      ) : (
-        <span key={i}>{part}</span>
-      )
-    )}
-</span>
-  ) : (
-    <span style={{ color: '#19202D' }}>N/A</span>
-  )}
-</div>
+                     <CardContent className="p-6 md:p-8">
+    <div className="grid md:grid-cols-3 gap-6 text-sm tracking-wide text-white/90">
+      <div className="space-y-3">
+        <div className="flex justify-between">
+          <span className="text-white/50">Bedrooms:</span>
+          <span className="text-white">{property.bedrooms}</span>
+        </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bathrooms:</span>
                             <span className="text-white">
