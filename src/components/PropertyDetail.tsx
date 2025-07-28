@@ -304,11 +304,13 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bedrooms:</span>
                             <span className="text-white">
-                              {property.bedrooms === 0
-  ? 'Studio'
-  : property.bedrooms > 0
-    ? property.bedrooms
-    : <span style={{ color: '#19202D' }}>N/A</span>}
+                              {{property.bedrooms === 0 ? (
+  <span className="text-white/60">Studio</span>
+) : property.bedrooms > 0 ? (
+  <span style={{ color: '#19202D' }}>{property.bedrooms}</span>
+) : (
+  <span style={{ color: '#19202D' }}>N/A</span>
+)}
                             </span>
                           </div>
                           <div className="flex justify-between text-sm">
