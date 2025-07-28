@@ -27,6 +27,31 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const [showTourRequest, setShowTourRequest] = useState(false);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
 
+  const [animatedSavings, setAnimatedSavings] = useState(0);
+
+useEffect(() => {
+  if (!annualSavings || animatedSavings >= annualSavings) return;
+
+  const duration = 1500; // 1.5 seconds
+  const startTime = performance.now();
+
+  const animate = (time: number) => {
+    const elapsed = time - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = Math.pow(progress, 0.8); // ease-out
+
+    setAnimatedSavings(Math.floor(eased * annualSavings));
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      setAnimatedSavings(annualSavings);
+    }
+  };
+
+  requestAnimationFrame(animate);
+}, [annualSavings]);
+
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
     if (score >= 98) return 'A+';
@@ -572,15 +597,15 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <CardContent className="p-6">
                       <div className="space-y-4">
                         {annualSavings && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">
-                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-                            </span>
-                            <span className="text-lg font-bold text-[#FFFFFF]">
-                            {formatPrice(annualSavings)}
-                            </span>
-                          </div>
-                        )}
+  <div className="flex justify-between items-center">
+    <span className="text-sm text-gray-400">
+      {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+    </span>
+    <span className="text-lg font-bold text-[#FFFFFF]">
+      {formatPrice(animatedSavings)}
+    </span>
+  </div>
+)}
                         
                         {/* Monthly HOA and Tax for Sales Properties */}
                         {!isRental && (
