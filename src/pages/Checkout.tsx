@@ -143,10 +143,10 @@ const Checkout = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-semibold mb-4 tracking-tighter">
-                Join Realer Estate
+                Save an avg of $3,000 a year on rent—for the cost of a subway ride.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Get early access to the best NYC real estate deals.
+                Never miss your shot at the apartment you deserve.
               </p>
             </div>
 
