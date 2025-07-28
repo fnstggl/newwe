@@ -18,6 +18,7 @@ const ManageSubscription = () => {
     }
     
     // If user is not on unlimited plan, redirect to pricing
+    // Staff and manual_unlimited users shouldn't access this page
     if (userProfile?.subscription_plan !== 'unlimited') {
       navigate('/pricing');
     }

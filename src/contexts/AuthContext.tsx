@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -155,8 +154,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Check if user has completed onboarding (for now, we'll use localStorage)
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
-        // Check subscription status via edge function - but skip for manual_unlimited
-        const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
+        // Skip subscription check for staff and manual_unlimited plans
+        const isStaffOrManualUnlimited = data.subscription_plan === 'staff' || data.subscription_plan === 'manual_unlimited';
         
         let subscriptionInfo = {
           subscription_plan: data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan,
@@ -165,14 +164,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           is_canceled: false
         };
         
-        // Skip subscription check for manual_unlimited plan
-        if (data.subscription_plan !== 'manual_unlimited' && !subscriptionError && subscriptionData) {
-          subscriptionInfo = {
-            subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
-            subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
-            subscription_end: subscriptionData.subscription_end,
-            is_canceled: subscriptionData.is_canceled || false
-          };
+        // Only check subscription status via edge function for regular unlimited plans
+        if (!isStaffOrManualUnlimited) {
+          const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
+          
+          if (!subscriptionError && subscriptionData) {
+            subscriptionInfo = {
+              subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
+              subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
+              subscription_end: subscriptionData.subscription_end,
+              is_canceled: subscriptionData.is_canceled || false
+            };
+          }
         }
         
         const profileData = { 

@@ -5,14 +5,19 @@ import { HoverButton } from "@/components/ui/hover-button";
 const SubscriptionStatus = () => {
   const { userProfile } = useAuth();
 
-  // Treat both "unlimited" and "manual_unlimited" as subscribed
-  const isSubscribed = userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'manual_unlimited';
+  // Treat "unlimited", "manual_unlimited", and "staff" as subscribed
+  const isSubscribed = userProfile?.subscription_plan === 'unlimited' || 
+                      userProfile?.subscription_plan === 'manual_unlimited' || 
+                      userProfile?.subscription_plan === 'staff';
 
   const handleManageSubscription = () => {
     window.location.href = '/manage-subscription';
   };
 
   const getPlanDisplayName = () => {
+    if (userProfile?.subscription_plan === 'staff') {
+      return 'Staff Plan';
+    }
     if (userProfile?.subscription_plan === 'manual_unlimited') {
       return 'Unlimited Plan (Manual)';
     }
@@ -20,6 +25,11 @@ const SubscriptionStatus = () => {
       return 'Unlimited Plan';
     }
     return 'Free Plan';
+  };
+
+  const showManageButton = () => {
+    // Only show manage button for regular unlimited plans (not staff or manual_unlimited)
+    return userProfile?.subscription_plan === 'unlimited';
   };
 
   return (
@@ -39,21 +49,21 @@ const SubscriptionStatus = () => {
           </p>
         </div>
         
-        {isSubscribed ? (
+        {showManageButton() ? (
           <button
             onClick={handleManageSubscription}
             className="px-6 py-2 bg-white text-black rounded-full font-medium tracking-tight transition-colors hover:bg-gray-200"
           >
             Manage Subscription
           </button>
-        ) : (
+        ) : !isSubscribed ? (
           <HoverButton 
             className="text-white font-semibold tracking-tight"
             onClick={() => window.location.href = '/pricing'}
           >
             Upgrade Plan
           </HoverButton>
-        )}
+        ) : null}
       </div>
     </div>
   );
