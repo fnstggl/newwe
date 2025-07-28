@@ -353,8 +353,8 @@ const Buy = () => {
           query = query.order('days_on_market', { ascending: true });
           break;
         default: // Featured
-          query = query.order('created_at', { ascending: false });
-          break;
+  query = query.order('score', { ascending: false });
+  break;
       }
 
       const RANDOM_POOL_SIZE = 100;
