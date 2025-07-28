@@ -346,8 +346,15 @@ const Rent = () => {
             query = query.order('discovered_at', { ascending: false });
             break;
           default: // Featured
-              query = query.order('score', { ascending: false });
             break;
+        }
+
+        const { data: rentStabilizedData, error: rentStabilizedError } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
+
+        if (rentStabilizedError) {
+          console.error('❌ RENT-STABILIZED ERROR:', rentStabilizedError);
+          setProperties([]);
+          return;
         }
 
         // Map rent-stabilized data to consistent format
