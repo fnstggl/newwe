@@ -842,7 +842,7 @@ const Buy = () => {
                           onClick={() => navigate('/join')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                         >
-                          🔓 Create free account to see more
+                          Create free account to see more
                         </button>
                            <p className="text-xs text-gray-400 mt-3">
   6,000+ New Yorkers · As seen on CBS & AP
