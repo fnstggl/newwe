@@ -758,6 +758,7 @@ export type Database = {
           email_address: string | null
           id: string
           is_canceled: boolean | null
+          manual_unlimited: boolean
           name: string | null
           neighborhood_preferences: string[] | null
           stripe_customer_id: string | null
@@ -769,6 +770,7 @@ export type Database = {
           email_address?: string | null
           id: string
           is_canceled?: boolean | null
+          manual_unlimited?: boolean
           name?: string | null
           neighborhood_preferences?: string[] | null
           stripe_customer_id?: string | null
@@ -780,6 +782,7 @@ export type Database = {
           email_address?: string | null
           id?: string
           is_canceled?: boolean | null
+          manual_unlimited?: boolean
           name?: string | null
           neighborhood_preferences?: string[] | null
           stripe_customer_id?: string | null
@@ -2029,6 +2032,7 @@ export type Database = {
           email_address: string | null
           id: string
           is_canceled: boolean | null
+          manual_unlimited: boolean
           name: string | null
           neighborhood_preferences: string[] | null
           stripe_customer_id: string | null

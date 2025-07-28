@@ -35,7 +35,7 @@ serve(async (req) => {
     // Get all profiles with unlimited subscriptions
     const { data: profiles, error: profilesError } = await supabaseClient
       .from('profiles')
-      .select('id, stripe_customer_id, subscription_plan')
+      .select('id, stripe_customer_id, subscription_plan, manual_unlimited')
       .eq('subscription_plan', 'unlimited');
 
     if (profilesError) {
@@ -47,6 +47,12 @@ serve(async (req) => {
     let expiredCount = 0;
 
     for (const profile of profiles || []) {
+      // Skip Stripe validation for manually unlimited users
+      if (profile.manual_unlimited) {
+        logStep("Skipping Stripe validation for manual unlimited user", { userId: profile.id });
+        continue;
+      }
+
       if (!profile.stripe_customer_id) continue;
 
       try {
