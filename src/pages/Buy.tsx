@@ -359,20 +359,79 @@ const Buy = () => {
 
       const { data, error } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
 
-      if (error) {
-        console.error('❌ SUPABASE ERROR:', error);
-        setProperties([]);
-        return;
-      }
+if (error) {
+  console.error('❌ SUPABASE ERROR:', error);
+  setProperties([]);
+  return;
+}
 
-      if (!data || !Array.isArray(data)) {
-        console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
-        setProperties([]);
-        return;
-      }
+if (!data || !Array.isArray(data)) {
+  console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+  setProperties([]);
+  return;
+}
 
-      // Only shuffle if Featured sorting
-      const resultData = sortBy === 'Featured' ? data.sort(() => Math.random() - 0.5) : data;
+// 🎯 Neighborhood priority map
+const neighborhoodPriority = {
+  'soho': 1,
+  'tribeca': 1,
+  'west-village': 1,
+  'east-village': 1,
+  'park-slope': 1,
+  'williamsburg': 1,
+  'greenpoint': 1,
+
+  'boerum-hill': 2,
+  'cobble-hill': 2,
+  'carroll-gardens': 2,
+  'dumbo': 2,
+  'fort-greene': 2,
+  'gramercy-park': 2,
+  'chelsea': 2,
+  'lower-east-side': 2,
+  'financial-district': 2,
+  'long-island-city': 2,
+  'prospect-heights': 2,
+
+  'crown-heights': 3,
+  'bedford-stuyvesant': 3,
+  'bushwick': 3,
+  'astoria': 3,
+  'sunnyside': 3,
+  'woodside': 3,
+  'jackson-heights': 3,
+  'elmhurst': 3,
+  'kips-bay': 3,
+  'murray-hill': 3,
+  'clinton-hill': 3,
+
+  'chinatown': 4,
+  'melrose': 4,
+  'mott-haven': 4,
+  'south-bronx': 4,
+  'concourse': 4,
+  'two-bridges': 4,
+  'nolita': 4,
+  'midtown': 4
+};
+
+let resultData;
+
+if (sortBy === 'Featured') {
+  // Group by rank, shuffle within each
+  const grouped = data.reduce((acc, item) => {
+    const rank = neighborhoodPriority[item.neighborhood] || 999;
+    if (!acc[rank]) acc[rank] = [];
+    acc[rank].push(item);
+    return acc;
+  }, {} as Record<number, any[]>);
+
+  resultData = Object.keys(grouped)
+    .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending
+    .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle each tier
+} else {
+  resultData = data;
+}
 
       if (reset) {
         setProperties(resultData);
