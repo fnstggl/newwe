@@ -346,7 +346,7 @@ const Rent = () => {
             query = query.order('discovered_at', { ascending: false });
             break;
           default: // Featured
-            query = query.order('created_at', { ascending: false });
+              query = query.order('score', { ascending: false });
             break;
         }
 
