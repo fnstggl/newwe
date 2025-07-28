@@ -107,8 +107,8 @@ const Press = () => {
             <div className="text-gray-400 text-sm">Redefining the NYC real estate market</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">Helping 6000+ New Yorkers</div>
-            <div className="text-gray-400 text-sm">Find more affordable homes</div>
+            <div className="text-2xl font-bold mb-2">6000+ New Yorkers</div>
+            <div className="text-gray-400 text-sm">Finding more affordable homes</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
             <div className="text-2xl font-bold mb-2">$500K+ rent savings surfaced</div>
