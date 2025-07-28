@@ -53,7 +53,42 @@ serve(async (req) => {
         continue;
       }
 
-      if (!profile.stripe_customer_id) continue;
+      // Only process users with Stripe customer IDs for subscription validation
+      if (!profile.stripe_customer_id) {
+        logStep("No Stripe customer ID found, reverting to free", { userId: profile.id });
+        
+        // Revert to free plan for users without Stripe customer ID (unless manual_unlimited)
+        const { error: updateError } = await supabaseClient
+          .from('profiles')
+          .update({
+            subscription_plan: 'free',
+            subscription_renewal: 'monthly'
+          })
+          .eq('id', profile.id);
+
+        if (updateError) {
+          logStep("Failed to update profile to free", { userId: profile.id, error: updateError });
+        } else {
+          logStep("Profile reverted to free (no customer ID)", { userId: profile.id });
+          expiredCount++;
+        }
+
+        // Update subscribers table
+        const { error: subscriberError } = await supabaseClient
+          .from('subscribers')
+          .update({
+            subscribed: false,
+            subscription_tier: 'free',
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', profile.id);
+
+        if (subscriberError) {
+          logStep("Failed to update subscriber record", { userId: profile.id, error: subscriberError });
+        }
+        
+        continue;
+      }
 
       try {
         // Check subscription status in Stripe
