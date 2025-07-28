@@ -143,7 +143,7 @@ const Checkout = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-semibold mb-4 tracking-tighter">
-                Save avg of $3,000/yr on rent for the cost of a subway ride.
+                Save $3,000/yr on rent for the cost of a subway ride.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
                 Your apartment’s out there. Be the one to get it.
