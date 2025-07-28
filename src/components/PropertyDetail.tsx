@@ -297,7 +297,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </div>
 
                   {/* Property Details - Updated to show "Studio" for 0 bedrooms and change null value color */}
-                  <Card className="bg-gray-800/50 border-gray-700">
+                  <Card className="bg-black border-gray-700">
                     <CardContent className="p-6">
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-2">
@@ -427,7 +427,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                   {/* Rent-Stabilized Analysis Section */}
                   {isRentStabilized && (property as any).rent_stabilization_analysis && (
-                    <Card className="bg-gray-800/50 border-gray-700">
+                    <Card className="bg-black border-gray-700">
                       <CardHeader>
                         <CardTitle className="text-white flex items-center">
                           Rent-Stabilized Analysis
@@ -474,7 +474,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                   {/* Description with collapsible */}
                   {property.description && (
-                    <Card className="bg-gray-800/50 border-gray-700">
+                    <Card className="bg-black border-gray-700">
                       <CardHeader>
                         <CardTitle className="text-white">Description</CardTitle>
                       </CardHeader>
@@ -506,7 +506,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                   {/* Amenities */}
                   {property.amenities && property.amenities.length > 0 && (
-                    <Card className="bg-gray-800/50 border-gray-700">
+                    <Card className="bg-black border-gray-700">
                       <CardHeader>
                         <CardTitle className="text-white">Amenities</CardTitle>
                       </CardHeader>
@@ -538,7 +538,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                   {/* About the Neighborhood - now aligned with property details */}
                   {neighborhoodInfo && (
-                    <Card className="bg-gray-800/50 border-gray-700">
+                    <Card className="bg-black border-gray-700">
                       <CardHeader>
                         <CardTitle className="text-white">About the Neighborhood</CardTitle>
                       </CardHeader>
@@ -568,7 +568,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
                   
                   {/* Annual Savings + Monthly Tax/HOA for Sales */}
-                  <Card className="bg-gray-800/50 border-gray-700">
+                  <Card className="bg-black border-gray-700">
                     <CardContent className="p-6">
                       <div className="space-y-4">
                         {annualSavings && (
