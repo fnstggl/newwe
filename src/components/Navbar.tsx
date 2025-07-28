@@ -17,8 +17,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const isUnlimited = userProfile?.subscription_plan === 'unlimited';
-
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
       isScrolled ? 'mx-6 mt-3 rounded-full border border-gray-800' : ''
@@ -146,43 +144,14 @@ const Navbar = () => {
           </div>
 
           {/* Auth Section */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             {user ? (
-              <>
-                {/* Subscription Status with Name */}
-                {isUnlimited ? (
-                  <div className="text-white text-xs tracking-tight">
-                    <span style={{
-                      textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
-                    }}>
-                      Unlimited
-                    </span>
-                    <span className="mx-1">/</span>
-                    <Link 
-                      to="/profile"
-                      className="hover:text-gray-300 transition-colors"
-                    >
-                      {userProfile?.name || 'Profile'}
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="text-white text-xs tracking-tight">
-                    <Link 
-                      to="/pricing"
-                      className="hover:text-gray-300 transition-colors"
-                    >
-                      Free
-                    </Link>
-                    <span className="mx-1">/</span>
-                    <Link 
-                      to="/profile"
-                      className="hover:text-gray-300 transition-colors"
-                    >
-                      {userProfile?.name || 'Profile'}
-                    </Link>
-                  </div>
-                )}
-              </>
+              <Link 
+                to="/profile"
+                className="text-white hover:text-gray-300 transition-colors text-xs tracking-tight"
+              >
+                {userProfile?.name || 'Profile'}
+              </Link>
             ) : (
               <>
                 <Link 
