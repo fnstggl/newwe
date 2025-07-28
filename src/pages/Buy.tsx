@@ -52,9 +52,11 @@ const Buy = () => {
   const [softGateModal, setSoftGateModal] = useState<{
     isOpen: boolean;
     property: any;
+    isLoggedOut: boolean;
   }>({
     isOpen: false,
-    property: null
+    property: null,
+    isLoggedOut: false
   });
 
   const ITEMS_PER_PAGE = 18;
@@ -467,11 +469,22 @@ const Buy = () => {
       return;
     }
 
+    // For logged out users clicking on blurred listings, show soft-gate modal
+    if (!user && index >= 3) {
+      setSoftGateModal({
+        isOpen: true,
+        property: property,
+        isLoggedOut: true
+      });
+      return;
+    }
+
     // For free plan users clicking on blurred listings, show soft-gate modal
     if (isFreeUser && index >= 9) {
       setSoftGateModal({
         isOpen: true,
-        property: property
+        property: property,
+        isLoggedOut: false
       });
       return;
     }
@@ -484,7 +497,8 @@ const Buy = () => {
   const handleCloseSoftGate = () => {
     setSoftGateModal({
       isOpen: false,
-      property: null
+      property: null,
+      isLoggedOut: false
     });
   };
 
@@ -815,6 +829,20 @@ const Buy = () => {
                     />
                   </div>
 
+                  {/* Make blurred listings clickable for logged out users */}
+                  {!user && isBlurred && (
+                    <div 
+                      className="absolute inset-0 cursor-pointer"
+                      onClick={() => {
+                        setSoftGateModal({
+                          isOpen: true,
+                          property: property,
+                          isLoggedOut: true
+                        });
+                      }}
+                    />
+                  )}
+
                   {/* Make blurred listings clickable for free plan users */}
                   {isFreeUser && isBlurred && (
                     <div 
@@ -822,7 +850,8 @@ const Buy = () => {
                       onClick={() => {
                         setSoftGateModal({
                           isOpen: true,
-                          property: property
+                          property: property,
+                          isLoggedOut: false
                         });
                       }}
                     />
@@ -948,6 +977,7 @@ const Buy = () => {
         onClose={handleCloseSoftGate}
         property={softGateModal.property}
         isRental={false}
+        isLoggedOut={softGateModal.isLoggedOut}
       />
     </div>
   );

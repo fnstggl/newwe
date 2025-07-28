@@ -15,13 +15,15 @@ interface SoftGateModalProps {
     price?: number;
   };
   isRental?: boolean;
+  isLoggedOut?: boolean;
 }
 
 const SoftGateModal: React.FC<SoftGateModalProps> = ({ 
   isOpen, 
   onClose, 
   property, 
-  isRental = false 
+  isRental = false,
+  isLoggedOut = false
 }) => {
   const navigate = useNavigate();
 
@@ -54,8 +56,28 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
     : `This home is ${discountPercent}% below-market`;
 
   const handleUpgrade = () => {
-    navigate('/pricing');
+    if (isLoggedOut) {
+      navigate('/join');
+    } else {
+      navigate('/pricing');
+    }
   };
+
+  // Content for logged out users
+  const loggedOutContent = {
+    header: "Sign in to view more listings",
+    description: "Get full details, photos, and market analysis",
+    buttonText: "Create free account"
+  };
+
+  // Content for free plan users
+  const freePlanContent = {
+    header: "You've found a deal",
+    description: "See why this listing is undervalued, full details, and more",
+    buttonText: "Unlock for $3/month"
+  };
+
+  const content = isLoggedOut ? loggedOutContent : freePlanContent;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
@@ -83,7 +105,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Header */}
         <h2 className="text-3xl font-extrabold text-white mb-3 tracking-tighter">
-          You've found a deal
+          {content.header}
         </h2>
 
         {/* Subheader */}
@@ -98,7 +120,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Description */}
         <p className="text-white/70 mb-8 text-base">
-          See why this listing is undervalued, full details, and more
+          {content.description}
         </p>
 
         {/* CTA Button */}
@@ -106,7 +128,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
           onClick={handleUpgrade}
           className="w-full bg-white text-black py-4 px-6 rounded-full font-semibold text-lg hover:bg-gray-100 transition-colors mb-4"
         >
-          Unlock for $3/month
+          {content.buttonText}
         </button>
 
         {/* Social proof */}
