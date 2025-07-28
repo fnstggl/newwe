@@ -41,7 +41,7 @@ const Buy = () => {
   const [minSqft, setMinSqft] = useState("");
   const [addressSearch, setAddressSearch] = useState("");
   const [minDiscount, setMinDiscount] = useState("");
-  const [sortBy, setSortBy] = useState("Featured");
+  const [sortBy, setSortBy] = useState("Discount: High to Low");
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +72,7 @@ const Buy = () => {
     'Score: Low to High',
     'Score: High to Low',
     'Newest Listed'
+    'Discount: High to Low' // ← Add this
   ];
 
   // Determine visibility limits based on user status
@@ -353,7 +354,7 @@ const Buy = () => {
           query = query.order('days_on_market', { ascending: true });
           break;
         default: // Featured
-          query = query.order('created_at', { ascending: false });
+              query = query.order('discount_percent', { ascending: false });
           break;
       }
 
