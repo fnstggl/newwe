@@ -141,7 +141,6 @@ const Pricing = () => {
             <div className="bg-black/50 rounded-2xl p-8 border border-gray-800 flex flex-col h-full">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">Free</h3>
               <p className="text-4xl font-semibold mb-6 tracking-tight">$0</p>
-              <p className="text-gray-400 mb-4 tracking-tight"> For the everyday New Yorker</p>
               <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -199,7 +198,6 @@ const Pricing = () => {
     Compared to ~$3,600 broker avg
   </span>
 </div>
-                  <p className="text-gray-400 mb-4 tracking-tight"> For the serious apartment hunter</p>
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
