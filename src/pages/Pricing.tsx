@@ -208,7 +208,7 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      <strong className="text-white"> Unlock all rental & sale deals</strong>
+                      <strong className="text-white"> Unlock ALL rental & sale deals</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
