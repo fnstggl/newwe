@@ -619,14 +619,17 @@ const [hasAnimated, setHasAnimated] = useState(false);
                       <div className="space-y-4">
                         {annualSavings && (
                           <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-400">
-                              {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
-                            <span 
-  className="text-lg font-bold text-[#FFFFFF]" 
-  ref={savingsRef}
->
-  {formatPrice(animatedSavings || 0)}
-</span>
+                            <div className="flex justify-between items-center">
+  <span className="text-sm text-gray-400">
+    {isRental ? 'Est Annual Savings:' : 'Est Savings:'}
+  </span>
+  <span 
+    className="text-lg font-bold text-[#FFFFFF]" 
+    ref={savingsRef}
+  >
+    {formatPrice(animatedSavings || 0)}
+  </span>
+</div>
                           </div>
                         )}
                         
