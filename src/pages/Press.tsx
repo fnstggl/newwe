@@ -84,7 +84,7 @@ const Press = () => {
           </h2>
           <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
             <p>
-              We're two teens from Brooklyn who grew up watching friends, family, and neighbors get priced out of the city we love.
+              We're two students from Brooklyn who grew up watching friends, family, and neighbors get priced out of the city we love.
             </p>
             <p>
               After seeing first-hand how we were losing our community to rising rents, and a background in real estate & software-dev we built something we wished had existed sooner.
@@ -107,8 +107,8 @@ const Press = () => {
             <div className="text-gray-400 text-sm">Redefining the NYC real estate market</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">Built by teens, used by thousands</div>
-            <div className="text-gray-400 text-sm">And growing every day</div>
+            <div className="text-2xl font-bold mb-2">Helping 6000+ New Yorkers</div>
+            <div className="text-gray-400 text-sm">Find more affordable homes</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
             <div className="text-2xl font-bold mb-2">$500K+ rent savings surfaced</div>
