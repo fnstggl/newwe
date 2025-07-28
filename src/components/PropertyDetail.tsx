@@ -302,15 +302,15 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Bedrooms:</span>
-                            <span className="text-white">
-                              {property.bedrooms === 0
-  ? 'Studio'
-  : property.bedrooms > 0
-    ? property.bedrooms
-    : <span style={{ color: '#19202D' }}>N/A</span>}
-                            </span>
-                          </div>
+  <span className="text-gray-400">Bedrooms:</span>
+  {property.bedrooms === 0 ? (
+    <span className="text-white/60">Studio</span>
+  ) : property.bedrooms > 0 ? (
+    <span className="text-white/80">{property.bedrooms}</span>
+  ) : (
+    <span style={{ color: '#19202D' }}>N/A</span>
+  )}
+</div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-400">Bathrooms:</span>
                             <span className="text-white">
