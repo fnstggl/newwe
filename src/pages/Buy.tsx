@@ -828,6 +828,19 @@ const Buy = () => {
                     />
                   )}
 
+                  {/* Make blurred listings clickable for logged out users */}
+                  {!user && isBlurred && (
+                    <div 
+                      className="absolute inset-0 cursor-pointer"
+                      onClick={() => {
+                        setSoftGateModal({
+                          isOpen: true,
+                          property: property
+                        });
+                      }}
+                    />
+                  )}
+
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
                   {!user && index === 4 && properties.length > 4 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
