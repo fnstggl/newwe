@@ -59,7 +59,7 @@ const Buy = () => {
     isLoggedOut: false
   });
 
-  const ITEMS_PER_PAGE = 18;
+  const ITEMS_PER_PAGE = 24;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
   const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
   const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
@@ -256,80 +256,78 @@ const Buy = () => {
   };
 
   const fetchProperties = async (reset = false) => {
-    setLoading(true);
-    const currentOffset = reset ? 0 : offset;
+  setLoading(true);
+  const currentOffset = reset ? 0 : offset;
 
-    try {
-      let query = supabase
-        .from('undervalued_sales')
-        .select('*')
-        .eq('status', 'active')
-        .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+  try {
+    let query = supabase
+      .from('undervalued_sales')
+      .select('*')
+      .eq('status', 'active')
+      .or('investor_plan_property.is.null,investor_plan_property.neq.true');
 
-      if (searchTerm.trim()) {
-        query = query.ilike('address', `%${searchTerm.trim()}%`);
+    if (searchTerm.trim()) {
+      query = query.ilike('address', `%${searchTerm.trim()}%`);
+    }
+
+    if (zipCode.trim()) {
+      query = query.ilike('zipcode', `${zipCode.trim()}%`);
+    }
+
+    if (maxPrice.trim()) {
+      const priceValue = parseInt(maxPrice.trim());
+      if (!isNaN(priceValue) && priceValue > 0) {
+        query = query.lte('price', priceValue);
       }
+    }
 
-      if (zipCode.trim()) {
-        query = query.ilike('zipcode', `${zipCode.trim()}%`);
-      }
-
-      if (maxPrice.trim()) {
-        const priceValue = parseInt(maxPrice.trim());
-        if (!isNaN(priceValue) && priceValue > 0) {
-          query = query.lte('price', priceValue);
+    if (bedrooms.trim()) {
+      const bedroomValue = parseInt(bedrooms.trim());
+      if (!isNaN(bedroomValue)) {
+        if (bedroomValue === 0) {
+          query = query.eq('bedrooms', 0);
+        } else {
+          query = query.gte('bedrooms', bedroomValue);
         }
       }
+    }
 
-      if (bedrooms.trim()) {
-        const bedroomValue = parseInt(bedrooms.trim());
-        if (!isNaN(bedroomValue)) {
-          if (bedroomValue === 0) {
-            // Studio: filter for exactly 0 bedrooms
-            query = query.eq('bedrooms', 0);
-          } else {
-            // For other values: filter for that number or more bedrooms
-            query = query.gte('bedrooms', bedroomValue);
-          }
-        }
+    if (minGrade.trim()) {
+      const gradeIndex = gradeOptions.indexOf(minGrade);
+      if (gradeIndex !== -1) {
+        const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
+        query = query.in('grade', allowedGrades);
       }
+    }
 
-      if (minGrade.trim()) {
-        const gradeIndex = gradeOptions.indexOf(minGrade);
-        if (gradeIndex !== -1) {
-          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-          query = query.in('grade', allowedGrades);
-        }
+    if (selectedNeighborhoods.length > 0) {
+      query = query.in('neighborhood', selectedNeighborhoods);
+    }
+
+    if (selectedBoroughs.length > 0) {
+      query = query.in('borough', selectedBoroughs);
+    }
+
+    if (minSqft.trim()) {
+      const sqftValue = parseInt(minSqft.trim());
+      if (!isNaN(sqftValue) && sqftValue > 0) {
+        query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
       }
+    }
 
-      if (selectedNeighborhoods.length > 0) {
-        query = query.in('neighborhood', selectedNeighborhoods);
+    if (addressSearch.trim()) {
+      query = query.ilike('address', `%${addressSearch.trim()}%`);
+    }
+
+    if (minDiscount.trim()) {
+      const discountValue = parseInt(minDiscount.replace('%', ''));
+      if (!isNaN(discountValue) && discountValue > 0) {
+        query = query.gte('discount_percent', discountValue);
       }
+    }
 
-      // Additional filters
-      if (selectedBoroughs.length > 0) {
-        query = query.in('borough', selectedBoroughs);
-      }
-
-      if (minSqft.trim()) {
-        const sqftValue = parseInt(minSqft.trim());
-        if (!isNaN(sqftValue) && sqftValue > 0) {
-          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
-        }
-      }
-
-      if (addressSearch.trim()) {
-        query = query.ilike('address', `%${addressSearch.trim()}%`);
-      }
-
-      if (minDiscount.trim()) {
-        const discountValue = parseInt(minDiscount.replace('%', ''));
-        if (!isNaN(discountValue) && discountValue > 0) {
-          query = query.gte('discount_percent', discountValue);
-        }
-      }
-
-      // Apply sorting
+    // Apply sorting for non-Featured sorts
+    if (sortBy !== 'Featured') {
       switch (sortBy) {
         case 'Price: Low to High':
           query = query.order('price', { ascending: true });
@@ -352,106 +350,118 @@ const Buy = () => {
         case 'Newest Listed':
           query = query.order('days_on_market', { ascending: true });
           break;
-        default: // Featured
-  query = query.order('score', { ascending: false });
-  break;
       }
-
-      const RANDOM_POOL_SIZE = 100;
-const { data, error } = await query.range(0, RANDOM_POOL_SIZE - 1);
-
-if (error) {
-  console.error('❌ SUPABASE ERROR:', error);
-  setProperties([]);
-  return;
-}
-
-if (!data || !Array.isArray(data)) {
-  console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
-  setProperties([]);
-  return;
-}
-
-// 🎯 Neighborhood priority map
-const neighborhoodPriority = {
-  'soho': 1,
-  'tribeca': 1,
-  'west-village': 1,
-  'east-village': 1,
-  'park-slope': 1,
-  'williamsburg': 1,
-  'greenpoint': 1,
-
-  'boerum-hill': 2,
-  'cobble-hill': 2,
-  'carroll-gardens': 2,
-  'dumbo': 2,
-  'fort-greene': 2,
-  'gramercy-park': 2,
-  'chelsea': 2,
-  'lower-east-side': 2,
-  'financial-district': 2,
-  'long-island-city': 2,
-  'prospect-heights': 2,
-
-  'crown-heights': 3,
-  'bedford-stuyvesant': 3,
-  'bushwick': 3,
-  'astoria': 3,
-  'sunnyside': 3,
-  'woodside': 3,
-  'jackson-heights': 3,
-  'elmhurst': 3,
-  'kips-bay': 3,
-  'murray-hill': 3,
-  'clinton-hill': 3,
-
-  'chinatown': 4,
-  'melrose': 4,
-  'mott-haven': 4,
-  'south-bronx': 4,
-  'concourse': 4,
-  'two-bridges': 4,
-  'nolita': 4,
-  'midtown': 4
-};
-
-let resultData;
-
-if (sortBy === 'Featured') {
-  // Group by rank, shuffle within each
-  const grouped = data.reduce((acc, item) => {
-    const rank = neighborhoodPriority[item.neighborhood] || 999;
-    if (!acc[rank]) acc[rank] = [];
-    acc[rank].push(item);
-    return acc;
-  }, {} as Record<number, any[]>);
-
-  const shuffled = Object.keys(grouped)
-    .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending
-    .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle each tier
-
-  resultData = shuffled.slice(offset, offset + ITEMS_PER_PAGE);
-} else {
-  resultData = data.slice(offset, offset + ITEMS_PER_PAGE);
-}
-
-      if (reset) {
-        setProperties(resultData);
-        setOffset(ITEMS_PER_PAGE);
-      } else {
-        setProperties(prev => [...prev, ...resultData]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
-      }
-
-      setHasMore(data.length === ITEMS_PER_PAGE);
-    } catch (error) {
-      console.error('💥 CATCH ERROR:', error);
-      setProperties([]);
-    } finally {
-      setLoading(false);
+    } else {
+      // For Featured, just order by score initially
+      query = query.order('score', { ascending: false });
     }
-  };
+
+    // Fetch data
+    let fetchSize = ITEMS_PER_PAGE;
+    if (sortBy === 'Featured') {
+      // For Featured, get a larger pool to work with
+      fetchSize = Math.max(100, currentOffset + ITEMS_PER_PAGE * 2);
+    }
+
+    const { data, error } = await query.range(currentOffset, currentOffset + fetchSize - 1);
+
+    if (error) {
+      console.error('❌ SUPABASE ERROR:', error);
+      setProperties([]);
+      return;
+    }
+
+    if (!data || !Array.isArray(data)) {
+      console.error('❌ DATA IS NOT AN ARRAY OR IS NULL:', data);
+      setProperties([]);
+      return;
+    }
+
+    let resultData;
+
+    if (sortBy === 'Featured') {
+      // 🎯 Neighborhood priority map
+      const neighborhoodPriority = {
+        'soho': 1,
+        'tribeca': 1,
+        'west-village': 1,
+        'east-village': 1,
+        'park-slope': 1,
+        'williamsburg': 1,
+        'greenpoint': 1,
+
+        'boerum-hill': 2,
+        'cobble-hill': 2,
+        'carroll-gardens': 2,
+        'dumbo': 2,
+        'fort-greene': 2,
+        'gramercy-park': 2,
+        'chelsea': 2,
+        'lower-east-side': 2,
+        'financial-district': 2,
+        'long-island-city': 2,
+        'prospect-heights': 2,
+
+        'crown-heights': 3,
+        'bedford-stuyvesant': 3,
+        'bushwick': 3,
+        'astoria': 3,
+        'sunnyside': 3,
+        'woodside': 3,
+        'jackson-heights': 3,
+        'elmhurst': 3,
+        'kips-bay': 3,
+        'murray-hill': 3,
+        'clinton-hill': 3,
+
+        'chinatown': 4,
+        'melrose': 4,
+        'mott-haven': 4,
+        'south-bronx': 4,
+        'concourse': 4,
+        'two-bridges': 4,
+        'nolita': 4,
+        'midtown': 4
+      };
+
+      // Group by rank, shuffle within each
+      const grouped = data.reduce((acc, item) => {
+        const rank = neighborhoodPriority[item.neighborhood] || 999;
+        if (!acc[rank]) acc[rank] = [];
+        acc[rank].push(item);
+        return acc;
+      }, {} as Record<number, any[]>);
+
+      const shuffled = Object.keys(grouped)
+        .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending
+        .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle each tier
+
+      // Take only the items we need for this page
+      resultData = shuffled.slice(0, ITEMS_PER_PAGE);
+      
+      // Set hasMore based on whether we got the full fetch size
+      setHasMore(data.length === fetchSize);
+    } else {
+      // For other sorts, just use the data as-is
+      resultData = data;
+      setHasMore(data.length === ITEMS_PER_PAGE);
+    }
+
+    if (reset) {
+      setProperties(resultData);
+      setOffset(ITEMS_PER_PAGE);
+    } else {
+      setProperties(prev => [...prev, ...resultData]);
+      setOffset(prev => prev + ITEMS_PER_PAGE);
+    }
+
+  } catch (error) {
+    console.error('💥 CATCH ERROR:', error);
+    setProperties([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const loadMore = () => {
     if (!loading && hasMore) {
