@@ -431,9 +431,9 @@ if (sortBy === 'Featured') {
     .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending
     .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle each tier
 
-  resultData = shuffled.slice(offset, offset + ITEMS_PER_PAGE);
+  resultData = shuffled.slice(currentOffset, currentOffset + ITEMS_PER_PAGE); // ✅ Use currentOffset instead of offset
 } else {
-  resultData = data.slice(offset, offset + ITEMS_PER_PAGE);
+  resultData = data.slice(currentOffset, currentOffset + ITEMS_PER_PAGE); // ✅ Use currentOffset here too
 }
 
       if (reset) {
@@ -444,7 +444,11 @@ if (sortBy === 'Featured') {
         setOffset(prev => prev + ITEMS_PER_PAGE);
       }
 
-      setHasMore(data.length === ITEMS_PER_PAGE);
+      if (sortBy === 'Featured') {
+  setHasMore(shuffled.length > currentOffset + ITEMS_PER_PAGE);
+} else {
+  setHasMore(data.length === ITEMS_PER_PAGE);
+}
     } catch (error) {
       console.error('💥 CATCH ERROR:', error);
       setProperties([]);
