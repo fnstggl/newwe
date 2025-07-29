@@ -427,11 +427,13 @@ if (sortBy === 'Featured') {
     return acc;
   }, {} as Record<number, any[]>);
 
-  resultData = Object.keys(grouped)
+  const shuffled = Object.keys(grouped)
     .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending
     .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle each tier
+
+  resultData = shuffled.slice(offset, offset + ITEMS_PER_PAGE);
 } else {
-  resultData = data;
+  resultData = data.slice(offset, offset + ITEMS_PER_PAGE);
 }
 
       if (reset) {
