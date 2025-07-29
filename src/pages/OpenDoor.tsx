@@ -103,7 +103,7 @@ const OpenDoor = () => {
                 Realer Estate is a tool that finds rent-stabilized and undervalued listings in NYC the second they hit the market.
               </p>
 
-<p className="text-xl text-white">
+<p className="text-lg text-white">
                 💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
               </p>
 
