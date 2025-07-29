@@ -92,6 +92,11 @@ const OpenDoor = () => {
       <div className="max-w-4xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-16">
+
+          <div className="relative text-center mb-16">
+  {/* Soft background glow behind the header */}
+  <div className="absolute inset-0 -top-16 -bottom-8 bg-gradient-to-b from-yellow-500/10 via-yellow-400/5 to-transparent blur-2xl opacity-60 -z-10 rounded-xl"></div>
+            
           <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
             The Open Door Plan
           </h1>
