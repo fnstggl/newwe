@@ -94,6 +94,17 @@ const Index = () => {
 </section>
 */}
 
+  {/* Product Mockup Section */}
+      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
+        <div className="text-center">
+          <img 
+            src="/lovable-uploads/0b38338f-4c89-4881-80ff-5d26234b31cc.png" 
+            alt="Realer Estate platform showing rental listings" 
+            className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
+          />
+        </div>
+      </section>
+    
       {/* Problem Section */}
       <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
@@ -152,17 +163,6 @@ const Index = () => {
               Explore Homes
             </HoverButton>
           </Link>
-        </div>
-      </section>
-
-      {/* Product Mockup Section */}
-      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center">
-          <img 
-            src="/lovable-uploads/0b38338f-4c89-4881-80ff-5d26234b31cc.png" 
-            alt="Realer Estate platform showing rental listings" 
-            className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
-          />
         </div>
       </section>
 
