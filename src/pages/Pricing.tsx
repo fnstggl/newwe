@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
-  const [isAnnual, setIsAnnual] = useState(true);
+  const [isAnnual, setIsAnnual] = useState(false);
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
   const { toast } = useToast();
@@ -107,12 +107,12 @@ const Pricing = () => {
               Ready to finally find a home you can afford?
             </h1>
             <p className="text-xl text-gray-400 tracking-tight">
-              These deals don't wait. People grab them before you even know they exist.
+              These deals don’t wait. People grab them before you even know they exist.
             </p>
         <div className="mt-10 flex justify-center">
   <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
     <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight">
-      "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+      “I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane.”
     </p>
     <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
   </div>
@@ -122,16 +122,16 @@ const Pricing = () => {
           <div className="text-center mb-16">
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4 mt-8">
-              <span className={`text-lg ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Annual
-              </span>
-              <Toggle
-                checked={!isAnnual}
-                onCheckedChange={(checked) => setIsAnnual(!checked)}
-                variant="default"
-              />
               <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
                 Monthly
+              </span>
+              <Toggle
+                checked={isAnnual}
+                onCheckedChange={setIsAnnual}
+                variant="default"
+              />
+              <span className={`text-lg ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                Annual
               </span>
             </div>
           </div>
@@ -188,14 +188,21 @@ const Pricing = () => {
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
                   </div>
                  <div className="mb-6 flex items-center justify-between">
-    {isAnnual ? (
+   {isAnnual ? (
   <div>
     <p className="text-4xl font-semibold tracking-tight">
-      $1.5<span className="text-lg text-gray-400">/mo</span>
+      $1.50<span className="text-lg text-gray-400">/mo</span>
     </p>
-    <p className="text-sm text-gray-400 mt-2 mb-0">$18 billed annually</p>
+    <p className="text-sm text-purple-400 font-medium mt-1 tracking-tight">
+      50% off — billed $18/year
+    </p>
+    <p className="text-xs text-gray-500 mt-1 tracking-tight">
+      (normally $36/year)
+    </p>
   </div>
 ) : (
+  ...
+)}
   <p className="text-4xl font-semibold tracking-tight">
     $3<span className="text-lg text-gray-400">/mo</span>
   </p>
