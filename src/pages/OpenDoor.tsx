@@ -90,16 +90,15 @@ const OpenDoor = () => {
     <div className="min-h-screen bg-black text-white font-inter">
       <div className="max-w-4xl mx-auto px-6 py-16">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="relative text-center mb-16">
-            {/* Soft yellow glow behind heading */}
-            <div className="absolute inset-0 -top-24 -bottom-12 w-full bg-yellow-400 opacity-10 blur-[100px] -z-10 rounded-3xl pointer-events-none"></div>
+        <div className="relative text-center mb-16">
+          {/* Soft yellow glow behind heading */}
+          <div className="absolute inset-0 -top-32 -bottom-32 left-1/2 transform -translate-x-1/2 w-[800px] h-[600px] bg-yellow-400 opacity-15 blur-[120px] rounded-full pointer-events-none"></div>
 
-            <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-              The Open Door Plan
-            </h1>
+          <h1 className="relative text-5xl md:text-6xl font-bold mb-8 tracking-tighter z-10">
+            The Open Door Plan
+          </h1>
 
-            <div className="mx-auto text-lg text-gray-300 leading-relaxed px-8 md:px-16 lg:px-20 max-w-4xl lg:max-w-5xl space-y-6">
+          <div className="relative mx-auto text-lg text-gray-300 leading-relaxed px-12 md:px-24 lg:px-32 xl:px-40 max-w-6xl space-y-6 z-10">
               <p className="text-2xl text-white font-semibold tracking-tight">
                 💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
               </p>
@@ -112,7 +111,6 @@ const OpenDoor = () => {
                 If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
               </p>
             </div>
-          </div>
         </div>
 
         {/* Main CTA */}
