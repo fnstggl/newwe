@@ -98,7 +98,7 @@ const OpenDoor = () => {
           
           <div className="max-w-3xl mx-auto space-y-6 leading-relaxed">
   <p className="text-2xl text-white font-semibold tracking-tight">
-    We launched the Open Door Plan to make Realer Estate free for those who need it most.
+    We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
   </p>
   
   <p className="text-lg text-gray-300">
