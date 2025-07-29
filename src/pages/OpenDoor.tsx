@@ -98,7 +98,7 @@ const OpenDoor = () => {
             The Open Door Plan
           </h1>
 
-          <div className="relative mx-auto text-lg text-gray-300 leading-relaxed px-4 md:px-8 lg:px-12 xl:px-16 max-w-7xl space-y-6 z-10">
+          <div className="relative mx-auto text-lg text-gray-300 leading-relaxed px-4 md:px-6 lg:px-8 xl:px-12 max-w-8xl space-y-6 z-10">
               <p className="text-2xl text-white font-semibold tracking-tight">
                 💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
               </p>
@@ -151,7 +151,7 @@ const OpenDoor = () => {
             </p>
             
             <p className="text-white text-lg font-medium">
-              💛 No credit card. No time limit. Just a better way to find hidden deals in NYC so you don't get squeezed.
+              No credit card. No time limit. Just a better way to find hidden deals in NYC so you don't get squeezed. 💛
             </p>
           </div>
         </div>
