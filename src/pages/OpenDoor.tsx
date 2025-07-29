@@ -98,11 +98,15 @@ const OpenDoor = () => {
             The Open Door Plan
           </h1>
 
-          <div className="relative mx-auto text-lg text-gray-300 leading-relaxed px-4 md:px-6 lg:px-8 xl:px-12 max-w-8xl space-y-6 z-10">
+          <div className="relative mx-auto text-lg text-gray-300 leading-relaxed px-4 md:px-6 lg:px-8 xl:px-12 max-w-7xl space-y-6 z-10">
               <p className="text-2xl text-white font-semibold tracking-tight">
-                💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
+                Realer Estate is a tool that finds rent-stabilized and undervalued listings in NYC the second they hit the market.
               </p>
 
+<p className="text-xl text-white">
+                💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
+              </p>
+            
               <p className="text-lg text-gray-300">
                 No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
               </p>
