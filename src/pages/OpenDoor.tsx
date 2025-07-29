@@ -95,7 +95,7 @@ const OpenDoor = () => {
 
           <div className="relative text-center mb-16">
   {/* Soft yellow glow behind heading */}
-  <div className="absolute inset-0 -top-16 -bottom-8 bg-gradient-to-b from-yellow-500/10 via-yellow-400/5 to-transparent blur-2xl opacity-60 -z-10 rounded-xl"></div>
+ <div className="absolute inset-0 -top-24 -bottom-12 w-full bg-yellow-400 opacity-10 blur-[100px] -z-10 rounded-3xl pointer-events-none"></div>
 
   <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
     The Open Door Plan
