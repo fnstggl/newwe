@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -203,8 +202,8 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
           options={{
             layout: 'tabs',
             defaultValues: {
-              paymentMethod: {
-                type: 'card',
+              billingDetails: {
+                email: user?.email || '',
               },
             },
             paymentMethodOrder: ['card', 'apple_pay', 'cashapp', 'amazon_pay'],
@@ -244,7 +243,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
             Processing...
           </>
         ) : (
-          `Subscribe for ${billingCycle === 'annual' ? '$19/year' : '$3/month'}`
+          `Subscribe for ${billingCycle === 'annual' ? '$18/year' : '$3/month'}`
         )}
       </button>
 

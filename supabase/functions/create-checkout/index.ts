@@ -58,7 +58,7 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    const priceAmount = billing_cycle === 'annual' ? 1900 : 300; // $19.00 or $3.00
+    const priceAmount = billing_cycle === 'annual' ? 1800 : 300; // $18.00 or $3.00
     const interval = billing_cycle === 'annual' ? 'year' : 'month';
 
     const session = await stripe.checkout.sessions.create({

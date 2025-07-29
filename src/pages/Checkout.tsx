@@ -20,9 +20,9 @@ const Checkout = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const billingCycle = searchParams.get('billing') as 'monthly' | 'annual' || 'monthly';
-  const price = billingCycle === 'annual' ? '$19/year' : '$3/month';
-  const amount = billingCycle === 'annual' ? 19 : 3;
+  const billingCycle = searchParams.get('billing') as 'monthly' | 'annual' || 'annual';
+  const price = billingCycle === 'annual' ? '$18/year' : '$3/month';
+  const amount = billingCycle === 'annual' ? 18 : 3;
 
   useEffect(() => {
     if (!user) {
@@ -43,7 +43,7 @@ const Checkout = () => {
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
             billing_cycle: billingCycle,
-            amount: billingCycle === 'annual' ? 1900 : 300, // in cents
+            amount: billingCycle === 'annual' ? 1800 : 300, // in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -146,7 +146,7 @@ const Checkout = () => {
                 Save $3,000/yr on rent for the cost of a subway ride.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Your apartment’s out there. Be the one to get it.
+                Your apartment's out there. Be the one to get it.
               </p>
             </div>
 
