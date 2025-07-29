@@ -334,21 +334,26 @@ const Profile = () => {
           </div>
 
           {/* Subscription Plan */}
-          <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
-            <h2 className="text-2xl font-semibold mb-6 tracking-tight">Subscription Plan</h2>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-lg font-medium tracking-tight capitalize">
-                  {profileData.subscription_plan || 'Free'} Plan
-                </p>
-                <p className="text-gray-400 text-sm tracking-tight">
-                  {profileData.subscription_plan === 'unlimited' 
-                    ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
-                    : 'Limited to 9 deals per day'
-                  }
-                </p>
-              </div>
+<div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
+  <h2 className="text-2xl font-semibold mb-6 tracking-tight">Subscription Plan</h2>
+  
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-lg font-medium tracking-tight capitalize">
+        {profileData.subscription_plan === 'open_door_plan' 
+          ? 'Open Door Plan' 
+          : (profileData.subscription_plan || 'Free') + ' Plan'
+        }
+      </p>
+      <p className="text-gray-400 text-sm tracking-tight">
+        {profileData.subscription_plan === 'unlimited' 
+          ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
+          : profileData.subscription_plan === 'open_door_plan'
+          ? 'Free unlimited access'
+          : 'Limited to 9 deals per day'
+        }
+      </p>
+    </div>
               
               <HoverButton 
                 className="text-white font-semibold tracking-tight"
