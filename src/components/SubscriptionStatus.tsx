@@ -7,7 +7,7 @@ const SubscriptionStatus = () => {
 
   // Treat "unlimited", "manual_unlimited", and "staff" as subscribed
   const isSubscribed = userProfile?.subscription_plan === 'unlimited' || 
-                      userProfile?.subscription_plan === 'manual_unlimited' || 
+                      userProfile?.subscription_plan === 'open_door_plan' || 
                       userProfile?.subscription_plan === 'staff';
 
   const handleManageSubscription = () => {
@@ -18,8 +18,8 @@ const SubscriptionStatus = () => {
     if (userProfile?.subscription_plan === 'staff') {
       return 'Staff Plan';
     }
-    if (userProfile?.subscription_plan === 'manual_unlimited') {
-      return 'Unlimited Plan (Manual)';
+    if (userProfile?.subscription_plan === 'open_door_plan') {
+      return 'Open Door Plan';
     }
     if (userProfile?.subscription_plan === 'unlimited') {
       return 'Unlimited Plan';

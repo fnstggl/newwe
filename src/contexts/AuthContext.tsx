@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
         // Skip subscription check for staff and manual_unlimited plans
-        const isStaffOrManualUnlimited = data.subscription_plan === 'staff' || data.subscription_plan === 'manual_unlimited';
+        const isStaffOrManualUnlimited = data.subscription_plan === 'open_door_plan' || data.subscription_plan === 'staff';
         
         let subscriptionInfo = {
           subscription_plan: data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan,
