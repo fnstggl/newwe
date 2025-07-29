@@ -106,10 +106,6 @@ const OpenDoor = () => {
 <p className="text-xl text-white">
                 💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
               </p>
-            
-              <p className="text-lg text-gray-300">
-                No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
-              </p>
 
               <p className="text-white font-medium">
                 If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
