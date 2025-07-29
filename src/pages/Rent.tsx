@@ -257,72 +257,122 @@ const Rent = () => {
   };
 
   const fetchProperties = async (reset = false) => {
-    setLoading(true);
-    const currentOffset = reset ? 0 : offset;
+  setLoading(true);
+  const currentOffset = reset ? 0 : offset;
 
-    try {
-      let allProperties: any[] = [];
+  try {
+    let allProperties: any[] = [];
 
-      // If rent-stabilized only is selected, fetch only from rent-stabilized table
-      if (rentStabilizedOnly) {
-        let query = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
+    // Neighborhood priority mapping (same as Buy page)
+    const neighborhoodPriority = {
+      // Tier 1 - Premium neighborhoods
+      'soho': 1,
+      'tribeca': 1,
+      'west-village': 1,
+      'east-village': 1,
+      'park-slope': 1,
+      'williamsburg': 1,
+      'greenpoint': 1,
+      'nolita': 1,
+      
+      // Tier 2 - Highly desirable
+      'boerum-hill': 2,
+      'cobble-hill': 2,
+      'carroll-gardens': 2,
+      'dumbo': 2,
+      'fort-greene': 2,
+      'gramercy-park': 2,
+      'chelsea': 2,
+      'lower-east-side': 2,
+      'financial-district': 2,
+      'long-island-city': 2,
+      'prospect-heights': 2,
+      
+      // Tier 3 - Good neighborhoods
+      'crown-heights': 3,
+      'bedford-stuyvesant': 3,
+      'bushwick': 3,
+      'astoria': 3,
+      'sunnyside': 3,
+      'woodside': 3,
+      'jackson-heights': 3,
+      'elmhurst': 3,
+      'kips-bay': 3,
+      'murray-hill': 3,
+      'clinton-hill': 3,
+      
+      // Tier 4 - Emerging/other areas
+      'chinatown': 4,
+      'melrose': 4,
+      'mott-haven': 4,
+      'south-bronx': 4,
+      'concourse': 4,
+      'two-bridges': 4,
+      'midtown': 4
+    };
 
-        if (searchTerm.trim()) {
-          query = query.ilike('address', `%${searchTerm.trim()}%`);
+    // If rent-stabilized only is selected, fetch only from rent-stabilized table
+    if (rentStabilizedOnly) {
+      let query = supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('display_status', 'active');
+
+      // Apply all your existing filters (same as before)
+      if (searchTerm.trim()) {
+        query = query.ilike('address', `%${searchTerm.trim()}%`);
+      }
+
+      if (zipCode.trim()) {
+        query = query.ilike('zip_code', `${zipCode.trim()}%`);
+      }
+
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          query = query.lte('monthly_rent', priceValue);
         }
+      }
 
-        if (zipCode.trim()) {
-          query = query.ilike('zip_code', `${zipCode.trim()}%`);
-        }
-
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            query = query.lte('monthly_rent', priceValue);
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue)) {
+          if (bedroomValue === 0) {
+            query = query.eq('bedrooms', 0);
+          } else {
+            query = query.gte('bedrooms', bedroomValue);
           }
         }
+      }
 
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              query = query.eq('bedrooms', 0);
-            } else {
-              query = query.gte('bedrooms', bedroomValue);
-            }
-          }
+      if (selectedNeighborhoods.length > 0) {
+        query = query.in('neighborhood', selectedNeighborhoods);
+      }
+
+      if (selectedBoroughs.length > 0) {
+        query = query.in('borough', selectedBoroughs);
+      }
+
+      if (minSqft.trim()) {
+        const sqftValue = parseInt(minSqft.trim());
+        if (!isNaN(sqftValue) && sqftValue > 0) {
+          query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
         }
+      }
 
-        if (selectedNeighborhoods.length > 0) {
-          query = query.in('neighborhood', selectedNeighborhoods);
+      if (addressSearch.trim()) {
+        query = query.ilike('address', `%${addressSearch.trim()}%`);
+      }
+
+      if (minDiscount.trim()) {
+        const discountValue = parseInt(minDiscount.replace('%', ''));
+        if (!isNaN(discountValue) && discountValue > 0) {
+          query = query.gte('undervaluation_percent', discountValue);
         }
+      }
 
-        if (selectedBoroughs.length > 0) {
-          query = query.in('borough', selectedBoroughs);
-        }
-
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            query = query.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
-
-        if (addressSearch.trim()) {
-          query = query.ilike('address', `%${addressSearch.trim()}%`);
-        }
-
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            query = query.gte('undervaluation_percent', discountValue);
-          }
-        }
-
-        // Apply sorting for rent-stabilized
+      // Apply sorting for non-Featured sorts
+      if (sortBy !== 'Featured') {
         switch (sortBy) {
           case 'Price: Low to High':
             query = query.order('monthly_rent', { ascending: true });
@@ -345,99 +395,109 @@ const Rent = () => {
           case 'Newest Listed':
             query = query.order('discovered_at', { ascending: false });
             break;
-          default: // Featured
-            break;
         }
-
-        const { data: rentStabilizedData, error: rentStabilizedError } = await query.range(currentOffset, currentOffset + ITEMS_PER_PAGE - 1);
-
-        if (rentStabilizedError) {
-          console.error('❌ RENT-STABILIZED ERROR:', rentStabilizedError);
-          setProperties([]);
-          return;
-        }
-
-        // Map rent-stabilized data to consistent format
-        allProperties = (rentStabilizedData || []).map(property => ({
-          ...property,
-          isRentStabilized: true,
-          grade: 'A+', // Rent-stabilized properties get A+ grade
-          score: property.deal_quality_score || 95,
-          discount_percent: property.undervaluation_percent,
-          images: property.images || [],
-          zipcode: property.zip_code // Map zip_code to zipcode for consistency
-        }));
-
       } else {
-        // Fetch from both tables when not filtering for rent-stabilized only
-        
-        // Fetch regular rentals
-        let regularQuery = supabase
-          .from('undervalued_rentals')
-          .select('*')
-          .eq('status', 'active');
+        // For Featured, just order by score initially
+        query = query.order('deal_quality_score', { ascending: false });
+      }
 
-        if (searchTerm.trim()) {
-          regularQuery = regularQuery.ilike('address', `%${searchTerm.trim()}%`);
+      // Fetch data
+      let fetchSize = ITEMS_PER_PAGE;
+      if (sortBy === 'Featured') {
+        fetchSize = Math.max(100, currentOffset + ITEMS_PER_PAGE * 2);
+      }
+
+      const { data: rentStabilizedData, error: rentStabilizedError } = await query.range(currentOffset, currentOffset + fetchSize - 1);
+
+      if (rentStabilizedError) {
+        console.error('❌ RENT-STABILIZED ERROR:', rentStabilizedError);
+        setProperties([]);
+        return;
+      }
+
+      // Map rent-stabilized data to consistent format
+      allProperties = (rentStabilizedData || []).map(property => ({
+        ...property,
+        isRentStabilized: true,
+        grade: 'A+', // Rent-stabilized properties get A+ grade
+        score: property.deal_quality_score || 95,
+        discount_percent: property.undervaluation_percent,
+        images: property.images || [],
+        zipcode: property.zip_code // Map zip_code to zipcode for consistency
+      }));
+
+    } else {
+      // Fetch from both tables when not filtering for rent-stabilized only
+      
+      // Fetch regular rentals
+      let regularQuery = supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('status', 'active');
+
+      // Apply all your existing filters for regular rentals
+      if (searchTerm.trim()) {
+        regularQuery = regularQuery.ilike('address', `%${searchTerm.trim()}%`);
+      }
+
+      if (zipCode.trim()) {
+        regularQuery = regularQuery.ilike('zipcode', `${zipCode.trim()}%`);
+      }
+
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          regularQuery = regularQuery.lte('monthly_rent', priceValue);
         }
+      }
 
-        if (zipCode.trim()) {
-          regularQuery = regularQuery.ilike('zipcode', `${zipCode.trim()}%`);
-        }
-
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            regularQuery = regularQuery.lte('monthly_rent', priceValue);
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue)) {
+          if (bedroomValue === 0) {
+            regularQuery = regularQuery.eq('bedrooms', 0);
+          } else {
+            regularQuery = regularQuery.gte('bedrooms', bedroomValue);
           }
         }
+      }
 
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              regularQuery = regularQuery.eq('bedrooms', 0);
-            } else {
-              regularQuery = regularQuery.gte('bedrooms', bedroomValue);
-            }
-          }
+      if (minGrade.trim()) {
+        const gradeIndex = gradeOptions.indexOf(minGrade);
+        if (gradeIndex !== -1) {
+          const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
+          regularQuery = regularQuery.in('grade', allowedGrades);
         }
+      }
 
-        if (minGrade.trim()) {
-          const gradeIndex = gradeOptions.indexOf(minGrade);
-          if (gradeIndex !== -1) {
-            const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-            regularQuery = regularQuery.in('grade', allowedGrades);
-          }
+      if (selectedNeighborhoods.length > 0) {
+        regularQuery = regularQuery.in('neighborhood', selectedNeighborhoods);
+      }
+
+      if (selectedBoroughs.length > 0) {
+        regularQuery = regularQuery.in('borough', selectedBoroughs);
+      }
+
+      if (minSqft.trim()) {
+        const sqftValue = parseInt(minSqft.trim());
+        if (!isNaN(sqftValue) && sqftValue > 0) {
+          regularQuery = regularQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
         }
+      }
 
-        if (selectedNeighborhoods.length > 0) {
-          regularQuery = regularQuery.in('neighborhood', selectedNeighborhoods);
+      if (addressSearch.trim()) {
+        regularQuery = regularQuery.ilike('address', `%${addressSearch.trim()}%`);
+      }
+
+      if (minDiscount.trim()) {
+        const discountValue = parseInt(minDiscount.replace('%', ''));
+        if (!isNaN(discountValue) && discountValue > 0) {
+          regularQuery = regularQuery.gte('discount_percent', discountValue);
         }
+      }
 
-        if (selectedBoroughs.length > 0) {
-          regularQuery = regularQuery.in('borough', selectedBoroughs);
-        }
-
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            regularQuery = regularQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
-
-        if (addressSearch.trim()) {
-          regularQuery = regularQuery.ilike('address', `%${addressSearch.trim()}%`);
-        }
-
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            regularQuery = regularQuery.gte('discount_percent', discountValue);
-          }
-        }
-
-        // Apply sorting for regular rentals
+      // Apply sorting for regular rentals (non-Featured)
+      if (sortBy !== 'Featured') {
         switch (sortBy) {
           case 'Price: Low to High':
             regularQuery = regularQuery.order('monthly_rent', { ascending: true });
@@ -460,70 +520,73 @@ const Rent = () => {
           case 'Newest Listed':
             regularQuery = regularQuery.order('days_on_market', { ascending: true });
             break;
-          default: // Featured
-            regularQuery = regularQuery.order('created_at', { ascending: false });
-            break;
         }
+      } else {
+        // For Featured, just order by score initially
+        regularQuery = regularQuery.order('score', { ascending: false });
+      }
 
-        // Fetch rent-stabilized properties
-        let rentStabilizedQuery = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
+      // Fetch rent-stabilized properties
+      let rentStabilizedQuery = supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('display_status', 'active');
 
-        if (searchTerm.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
+      // Apply same filters to rent-stabilized query
+      if (searchTerm.trim()) {
+        rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${searchTerm.trim()}%`);
+      }
+
+      if (zipCode.trim()) {
+        rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
+      }
+
+      if (maxPrice.trim()) {
+        const priceValue = parseInt(maxPrice.trim());
+        if (!isNaN(priceValue) && priceValue > 0) {
+          rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
         }
+      }
 
-        if (zipCode.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('zip_code', `${zipCode.trim()}%`);
-        }
-
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.lte('monthly_rent', priceValue);
+      if (bedrooms.trim()) {
+        const bedroomValue = parseInt(bedrooms.trim());
+        if (!isNaN(bedroomValue)) {
+          if (bedroomValue === 0) {
+            rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
+          } else {
+            rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
           }
         }
+      }
 
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              rentStabilizedQuery = rentStabilizedQuery.eq('bedrooms', 0);
-            } else {
-              rentStabilizedQuery = rentStabilizedQuery.gte('bedrooms', bedroomValue);
-            }
-          }
+      if (selectedNeighborhoods.length > 0) {
+        rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+      }
+
+      if (selectedBoroughs.length > 0) {
+        rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
+      }
+
+      if (minSqft.trim()) {
+        const sqftValue = parseInt(minSqft.trim());
+        if (!isNaN(sqftValue) && sqftValue > 0) {
+          rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
         }
+      }
 
-        if (selectedNeighborhoods.length > 0) {
-          rentStabilizedQuery = rentStabilizedQuery.in('neighborhood', selectedNeighborhoods);
+      if (addressSearch.trim()) {
+        rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
+      }
+
+      if (minDiscount.trim()) {
+        const discountValue = parseInt(minDiscount.replace('%', ''));
+        if (!isNaN(discountValue) && discountValue > 0) {
+          rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
         }
+      }
 
-        if (selectedBoroughs.length > 0) {
-          rentStabilizedQuery = rentStabilizedQuery.in('borough', selectedBoroughs);
-        }
-
-        if (minSqft.trim()) {
-          const sqftValue = parseInt(minSqft.trim());
-          if (!isNaN(sqftValue) && sqftValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.gte('sqft', sqftValue).not('sqft', 'is', null);
-          }
-        }
-
-        if (addressSearch.trim()) {
-          rentStabilizedQuery = rentStabilizedQuery.ilike('address', `%${addressSearch.trim()}%`);
-        }
-
-        if (minDiscount.trim()) {
-          const discountValue = parseInt(minDiscount.replace('%', ''));
-          if (!isNaN(discountValue) && discountValue > 0) {
-            rentStabilizedQuery = rentStabilizedQuery.gte('undervaluation_percent', discountValue);
-          }
-        }
-
-        // Apply sorting for rent-stabilized
+      // Apply sorting for rent-stabilized (non-Featured)
+      if (sortBy !== 'Featured') {
         switch (sortBy) {
           case 'Price: Low to High':
             rentStabilizedQuery = rentStabilizedQuery.order('monthly_rent', { ascending: true });
@@ -546,62 +609,92 @@ const Rent = () => {
           case 'Newest Listed':
             rentStabilizedQuery = rentStabilizedQuery.order('discovered_at', { ascending: false });
             break;
-          default: // Featured
-            rentStabilizedQuery = rentStabilizedQuery.order('created_at', { ascending: false });
-            break;
         }
-
-        const [regularResult, rentStabilizedResult] = await Promise.all([
-          regularQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1),
-          rentStabilizedQuery.range(currentOffset, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) - 1)
-        ]);
-
-        if (regularResult.error) {
-          console.error('❌ REGULAR RENTALS ERROR:', regularResult.error);
-        }
-
-        if (rentStabilizedResult.error) {
-          console.error('❌ RENT-STABILIZED ERROR:', rentStabilizedResult.error);
-        }
-
-        // Combine results
-        const regularProperties = (regularResult.data || []).map(property => ({
-          ...property,
-          isRentStabilized: false
-        }));
-
-        const rentStabilizedProperties = (rentStabilizedResult.data || []).map(property => ({
-          ...property,
-          isRentStabilized: true,
-          grade: 'A+', // Rent-stabilized properties get A+ grade
-          score: property.deal_quality_score || 95,
-          discount_percent: property.undervaluation_percent,
-          images: property.images || [],
-          zipcode: property.zip_code // Map zip_code to zipcode for consistency
-        }));
-
-        allProperties = [...regularProperties, ...rentStabilizedProperties];
-      }
-
-      // Only shuffle if Featured sorting
-      const resultData = sortBy === 'Featured' ? allProperties.sort(() => Math.random() - 0.5) : allProperties;
-
-      if (reset) {
-        setProperties(resultData);
-        setOffset(ITEMS_PER_PAGE);
       } else {
-        setProperties(prev => [...prev, ...resultData]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
+        // For Featured, just order by score initially
+        rentStabilizedQuery = rentStabilizedQuery.order('deal_quality_score', { ascending: false });
       }
 
-      setHasMore(allProperties.length === ITEMS_PER_PAGE);
-    } catch (error) {
-      console.error('💥 CATCH ERROR:', error);
-      setProperties([]);
-    } finally {
-      setLoading(false);
+      // Determine fetch size
+      let fetchSize = Math.floor(ITEMS_PER_PAGE / 2);
+      if (sortBy === 'Featured') {
+        fetchSize = Math.max(50, currentOffset + Math.floor(ITEMS_PER_PAGE / 2) * 2);
+      }
+
+      // Execute both queries
+      const [regularResult, rentStabilizedResult] = await Promise.all([
+        regularQuery.range(currentOffset, currentOffset + fetchSize - 1),
+        rentStabilizedQuery.range(currentOffset, currentOffset + fetchSize - 1)
+      ]);
+
+      if (regularResult.error) {
+        console.error('❌ REGULAR RENTALS ERROR:', regularResult.error);
+      }
+
+      if (rentStabilizedResult.error) {
+        console.error('❌ RENT-STABILIZED ERROR:', rentStabilizedResult.error);
+      }
+
+      // Combine results
+      const regularProperties = (regularResult.data || []).map(property => ({
+        ...property,
+        isRentStabilized: false
+      }));
+
+      const rentStabilizedProperties = (rentStabilizedResult.data || []).map(property => ({
+        ...property,
+        isRentStabilized: true,
+        grade: 'A+', // Rent-stabilized properties get A+ grade
+        score: property.deal_quality_score || 95,
+        discount_percent: property.undervaluation_percent,
+        images: property.images || [],
+        zipcode: property.zip_code // Map zip_code to zipcode for consistency
+      }));
+
+      allProperties = [...regularProperties, ...rentStabilizedProperties];
     }
-  };
+
+    // Apply neighborhood prioritization (same logic as Buy page)
+    let resultData;
+    if (sortBy === 'Featured') {
+      // Group by neighborhood rank, shuffle within each tier
+      const grouped = allProperties.reduce((acc, item) => {
+        const rank = neighborhoodPriority[item.neighborhood] || 999;
+        if (!acc[rank]) acc[rank] = [];
+        acc[rank].push(item);
+        return acc;
+      }, {} as Record<number, any[]>);
+
+      const shuffled = Object.keys(grouped)
+        .sort((a, b) => Number(a) - Number(b)) // sort ranks ascending (best neighborhoods first)
+        .flatMap(rank => grouped[Number(rank)].sort(() => Math.random() - 0.5)); // shuffle within each tier
+
+      // Take only the items we need for this page
+      resultData = shuffled.slice(0, ITEMS_PER_PAGE);
+      
+      // Set hasMore based on whether we got the full fetch size
+      setHasMore(allProperties.length >= ITEMS_PER_PAGE);
+    } else {
+      // For other sorts, just use the data as-is
+      resultData = allProperties;
+      setHasMore(allProperties.length === ITEMS_PER_PAGE);
+    }
+
+    if (reset) {
+      setProperties(resultData);
+      setOffset(ITEMS_PER_PAGE);
+    } else {
+      setProperties(prev => [...prev, ...resultData]);
+      setOffset(prev => prev + ITEMS_PER_PAGE);
+    }
+
+  } catch (error) {
+    console.error('💥 CATCH ERROR:', error);
+    setProperties([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const loadMore = () => {
     if (!loading && hasMore) {
