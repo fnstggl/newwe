@@ -191,9 +191,14 @@ const Pricing = () => {
     {isAnnual ? (
   <div>
     <p className="text-4xl font-semibold tracking-tight">
-      $1.5<span className="text-lg text-gray-400">/mo</span>
+      $1.50<span className="text-lg text-gray-400">/mo</span>
     </p>
-    <p className="text-sm text-gray-400 mt-2 mb-0">$18 billed annually</p>
+    <p className="text-sm text-purple-400 font-medium mt-1 tracking-tight">
+      50% off — billed $18/year
+    </p>
+    <p className="text-xs text-gray-500 mt-1 tracking-tight">
+      (normally $36/year)
+    </p>
   </div>
 ) : (
   <p className="text-4xl font-semibold tracking-tight">
