@@ -80,18 +80,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* As Seen On Section */}
-   <section className="pt-4 pb-0 px-4 max-w-6xl mx-auto">
-        <div className="text-center">
-          <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
-            <img 
-              src="/lovable-uploads/ccb3bd82-5c57-4ba0-80af-4d8ce8d9306a.png" 
-              alt="As seen on CBS, ABC, AP News" 
-              className="h-10 mx-auto"
-            />
-          </Link>
-        </div>
-      </section>
+      {/* 
+<section className="pt-4 pb-0 px-4 max-w-6xl mx-auto">
+  <div className="text-center">
+    <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
+      <img 
+        src="/lovable-uploads/ccb3bd82-5c57-4ba0-80af-4d8ce8d9306a.png" 
+        alt="As seen on CBS, ABC, AP News" 
+        className="h-10 mx-auto"
+      />
+    </Link>
+  </div>
+</section>
+*/}
 
       {/* Problem Section */}
       <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
