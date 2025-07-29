@@ -77,7 +77,7 @@ const Buy = () => {
   // Determine visibility limits based on user status
   const getVisibilityLimit = () => {
     if (!user) return 3; // Signed out users see 3
-    if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'staff') return Infinity; // Unlimited and staff users see all
+    if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') return Infinity; // Unlimited and open_door_plan users see all
     return 9; // Free plan users see 9
   };
 
@@ -586,8 +586,8 @@ const Buy = () => {
   );
 
   const visibilityLimit = getVisibilityLimit();
-  const isUnlimitedUser = userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'staff';
-  const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited' && userProfile?.subscription_plan !== 'staff';
+  const isUnlimitedUser = userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan';
+  const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited' && userProfile?.subscription_plan !== 'open_door_plan';
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
