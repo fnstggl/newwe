@@ -94,27 +94,27 @@ const OpenDoor = () => {
         <div className="text-center mb-16">
 
           <div className="relative text-center mb-16">
-  {/* Soft background glow behind the header */}
+  {/* Soft yellow glow behind heading */}
   <div className="absolute inset-0 -top-16 -bottom-8 bg-gradient-to-b from-yellow-500/10 via-yellow-400/5 to-transparent blur-2xl opacity-60 -z-10 rounded-xl"></div>
-            
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-            The Open Door Plan
-          </h1>
-          
-          <div className="max-w-3xl mx-auto space-y-6 leading-relaxed">
-  <p className="text-2xl text-white font-semibold tracking-tight">
-    We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
-  </p>
-  
-  <p className="text-lg text-gray-300">
-    No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
-  </p>
-            
-            <p className="text-white font-medium">
-              If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
-            </p>
-          </div>
-        </div>
+
+  <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
+    The Open Door Plan
+  </h1>
+
+  <div className="mx-auto text-lg text-gray-300 leading-relaxed px-6 md:px-12 max-w-4xl lg:max-w-5xl space-y-6">
+    <p className="text-2xl text-white font-semibold tracking-tight">
+      💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
+    </p>
+
+    <p className="text-lg text-gray-300">
+      No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
+    </p>
+
+    <p className="text-white font-medium">
+      If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
+    </p>
+  </div>
+</div>
 
         {/* Main CTA */}
         <div className="text-center mb-16">
