@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -92,29 +91,29 @@ const OpenDoor = () => {
       <div className="max-w-4xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-16">
-
           <div className="relative text-center mb-16">
-  {/* Soft yellow glow behind heading */}
- <div className="absolute inset-0 -top-24 -bottom-12 w-full bg-yellow-400 opacity-10 blur-[100px] -z-10 rounded-3xl pointer-events-none"></div>
+            {/* Soft yellow glow behind heading */}
+            <div className="absolute inset-0 -top-24 -bottom-12 w-full bg-yellow-400 opacity-10 blur-[100px] -z-10 rounded-3xl pointer-events-none"></div>
 
-  <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-    The Open Door Plan
-  </h1>
+            <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
+              The Open Door Plan
+            </h1>
 
-  <div className="mx-auto text-lg text-gray-300 leading-relaxed px-6 md:px-12 max-w-4xl lg:max-w-5xl space-y-6">
-    <p className="text-2xl text-white font-semibold tracking-tight">
-      💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
-    </p>
+            <div className="mx-auto text-lg text-gray-300 leading-relaxed px-8 md:px-16 lg:px-20 max-w-4xl lg:max-w-5xl space-y-6">
+              <p className="text-2xl text-white font-semibold tracking-tight">
+                💛 We launched the Open Door Plan to ensure everyone has free access to more affordable homes.
+              </p>
 
-    <p className="text-lg text-gray-300">
-      No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
-    </p>
+              <p className="text-lg text-gray-300">
+                No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
+              </p>
 
-    <p className="text-white font-medium">
-      If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
-    </p>
-  </div>
-</div>
+              <p className="text-white font-medium">
+                If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Main CTA */}
         <div className="text-center mb-16">
