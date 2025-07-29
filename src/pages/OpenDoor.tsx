@@ -96,14 +96,14 @@ const OpenDoor = () => {
             The Open Door Plan
           </h1>
           
-          <div className="max-w-3xl mx-auto space-y-6 text-lg text-gray-300 leading-relaxed">
-            <p>
-              We launched the Open Door Plan to make Realer Estate free for those who need it most.
-            </p>
-            
-            <p>
-              No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
-            </p>
+          <div className="max-w-3xl mx-auto space-y-6 leading-relaxed">
+  <p className="text-2xl text-white font-semibold tracking-tight">
+    We launched the Open Door Plan to make Realer Estate free for those who need it most.
+  </p>
+  
+  <p className="text-lg text-gray-300">
+    No paywalls. No ads. Just real listings — rent-stabilized, undervalued, and ready to help you stay rooted in the city.
+  </p>
             
             <p className="text-white font-medium">
               If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
