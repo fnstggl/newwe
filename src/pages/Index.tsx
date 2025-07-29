@@ -136,7 +136,7 @@ const Index = () => {
             </div>
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
               <h3 className="text-2xl font-semibold mb-4 tracking-tight">You save thousands</h3>
-              <p className="text-gray-400 tracking-tight">Skip overpriced listings and focus on real opportunities.</p>
+              <p className="text-gray-400 tracking-tight">Skip overpriced listings and only see the best deals.</p>
             </div>
           </div>
         </div>
