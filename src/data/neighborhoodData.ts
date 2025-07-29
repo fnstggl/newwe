@@ -1,279 +1,441 @@
 export interface NeighborhoodInfo {
+  borough: string;
+  coordinates: { lat: number; lng: number };
   description: string;
-  pros: string[];
-  cons: string[];
+  averageRent: number;
+  walkScore: number;
 }
-export const neighborhoodData: { [key: string]: NeighborhoodInfo } = {
-  'upper east side': {
-    description: 'A sophisticated and upscale neighborhood known for its luxury shopping, world-class museums, and elegant pre-war buildings. Home to Museum Mile and Central Park\'s eastern border.',
-    pros: ['Great for families', 'Excellent schools', 'Beautiful architecture'],
-    cons: ['Limited nightlife', 'More expensive', 'Less diverse dining']
+
+export const neighborhoodData: Record<string, NeighborhoodInfo> = {
+  // Manhattan neighborhoods
+  "Lower East Side": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7154, lng: -73.9857 },
+    description: "Historic immigrant neighborhood with trendy restaurants and nightlife",
+    averageRent: 3800,
+    walkScore: 98
   },
-  'upper west side': {
-    description: 'A cultural hub with a neighborhood feel, featuring tree-lined streets, historic brownstones, and proximity to Central Park and Lincoln Center.',
-    pros: ['Family-friendly', 'Great culture scene', 'Good restaurants'],
-    cons: ['Can be quiet at night', 'Limited shopping', 'Tourist crowds']
+  "East Village": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7264, lng: -73.9818 },
+    description: "Bohemian enclave with art galleries, vintage shops, and diverse dining",
+    averageRent: 4200,
+    walkScore: 98
   },
-  'lower east side': {
-    description: 'A vibrant and eclectic neighborhood that blends historic immigrant culture with modern hipster appeal, known for its nightlife and diverse food scene.',
-    pros: ['Great nightlife', 'Excellent food scene', 'Rich history'],
-    cons: ['Can be noisy', 'Limited green space', 'Crowded on weekends']
+  "West Village": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7357, lng: -74.0023 },
+    description: "Charming cobblestone streets with upscale dining and historic brownstones",
+    averageRent: 5500,
+    walkScore: 98
   },
-  'soho': {
-    description: 'A trendy shopping district with cobblestone streets and cast-iron architecture, famous for high-end boutiques, art galleries, and loft-style living.',
-    pros: ['Amazing shopping', 'Beautiful architecture', 'Great for art lovers'],
-    cons: ['Very expensive', 'Tourist heavy', 'Limited local amenities']
+  "SoHo": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7233, lng: -74.0030 },
+    description: "Shopping district with cast-iron architecture and art galleries",
+    averageRent: 6000,
+    walkScore: 96
   },
-  'chelsea': {
-    description: 'A dynamic neighborhood known for its art galleries, the High Line park, and vibrant nightlife scene, with a mix of modern and historic architecture.',
-    pros: ['Great art scene', 'Excellent nightlife', 'Good transportation'],
-    cons: ['Can be expensive', 'Crowded streets', 'Limited parking']
+  "Tribeca": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7195, lng: -74.0137 },
+    description: "Upscale residential area with converted warehouses and fine dining",
+    averageRent: 6500,
+    walkScore: 94
   },
-  'greenwich village': {
-    description: 'A charming bohemian neighborhood with tree-lined streets, historic townhouses, and a rich artistic heritage, known for its cozy cafes and intimate venues.',
-    pros: ['Charming atmosphere', 'Great cafes', 'Rich history'],
-    cons: ['Very expensive', 'Limited space', 'Tourist crowds']
+  "NoLita": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7227, lng: -73.9955 },
+    description: "Trendy boutiques and cafes in a compact, walkable area",
+    averageRent: 4800,
+    walkScore: 97
   },
-  'east village': {
-    description: 'A gritty and artistic neighborhood with a punk rock heritage, known for its dive bars, experimental restaurants, and young creative community.',
-    pros: ['Great nightlife', 'Diverse food scene', 'Artistic community'],
-    cons: ['Can be noisy', 'Less family-friendly', 'Limited green space']
+  "Chelsea": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7465, lng: -73.9971 },
+    description: "Art galleries, the High Line, and vibrant nightlife scene",
+    averageRent: 4500,
+    walkScore: 96
   },
-  'tribeca': {
-    description: 'An upscale neighborhood with cobblestone streets and converted industrial buildings, known for its celebrity residents and high-end dining scene.',
-    pros: ['Luxury living', 'Excellent restaurants', 'Quiet streets'],
-    cons: ['Very expensive', 'Limited nightlife', 'Can feel isolated']
+  "Flatiron": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7411, lng: -73.9897 },
+    description: "Business district with historic architecture and Madison Square Park",
+    averageRent: 4800,
+    walkScore: 98
   },
-  'williamsburg': {
-    description: 'A trendy Brooklyn neighborhood across the East River, known for its hipster culture, artisanal food scene, and stunning Manhattan skyline views.',
-    pros: ['Great food scene', 'Vibrant nightlife', 'Beautiful waterfront'],
-    cons: ['Can be pretentious', 'Expensive for Brooklyn', 'Limited subway access']
+  "Gramercy": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7368, lng: -73.9841 },
+    description: "Quiet residential area with private park and historic buildings",
+    averageRent: 4600,
+    walkScore: 95
   },
-  'park slope': {
-    description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
-    pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
-    cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
+  "Murray Hill": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7505, lng: -73.9779 },
+    description: "Residential neighborhood popular with young professionals",
+    averageRent: 3900,
+    walkScore: 94
   },
-  'midtown': {
-    description: 'The bustling heart of Manhattan, home to iconic landmarks like Times Square and the Empire State Building, with endless dining and entertainment options.',
-    pros: ['Great transportation', 'Amazing dining', 'Tourist attractions'],
-    cons: ['Very crowded', 'Expensive', 'Noisy']
+  "Midtown": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7549, lng: -73.9840 },
+    description: "Commercial hub with Times Square, Broadway theaters, and skyscrapers",
+    averageRent: 4200,
+    walkScore: 98
   },
-  'financial district': {
-    description: 'The historic financial center of NYC with Wall Street at its core, featuring modern skyscrapers mixed with colonial-era buildings and waterfront views.',
-    pros: ['Historic significance', 'Waterfront access', 'Good restaurants'],
-    cons: ['Quiet on weekends', 'Limited nightlife', 'Tourist heavy']
+  "Hell's Kitchen": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7648, lng: -73.9882 },
+    description: "Theater district proximity with diverse dining and nightlife",
+    averageRent: 3800,
+    walkScore: 98
   },
-  'astoria': {
-    description: 'A diverse Queens neighborhood known for its affordable housing, authentic Greek cuisine, and strong community feel with easy Manhattan access.',
-    pros: ['Affordable living', 'Great Greek food', 'Family-friendly'],
-    cons: ['Limited nightlife', 'Fewer amenities', 'Commute to Manhattan']
+  "Upper East Side": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7736, lng: -73.9566 },
+    description: "Upscale residential area with museums, boutiques, and Central Park access",
+    averageRent: 4000,
+    walkScore: 96
   },
-  'bedford-stuyvesant': {
-    description: 'A historic Brooklyn neighborhood experiencing rapid gentrification, known for its beautiful brownstones, rich African-American heritage, and emerging food scene.',
-    pros: ['Beautiful architecture', 'Rich culture', 'More affordable'],
-    cons: ['Gentrification issues', 'Safety varies', 'Limited subway access']
+  "Upper West Side": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.7870, lng: -73.9754 },
+    description: "Family-friendly with Lincoln Center, Central Park, and pre-war buildings",
+    averageRent: 3700,
+    walkScore: 98
   },
-  'boerum hill': {
-    description: 'A quiet residential Brooklyn neighborhood with tree-lined streets, historic brownstones, and a small-town feel within the city.',
-    pros: ['Quiet residential', 'Beautiful homes', 'Family-friendly'],
-    cons: ['Limited nightlife', 'Expensive', 'Few amenities']
+  "Morningside Heights": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.8076, lng: -73.9626 },
+    description: "College town atmosphere with Columbia University and affordable dining",
+    averageRent: 2800,
+    walkScore: 92
   },
-  'brooklyn heights': {
-    description: 'An elegant Brooklyn neighborhood with stunning Manhattan views, historic architecture, and the famous Brooklyn Heights Promenade.',
-    pros: ['Amazing views', 'Historic charm', 'Quiet streets'],
-    cons: ['Very expensive', 'Limited nightlife', 'Tourist crowds']
+  "Harlem": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.8116, lng: -73.9442 },
+    description: "Rich cultural history with jazz clubs, soul food, and historic brownstones",
+    averageRent: 2200,
+    walkScore: 88
   },
-  'bushwick': {
-    description: 'A rapidly gentrifying Brooklyn neighborhood known for its vibrant street art, industrial spaces converted to lofts, and thriving nightlife scene.',
-    pros: ['Great nightlife', 'Artist community', 'More affordable'],
-    cons: ['Safety varies', 'Gentrification', 'Industrial feel']
+  "Washington Heights": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.8518, lng: -73.9351 },
+    description: "Diverse neighborhood with Fort Tryon Park and affordable housing",
+    averageRent: 1800,
+    walkScore: 85
   },
-  'carroll gardens': {
-    description: 'A charming Brooklyn neighborhood known for its Italian heritage, tree-lined streets, and strong community feel with excellent restaurants.',
-    pros: ['Great restaurants', 'Community feel', 'Beautiful streets'],
-    cons: ['Limited nightlife', 'Expensive', 'Few bars']
+  "Inwood": {
+    borough: "Manhattan",
+    coordinates: { lat: 40.8677, lng: -73.9212 },
+    description: "Northernmost Manhattan with parks, affordable rent, and Dominican culture",
+    averageRent: 1600,
+    walkScore: 82
   },
-  'chinatown': {
-    description: 'A bustling Manhattan neighborhood with authentic Chinese culture, incredible dim sum, street markets, and affordable shopping.',
-    pros: ['Amazing food', 'Cultural experience', 'Affordable dining'],
-    cons: ['Very crowded', 'Language barriers', 'Tourist heavy']
+
+  // Brooklyn neighborhoods
+  "Williamsburg": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.7081, lng: -73.9571 },
+    description: "Hipster haven with artisanal everything, waterfront views, and trendy nightlife",
+    averageRent: 3400,
+    walkScore: 94
   },
-  'clinton hill': {
-    description: 'A diverse Brooklyn neighborhood known for its historic architecture, tree-lined streets, and proximity to both Fort Greene and Bed-Stuy.',
-    pros: ['Good architecture', 'Diverse community', 'Central location'],
-    cons: ['Gentrification', 'Limited amenities', 'Safety varies']
+  "DUMBO": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.7033, lng: -73.9903 },
+    description: "Upscale waterfront area with cobblestone streets and Manhattan Bridge views",
+    averageRent: 4200,
+    walkScore: 89
   },
-  'cobble hill': {
-    description: 'A small, upscale Brooklyn neighborhood known for its cobblestone streets, historic charm, and family-friendly atmosphere.',
-    pros: ['Family-friendly', 'Historic charm', 'Quiet streets'],
-    cons: ['Very expensive', 'Limited nightlife', 'Small area']
+  "Brooklyn Heights": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6962, lng: -73.9929 },
+    description: "Historic district with promenade overlooking Manhattan skyline",
+    averageRent: 3800,
+    walkScore: 91
   },
-  'concourse': {
-    description: 'A South Bronx neighborhood known for its proximity to Yankee Stadium, diverse Latino culture, and affordable housing options.',
-    pros: ['Affordable housing', 'Cultural diversity', 'Sports access'],
-    cons: ['Safety varies', 'Limited amenities', 'Commute times']
+  "Park Slope": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6736, lng: -73.9796 },
+    description: "Family-friendly with Victorian architecture and Prospect Park proximity",
+    averageRent: 3200,
+    walkScore: 95
   },
-  'crown heights': {
-    description: 'A diverse Brooklyn neighborhood with a rich Caribbean and Jewish heritage, beautiful architecture, and emerging food scene.',
-    pros: ['Cultural diversity', 'Beautiful buildings', 'More affordable'],
-    cons: ['Safety varies', 'Gentrification', 'Limited nightlife']
+  "Carroll Gardens": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6783, lng: -73.9999 },
+    description: "Italian-American heritage with tree-lined streets and local markets",
+    averageRent: 3000,
+    walkScore: 89
   },
-  'dumbo': {
-    description: 'A waterfront Brooklyn neighborhood with cobblestone streets, converted warehouses, and stunning views of Manhattan and the Brooklyn Bridge.',
-    pros: ['Amazing views', 'Waterfront parks', 'Unique architecture'],
-    cons: ['Very expensive', 'Tourist heavy', 'Limited housing']
+  "Cobble Hill": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6861, lng: -73.9969 },
+    description: "Charming brownstones with boutique shopping and cozy cafes",
+    averageRent: 3300,
+    walkScore: 90
   },
-  'fort greene': {
-    description: 'A historic Brooklyn neighborhood known for its cultural institutions, beautiful brownstones, and strong African-American heritage.',
-    pros: ['Rich culture', 'Beautiful architecture', 'Good restaurants'],
-    cons: ['Expensive', 'Limited nightlife', 'Gentrification']
+  "Red Hook": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6743, lng: -74.0120 },
+    description: "Waterfront community with art studios, food vendors, and maritime history",
+    averageRent: 2600,
+    walkScore: 68
   },
-  'gowanus': {
-    description: 'An industrial Brooklyn neighborhood undergoing rapid development, known for its creative spaces, emerging food scene, and the Gowanus Canal.',
-    pros: ['Creative community', 'Emerging dining', 'More affordable'],
-    cons: ['Industrial feel', 'Environmental concerns', 'Limited amenities']
+  "Gowanus": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6733, lng: -73.9884 },
+    description: "Industrial area undergoing gentrification with art galleries and new developments",
+    averageRent: 2800,
+    walkScore: 84
   },
-  'gramercy park': {
-    description: 'An elegant Manhattan neighborhood centered around a private park, known for its historic buildings, quiet streets, and upscale living.',
-    pros: ['Quiet elegance', 'Historic charm', 'Central location'],
-    cons: ['Very expensive', 'Limited nightlife', 'Exclusive feel']
+  "Greenpoint": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.7306, lng: -73.9441 },
+    description: "Polish heritage neighborhood with waterfront parks and trendy restaurants",
+    averageRent: 2900,
+    walkScore: 87
   },
-  'greenpoint': {
-    description: 'A Polish-influenced Brooklyn neighborhood known for its waterfront views, authentic pierogi, and growing arts scene along the East River.',
-    pros: ['Great Polish food', 'Waterfront access', 'Artist community'],
-    cons: ['Limited subway', 'Industrial areas', 'Gentrification']
+  "Bushwick": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6944, lng: -73.9213 },
+    description: "Arts district with street murals, music venues, and affordable living",
+    averageRent: 2400,
+    walkScore: 84
   },
-  'kips bay': {
-    description: 'A Midtown East Manhattan neighborhood known for its high-rise buildings, medical facilities, and convenient location near major attractions.',
-    pros: ['Great location', 'Good transportation', 'Modern buildings'],
-    cons: ['Lacks character', 'Expensive', 'Tourist heavy']
+  "Bedford-Stuyvesant": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6895, lng: -73.9441 },
+    description: "Historic brownstones with rich African-American culture and emerging food scene",
+    averageRent: 2200,
+    walkScore: 86
   },
-  'little italy': {
-    description: 'A historic Manhattan neighborhood celebrating Italian-American heritage with authentic restaurants, festivals, and Old World charm.',
-    pros: ['Great Italian food', 'Historic charm', 'Cultural events'],
-    cons: ['Tourist trap', 'Expensive dining', 'Limited housing']
+  "Crown Heights": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6677, lng: -73.9425 },
+    description: "Diverse community with Caribbean culture and the Brooklyn Museum nearby",
+    averageRent: 2000,
+    walkScore: 83
   },
-  'long island city': {
-    description: 'A rapidly developing Queens neighborhood with stunning Manhattan skyline views, modern high-rises, and excellent transportation connections.',
-    pros: ['Amazing views', 'New developments', 'Great transportation'],
-    cons: ['Lacks character', 'Construction noise', 'Expensive for Queens']
+  "Prospect Heights": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6762, lng: -73.9664 },
+    description: "Close to Prospect Park and Barclays Center with diverse dining options",
+    averageRent: 2800,
+    walkScore: 92
   },
-  'melrose': {
-    description: 'A South Bronx neighborhood known for its Latino culture, affordable housing, and proximity to Yankee Stadium and the Harlem River.',
-    pros: ['Affordable living', 'Cultural diversity', 'River access'],
-    cons: ['Safety varies', 'Limited amenities', 'Economic challenges']
+  "Fort Greene": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6919, lng: -73.9753 },
+    description: "Historic district with Fort Greene Park and vibrant arts scene",
+    averageRent: 2700,
+    walkScore: 89
   },
-  'mott haven': {
-    description: 'An emerging South Bronx neighborhood experiencing gentrification, known for its art galleries, waterfront development, and affordable housing.',
-    pros: ['Emerging arts scene', 'Affordable housing', 'Waterfront development'],
-    cons: ['Safety varies', 'Limited amenities', 'Gentrification']
+  "Clinton Hill": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6882, lng: -73.9680 },
+    description: "Tree-lined streets with historic architecture and local cafes",
+    averageRent: 2500,
+    walkScore: 87
   },
-  'murray hill': {
-    description: 'A Midtown Manhattan neighborhood popular with young professionals, known for its high-rise buildings, restaurant scene, and central location.',
-    pros: ['Great for young professionals', 'Good restaurants', 'Central location'],
-    cons: ['Expensive', 'Crowded', 'Lacks character']
+  "Boerum Hill": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6888, lng: -73.9909 },
+    description: "Quiet residential area with easy access to multiple neighborhoods",
+    averageRent: 3100,
+    walkScore: 91
   },
-  'nolita': {
-    description: 'A trendy Manhattan neighborhood with boutique shopping, upscale dining, and a mix of old-world Italian charm with modern sophistication.',
-    pros: ['Great shopping', 'Excellent dining', 'Historic charm'],
-    cons: ['Very expensive', 'Tourist crowds', 'Limited space']
+  "Downtown Brooklyn": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6927, lng: -73.9857 },
+    description: "Business district with shopping, dining, and transportation hub",
+    averageRent: 3000,
+    walkScore: 95
   },
-    'park slope': {
-    description: 'A family-friendly Brooklyn neighborhood with tree-lined streets, Victorian brownstones, and proximity to Prospect Park, known for its community feel.',
-    pros: ['Very family-friendly', 'Beautiful architecture', 'Great parks'],
-    cons: ['Can be quiet', 'Limited nightlife', 'Expensive for families']
+  "Sunset Park": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6553, lng: -74.0105 },
+    description: "Diverse community with large park and Manhattan views",
+    averageRent: 1900,
+    walkScore: 79
   },
-  'prospect heights': {
-    description: 'A diverse Brooklyn neighborhood adjacent to Prospect Park, known for its cultural institutions like the Brooklyn Museum and Botanic Garden.',
-    pros: ['Great culture', 'Park access', 'Diverse community'],
-    cons: ['Gentrification', 'Expensive', 'Limited parking']
+  "Bay Ridge": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6323, lng: -74.0269 },
+    description: "Family-friendly with waterfront promenade and Norwegian heritage",
+    averageRent: 2100,
+    walkScore: 81
   },
-  'ridgewood': {
-    description: 'A Queens neighborhood on the Brooklyn border, known for its affordable housing, German heritage, and authentic beer gardens.',
-    pros: ['Affordable living', 'Great beer gardens', 'Authentic culture'],
-    cons: ['Limited nightlife', 'Commute to Manhattan', 'Industrial areas']
+  "Dyker Heights": {
+    borough: "Brooklyn",
+    coordinates: { lat: 40.6214, lng: -74.0134 },
+    description: "Residential area known for elaborate Christmas light displays",
+    averageRent: 1800,
+    walkScore: 65
   },
-  'two bridges': {
-    description: 'A small Lower East Side neighborhood between the Manhattan and Brooklyn Bridges, known for its public housing and waterfront views.',
-    pros: ['Waterfront access', 'Affordable housing', 'Bridge views'],
-    cons: ['Limited amenities', 'Public housing concentration', 'Small area']
+
+  // Queens neighborhoods
+  "Long Island City": {
+    borough: "Queens",
+    coordinates: { lat: 40.7505, lng: -73.9352 },
+    description: "Rapidly developing with high-rises, art museums, and Manhattan skyline views",
+    averageRent: 2800,
+    walkScore: 85
   },
-  'west village': {
-    description: 'A picturesque Manhattan neighborhood with winding streets, historic townhouses, and a bohemian atmosphere perfect for strolling.',
-    pros: ['Beautiful streets', 'Great nightlife', 'Historic charm'],
-    cons: ['Very expensive', 'Tourist crowds', 'Limited parking']
+  "Astoria": {
+    borough: "Queens",
+    coordinates: { lat: 40.7698, lng: -73.9242 },
+    description: "Greek heritage with diverse dining, parks, and affordable living",
+    averageRent: 2300,
+    walkScore: 87
   },
-  'woodside': {
-    description: 'A diverse Queens neighborhood known for its Irish heritage, authentic pubs, and affordable family-friendly living.',
-    pros: ['Family-friendly', 'Affordable living', 'Great Irish pubs'],
-    cons: ['Limited nightlife', 'Commute to Manhattan', 'Few amenities']
+  "Sunnyside": {
+    borough: "Queens",
+    coordinates: { lat: 40.7434, lng: -73.9258 },
+    description: "Garden city planning with tree-lined streets and Irish-American culture",
+    averageRent: 2200,
+    walkScore: 82
   },
-  'corona': {
-    description: 'A diverse Queens neighborhood known for its Latino culture, authentic cuisine, and proximity to Flushing Meadows Corona Park.',
-    pros: ['Great Latino food', 'Cultural diversity', 'Park access'],
-    cons: ['Language barriers', 'Limited amenities', 'Crowded']
+  "Woodside": {
+    borough: "Queens",
+    coordinates: { lat: 40.7454, lng: -73.9057 },
+    description: "Multi-ethnic community with authentic cuisine and affordable housing",
+    averageRent: 2000,
+    walkScore: 85
   },
-  'elmhurst': {
-    description: 'One of the most diverse neighborhoods in the world, located in Queens, known for its incredible variety of authentic ethnic restaurants.',
-    pros: ['Amazing ethnic food', 'Cultural diversity', 'Affordable dining'],
-    cons: ['Very crowded', 'Language barriers', 'Limited parking']
+  "Jackson Heights": {
+    borough: "Queens",
+    coordinates: { lat: 40.7556, lng: -73.8831 },
+    description: "Culturally diverse with authentic international food and shopping",
+    averageRent: 1900,
+    walkScore: 88
   },
-  'jackson heights': {
-    description: 'A vibrant Queens neighborhood known as one of the most ethnically diverse areas in the world, with incredible South Asian and Latin American food.',
-    pros: ['Incredible food diversity', 'Cultural richness', 'Affordable living'],
-    cons: ['Very crowded', 'Noise levels', 'Limited parking']
+  "Elmhurst": {
+    borough: "Queens",
+    coordinates: { lat: 40.7362, lng: -73.8801 },
+    description: "One of the most diverse areas in the world with authentic ethnic cuisine",
+    averageRent: 1800,
+    walkScore: 82
   },
-  'sunnyside': {
-    description: 'A quiet Queens neighborhood known for its garden community, tree-lined streets, and strong Irish and Latino populations.',
-    pros: ['Quiet residential', 'Garden community', 'Family-friendly'],
-    cons: ['Limited nightlife', 'Commute to Manhattan', 'Few amenities']
+  "Corona": {
+    borough: "Queens",
+    coordinates: { lat: 40.7498, lng: -73.8623 },
+    description: "Latino community with Citi Field, Flushing Meadows Park nearby",
+    averageRent: 1700,
+    walkScore: 78
+  },
+  "Flushing": {
+    borough: "Queens",
+    coordinates: { lat: 40.7677, lng: -73.8331 },
+    description: "Chinatown with authentic Asian cuisine, shopping, and cultural sites",
+    averageRent: 1800,
+    walkScore: 86
+  },
+  "Forest Hills": {
+    borough: "Queens",
+    coordinates: { lat: 40.7214, lng: -73.8448 },
+    description: "Suburban feel with Tudor-style homes and the US Open tennis venue",
+    averageRent: 2100,
+    walkScore: 80
+  },
+  "Rego Park": {
+    borough: "Queens",
+    coordinates: { lat: 40.7264, lng: -73.8615 },
+    description: "Shopping destination with diverse community and good transportation",
+    averageRent: 2000,
+    walkScore: 84
+  },
+  "Kew Gardens": {
+    borough: "Queens",
+    coordinates: { lat: 40.7071, lng: -73.8309 },
+    description: "Quiet residential area with Tudor architecture and tree-lined streets",
+    averageRent: 1900,
+    walkScore: 75
+  },
+  "Ridgewood": {
+    borough: "Queens",
+    coordinates: { lat: 40.7006, lng: -73.9012 },
+    description: "Affordable area with German heritage and growing arts scene",
+    averageRent: 1800,
+    walkScore: 81
+  },
+
+  // Bronx neighborhoods
+  "Mott Haven": {
+    borough: "Bronx",
+    coordinates: { lat: 40.8089, lng: -73.9262 },
+    description: "Waterfront views with growing arts district and affordable housing",
+    averageRent: 1600,
+    walkScore: 85
+  },
+  "South Bronx": {
+    borough: "Bronx",
+    coordinates: { lat: 40.8176, lng: -73.9182 },
+    description: "Rich hip-hop history with cultural sites and community development",
+    averageRent: 1500,
+    walkScore: 80
+  },
+  "Concourse": {
+    borough: "Bronx",
+    coordinates: { lat: 40.8272, lng: -73.9196 },
+    description: "Grand Concourse with Art Deco architecture and Yankee Stadium nearby",
+    averageRent: 1400,
+    walkScore: 84
+  },
+  "Fordham": {
+    borough: "Bronx",
+    coordinates: { lat: 40.8619, lng: -73.9016 },
+    description: "University area with shopping district and diverse dining options",
+    averageRent: 1500,
+    walkScore: 86
+  },
+  "Riverdale": {
+    borough: "Bronx",
+    coordinates: { lat: 40.8988, lng: -73.9057 },
+    description: "Upscale residential area with single-family homes and private schools",
+    averageRent: 2000,
+    walkScore: 65
+  },
+
+  // Staten Island neighborhoods
+  "St. George": {
+    borough: "Staten Island",
+    coordinates: { lat: 40.6432, lng: -74.0776 },
+    description: "Ferry terminal area with cultural attractions and harbor views",
+    averageRent: 1600,
+    walkScore: 78
+  },
+  "Stapleton": {
+    borough: "Staten Island",
+    coordinates: { lat: 40.6276, lng: -74.0776 },
+    description: "Historic waterfront community with diverse population",
+    averageRent: 1400,
+    walkScore: 72
+  },
+  "New Brighton": {
+    borough: "Staten Island",
+    coordinates: { lat: 40.6412, lng: -74.0865 },
+    description: "Historic district with Victorian architecture and cultural sites",
+    averageRent: 1500,
+    walkScore: 70
   }
 };
 
-export const getNeighborhoodInfo = (neighborhood: string | null): NeighborhoodInfo | null => {
-  if (!neighborhood) return null;
-  
-  // Convert to lowercase for lookup and handle the case matching
-  const normalizedNeighborhood = neighborhood.toLowerCase().trim();
-  
-  // Try direct lookup first
-  if (neighborhoodData[normalizedNeighborhood]) {
-    return neighborhoodData[normalizedNeighborhood];
-  }
-  
-  // Try with hyphens replaced by spaces
-  const withSpaces = normalizedNeighborhood.replace(/-/g, ' ');
-  if (neighborhoodData[withSpaces]) {
-    return neighborhoodData[withSpaces];
-  }
-  
-  // Try with spaces replaced by hyphens
-  const withHyphens = normalizedNeighborhood.replace(/\s+/g, '-');
-  if (neighborhoodData[withHyphens]) {
-    return neighborhoodData[withHyphens];
-  }
-  
-  // Try removing 'the' prefix if it exists
-  const withoutThe = normalizedNeighborhood.replace(/^the\s+/, '');
-  if (neighborhoodData[withoutThe]) {
-    return neighborhoodData[withoutThe];
-  }
-  
-  // Fallback to generic description
-  return {
-    description: `${neighborhood} is a distinctive New York neighborhood with its own unique character and charm, offering residents a blend of urban convenience and local community feel.`,
-    pros: ['Good transportation', 'Local character', 'Urban convenience'],
-    cons: ['Varies by location', 'City noise', 'Parking challenges']
-  };
+export const boroughs = ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"];
+
+export const getNeighborhoodsByBorough = (borough: string): string[] => {
+  return Object.keys(neighborhoodData).filter(
+    (neighborhood) => neighborhoodData[neighborhood].borough === borough
+  );
 };
 
-export const capitalizeNeighborhood = (neighborhood: string | null): string => {
-  if (!neighborhood) return '';
-  
-  return neighborhood
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-  };
+export const getAllNeighborhoods = (): string[] => {
+  return Object.keys(neighborhoodData);
+};
+
+export const getNeighborhoodInfo = (neighborhood: string): NeighborhoodInfo | undefined => {
+  return neighborhoodData[neighborhood];
+};

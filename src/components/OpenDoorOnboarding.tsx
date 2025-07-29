@@ -168,7 +168,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
             
             <button
               onClick={handleNext}
-              className="px-8 py-3 rounded-full font-semibold tracking-tighter bg-gradient-to-r from-amber-400 to-purple-400 text-black hover:shadow-lg hover:shadow-amber-400/25 transition-all duration-300"
+              className="px-8 py-3 rounded-full font-semibold tracking-tighter bg-white text-black hover:bg-gray-100 transition-all duration-300"
             >
               {step === 3 ? "Start Browsing" : "Next"}
             </button>
