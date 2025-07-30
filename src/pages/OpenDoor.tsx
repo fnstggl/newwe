@@ -186,7 +186,7 @@ const OpenDoor = () => {
       <div className="text-center">
         <div className="font-semibold">PUBLIC ACCESS</div>
         <div className="italic">Made Possible by</div>
-        <div className="font-semibold">Open Door Plan</div>
+        <div className="font-semibold">Housing Access Plan</div>
       </div>
     </div>
   </div>
