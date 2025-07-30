@@ -212,7 +212,7 @@ const OpenDoor = () => {
           
           <div className="max-w-3xl mx-auto">
             <p className="text-lg text-gray-300 mb-8 leading-relaxed">
-              We launched the Open Door Plan to ensure everyone has free access to affordable homes. 
+              We launched the Open Door Plan so every New Yorker—no matter their budget—can find affordable homes. 
             </p>
             
             <p className="text-lg text-gray-300 mb-12 leading-relaxed">
