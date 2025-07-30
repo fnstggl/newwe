@@ -261,14 +261,14 @@ const OpenDoor = () => {
         </div>
       </div>
 
-      {/* Signup Modal - GLASSMORPHIC VERSION */}
+      {/* More Transparent Signup Modal */}
 {showSignupModal && (
   <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50">
+    <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/50">
       <div className="p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-playfair font-bold text-white mb-4">
-            Access the Community Database
+            Open Door Access to Realer Estate
           </h2>
           <p className="text-gray-300 text-lg">
             Create your free account to unlock hidden rent-stabilized deals
@@ -278,6 +278,7 @@ const OpenDoor = () => {
           </p>
         </div>
 
+        {/* Rest of the form content stays exactly the same */}
         <form onSubmit={handleSignup} className="space-y-6 mb-6">
           <button
             type="button"
