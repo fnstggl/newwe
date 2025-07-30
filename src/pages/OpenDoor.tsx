@@ -240,7 +240,7 @@ const OpenDoor = () => {
             </p>
             
             <p className="text-white text-lg font-medium">
-              No credit card. No time limit. Just a better way to find hidden deals in NYC so you don't get squeezed.
+              No cards required. No catch. Just a better way to find hidden deals in NYC so you don't get squeezed.
             </p>
           </div>
         </div>
