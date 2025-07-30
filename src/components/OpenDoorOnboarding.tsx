@@ -14,18 +14,19 @@ interface OpenDoorOnboardingProps {
 const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingProps) => {
   const [step, setStep] = useState(1);
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [hasUpgraded, setHasUpgraded] = useState(false);
   const { user, updateOnboardingStatus } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (isOpen && user) {
-      // Automatically upgrade user to open_door_plan when onboarding starts
+    if (isOpen && user && !hasUpgraded) {
+      // Immediately upgrade user to open_door_plan when onboarding starts
       upgradeToOpenDoorPlan();
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, hasUpgraded]);
 
   const upgradeToOpenDoorPlan = async () => {
-    if (!user) return;
+    if (!user || hasUpgraded) return;
 
     setIsUpgrading(true);
     try {
@@ -43,6 +44,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
         });
       } else {
         console.log('Successfully upgraded to open_door_plan');
+        setHasUpgraded(true);
       }
     } catch (error) {
       console.error('Error upgrading user:', error);
@@ -92,9 +94,14 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                 <p className="text-white/80 text-lg tracking-tighter">
                   You now have unlimited access to NYC's hidden rent-stabilized deals.
                 </p>
-                {isUpgrading && (
+                {(isUpgrading || !hasUpgraded) && (
                   <p className="text-amber-400 text-sm animate-pulse">
                     🔓 Activating your Open Door access...
+                  </p>
+                )}
+                {hasUpgraded && (
+                  <p className="text-green-400 text-sm">
+                    ✅ Open Door access activated!
                   </p>
                 )}
               </div>
