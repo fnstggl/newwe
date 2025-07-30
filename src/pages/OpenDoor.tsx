@@ -205,7 +205,7 @@ const OpenDoor = () => {
         <div className="mb-16 flex justify-center">
           <div className="w-full max-w-5xl">
             <img 
-              src="/lovable-uploads/fe87b387-d785-4ec8-bc9b-567aeaa1e882.png" 
+              src="/lovable-uploads/1abe430a-2f2e-4e55-9edb-4cf22c684187.png" 
               alt="Realer Estate property listings interface"
               className="w-full h-auto rounded-lg shadow-lg"
             />
