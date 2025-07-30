@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -155,7 +154,7 @@ const OpenDoor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-inter">
+    <div className="min-h-screen bg-black text-white font-inter">
       <div className="max-w-4xl mx-auto px-8 py-20">
         {/* Header Section with Testimonial */}
         <div className="mb-16">
@@ -168,14 +167,14 @@ const OpenDoor = () => {
               />
             </div>
             <div className="flex-1">
-              <blockquote className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-4 font-playfair italic">
+              <blockquote className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-4 font-playfair italic">
                 "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
               </blockquote>
-              <cite className="text-sm text-gray-600 not-italic">
+              <cite className="text-sm text-gray-400 not-italic">
                 — Sasha, Brooklyn renter
               </cite>
             </div>
-            <div className="border border-gray-300 px-4 py-2 text-xs uppercase tracking-wider text-gray-600 bg-white">
+            <div className="border border-gray-600 px-4 py-2 text-xs uppercase tracking-wider text-gray-300 bg-gray-900">
               <div className="text-center">
                 <div className="font-semibold">PUBLIC ACCESS</div>
                 <div className="italic">Made Possible by</div>
@@ -184,13 +183,13 @@ const OpenDoor = () => {
             </div>
           </div>
 
-          <div className="border-b border-gray-200 mb-12"></div>
+          <div className="border-b border-gray-700 mb-12"></div>
 
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-gray-900">
+            <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-white">
               Free access to NYC's<br />hidden rent-stabilized deals
             </h1>
-            <p className="text-xl text-gray-600 mb-4">Open Door Plan</p>
+            <p className="text-xl text-gray-400 mb-4">Open Door Plan</p>
           </div>
         </div>
 
@@ -207,16 +206,16 @@ const OpenDoor = () => {
 
         {/* Description */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-white">
             Built for those who need it most.
           </h2>
           
           <div className="max-w-3xl mx-auto">
-            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+            <p className="text-lg text-gray-300 mb-8 leading-relaxed">
               We launched the Open Door Plan to ensure everyone has free access to affordable homes.
             </p>
             
-            <p className="text-lg text-gray-700 mb-12 leading-relaxed">
+            <p className="text-lg text-gray-300 mb-12 leading-relaxed">
               If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
             </p>
           </div>
@@ -235,12 +234,12 @@ const OpenDoor = () => {
 
         {/* Description Box */}
         <div className="text-center mb-16">
-          <div className="max-w-3xl mx-auto p-8 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
+          <div className="max-w-3xl mx-auto p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-sm">
+            <p className="text-gray-300 text-lg leading-relaxed mb-6">
               Realer Estate is usually $3/month to help us stay independent—but we created Open Door Plan to make sure that all New Yorkers have access to affordable homes.
             </p>
             
-            <p className="text-gray-900 text-lg font-medium">
+            <p className="text-white text-lg font-medium">
               No credit card. No time limit. Just a better way to find hidden deals in NYC so you don't get squeezed.
             </p>
           </div>
@@ -248,13 +247,13 @@ const OpenDoor = () => {
 
         {/* Footer CTA */}
         <div className="text-center mb-16">
-          <div className="w-full h-px bg-gray-300 mb-12"></div>
+          <div className="w-full h-px bg-gray-700 mb-12"></div>
           
-          <p className="text-gray-600 text-base mb-8">
+          <p className="text-gray-400 text-base mb-8">
             Are you a journalist, housing org, or public partner?{" "}
             <a 
               href="mailto:info@realerestate.org"
-              className="text-gray-900 hover:text-gray-700 transition-colors underline"
+              className="text-white hover:text-gray-300 transition-colors underline"
             >
               Click here to offer the Open Door Plan to your audience.
             </a>
@@ -263,7 +262,7 @@ const OpenDoor = () => {
 
         {/* Final Footer */}
         <div className="text-center">
-          <h3 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-gray-900">
+          <h3 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-white">
             You found the free way in.
           </h3>
           <div className="w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-full"></div>
@@ -273,13 +272,13 @@ const OpenDoor = () => {
       {/* Signup Modal */}
       {showSignupModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-gray-900 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-700">
             <div className="p-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-playfair font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl font-playfair font-bold text-white mb-4">
                   Access the Community Database
                 </h2>
-                <p className="text-gray-600 text-lg">
+                <p className="text-gray-400 text-lg">
                   Create your free account to unlock hidden rent-stabilized deals
                 </p>
                 <p className="text-xs text-gray-500 uppercase tracking-widest mt-4 font-mono">
@@ -292,7 +291,7 @@ const OpenDoor = () => {
                   type="button"
                   onClick={handleGoogleSignup}
                   disabled={isGoogleLoading}
-                  className="w-full py-3 px-4 bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full text-base font-medium transition-all flex items-center justify-center space-x-3"
+                  className="w-full py-3 px-4 bg-gray-800 border-2 border-gray-600 text-white hover:bg-gray-700 rounded-full text-base font-medium transition-all flex items-center justify-center space-x-3"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -304,9 +303,9 @@ const OpenDoor = () => {
                 </button>
 
                 <div className="flex items-center space-x-4">
-                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <div className="flex-1 h-px bg-gray-600"></div>
                   <span className="text-gray-500 text-sm">or</span>
-                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <div className="flex-1 h-px bg-gray-600"></div>
                 </div>
 
                 <div>
@@ -316,7 +315,7 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
                     required
                     placeholder="Full Name"
-                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
+                    className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                 </div>
 
@@ -327,7 +326,7 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
                     required
                     placeholder="Email Address"
-                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
+                    className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                 </div>
 
@@ -338,12 +337,12 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
                     required
                     placeholder="Password"
-                    className="w-full px-4 py-3 pr-12 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
+                    className="w-full px-4 py-3 pr-12 bg-gray-800 border-2 border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -361,7 +360,7 @@ const OpenDoor = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => setShowSignupModal(false)}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
                 >
                   Cancel
                 </button>
