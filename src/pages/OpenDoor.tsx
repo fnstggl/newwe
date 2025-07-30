@@ -240,7 +240,7 @@ const OpenDoor = () => {
             </p>
             
             <p className="text-white text-lg font-medium">
-              No cards required. No catch. Just a better way to find hidden deals in NYC so you don't get squeezed.
+              No credit cards. No fine print. Just a better way to find below-market homes in NYC.
             </p>
           </div>
         </div>
