@@ -248,7 +248,7 @@ const OpenDoor = () => {
             </p>
             
             <p className="text-white text-lg font-medium">
-              No credit cards. No fine print. Just a better way to ensure all of NYC can find below-market homes.
+              No credit cards. No fine print. Just a better way to help fight housing insecurity.
             </p>
           </div>
         </div>
