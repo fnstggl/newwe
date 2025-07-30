@@ -189,7 +189,7 @@ const OpenDoor = () => {
             <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-white">
               Free access to NYC's<br />hidden rent-stabilized deals
             </h1>
-            <p className="text-xl text-gray-400 mb-4">Open Door Plan</p>
+            <p className="text-xl text-gray-100 mb-4 font-inter font-bold uppercase tracking-wide">Open Door Plan</p>
           </div>
         </div>
 
