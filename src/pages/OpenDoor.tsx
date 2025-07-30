@@ -184,9 +184,9 @@ const OpenDoor = () => {
     </div>
     <div className="border border-gray-600 px-4 py-2 text-xs uppercase tracking-wider text-gray-300 bg-gray-900">
       <div className="text-center">
-        <div className="font-semibold">PUBLIC ACCESS</div>
+        <div className="font-semibold">FREE HOUSING ACCESS</div>
         <div className="italic">Made Possible by</div>
-        <div className="font-semibold">Housing Access Plan</div>
+        <div className="font-semibold">Realer Estate</div>
       </div>
     </div>
   </div>
