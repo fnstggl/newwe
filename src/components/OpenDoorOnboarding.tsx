@@ -15,7 +15,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
   const [step, setStep] = useState(1);
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [hasUpgraded, setHasUpgraded] = useState(false);
-  const { user, updateOnboardingStatus } = useAuth();
+  const { user, updateOnboardingStatus, forceRefreshProfile } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,6 +45,10 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
       } else {
         console.log('Successfully upgraded to open_door_plan');
         setHasUpgraded(true);
+        
+        // Clear cached subscription state and force refresh profile
+        console.log('Clearing cache and forcing profile refresh');
+        await forceRefreshProfile();
       }
     } catch (error) {
       console.error('Error upgrading user:', error);

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,6 +19,7 @@ interface AuthContextType {
     is_canceled?: boolean;
   } | null;
   updateOnboardingStatus: (completed: boolean) => Promise<void>;
+  forceRefreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,6 +63,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const cacheSubscriptionState = (userId: string, subscriptionData: any) => {
     try {
       localStorage.setItem(`subscription_state_${userId}`, JSON.stringify(subscriptionData));
+    } catch {
+      // Ignore localStorage errors
+    }
+  };
+
+  // Clear cached subscription state
+  const clearCachedSubscriptionState = (userId: string) => {
+    try {
+      localStorage.removeItem(`subscription_state_${userId}`);
     } catch {
       // Ignore localStorage errors
     }
@@ -204,6 +215,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const forceRefreshProfile = async () => {
+    if (!user?.id) return;
+    
+    console.log('Force refreshing profile for user:', user.id);
+    
+    // Clear the cached subscription state
+    clearCachedSubscriptionState(user.id);
+    
+    // Force fetch fresh profile data
+    await fetchUserProfile(user.id);
+  };
+
   const updateOnboardingStatus = async (completed: boolean) => {
     if (user) {
       localStorage.setItem(`onboarding_${user.id}`, completed ? 'completed' : 'pending');
@@ -280,7 +303,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithGoogle,
     signOut,
     userProfile,
-    updateOnboardingStatus
+    updateOnboardingStatus,
+    forceRefreshProfile
   };
 
   return (
