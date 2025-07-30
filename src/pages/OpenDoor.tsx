@@ -215,7 +215,7 @@ const OpenDoor = () => {
         {/* Description */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-white">
-            Built for those who need it most.
+            Built free for the community.
           </h2>
           
           <div className="max-w-3xl mx-auto">
