@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -20,7 +21,7 @@ const OpenDoor = () => {
 
   useEffect(() => {
     // Update meta tags to prevent indexing
-    document.title = "Open Door Plan - Realer Estate";
+    document.title = "Housing Access Plan - Realer Estate";
     
     // Add noindex meta tag
     const metaRobots = document.querySelector('meta[name="robots"]');
@@ -47,14 +48,12 @@ const OpenDoor = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const fromGoogleAuth = urlParams.get('from_google_auth');
     
-    // Show onboarding for ANY user who comes back with from_google_auth=true parameter
-    // This ensures users who clicked "Continue with Google" on Open Door page always see onboarding
-    if (user && fromGoogleAuth === 'true') {
+    if (user && fromGoogleAuth === 'true' && userProfile?.subscription_plan !== 'open_door_plan') {
       // Remove the URL parameter and show onboarding
       window.history.replaceState({}, document.title, window.location.pathname);
       setShowOnboarding(true);
     }
-  }, [user]);
+  }, [user, userProfile]);
 
   const handleUnlockAccess = async () => {
     if (!user) {
@@ -81,12 +80,12 @@ const OpenDoor = () => {
       if (error) {
         toast({
           title: "Error",
-          description: "Failed to activate Open Door Plan. Please try again.",
+          description: "Failed to activate Housing Access Plan. Please try again.",
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Welcome to the Open Door Plan!",
+          title: "Welcome to the Housing Access Plan!",
           description: "You now have unlimited access to all listings.",
         });
         navigate('/');
@@ -285,13 +284,13 @@ const OpenDoor = () => {
       <div className="p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-playfair font-bold text-white mb-4">
-            Open Door Access to Realer Estate
+            Free Housing Access to Realer Estate
           </h2>
           <p className="text-gray-300 text-lg">
             Create your free account to unlock hidden rent-stabilized deals
           </p>
           <p className="text-xs text-gray-400 uppercase tracking-widest mt-4 font-mono">
-            Open Door Protocol — Community Access
+            Open Door Initiative — Housing Access
           </p>
         </div>
 

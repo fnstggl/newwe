@@ -15,22 +15,15 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
   const [step, setStep] = useState(1);
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [hasUpgraded, setHasUpgraded] = useState(false);
-  const { user, updateOnboardingStatus, forceRefreshProfile, userProfile } = useAuth();
+  const { user, updateOnboardingStatus, forceRefreshProfile } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen && user && !hasUpgraded) {
-      // Skip upgrade if user is already on open_door_plan (safety check)
-      if (userProfile?.subscription_plan === 'open_door_plan') {
-        console.log('User already on open_door_plan, skipping upgrade');
-        setHasUpgraded(true);
-        return;
-      }
-      
       // Immediately upgrade user to open_door_plan when onboarding starts
       upgradeToOpenDoorPlan();
     }
-  }, [isOpen, user, hasUpgraded, userProfile?.subscription_plan]);
+  }, [isOpen, user, hasUpgraded]);
 
   const upgradeToOpenDoorPlan = async () => {
     if (!user || hasUpgraded) return;
@@ -81,7 +74,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
       <div className="bg-black/90 backdrop-blur-xl border border-white/20 ring-1 ring-amber-400/20 shadow-2xl shadow-amber-400/20 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="p-8">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold text-white tracking-tighter">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
               🔓 Access Granted
             </h2>
             <button
@@ -99,10 +92,10 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                 <CheckCircle className="w-24 h-24 mx-auto text-green-400 relative z-10" />
               </div>
               <div className="space-y-4">
-                <h3 className="text-3xl font-bold text-white tracking-tighter leading-tight">
-                  Welcome to the backdoor.
+                <h3 className="text-3xl font-bold text-white tracking-tight leading-tight">
+                  Welcome to free housing access.
                 </h3>
-                <p className="text-white/80 text-lg tracking-tighter">
+                <p className="text-white/80 text-lg tracking-tight">
                   You now have unlimited access to NYC's hidden rent-stabilized deals.
                 </p>
                 {(isUpgrading || !hasUpgraded) && (
@@ -122,10 +115,10 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
           {step === 2 && (
             <div className="space-y-6 text-center">
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold text-white tracking-tighter">
-                  No paywalls. No limits. No BS.
+                <h3 className="text-2xl font-bold text-white tracking-tight">
+                  Made free for the community. No paywalls. Just more affordable homes.
                 </h3>
-                <p className="text-white/70 text-lg tracking-tighter leading-relaxed">
+                <p className="text-white/70 text-lg tracking-tight leading-relaxed">
                   While others pay $3/month, you got in free. Use this access to find deals that can save you thousands.
                 </p>
               </div>
@@ -133,19 +126,19 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
               <div className="space-y-4 text-left">
                 <div className="flex items-center space-x-3 text-white/70">
                   <span>🏠</span>
-                  <span className="tracking-tighter">Unlimited rent-stabilized listings</span>
+                  <span className="tracking-tight">Unlimited rent-stabilized listings</span>
                 </div>
                 <div className="flex items-center space-x-3 text-white/70">
                   <span>💰</span>
-                  <span className="tracking-tighter">Below-market deals updated daily</span>
+                  <span className="tracking-tight">Below-market deals updated daily</span>
                 </div>
                 <div className="flex items-center space-x-3 text-white/70">
                   <span>🎯</span>
-                  <span className="tracking-tighter">No broker fees on many listings</span>
+                  <span className="tracking-tight">Instant email notifications on new deals</span>
                 </div>
                 <div className="flex items-center space-x-3 text-white/70">
                   <span>⚡</span>
-                  <span className="tracking-tighter">First access to new discoveries</span>
+                  <span className="tracking-tight">Never get priced out again</span>
                 </div>
               </div>
             </div>
@@ -154,16 +147,16 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
           {step === 3 && (
             <div className="space-y-8 text-center">
               <div className="space-y-4">
-                <h3 className="text-3xl font-bold text-white tracking-tighter">
+                <h3 className="text-3xl font-bold text-white tracking-tight">
                   Time to find your home.
                 </h3>
-                <p className="text-white/70 text-lg tracking-tighter">
-                  Your Open Door access is now active. Start browsing deals that others will never see.
+                <p className="text-white/70 text-lg tracking-tight">
+                  Your Housing Access plan is now active. Start browsing the best deals in the city.
                 </p>
               </div>
               
               <div className="p-6 bg-gradient-to-r from-amber-400/10 via-purple-400/10 to-blue-400/10 rounded-2xl border border-white/10">
-                <p className="text-white text-sm tracking-tighter font-medium">
+                <p className="text-white text-sm tracking-tight font-medium">
                   💛 Remember: This free access is our gift to ensure housing remains accessible to all New Yorkers.
                 </p>
               </div>
@@ -186,7 +179,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
             
             <button
               onClick={handleNext}
-              className="px-8 py-3 rounded-full font-semibold tracking-tighter bg-white text-black hover:bg-gray-100 transition-all duration-300"
+              className="px-8 py-3 rounded-full font-semibold tracking-tight bg-white text-black hover:bg-gray-100 transition-all duration-300"
             >
               {step === 3 ? "Start Browsing" : "Next"}
             </button>
