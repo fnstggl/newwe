@@ -290,7 +290,7 @@ const OpenDoor = () => {
             Create your free account to unlock hidden rent-stabilized deals
           </p>
           <p className="text-xs text-gray-400 uppercase tracking-widest mt-4 font-mono">
-            Open Door Initiative — Housing Access
+            Open Door Initiative
           </p>
         </div>
 
