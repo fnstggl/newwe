@@ -156,7 +156,6 @@ const OpenDoor = () => {
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <div className="max-w-4xl mx-auto px-8 py-20">
-      /* Header Section with Testimonial - WITHOUT profile picture */
 <div className="mb-16">
   <div className="flex items-start gap-6 mb-16">
     <div className="flex-1">
