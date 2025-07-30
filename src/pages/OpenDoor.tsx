@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -41,6 +42,18 @@ const OpenDoor = () => {
       }
     };
   }, []);
+
+  // Check if user just signed in via Google OAuth and trigger onboarding
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromGoogleAuth = urlParams.get('from_google_auth');
+    
+    if (user && fromGoogleAuth === 'true' && userProfile?.subscription_plan !== 'open_door_plan') {
+      // Remove the URL parameter and show onboarding
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setShowOnboarding(true);
+    }
+  }, [user, userProfile]);
 
   const handleUnlockAccess = async () => {
     if (!user) {
@@ -122,7 +135,12 @@ const OpenDoor = () => {
   const handleGoogleSignup = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await signInWithGoogle();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/opendoor?from_google_auth=true`
+        }
+      });
       
       if (error) {
         toast({
@@ -130,12 +148,9 @@ const OpenDoor = () => {
           description: error.message,
           variant: "destructive",
         });
-      } else {
-        setShowSignupModal(false);
-        // For Google sign-ups on Open Door page, we need to upgrade them to open_door_plan
-        // We'll trigger the onboarding flow which handles the upgrade
-        setShowOnboarding(true);
+        setIsGoogleLoading(false);
       }
+      // Don't set loading to false here as user will be redirected
     } catch (error) {
       console.error("Google sign-in error:", error);
       toast({
@@ -143,7 +158,6 @@ const OpenDoor = () => {
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsGoogleLoading(false);
     }
   };
