@@ -156,42 +156,35 @@ const OpenDoor = () => {
   return (
     <div className="min-h-screen bg-black text-white font-inter">
       <div className="max-w-4xl mx-auto px-8 py-20">
-        {/* Header Section with Testimonial */}
-        <div className="mb-16">
-          <div className="flex items-start gap-6 mb-16">
-            <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-              <img 
-                src="/lovable-uploads/67b6325c-fc2a-49c2-a472-e0195346acdc.png"
-                alt="Sasha, Brooklyn renter"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1">
-              <blockquote className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-4 font-playfair italic">
-                "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
-              </blockquote>
-              <cite className="text-sm text-gray-400 not-italic">
-                — Sasha, Brooklyn renter
-              </cite>
-            </div>
-            <div className="border border-gray-600 px-4 py-2 text-xs uppercase tracking-wider text-gray-300 bg-gray-900">
-              <div className="text-center">
-                <div className="font-semibold">PUBLIC ACCESS</div>
-                <div className="italic">Made Possible by</div>
-                <div className="font-semibold">Open Door Plan</div>
-              </div>
-            </div>
-          </div>
+      /* Header Section with Testimonial - WITHOUT profile picture */
+<div className="mb-16">
+  <div className="flex items-start gap-6 mb-16">
+    <div className="flex-1">
+      <blockquote className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-4 font-playfair italic">
+        "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+      </blockquote>
+      <cite className="text-sm text-gray-400 not-italic">
+        — Sasha, Brooklyn renter
+      </cite>
+    </div>
+    <div className="border border-gray-600 px-4 py-2 text-xs uppercase tracking-wider text-gray-300 bg-gray-900">
+      <div className="text-center">
+        <div className="font-semibold">PUBLIC ACCESS</div>
+        <div className="italic">Made Possible by</div>
+        <div className="font-semibold">Open Door Plan</div>
+      </div>
+    </div>
+  </div>
 
-          <div className="border-b border-gray-700 mb-12"></div>
+  <div className="border-b border-gray-700 mb-12"></div>
 
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-white">
-              Free access to NYC's<br />hidden rent-stabilized deals
-            </h1>
-            <p className="text-xl text-gray-100 mb-4 font-inter font-bold uppercase tracking-wide">Realer Estate. For the community.</p>
-          </div>
-        </div>
+  <div className="text-center">
+    <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-white">
+      Free access to NYC's<br />hidden rent-stabilized deals
+    </h1>
+    <p className="text-xl text-gray-100 mb-4 font-inter font-bold uppercase tracking-wide">Realer Estate. For the community.</p>
+  </div>
+</div>
 
         {/* Product Mockup */}
         <div className="mb-16 flex justify-center">
