@@ -132,7 +132,9 @@ const OpenDoor = () => {
         });
       } else {
         setShowSignupModal(false);
-        // The auth context will handle the rest
+        // For Google sign-ups on Open Door page, we need to upgrade them to open_door_plan
+        // We'll trigger the onboarding flow which handles the upgrade
+        setShowOnboarding(true);
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
