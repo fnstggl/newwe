@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -44,10 +45,12 @@ const OpenDoor = () => {
 
   const handleUnlockAccess = async () => {
     if (!user) {
+      // Show signup modal for non-logged in users
       setShowSignupModal(true);
       return;
     }
 
+    // If already on open_door_plan, redirect to home
     if (userProfile?.subscription_plan === 'open_door_plan') {
       navigate('/');
       return;
@@ -56,6 +59,7 @@ const OpenDoor = () => {
     setIsLoading(true);
 
     try {
+      // Update user's subscription plan to open_door_plan
       const { error } = await supabase
         .from('profiles')
         .update({ subscription_plan: 'open_door_plan' })
@@ -99,6 +103,7 @@ const OpenDoor = () => {
           variant: "destructive",
         });
       } else {
+        // Upgrade to open_door_plan after successful signup
         if (needsOnboarding) {
           setShowSignupModal(false);
           setShowOnboarding(true);
@@ -128,6 +133,7 @@ const OpenDoor = () => {
         });
       } else {
         setShowSignupModal(false);
+        // The auth context will handle the rest
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
@@ -149,68 +155,71 @@ const OpenDoor = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white font-inter">
-      <div className="max-w-4xl mx-auto px-6 py-16">
-        
-        {/* Small editorial badge */}
-        <div className="text-center mb-8">
-          <div className="inline-block px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full">
-            <span className="text-xs font-mono text-amber-400 tracking-widest uppercase">Open Door Plan</span>
-          </div>
-        </div>
-
-        {/* Main headline - editorial style */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
-            Free access to Realer Estate.
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8 font-serif italic">
-            NYC's backdoor to hidden rent-stabilized deals
-          </p>
-        </div>
-
-        {/* Renter quote section with public access badge */}
-        <div className="relative mb-16">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 max-w-3xl mx-auto">
-            {/* Public Access Badge */}
-            <div className="absolute -top-3 right-6">
-              <div className="px-3 py-1 bg-amber-500 text-black rounded-full text-xs font-medium">
-                Public Access via Open Door Plan
-              </div>
-            </div>
-            
-            <blockquote className="text-lg md:text-xl text-gray-200 italic leading-relaxed mb-4">
-              "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
-            </blockquote>
-            <cite className="text-gray-400 not-italic">— Sasha, Brooklyn renter</cite>
-          </div>
-        </div>
-
-        {/* Product mockup with amber border treatment */}
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-inter">
+      <div className="max-w-4xl mx-auto px-8 py-20">
+        {/* Header Section with Testimonial */}
         <div className="mb-16">
-          <div className="relative mx-auto max-w-4xl">
-            <div className="relative">
-              {/* Subtle amber glow border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/20 to-amber-600/20 rounded-3xl blur-sm"></div>
-              <div className="relative border-2 border-amber-500/30 rounded-3xl overflow-hidden">
-                <img 
-                  src="/lovable-uploads/1bb60a7c-e91d-4fd0-8100-f3eafb2af436.png" 
-                  alt="Realer Estate property listings interface"
-                  className="w-full h-auto"
-                />
+          <div className="flex items-start gap-6 mb-16">
+            <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+              <img 
+                src="/lovable-uploads/67b6325c-fc2a-49c2-a472-e0195346acdc.png"
+                alt="Sasha, Brooklyn renter"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <blockquote className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-4 font-playfair italic">
+                "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+              </blockquote>
+              <cite className="text-sm text-gray-600 not-italic">
+                — Sasha, Brooklyn renter
+              </cite>
+            </div>
+            <div className="border border-gray-300 px-4 py-2 text-xs uppercase tracking-wider text-gray-600 bg-white">
+              <div className="text-center">
+                <div className="font-semibold">PUBLIC ACCESS</div>
+                <div className="italic">Made Possible by</div>
+                <div className="font-semibold">Open Door Plan</div>
               </div>
             </div>
           </div>
+
+          <div className="border-b border-gray-200 mb-12"></div>
+
+          <div className="text-center">
+            <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 text-gray-900">
+              Free access to NYC's<br />hidden rent-stabilized deals
+            </h1>
+            <p className="text-xl text-gray-600 mb-4">Open Door Plan</p>
+          </div>
         </div>
 
-        {/* Mission statement */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
+        {/* Product Mockup */}
+        <div className="mb-16 flex justify-center">
+          <div className="w-full max-w-5xl">
+            <img 
+              src="/lovable-uploads/1233d786-e326-481e-a83c-4aa83f18f28e.png" 
+              alt="Realer Estate property listings interface"
+              className="w-full h-auto rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-gray-900">
             Built for those who need it most.
           </h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed mb-8">
-            We made this plan so you don't get priced out before you even get a shot. 💛
-          </p>
+          
+          <div className="max-w-3xl mx-auto">
+            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+              We launched the Open Door Plan to ensure everyone has free access to affordable homes.
+            </p>
+            
+            <p className="text-lg text-gray-700 mb-12 leading-relaxed">
+              If you found this page through a journalist, housing org, or public partner, you can unlock unlimited access for free below.
+            </p>
+          </div>
         </div>
 
         {/* Main CTA */}
@@ -218,74 +227,63 @@ const OpenDoor = () => {
           <button
             onClick={handleUnlockAccess}
             disabled={isLoading || isProcessing}
-            className="group relative inline-flex items-center justify-center px-12 py-6 text-xl font-semibold bg-white text-black rounded-full transition-all duration-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              boxShadow: '0 0 0 2px transparent, 0 0 20px rgba(245, 158, 11, 0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.4), 0 0 30px rgba(245, 158, 11, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 2px transparent, 0 0 20px rgba(245, 158, 11, 0.3)';
-            }}
+            className="inline-flex items-center justify-center px-12 py-4 text-lg font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
-            <span className="relative z-10">
-              {getButtonText()}
-            </span>
+            {getButtonText()}
           </button>
         </div>
 
-        {/* Description box */}
+        {/* Description Box */}
         <div className="text-center mb-16">
-          <div className="max-w-2xl mx-auto p-8 bg-gray-800/30 border border-gray-700 rounded-2xl">
-            <p className="text-gray-300 text-lg leading-relaxed mb-6">
+          <div className="max-w-3xl mx-auto p-8 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <p className="text-gray-700 text-lg leading-relaxed mb-6">
               Realer Estate is usually $3/month to help us stay independent—but we created Open Door Plan to make sure that all New Yorkers have access to affordable homes.
             </p>
             
-            <p className="text-white text-lg font-medium">
-              No credit card. No catch. Just a better way to find a home.
+            <p className="text-gray-900 text-lg font-medium">
+              No credit card. No time limit. Just a better way to find hidden deals in NYC so you don't get squeezed.
             </p>
           </div>
         </div>
 
-        {/* Footer contact info */}
+        {/* Footer CTA */}
         <div className="text-center mb-16">
-          <div className="w-full h-px bg-gray-700 mb-12"></div>
+          <div className="w-full h-px bg-gray-300 mb-12"></div>
           
-          <p className="text-gray-400 text-base mb-8">
+          <p className="text-gray-600 text-base mb-8">
             Are you a journalist, housing org, or public partner?{" "}
             <a 
               href="mailto:info@realerestate.org"
-              className="text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-4"
+              className="text-gray-900 hover:text-gray-700 transition-colors underline"
             >
               Click here to offer the Open Door Plan to your audience.
             </a>
           </p>
         </div>
 
-        {/* Final footer with gradient line */}
+        {/* Final Footer */}
         <div className="text-center">
-          <h3 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">
+          <h3 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-gray-900">
             You found the free way in.
           </h3>
-          <div className="w-full h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-blue-400 rounded-full"></div>
+          <div className="w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-full"></div>
         </div>
       </div>
 
-      {/* Signup Modal - unchanged functionality */}
+      {/* Signup Modal */}
       {showSignupModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900/95 backdrop-blur-xl border border-gray-700 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-8">
               <div className="text-center mb-8">
-                <div className="inline-block px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full mb-4">
-                  <span className="text-xs font-mono text-amber-400 tracking-widest uppercase">Open Door Access</span>
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-4">
-                  Create Your Free Account
+                <h2 className="text-3xl font-playfair font-bold text-gray-900 mb-4">
+                  Access the Community Database
                 </h2>
-                <p className="text-gray-300 text-base">
-                  Get unlimited access to NYC's hidden rent-stabilized deals
+                <p className="text-gray-600 text-lg">
+                  Create your free account to unlock hidden rent-stabilized deals
+                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-widest mt-4 font-mono">
+                  Open Door Protocol — Community Access
                 </p>
               </div>
 
@@ -294,7 +292,7 @@ const OpenDoor = () => {
                   type="button"
                   onClick={handleGoogleSignup}
                   disabled={isGoogleLoading}
-                  className="w-full py-4 px-4 bg-white border border-gray-300 text-gray-900 hover:bg-gray-50 rounded-full text-lg font-medium transition-all flex items-center justify-center space-x-3"
+                  className="w-full py-3 px-4 bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full text-base font-medium transition-all flex items-center justify-center space-x-3"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -306,9 +304,9 @@ const OpenDoor = () => {
                 </button>
 
                 <div className="flex items-center space-x-4">
-                  <div className="flex-1 h-px bg-gray-600"></div>
-                  <span className="text-gray-400 text-sm">or</span>
-                  <div className="flex-1 h-px bg-gray-600"></div>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="text-gray-500 text-sm">or</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
                 <div>
@@ -318,7 +316,7 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
                     required
                     placeholder="Full Name"
-                    className="w-full px-4 py-4 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-lg"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                 </div>
 
@@ -329,7 +327,7 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
                     required
                     placeholder="Email Address"
-                    className="w-full px-4 py-4 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-lg"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                 </div>
 
@@ -340,12 +338,12 @@ const OpenDoor = () => {
                     onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
                     required
                     placeholder="Password"
-                    className="w-full px-4 py-4 pr-12 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-lg"
+                    className="w-full px-4 py-3 pr-12 bg-white border-2 border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all text-base"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -354,7 +352,7 @@ const OpenDoor = () => {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full py-4 text-lg font-semibold bg-white text-black hover:bg-gray-100 rounded-full transition-colors"
+                  className="w-full py-3 text-base font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-full transition-colors"
                 >
                   {isProcessing ? "Creating Account..." : "Unlock Free Access"}
                 </button>
@@ -363,7 +361,7 @@ const OpenDoor = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => setShowSignupModal(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   Cancel
                 </button>
