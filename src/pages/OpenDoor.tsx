@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -48,12 +47,14 @@ const OpenDoor = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const fromGoogleAuth = urlParams.get('from_google_auth');
     
-    if (user && fromGoogleAuth === 'true' && userProfile?.subscription_plan !== 'open_door_plan') {
+    // Show onboarding for ANY user who comes back with from_google_auth=true parameter
+    // This ensures users who clicked "Continue with Google" on Open Door page always see onboarding
+    if (user && fromGoogleAuth === 'true') {
       // Remove the URL parameter and show onboarding
       window.history.replaceState({}, document.title, window.location.pathname);
       setShowOnboarding(true);
     }
-  }, [user, userProfile]);
+  }, [user]);
 
   const handleUnlockAccess = async () => {
     if (!user) {

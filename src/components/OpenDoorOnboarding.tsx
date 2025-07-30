@@ -15,15 +15,22 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
   const [step, setStep] = useState(1);
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [hasUpgraded, setHasUpgraded] = useState(false);
-  const { user, updateOnboardingStatus, forceRefreshProfile } = useAuth();
+  const { user, updateOnboardingStatus, forceRefreshProfile, userProfile } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen && user && !hasUpgraded) {
+      // Skip upgrade if user is already on open_door_plan (safety check)
+      if (userProfile?.subscription_plan === 'open_door_plan') {
+        console.log('User already on open_door_plan, skipping upgrade');
+        setHasUpgraded(true);
+        return;
+      }
+      
       // Immediately upgrade user to open_door_plan when onboarding starts
       upgradeToOpenDoorPlan();
     }
-  }, [isOpen, user, hasUpgraded]);
+  }, [isOpen, user, hasUpgraded, userProfile?.subscription_plan]);
 
   const upgradeToOpenDoorPlan = async () => {
     if (!user || hasUpgraded) return;
