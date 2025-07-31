@@ -340,7 +340,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   {/* Neighborhoods */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Neighborhoods</h3>
-                    <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-xl p-4 bg-gray-900">
+                    <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-xl p-4 bg-gray-900 overscroll-contain">
                       <div className="flex flex-wrap gap-2">
                         {neighborhoods.map((neighborhood, index) => (
                           <TagButton
