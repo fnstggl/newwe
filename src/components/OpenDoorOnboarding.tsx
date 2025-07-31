@@ -170,7 +170,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                 </p>
               </div>
               
-              <div className="p-6 bg-gradient-to-r from-amber-400/10 via-purple-400/10 to-blue-400/10 rounded-2xl border border-white/10">
+            <div className="p-6 bg-white/10 rounded-2xl border border-white/10">
                 <p className="text-white text-sm tracking-tight font-medium">
                   💛 Remember: This free access is our gift to ensure housing remains accessible to all New Yorkers.
                 </p>
@@ -185,7 +185,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                   key={i}
                   className={`h-2 rounded-full transition-all duration-500 ease-in-out ${
                     i === step 
-                      ? "w-6 bg-gradient-to-r from-amber-400 to-purple-400" 
+                      ? "w-6 bg-white"
                       : "w-2 bg-gray-600"
                   }`}
                 />
