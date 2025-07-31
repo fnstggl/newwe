@@ -21,7 +21,7 @@ const Buy = () => {
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+ const [maxPrice, setMaxPrice] = useState("1500000");
   const [bedrooms, setBedrooms] = useState("");
   const [minGrade, setMinGrade] = useState("");
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
