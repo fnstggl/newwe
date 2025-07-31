@@ -336,7 +336,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   key={i}
   className={`h-2 rounded-full transition-all duration-500 ease-in-out ${
     i === step 
-      ? "w-6 bg-blue-500" 
+      ? "w-6 bg-white"
       : "w-2 bg-gray-600"
   }`}
 />
