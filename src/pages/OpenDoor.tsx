@@ -127,7 +127,7 @@ const OpenDoor = () => {
           variant: "destructive",
         });
       } else {
-        // Upgrade to open_door_plan after successful signup
+        // Upgrade to open_door_plan after successful signup from OpenDoor page
         if (needsOnboarding) {
           setShowSignupModal(false);
           setShowOnboarding(true);
