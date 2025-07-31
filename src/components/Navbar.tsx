@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -18,7 +17,7 @@ const Navbar = () => {
   }, []);
 
   // Show For You tab only for authenticated users who have completed onboarding
-  const showForYou = user && userProfile?.onboarding_completed;
+  const showForYou = user && userProfile?.hasCompletedOnboarding;
 
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
