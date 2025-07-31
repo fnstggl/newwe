@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import OnboardingStep from './OnboardingStep';
 import { Slider } from './ui/slider';
@@ -274,7 +275,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
       case 5:
         return (
-          <div className="min-h-screen bg-black text-white flex flex-col">
+          <div className="min-h-screen bg-black text-white">
             {/* Back Button */}
             <div className="fixed top-8 left-8 z-50">
               <button
@@ -293,8 +294,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
               />
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 pt-24 pb-8 px-4">
+            {/* Scrollable Main Content */}
+            <div className="pt-24 pb-8 px-4 overflow-y-auto">
               <div className="max-w-lg w-full mx-auto text-center space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -324,19 +325,31 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                     </div>
                   </div>
 
-                  {/* Budget */}
+                  {/* Budget - Now a Slider */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Max Budget</h3>
-                    <input
-                      type="number"
-                      placeholder="$3,000"
-                      value={onboardingData.max_budget || ''}
-                      onChange={(e) => updateData('max_budget', parseInt(e.target.value) || 0)}
-                      className="w-full p-4 rounded-xl bg-gray-900 border border-gray-600 text-white placeholder-gray-400 focus:border-white focus:outline-none"
-                    />
+                    <div className="space-y-6">
+                      <Slider
+                        value={[onboardingData.max_budget || 3000]}
+                        onValueChange={(value) => updateData('max_budget', value[0])}
+                        max={8000}
+                        min={1000}
+                        step={100}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-sm text-gray-400">
+                        <span>$1K</span>
+                        <span>$3K</span>
+                        <span>$5K</span>
+                        <span>$8K+</span>
+                      </div>
+                      <p className="text-center text-xl font-semibold">
+                        ${(onboardingData.max_budget || 3000).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Neighborhoods - No Scroll Box */}
+                  {/* Neighborhoods */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Neighborhoods</h3>
                     <div className="flex flex-wrap gap-2 justify-center">
