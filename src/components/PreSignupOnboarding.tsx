@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import OnboardingStep from './OnboardingStep';
 import { Slider } from './ui/slider';
 import { Progress } from './ui/progress';
+import { ArrowLeft } from 'lucide-react';
 
 interface OnboardingData {
   search_duration?: string;
@@ -40,7 +41,13 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const neighborhoods = [
     "Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island",
     "Carroll Gardens", "Bed-Stuy", "Williamsburg", "Astoria", 
-    "Long Island City", "Anywhere with a train"
+    "Long Island City", "Park Slope", "Greenpoint", "Bushwick",
+    "Crown Heights", "Sunset Park", "Red Hook", "Dumbo",
+    "Fort Greene", "Prospect Heights", "Chelsea", "SoHo",
+    "East Village", "West Village", "Lower East Side", "Tribeca",
+    "Financial District", "Midtown", "Upper East Side", "Upper West Side",
+    "Harlem", "Washington Heights", "Inwood", "Jackson Heights",
+    "Elmhurst", "Forest Hills", "Flushing", "Anywhere with a train"
   ];
 
   const mustHaveOptions = [
@@ -88,6 +95,12 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
       setCurrentStep(currentStep + 1);
     } else {
       onComplete(onboardingData);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
@@ -262,87 +275,114 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
       case 5:
         return (
-          <OnboardingStep
-            step={currentStep}
-            totalSteps={totalSteps}
-            title="Describe your dream deal"
-          >
-            <div className="space-y-8">
-              {/* Bedrooms */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Bedrooms</h3>
-                <div className="flex gap-2">
-                  {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
-                    <button
-                      key={bed}
-                      onClick={() => updateData('bedrooms', bed === '5+' ? 5 : bed)}
-                      className={`px-4 py-2 rounded-xl border transition-all duration-300 ${
-                        onboardingData.bedrooms === (bed === '5+' ? 5 : bed)
-                          ? 'border-white bg-white text-black'
-                          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-                      }`}
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      {bed}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Budget */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Max Budget</h3>
-                <input
-                  type="number"
-                  placeholder="$3,000"
-                  value={onboardingData.max_budget || ''}
-                  onChange={(e) => updateData('max_budget', parseInt(e.target.value) || 0)}
-                  className="w-full p-4 rounded-xl bg-gray-900 border border-gray-600 text-white placeholder-gray-400 focus:border-white focus:outline-none"
-                />
-              </div>
-
-              {/* Neighborhoods */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Neighborhoods</h3>
-                <div className="flex flex-wrap gap-2">
-                  {neighborhoods.map((neighborhood, index) => (
-                    <TagButton
-                      key={neighborhood}
-                      selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
-                      onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
-                      delay={index * 50}
-                    >
-                      {neighborhood}
-                    </TagButton>
-                  ))}
-                </div>
-              </div>
-
-              {/* Must-haves */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Must-haves</h3>
-                <div className="flex flex-wrap gap-2">
-                  {mustHaveOptions.map((option, index) => (
-                    <TagButton
-                      key={option}
-                      selected={onboardingData.must_haves?.includes(option)}
-                      onClick={() => handleArrayToggle('must_haves', option)}
-                      delay={index * 50}
-                    >
-                      {option}
-                    </TagButton>
-                  ))}
-                </div>
-              </div>
-
+          <div className="min-h-screen bg-black text-white flex flex-col">
+            {/* Back Button */}
+            <div className="fixed top-8 left-8 z-50">
               <button
-                onClick={nextStep}
-                className="w-full p-4 bg-white text-black rounded-2xl font-semibold hover:scale-105 transition-all duration-300 animate-scale-in"
+                onClick={prevStep}
+                className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
               >
-                Find my deals →
+                <ArrowLeft className="w-5 h-5" />
               </button>
             </div>
-          </OnboardingStep>
+
+            {/* Progress Bar */}
+            <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gray-800 rounded-full overflow-hidden z-40">
+              <div 
+                className="h-full bg-white rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 flex items-center justify-center p-4 pt-24">
+              <div className="max-w-lg w-full text-center space-y-8">
+                <div className="space-y-4">
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                    Describe your dream deal
+                  </h1>
+                </div>
+                
+                <div className="space-y-8">
+                  {/* Bedrooms */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Bedrooms</h3>
+                    <div className="flex gap-2 justify-center">
+                      {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
+                        <button
+                          key={bed}
+                          onClick={() => updateData('bedrooms', bed === '5+' ? 5 : bed)}
+                          className={`px-4 py-2 rounded-xl border transition-all duration-300 ${
+                            onboardingData.bedrooms === (bed === '5+' ? 5 : bed)
+                              ? 'border-white bg-white text-black'
+                              : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+                          }`}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          {bed}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Budget */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Max Budget</h3>
+                    <input
+                      type="number"
+                      placeholder="$3,000"
+                      value={onboardingData.max_budget || ''}
+                      onChange={(e) => updateData('max_budget', parseInt(e.target.value) || 0)}
+                      className="w-full p-4 rounded-xl bg-gray-900 border border-gray-600 text-white placeholder-gray-400 focus:border-white focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Neighborhoods */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Neighborhoods</h3>
+                    <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-xl p-4 bg-gray-900">
+                      <div className="flex flex-wrap gap-2">
+                        {neighborhoods.map((neighborhood, index) => (
+                          <TagButton
+                            key={neighborhood}
+                            selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
+                            onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
+                            delay={index * 20}
+                          >
+                            {neighborhood}
+                          </TagButton>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Must-haves */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Must-haves</h3>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {mustHaveOptions.map((option, index) => (
+                        <TagButton
+                          key={option}
+                          selected={onboardingData.must_haves?.includes(option)}
+                          onClick={() => handleArrayToggle('must_haves', option)}
+                          delay={index * 50}
+                        >
+                          {option}
+                        </TagButton>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={nextStep}
+                    className="w-full p-4 bg-white text-black rounded-2xl font-semibold hover:scale-105 transition-all duration-300 animate-scale-in"
+                  >
+                    Find my deals →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         );
 
       case 6:
@@ -502,6 +542,16 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
   return (
     <div className="fixed inset-0 z-50">
+      {currentStep !== 5 && currentStep > 1 && (
+        <div className="fixed top-8 left-8 z-50">
+          <button
+            onClick={prevStep}
+            className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+        </div>
+      )}
       {renderStep()}
     </div>
   );
