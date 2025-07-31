@@ -17,6 +17,9 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Show For You tab only for authenticated users who have completed onboarding
+  const showForYou = user && userProfile?.onboarding_completed;
+
   return (
     <nav className={`sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-gray-800 transition-all duration-300 ${
       isScrolled ? 'mx-6 mt-3 rounded-full border border-gray-800' : ''
@@ -36,6 +39,29 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
+            {showForYou && (
+              <Link 
+                to="/foryou" 
+                className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
+                  location.pathname === '/foryou' ? 'text-white' : 'text-gray-300'
+                }`}
+                style={{
+                  textShadow: location.pathname === '/foryou' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== '/foryou') {
+                    e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== '/foryou') {
+                    e.currentTarget.style.textShadow = 'none';
+                  }
+                }}
+              >
+                For You
+              </Link>
+            )}
             <Link 
               to="/buy" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${

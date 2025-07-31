@@ -1,85 +1,79 @@
+
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import "./App.css";
+
 import Index from "./pages/Index";
-import Search from "./pages/Search";
-import Buy from "./pages/Buy";
-import Rent from "./pages/Rent";
-import SavedProperties from "./pages/SavedProperties";
-import Manifesto from "./pages/Manifesto";
-import Pricing from "./pages/Pricing";
-import Join from "./pages/Join";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Press from "./pages/Press";
-import NotFound from "./pages/NotFound";
-import CancelSubscription from "./pages/CancelSubscription";
-import ManageSubscription from "./pages/ManageSubscription";
-import OpenDoor from "./pages/OpenDoor";
 import Navbar from "./components/Navbar";
-import MobileNavigation from "./components/MobileNavigation";
-import OnboardingPopup from "./components/OnboardingPopup";
-import { useState } from "react";
-import Checkout from "./pages/Checkout";
+
+// Lazy load components
+const Buy = lazy(() => import("./pages/Buy"));
+const Rent = lazy(() => import("./pages/Rent"));
+const SavedProperties = lazy(() => import("./pages/SavedProperties"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Manifesto = lazy(() => import("./pages/Manifesto"));
+const Join = lazy(() => import("./pages/Join"));
+const NewJoin = lazy(() => import("./pages/NewJoin"));
+const ForYou = lazy(() => import("./pages/ForYou"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Neighborhoods = lazy(() => import("./pages/Neighborhoods"));
+const Search = lazy(() => import("./pages/Search"));
+const OpenDoor = lazy(() => import("./pages/OpenDoor"));
+const Press = lazy(() => import("./pages/Press"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const ManageSubscription = lazy(() => import("./pages/ManageSubscription"));
+const CancelSubscription = lazy(() => import("./pages/CancelSubscription"));
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
+function App() {
   return (
-    <div className="min-h-screen bg-black text-white font-inter">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/buy/:listingId" element={<Buy />} />
-        <Route path="/rent" element={<Rent />} />
-        <Route path="/rent/:listingId" element={<Rent />} />
-        <Route path="/saved" element={<SavedProperties />} />
-        <Route path="/manifesto" element={<Manifesto />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/cancel-subscription" element={<CancelSubscription />} />
-        <Route path="/manage-subscription" element={<ManageSubscription />} />
-        <Route path="/join" element={<Join />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/press" element={<Press />} />
-        <Route path="/housingaccess" element={<OpenDoor />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <MobileNavigation />
-      
-      <OnboardingPopup 
-        isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
-        onComplete={() => setShowOnboarding(false)}
-      />
-    </div>
-  );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
+        <TooltipProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-background font-sans antialiased">
+              <Navbar />
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/buy" element={<Buy />} />
+                  <Route path="/rent" element={<Rent />} />
+                  <Route path="/saved" element={<SavedProperties />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/manifesto" element={<Manifesto />} />
+                  <Route path="/join" element={<NewJoin />} />
+                  <Route path="/old-join" element={<Join />} />
+                  <Route path="/foryou" element={<ForYou />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/neighborhoods" element={<Neighborhoods />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/open-door" element={<OpenDoor />} />
+                  <Route path="/press" element={<Press />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/manage-subscription" element={<ManageSubscription />} />
+                  <Route path="/cancel-subscription" element={<CancelSubscription />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </div>
+            <Toaster />
+          </BrowserRouter>
+        </TooltipProvider>
       </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </QueryClientProvider>
+  );
+}
 
 export default App;
