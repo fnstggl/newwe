@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -32,6 +31,16 @@ const OpenDoor = () => {
       meta.name = 'robots';
       meta.content = 'noindex, nofollow';
       document.head.appendChild(meta);
+    }
+
+    // Ensure favicon is properly set for this page
+    const faviconLink = document.querySelector('link[rel="icon"]');
+    if (!faviconLink) {
+      const favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      favicon.href = '/lovable-uploads/favicon-v3.png?v=2025012302';
+      favicon.type = 'image/png';
+      document.head.appendChild(favicon);
     }
 
     // Clean up on unmount
