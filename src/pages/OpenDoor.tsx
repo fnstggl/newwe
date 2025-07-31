@@ -34,8 +34,11 @@ const OpenDoor = () => {
     }
 
     // Ensure favicon is properly set for this page
-    const faviconLink = document.querySelector('link[rel="icon"]');
-    if (!faviconLink) {
+    const existingFavicon = document.querySelector('link[rel="icon"]');
+    if (existingFavicon) {
+      existingFavicon.setAttribute('href', '/lovable-uploads/favicon-v3.png?v=2025012302');
+      existingFavicon.setAttribute('type', 'image/png');
+    } else {
       const favicon = document.createElement('link');
       favicon.rel = 'icon';
       favicon.href = '/lovable-uploads/favicon-v3.png?v=2025012302';
