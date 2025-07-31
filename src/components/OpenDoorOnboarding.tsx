@@ -89,7 +89,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
   <div className="space-y-8 text-center">
     {/* REMOVE the rainbow gradient background, keep just the checkmark */}
     <div className="relative">
-      <CheckCircle className="w-20 h-20 mx-auto text-orange-500 relative z-10" />
+      <CheckCircle className="w-20 h-20 mx-auto text-white-500 relative z-10" />
     </div>
     
     <div className="space-y-6">
