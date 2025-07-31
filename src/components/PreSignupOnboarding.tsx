@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import OnboardingStep from './OnboardingStep';
 import { Slider } from './ui/slider';
@@ -275,7 +274,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
       case 5:
         return (
-          <div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
+          <div className="min-h-screen bg-black text-white flex flex-col">
             {/* Back Button */}
             <div className="fixed top-8 left-8 z-50">
               <button
@@ -294,9 +293,9 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
               />
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto pt-24 pb-8">
-              <div className="max-w-lg w-full mx-auto px-4 text-center space-y-8">
+            {/* Main Content */}
+            <div className="flex-1 pt-24 pb-8 px-4">
+              <div className="max-w-lg w-full mx-auto text-center space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
                     Describe your dream deal
@@ -337,22 +336,20 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                     />
                   </div>
 
-                  {/* Neighborhoods */}
+                  {/* Neighborhoods - No Scroll Box */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Neighborhoods</h3>
-                    <div className="max-h-48 overflow-y-auto border border-gray-600 rounded-xl p-4 bg-gray-900 overscroll-contain">
-                      <div className="flex flex-wrap gap-2">
-                        {neighborhoods.map((neighborhood, index) => (
-                          <TagButton
-                            key={neighborhood}
-                            selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
-                            onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
-                            delay={index * 20}
-                          >
-                            {neighborhood}
-                          </TagButton>
-                        ))}
-                      </div>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {neighborhoods.map((neighborhood, index) => (
+                        <TagButton
+                          key={neighborhood}
+                          selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
+                          onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
+                          delay={index * 20}
+                        >
+                          {neighborhood}
+                        </TagButton>
+                      ))}
                     </div>
                   </div>
 

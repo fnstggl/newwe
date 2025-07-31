@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -167,17 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select(`
           name, 
           subscription_plan, 
-          subscription_renewal,
-          onboarding_completed,
-          search_duration,
-          frustrations,
-          searching_for,
-          property_type,
-          bedrooms,
-          max_budget,
-          preferred_neighborhoods,
-          must_haves,
-          discount_threshold
+          subscription_renewal
         `)
         .eq('id', userId)
         .single();
@@ -196,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (data) {
         // Check if user has completed onboarding (for now, we'll use localStorage)
-        const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed' || data.onboarding_completed;
+        const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
         
         // Skip subscription check for staff and manual_unlimited plans
         const isStaffOrManualUnlimited = data.subscription_plan === 'open_door_plan' || data.subscription_plan === 'staff';
@@ -225,16 +216,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
-          onboarding_completed: data.onboarding_completed,
-          search_duration: data.search_duration,
-          frustrations: data.frustrations,
-          searching_for: data.searching_for,
-          property_type: data.property_type,
-          bedrooms: data.bedrooms,
-          max_budget: data.max_budget,
-          preferred_neighborhoods: data.preferred_neighborhoods,
-          must_haves: data.must_haves,
-          discount_threshold: data.discount_threshold,
           ...subscriptionInfo
         };
         
