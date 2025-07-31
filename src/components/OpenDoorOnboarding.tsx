@@ -89,7 +89,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
             <div className="space-y-8 text-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-blue-400/20 blur-xl rounded-full"></div>
-                <CheckCircle className="w-24 h-24 mx-auto text-green-400 relative z-10" />
+                <CheckCircle className="w-24 h-24 mx-auto text-orange-500 relative z-10" />
               </div>
               <div className="space-y-4">
                 <h3 className="text-3xl font-bold text-white tracking-tight leading-tight">
@@ -165,17 +165,17 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
 
           <div className="flex justify-between items-center mt-8">
             <div className="flex space-x-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className={`h-2 rounded-full transition-all duration-500 ease-in-out ${
-                    i === step 
-                      ? "w-6 bg-gradient-to-r from-amber-400 to-purple-400" 
-                      : "w-2 bg-gray-600"
-                  }`}
-                />
-              ))}
-            </div>
+  {[1, 2, 3].map((i) => (
+    <div
+      key={i}
+      className={`h-2 rounded-full transition-all duration-500 ease-in-out ${
+        i === step 
+          ? "w-6 bg-white"  // ← Simple white instead of gradient
+          : "w-2 bg-gray-600"
+      }`}
+    />
+  ))}
+</div>
             
             <button
               onClick={handleNext}
