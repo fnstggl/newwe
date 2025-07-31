@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import OnboardingStep from './OnboardingStep';
 import { Slider } from './ui/slider';
@@ -295,7 +296,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
             </div>
 
             {/* Scrollable Main Content */}
-            <div className="pt-24 pb-8 px-4 overflow-y-auto">
+            <div className="pt-24 pb-32 px-4 max-h-screen overflow-y-auto">
               <div className="max-w-lg w-full mx-auto text-center space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -568,3 +569,4 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 };
 
 export default PreSignupOnboarding;
+
