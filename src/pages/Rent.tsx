@@ -270,9 +270,8 @@ const Rent = () => {
       'tribeca': 1,
       'west-village': 1,
       'east-village': 1,
+      'chelsea': 1,
       'park-slope': 1,
-      'williamsburg': 1,
-      'greenpoint': 1,
       'nolita': 1,
       
       // Tier 2 - Highly desirable
@@ -282,7 +281,8 @@ const Rent = () => {
       'dumbo': 2,
       'fort-greene': 2,
       'gramercy-park': 2,
-      'chelsea': 2,
+      'greenpoint': 2,
+      'williamsburg': 2,
       'lower-east-side': 2,
       'financial-district': 2,
       'long-island-city': 2,
