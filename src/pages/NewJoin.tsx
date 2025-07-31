@@ -47,21 +47,23 @@ const NewJoin = () => {
 
   const saveOnboardingData = async (userId: string) => {
     try {
+      const updateData: any = {
+        search_duration: onboardingData.search_duration,
+        frustrations: onboardingData.frustrations,
+        searching_for: onboardingData.searching_for,
+        property_type: onboardingData.property_type,
+        bedrooms: onboardingData.bedrooms,
+        max_budget: onboardingData.max_budget,
+        preferred_neighborhoods: onboardingData.preferred_neighborhoods,
+        must_haves: onboardingData.must_haves,
+        discount_threshold: onboardingData.discount_threshold,
+        onboarding_completed: true,
+        onboarding_completed_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          search_duration: onboardingData.search_duration,
-          frustrations: onboardingData.frustrations,
-          searching_for: onboardingData.searching_for,
-          property_type: onboardingData.property_type,
-          bedrooms: onboardingData.bedrooms,
-          max_budget: onboardingData.max_budget,
-          preferred_neighborhoods: onboardingData.preferred_neighborhoods,
-          must_haves: onboardingData.must_haves,
-          discount_threshold: onboardingData.discount_threshold,
-          onboarding_completed: true,
-          onboarding_completed_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', userId);
 
       if (error) {

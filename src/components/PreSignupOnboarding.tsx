@@ -275,7 +275,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
       case 5:
         return (
-          <div className="min-h-screen bg-black text-white flex flex-col">
+          <div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
             {/* Back Button */}
             <div className="fixed top-8 left-8 z-50">
               <button
@@ -294,9 +294,9 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
               />
             </div>
 
-            {/* Content */}
-            <div className="flex-1 flex items-center justify-center p-4 pt-24">
-              <div className="max-w-lg w-full text-center space-y-8">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto pt-24 pb-8">
+              <div className="max-w-lg w-full mx-auto px-4 text-center space-y-8">
                 <div className="space-y-4">
                   <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
                     Describe your dream deal
@@ -307,7 +307,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   {/* Bedrooms */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Bedrooms</h3>
-                    <div className="flex gap-2 justify-center">
+                    <div className="flex gap-2 justify-center flex-wrap">
                       {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
                         <button
                           key={bed}
