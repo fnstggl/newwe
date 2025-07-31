@@ -754,70 +754,37 @@ export type Database = {
       }
       profiles: {
         Row: {
-          bedrooms: number | null
           created_at: string
-          discount_threshold: number | null
           email_address: string | null
-          frustrations: string[] | null
           id: string
           is_canceled: boolean | null
           manual_unlimited: boolean
-          max_budget: number | null
-          must_haves: string[] | null
           name: string | null
           neighborhood_preferences: string[] | null
-          onboarding_completed: boolean | null
-          onboarding_completed_at: string | null
-          preferred_neighborhoods: string[] | null
-          property_type: string | null
-          search_duration: string | null
-          searching_for: string | null
           stripe_customer_id: string | null
           subscription_plan: string
           subscription_renewal: string | null
         }
         Insert: {
-          bedrooms?: number | null
           created_at?: string
-          discount_threshold?: number | null
           email_address?: string | null
-          frustrations?: string[] | null
           id: string
           is_canceled?: boolean | null
           manual_unlimited?: boolean
-          max_budget?: number | null
-          must_haves?: string[] | null
           name?: string | null
           neighborhood_preferences?: string[] | null
-          onboarding_completed?: boolean | null
-          onboarding_completed_at?: string | null
-          preferred_neighborhoods?: string[] | null
-          property_type?: string | null
-          search_duration?: string | null
-          searching_for?: string | null
           stripe_customer_id?: string | null
           subscription_plan?: string
           subscription_renewal?: string | null
         }
         Update: {
-          bedrooms?: number | null
           created_at?: string
-          discount_threshold?: number | null
           email_address?: string | null
-          frustrations?: string[] | null
           id?: string
           is_canceled?: boolean | null
           manual_unlimited?: boolean
-          max_budget?: number | null
-          must_haves?: string[] | null
           name?: string | null
           neighborhood_preferences?: string[] | null
-          onboarding_completed?: boolean | null
-          onboarding_completed_at?: string | null
-          preferred_neighborhoods?: string[] | null
-          property_type?: string | null
-          search_duration?: string | null
-          searching_for?: string | null
           stripe_customer_id?: string | null
           subscription_plan?: string
           subscription_renewal?: string | null
@@ -2061,24 +2028,13 @@ export type Database = {
       get_users_for_neighborhood: {
         Args: { neighborhood: string }
         Returns: {
-          bedrooms: number | null
           created_at: string
-          discount_threshold: number | null
           email_address: string | null
-          frustrations: string[] | null
           id: string
           is_canceled: boolean | null
           manual_unlimited: boolean
-          max_budget: number | null
-          must_haves: string[] | null
           name: string | null
           neighborhood_preferences: string[] | null
-          onboarding_completed: boolean | null
-          onboarding_completed_at: string | null
-          preferred_neighborhoods: string[] | null
-          property_type: string | null
-          search_duration: string | null
-          searching_for: string | null
           stripe_customer_id: string | null
           subscription_plan: string
           subscription_renewal: string | null
