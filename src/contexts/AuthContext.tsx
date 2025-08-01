@@ -168,16 +168,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name, 
           subscription_plan, 
           subscription_renewal,
-          onboarding_completed,
-          search_duration,
-          frustrations,
-          searching_for,
           property_type,
           bedrooms,
           max_budget,
           preferred_neighborhoods,
           must_haves,
-          discount_threshold
+          discount_threshold,
+          search_duration,
+          frustrations,
+          searching_for
         `)
         .eq('id', userId)
         .single();
@@ -225,7 +224,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
-          onboarding_completed: data.onboarding_completed || false,
+          onboarding_completed: hasCompletedOnboarding, // Set this based on localStorage for now
           search_duration: data.search_duration,
           frustrations: data.frustrations,
           searching_for: data.searching_for,
@@ -273,7 +272,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateOnboardingStatus = async (completed: boolean) => {
     if (user) {
       localStorage.setItem(`onboarding_${user.id}`, completed ? 'completed' : 'pending');
-      setUserProfile(prev => prev ? { ...prev, hasCompletedOnboarding: completed } : null);
+      setUserProfile(prev => prev ? { ...prev, hasCompletedOnboarding: completed, onboarding_completed: completed } : null);
     }
   };
 
