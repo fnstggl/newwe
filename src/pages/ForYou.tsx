@@ -490,8 +490,8 @@ const ForYou = () => {
     if (!user) return;
 
     try {
-      // Use the actual property ID from the database table, not the UUID
-      const propertyId = property.listing_id || property.id;
+      // Use the actual UUID property ID, not the listing_id
+      const propertyId = property.id;
       
       const { error } = await supabase
         .from('saved_properties')
