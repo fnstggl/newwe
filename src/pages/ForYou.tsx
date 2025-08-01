@@ -1,10 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { Heart, X, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import SwipeablePropertyCard from '../components/SwipeablePropertyCard';
 
 interface Property {
   id: string;
@@ -25,9 +23,6 @@ interface Property {
   description?: string;
   property_type?: string;
   table_source: string;
-  grade?: string;
-  score?: number;
-  reasoning?: string;
 }
 
 const ForYou = () => {
@@ -35,8 +30,8 @@ const ForYou = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [chatMessage, setChatMessage] = useState('');
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user && userProfile) {
@@ -227,8 +222,43 @@ const ForYou = () => {
     }
   };
 
-  const handleSwipeLeft = () => {
-    // Move to next property (discard current)
+  const handleSave = async (property: Property) => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('saved_properties')
+        .insert([{
+          user_id: user.id,
+          property_id: property.id,
+          property_type: property.property_type || 'rent',
+          table_source: property.table_source
+        }]);
+
+      if (error) {
+        console.error('Error saving property:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save the property. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Property Saved",
+          description: "This property has been saved to your profile.",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving property:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while saving. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSkip = () => {
     if (currentIndex < properties.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
@@ -236,86 +266,85 @@ const ForYou = () => {
         title: "No More Properties",
         description: "You've reached the end of available properties.",
       });
-    }
-  };
-
-  const handleSwipeRight = () => {
-    // Property was saved, move to next
-    if (currentIndex < properties.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      toast({
-        title: "No More Properties",
-        description: "You've reached the end of available properties.",
-      });
-    }
-  };
-
-  const handlePropertyClick = () => {
-    const property = properties[currentIndex];
-    if (!property) return;
-
-    // Navigate to the appropriate property detail page
-    if (property.property_type === 'rent') {
-      navigate(`/rent?property=${property.id}`);
-    } else {
-      navigate(`/buy?property=${property.id}`);
     }
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-white font-inter flex justify-center items-center">
-        <div className="text-xl">Loading your personalized properties...</div>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen text-white">Loading properties...</div>;
   }
 
   if (!userProfile || (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding)) {
-    return (
-      <div className="min-h-screen bg-black text-white font-inter flex justify-center items-center">
-        <div className="text-xl">Complete onboarding to see personalized properties.</div>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen text-white">Complete onboarding to see personalized properties.</div>;
   }
 
   const property = properties[currentIndex];
 
   if (!property) {
-    return (
-      <div className="min-h-screen bg-black text-white font-inter flex justify-center items-center">
-        <div className="text-xl">No properties found matching your criteria.</div>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen text-white">No properties found matching your criteria.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center p-4">
-      {/* Header */}
-      <div className="w-full max-w-md text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">For You</h1>
-        <p className="text-gray-400">
-          Property {currentIndex + 1} of {properties.length}
-        </p>
+    <div className="min-h-screen bg-black text-white font-inter flex flex-col">
+      {/* Property Card */}
+      <div className="relative w-full max-w-md mx-auto mt-16 rounded-3xl shadow-lg overflow-hidden">
+        {/* Image Carousel */}
+        <div className="relative h-80">
+          {property.images && property.images.length > 0 ? (
+            <img
+              src={property.images[0]}
+              alt={property.address}
+              className="absolute w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute w-full h-full bg-gray-700 flex items-center justify-center">
+              No Image Available
+            </div>
+          )}
+        </div>
+
+        {/* Property Details */}
+        <div className="p-6 space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight">{property.address}</h2>
+          <p className="text-gray-400">
+            {property.property_type === 'rent' ? `$${property.monthly_rent?.toLocaleString()}` : `$${property.price?.toLocaleString()}`}
+          </p>
+          <div className="flex space-x-4">
+            <span>{property.bedrooms} Beds</span>
+            <span>{property.bathrooms} Baths</span>
+            {property.sqft && <span>{property.sqft} SqFt</span>}
+          </div>
+          <p className="text-gray-500">{property.description}</p>
+          {property.discount_percent && (
+            <div className="text-green-500 font-semibold">
+              {property.discount_percent}% Below Market Value
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-around p-4 border-t border-gray-700">
+          <button onClick={() => handleSkip()} className="px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+          <button onClick={() => handleSave(property)} className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors">
+            <Heart className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      {/* Swipeable Property Card */}
-      <SwipeablePropertyCard
-        property={property}
-        isRental={property.property_type === 'rent'}
-        onSwipeLeft={handleSwipeLeft}
-        onSwipeRight={handleSwipeRight}
-        onPropertyClick={handlePropertyClick}
-      />
-
-      {/* Instructions */}
-      <div className="w-full max-w-md text-center mt-8 space-y-2">
-        <p className="text-gray-400 text-sm">
-          Drag left to discard • Drag right to save • Tap to view details
-        </p>
-        <div className="flex justify-between text-xs text-gray-500">
-          <span>← Discard</span>
-          <span>Save →</span>
+      {/* Chat Input */}
+      <div className="mt-8 w-full max-w-md mx-auto px-4">
+        <div className="flex rounded-full overflow-hidden border border-gray-700 bg-gray-900">
+          <input
+            type="text"
+            placeholder="Send a message..."
+            value={chatMessage}
+            onChange={(e) => setChatMessage(e.target.value)}
+            className="w-full px-4 py-3 bg-transparent text-white focus:outline-none"
+          />
+          <button className="px-4 py-3 bg-blue-600 text-white hover:bg-blue-500 transition-colors">
+            <MessageCircle className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>
