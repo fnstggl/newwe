@@ -1,8 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Heart, X, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import PropertyCard from '@/components/PropertyCard';
 
 interface Property {
   id: string;
@@ -23,6 +26,12 @@ interface Property {
   description?: string;
   property_type?: string;
   table_source: string;
+  grade?: string;
+  score?: number;
+  rent_per_sqft?: number;
+  price_per_sqft?: number;
+  reasoning?: string;
+  isRentStabilized?: boolean;
 }
 
 const ForYou = () => {
@@ -32,6 +41,7 @@ const ForYou = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [chatMessage, setChatMessage] = useState('');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user && userProfile) {
@@ -101,7 +111,8 @@ const ForYou = () => {
               images: propertyImages,
               property_type: 'rent',
               table_source: 'undervalued_rent_stabilized',
-              discount_percent: property.undervaluation_percent || 0
+              discount_percent: property.undervaluation_percent || 0,
+              isRentStabilized: true
             });
           });
         }
@@ -269,6 +280,11 @@ const ForYou = () => {
     }
   };
 
+  const handlePropertyClick = (property: Property) => {
+    const propertyType = property.property_type === 'buy' ? 'buy' : 'rent';
+    navigate(`/${propertyType}/${property.id}`);
+  };
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen text-white">Loading properties...</div>;
   }
@@ -285,55 +301,50 @@ const ForYou = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-inter flex flex-col">
-      {/* Property Card */}
-      <div className="relative w-full max-w-md mx-auto mt-16 rounded-3xl shadow-lg overflow-hidden">
-        {/* Image Carousel */}
-        <div className="relative h-80">
-          {property.images && property.images.length > 0 ? (
-            <img
-              src={property.images[0]}
-              alt={property.address}
-              className="absolute w-full h-full object-cover"
-            />
-          ) : (
-            <div className="absolute w-full h-full bg-gray-700 flex items-center justify-center">
-              No Image Available
-            </div>
-          )}
-        </div>
+      {/* Property Card - Enlarged */}
+      <div className="relative w-full max-w-2xl mx-auto mt-8 px-4">
+        <PropertyCard
+          property={{
+            id: property.id,
+            address: property.address,
+            grade: property.grade || 'B',
+            score: property.score || 85,
+            price: property.price,
+            monthly_rent: property.monthly_rent,
+            price_per_sqft: property.price_per_sqft,
+            rent_per_sqft: property.rent_per_sqft,
+            bedrooms: property.bedrooms,
+            bathrooms: property.bathrooms,
+            sqft: property.sqft,
+            neighborhood: property.neighborhood,
+            discount_percent: property.discount_percent,
+            reasoning: property.reasoning,
+            images: property.images,
+            isRentStabilized: property.isRentStabilized
+          }}
+          isRental={property.property_type === 'rent'}
+          onClick={() => handlePropertyClick(property)}
+        />
+      </div>
 
-        {/* Property Details */}
-        <div className="p-6 space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">{property.address}</h2>
-          <p className="text-gray-400">
-            {property.property_type === 'rent' ? `$${property.monthly_rent?.toLocaleString()}` : `$${property.price?.toLocaleString()}`}
-          </p>
-          <div className="flex space-x-4">
-            <span>{property.bedrooms} Beds</span>
-            <span>{property.bathrooms} Baths</span>
-            {property.sqft && <span>{property.sqft} SqFt</span>}
-          </div>
-          <p className="text-gray-500">{property.description}</p>
-          {property.discount_percent && (
-            <div className="text-green-500 font-semibold">
-              {property.discount_percent}% Below Market Value
-            </div>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-around p-4 border-t border-gray-700">
-          <button onClick={() => handleSkip()} className="px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-          <button onClick={() => handleSave(property)} className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors">
-            <Heart className="w-5 h-5" />
-          </button>
-        </div>
+      {/* Actions */}
+      <div className="flex justify-around p-8 max-w-md mx-auto w-full">
+        <button 
+          onClick={() => handleSkip()} 
+          className="px-8 py-4 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
+        <button 
+          onClick={() => handleSave(property)} 
+          className="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors"
+        >
+          <Heart className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Chat Input */}
-      <div className="mt-8 w-full max-w-md mx-auto px-4">
+      <div className="mt-8 w-full max-w-2xl mx-auto px-4 pb-8">
         <div className="flex rounded-full overflow-hidden border border-gray-700 bg-gray-900">
           <input
             type="text"
