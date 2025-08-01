@@ -29,6 +29,19 @@ interface Property {
   grade?: string;
   score?: number;
   reasoning?: string;
+  videos?: any[];
+  floorplans?: any[];
+  amenities?: string[];
+  no_fee?: boolean;
+  days_on_market?: number;
+  built_in?: number;
+  rent_per_sqft?: number;
+  price_per_sqft?: number;
+  monthly_hoa?: number;
+  monthly_tax?: number;
+  listing_id?: string;
+  status?: string;
+  display_status?: string;
 }
 
 const ForYou = () => {
@@ -61,161 +74,90 @@ const ForYou = () => {
         return;
       }
 
-      // Fetch from undervalued_rentals if looking to rent
-      if (!userProfile.property_type || userProfile.property_type === 'rent') {
-        let query = supabase
-          .from('undervalued_rentals')
-          .select('*')
-          .eq('status', 'active')
-          .order('discount_percent', { ascending: false })
-          .limit(50);
+      // Fetch from undervalued_rentals
+      const { data: rentals, error: rentalsError } = await supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('status', 'active')
+        .order('discount_percent', { ascending: false })
+        .limit(50);
 
-        const { data: rentals, error: rentalsError } = await query;
-
-        if (!rentalsError && rentals) {
-          rentals.forEach(rental => {
-            const propertyImages = Array.isArray(rental.images) ? rental.images : 
-                                 typeof rental.images === 'string' ? JSON.parse(rental.images) : 
-                                 [];
-            
-            allProperties.push({
-              ...rental,
-              images: propertyImages,
-              property_type: 'rent',
-              table_source: 'undervalued_rentals'
-            });
+      if (!rentalsError && rentals) {
+        rentals.forEach(rental => {
+          const propertyImages = Array.isArray(rental.images) ? rental.images : 
+                               typeof rental.images === 'string' ? JSON.parse(rental.images) : 
+                               [];
+          
+          allProperties.push({
+            ...rental,
+            images: propertyImages,
+            property_type: 'rent',
+            table_source: 'undervalued_rentals',
+            videos: rental.videos || [],
+            floorplans: rental.floorplans || [],
+            amenities: rental.amenities || [],
+            no_fee: rental.no_fee || false
           });
-        }
-
-        // Also fetch from undervalued_rent_stabilized
-        let stabilizedQuery = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active')
-          .order('undervaluation_percent', { ascending: false })
-          .limit(50);
-
-        const { data: stabilized, error: stabilizedError } = await stabilizedQuery;
-
-        if (!stabilizedError && stabilized) {
-          stabilized.forEach(property => {
-            const propertyImages = Array.isArray(property.images) ? property.images : 
-                                 typeof property.images === 'string' ? JSON.parse(property.images) : 
-                                 [];
-            
-            allProperties.push({
-              ...property,
-              images: propertyImages,
-              property_type: 'rent',
-              table_source: 'undervalued_rent_stabilized',
-              discount_percent: property.undervaluation_percent || 0
-            });
-          });
-        }
-      }
-
-      // Fetch from undervalued_sales if looking to buy
-      if (!userProfile.property_type || userProfile.property_type === 'buy') {
-        let query = supabase
-          .from('undervalued_sales')
-          .select('*')
-          .eq('status', 'active')
-          .order('discount_percent', { ascending: false })
-          .limit(50);
-
-        const { data: sales, error: salesError } = await query;
-
-        if (!salesError && sales) {
-          sales.forEach(sale => {
-            const propertyImages = Array.isArray(sale.images) ? sale.images : 
-                                 typeof sale.images === 'string' ? JSON.parse(sale.images) : 
-                                 [];
-            
-            allProperties.push({
-              ...sale,
-              images: propertyImages,
-              property_type: 'buy',
-              table_source: 'undervalued_sales'
-            });
-          });
-        }
-      }
-
-      // Apply filters
-      let filteredProperties = allProperties;
-
-      // Filter by bedrooms
-      if (userProfile.bedrooms !== undefined && userProfile.bedrooms !== null) {
-        filteredProperties = filteredProperties.filter(p => p.bedrooms === userProfile.bedrooms);
-      }
-
-      // Filter by budget
-      if (userProfile.max_budget) {
-        filteredProperties = filteredProperties.filter(p => {
-          if (p.property_type === 'rent' && p.monthly_rent) {
-            return p.monthly_rent <= userProfile.max_budget!;
-          } else if (p.property_type === 'buy' && p.price) {
-            return p.price <= userProfile.max_budget!;
-          }
-          return true;
         });
       }
 
-      // Filter by neighborhoods - fixed logic
-      if (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) {
-        const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
-        const selectedBoroughs = userProfile.preferred_neighborhoods.filter(n => boroughs.includes(n));
-        const selectedNeighborhoods = userProfile.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
-        
-        filteredProperties = filteredProperties.filter(p => {
-          // If "Anywhere with a train" is selected, show all properties
-          if (userProfile.preferred_neighborhoods!.includes('Anywhere with a train')) {
-            return true;
-          }
+      // Fetch from undervalued_rent_stabilized
+      const { data: stabilized, error: stabilizedError } = await supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('display_status', 'active')
+        .order('undervaluation_percent', { ascending: false })
+        .limit(50);
+
+      if (!stabilizedError && stabilized) {
+        stabilized.forEach(property => {
+          const propertyImages = Array.isArray(property.images) ? property.images : 
+                               typeof property.images === 'string' ? JSON.parse(property.images) : 
+                               [];
           
-          // Check if property matches selected boroughs
-          if (selectedBoroughs.length > 0 && p.borough) {
-            if (selectedBoroughs.includes(p.borough)) return true;
-          }
-          
-          // Check if property matches selected neighborhoods
-          if (selectedNeighborhoods.length > 0 && p.neighborhood) {
-            if (selectedNeighborhoods.some(neighborhood => 
-              p.neighborhood?.toLowerCase().includes(neighborhood.toLowerCase())
-            )) return true;
-          }
-          
-          // If no boroughs or neighborhoods selected, but other areas selected, exclude
-          if (selectedBoroughs.length === 0 && selectedNeighborhoods.length === 0) {
-            return true;
-          }
-          
-          return false;
+          allProperties.push({
+            ...property,
+            images: propertyImages,
+            property_type: 'rent',
+            table_source: 'undervalued_rent_stabilized',
+            discount_percent: property.undervaluation_percent || 0,
+            videos: property.videos || [],
+            floorplans: property.floorplans || [],
+            amenities: property.amenities || [],
+            no_fee: false
+          });
         });
       }
 
-      // Filter by discount threshold
-      if (userProfile.discount_threshold) {
-        filteredProperties = filteredProperties.filter(p => 
-          p.discount_percent >= userProfile.discount_threshold!
-        );
-      }
+      // Fetch from undervalued_sales
+      const { data: sales, error: salesError } = await supabase
+        .from('undervalued_sales')
+        .select('*')
+        .eq('status', 'active')
+        .order('discount_percent', { ascending: false })
+        .limit(50);
 
-      // Filter by must-haves for rentals
-      if (userProfile.property_type === 'rent' && userProfile.must_haves && userProfile.must_haves.length > 0) {
-        filteredProperties = filteredProperties.filter(p => {
-          if (userProfile.must_haves!.includes('No broker fee') && p.table_source === 'undervalued_rentals') {
-            return (p as any).no_fee === true;
-          }
-          if (userProfile.must_haves!.includes('Rent-stabilized')) {
-            return p.table_source === 'undervalued_rent_stabilized';
-          }
-          return true;
+      if (!salesError && sales) {
+        sales.forEach(sale => {
+          const propertyImages = Array.isArray(sale.images) ? sale.images : 
+                               typeof sale.images === 'string' ? JSON.parse(sale.images) : 
+                               [];
+          
+          allProperties.push({
+            ...sale,
+            images: propertyImages,
+            property_type: 'buy',
+            table_source: 'undervalued_sales',
+            videos: sale.videos || [],
+            floorplans: sale.floorplans || [],
+            amenities: sale.amenities || [],
+            no_fee: false
+          });
         });
       }
 
       // Shuffle and set properties
-      const shuffled = filteredProperties.sort(() => 0.5 - Math.random());
+      const shuffled = allProperties.sort(() => 0.5 - Math.random());
       setProperties(shuffled);
     } catch (error) {
       console.error('Error fetching personalized properties:', error);
@@ -317,8 +259,8 @@ const ForYou = () => {
       <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center p-4">
         {/* Enhanced Header */}
         <div className="w-full max-w-md text-center mb-6 space-y-2">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            For You
+          <h1 className="text-4xl font-bold mb-2 text-white">
+            Your dream home. Found for you
           </h1>
           <p className="text-sm text-gray-400 mb-1">
             Curated deals matching your preferences
@@ -368,7 +310,7 @@ const ForYou = () => {
       {/* Property Detail Modal */}
       {selectedProperty && (
         <PropertyDetail
-          property={selectedProperty}
+          property={selectedProperty as any}
           isRental={selectedProperty.property_type === 'rent'}
           onClose={() => setSelectedProperty(null)}
         />

@@ -7,15 +7,6 @@ interface UserProfile {
   id: string;
   name?: string;
   email_address?: string;
-  property_type?: string;
-  bedrooms?: number;
-  max_budget?: number;
-  preferred_neighborhoods?: string[];
-  must_haves?: string[];
-  discount_threshold?: number;
-  search_duration?: string;
-  frustrations?: string[];
-  searching_for?: string;
   onboarding_completed?: boolean;
   hasCompletedOnboarding?: boolean;
   subscription_plan?: string;
@@ -60,15 +51,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           id,
           name, 
           email_address,
-          property_type,
-          bedrooms,
-          max_budget,
-          preferred_neighborhoods,
-          must_haves,
-          discount_threshold,
-          search_duration,
-          frustrations,
-          searching_for,
           subscription_plan,
           subscription_renewal,
           stripe_customer_id,
