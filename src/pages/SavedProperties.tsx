@@ -82,10 +82,19 @@ const SavedProperties = () => {
               .eq('status', 'active')
           : Promise.resolve({ data: [], error: null });
 
-        const [salesResult, rentalsResult] = await Promise.all([salesPromise, rentalsPromise]);
+        const stabilizedRentalsPromise = rentalIds.length > 0
+          ? supabase
+              .from('undervalued_rent_stabilized')
+              .select('*')
+              .in('id', rentalIds)
+              .eq('display_status', 'active')
+          : Promise.resolve({ data: [], error: null });
+
+        const [salesResult, rentalsResult, stabilizedRentalsResult] = await Promise.all([salesPromise, rentalsPromise, stabilizedRentalsPromise]);
 
         if (salesResult.error) throw salesResult.error;
         if (rentalsResult.error) throw rentalsResult.error;
+        if (stabilizedRentalsResult.error) throw stabilizedRentalsResult.error;
 
         // Combine the results
         const combinedProperties: SavedPropertyWithDetails[] = savedData.map(savedProp => {
@@ -94,7 +103,10 @@ const SavedProperties = () => {
           if (savedProp.property_type === 'sale') {
             propertyDetails = (salesResult.data || []).find(p => p.id === savedProp.property_id) || null;
           } else {
-            propertyDetails = (rentalsResult.data || []).find(p => p.id === savedProp.property_id) || null;
+            // Check both rental tables for rental properties
+            propertyDetails = (rentalsResult.data || []).find(p => p.id === savedProp.property_id) || 
+                             (stabilizedRentalsResult.data || []).find(p => p.id === savedProp.property_id) || 
+                             null;
           }
 
           return {
