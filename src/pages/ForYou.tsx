@@ -656,9 +656,13 @@ const ForYou = () => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
-            className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+            className="w-24 h-24 mx-auto"
           >
-            <span className="text-4xl">🏠</span>
+            <img 
+              src="/lovable-uploads/de1bfef4-cfe1-4af5-a773-d64ad8a646b5.png" 
+              alt="Dream Home Logo" 
+              className="w-full h-full object-contain"
+            />
           </motion.div>
           
           <div className="space-y-3">
@@ -679,7 +683,7 @@ const ForYou = () => {
             onClick={() => setShowUpdateFilters(true)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors flex items-center justify-center space-x-3 font-medium"
+            className="w-full px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 text-white rounded-full transition-all duration-200 flex items-center justify-center space-x-3 font-medium shadow-lg"
           >
             <Settings className="w-5 h-5" />
             <span>Adjust filters?</span>
@@ -694,6 +698,13 @@ const ForYou = () => {
         >
           New listings appear daily. We'll keep watching the market for you and notify you when new matches are found.
         </motion.p>
+
+        {/* Update Filters Modal */}
+        <UpdateFiltersModal
+          isOpen={showUpdateFilters}
+          onClose={() => setShowUpdateFilters(false)}
+          onFiltersUpdated={handleFiltersUpdated}
+        />
       </div>
     );
   }
