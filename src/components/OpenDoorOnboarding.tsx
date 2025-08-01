@@ -85,47 +85,32 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
             </button>
           </div>
 
-         {step === 1 && (
-  <div className="space-y-8 text-center">
-    {/* REMOVE the rainbow gradient background, keep just the checkmark */}
-    <div className="relative">
-      <CheckCircle className="w-20 h-20 mx-auto text-white-500 relative z-10" />
-    </div>
-    
-    <div className="space-y-6">
-      <h3 className="text-3xl font-bold text-white tracking-tight leading-tight">
-        Welcome to free housing access.
-      </h3>
-      
-      <p className="text-white/70 text-lg tracking-tight leading-relaxed max-w-md mx-auto">
-        You now have unlimited access to NYC's hidden rent-stabilized deals.
-      </p>
-      
-      {/* Better status messaging */}
-      <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-        {(isUpgrading || !hasUpgraded) ? (
-          <div className="flex items-center justify-center space-x-3">
-            <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-orange-400 text-sm font-medium">
-              Activating your Open Door access...
-            </p>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center space-x-3">
-            <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
+          {step === 1 && (
+            <div className="space-y-8 text-center">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-blue-400/20 blur-xl rounded-full"></div>
+                <CheckCircle className="w-24 h-24 mx-auto text-green-400 relative z-10" />
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-3xl font-bold text-white tracking-tight leading-tight">
+                  Welcome to free housing access.
+                </h3>
+                <p className="text-white/80 text-lg tracking-tight">
+                  You now have unlimited access to NYC's hidden rent-stabilized deals.
+                </p>
+                {(isUpgrading || !hasUpgraded) && (
+                  <p className="text-amber-400 text-sm animate-pulse">
+                    🔓 Activating your Open Door access...
+                  </p>
+                )}
+                {hasUpgraded && (
+                  <p className="text-green-400 text-sm">
+                    ✅ Open Door access activated!
+                  </p>
+                )}
+              </div>
             </div>
-            <p className="text-green-400 text-sm font-medium">
-              Open Door access activated!
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+          )}
 
           {step === 2 && (
             <div className="space-y-6 text-center">
@@ -170,7 +155,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                 </p>
               </div>
               
-            <div className="p-6 bg-white/10 rounded-2xl border border-white/10">
+              <div className="p-6 bg-gradient-to-r from-amber-400/10 via-purple-400/10 to-blue-400/10 rounded-2xl border border-white/10">
                 <p className="text-white text-sm tracking-tight font-medium">
                   💛 Remember: This free access is our gift to ensure housing remains accessible to all New Yorkers.
                 </p>
@@ -185,7 +170,7 @@ const OpenDoorOnboarding = ({ isOpen, onClose, onComplete }: OpenDoorOnboardingP
                   key={i}
                   className={`h-2 rounded-full transition-all duration-500 ease-in-out ${
                     i === step 
-                      ? "w-6 bg-white"
+                      ? "w-6 bg-gradient-to-r from-amber-400 to-purple-400" 
                       : "w-2 bg-gray-600"
                   }`}
                 />
