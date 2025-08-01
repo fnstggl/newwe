@@ -63,10 +63,10 @@ const Index = () => {
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
             <div className="text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
-                Your unfair advantage in real estate.
+                Making rent-stabilized and below-market homes accessible to everyone.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
-                The best deals in the city—found for you.
+                We'll find the deals. So you don't get priced out.
               </p>
               <Link to="/rent" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
