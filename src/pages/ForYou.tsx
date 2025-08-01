@@ -104,7 +104,7 @@ const LoadingSequence = () => {
     if (currentScanIndex < scanningTexts.length - 1) {
       timer = setTimeout(() => {
         setCurrentScanIndex(currentScanIndex + 1);
-      }, 400);
+      }, 600);
     } else {
       // Scanning done, move to found
       timer = setTimeout(() => setCurrentPhase('found'), 300);
