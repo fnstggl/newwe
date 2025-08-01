@@ -521,8 +521,7 @@ const ForYou = () => {
           title: "Property Saved ❤️",
           description: "Added to your saved properties!",
         });
-        // Move to next property after saving with animation
-        handleSwipeRight();
+        // Don't call handleSwipeRight here as it will be called by the button click
       }
     } catch (error) {
       console.error('Error saving property:', error);
