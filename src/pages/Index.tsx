@@ -123,7 +123,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
-            NYC real estate is rigged. Now you can win. 
+            The real estate game is rigged. Now you can win. 
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">

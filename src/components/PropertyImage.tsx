@@ -8,17 +8,12 @@ interface PropertyImageProps {
   className?: string;
 }
 
-// Global cache for image URLs to prevent duplicate requests
-const imageCache = new Map<string, string>();
-const pendingRequests = new Map<string, Promise<string>>();
-
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
-  // Process images with deduplication and lazy loading
+  // Process images with much more aggressive compression for thumbnails
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
@@ -27,18 +22,8 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       
       // Check if it's a Zillow image URL
       if (url.startsWith('https://photos.zillowstatic.com/')) {
-        // Create a cache key
-        const cacheKey = `${url}_250_25`;
-        
-        // Return cached URL if available
-        if (imageCache.has(cacheKey)) {
-          return imageCache.get(cacheKey)!;
-        }
-        
-        // Create optimized URL
-        const optimizedUrl = `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=250&quality=25`;
-        imageCache.set(cacheKey, optimizedUrl);
-        return optimizedUrl;
+        // Use very aggressive compression for thumbnails
+        return `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=250&quality=25`;
       }
       
       return url;
@@ -63,42 +48,35 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Only preload the first image immediately
+  // Ultra-aggressive preloading for instant display
   useEffect(() => {
-    if (processedImages.length > 0 && !loadedImages.has(0)) {
+    if (processedImages.length > 0) {
+      // Preload first image immediately with ultra-low quality
       const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, 0]));
-      };
-      img.src = processedImages[0];
-    }
-  }, [processedImages]);
-
-  // Lazy load images when user hovers or navigates
-  useEffect(() => {
-    if (isHovered && processedImages.length > 1) {
-      // Load the next image when hovering
-      const nextIndex = (currentImageIndex + 1) % processedImages.length;
-      if (!loadedImages.has(nextIndex)) {
-        const img = new Image();
-        img.onload = () => {
-          setLoadedImages(prev => new Set([...prev, nextIndex]));
-        };
-        img.src = processedImages[nextIndex];
+      const ultraLowQualityUrl = processedImages[0].replace('quality=25', 'quality=15').replace('width=250', 'width=200');
+      img.src = ultraLowQualityUrl;
+      
+      // Preload next 2 images with tiny delay
+      if (processedImages.length > 1) {
+        setTimeout(() => {
+          for (let i = 1; i < Math.min(3, processedImages.length); i++) {
+            const img = new Image();
+            img.src = processedImages[i];
+          }
+        }, 10);
+      }
+      
+      // Preload remaining images with longer delay
+      if (processedImages.length > 3) {
+        setTimeout(() => {
+          for (let i = 3; i < processedImages.length; i++) {
+            const img = new Image();
+            img.src = processedImages[i];
+          }
+        }, 100);
       }
     }
-  }, [isHovered, currentImageIndex, processedImages, loadedImages]);
-
-  // Load current image if not already loaded
-  useEffect(() => {
-    if (!loadedImages.has(currentImageIndex) && processedImages[currentImageIndex]) {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, currentImageIndex]));
-      };
-      img.src = processedImages[currentImageIndex];
-    }
-  }, [currentImageIndex, processedImages, loadedImages]);
+  }, [processedImages]);
 
   // Navigation functions with event.stopPropagation()
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -128,16 +106,13 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     // Mark this image index as having an error
     setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
     
-    // If optimized proxy failed, try original URL with exponential backoff
+    // If optimized proxy failed, try original URL
     if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
       try {
         const urlParams = new URLSearchParams(currentSrc.split('?')[1]);
         const originalUrl = decodeURIComponent(urlParams.get('url') || '');
         if (originalUrl) {
-          // Add delay before fallback to reduce load
-          setTimeout(() => {
-            img.src = originalUrl;
-          }, Math.random() * 1000 + 500); // Random delay between 500-1500ms
+          img.src = originalUrl;
         }
       } catch (error) {
         console.error('Error parsing proxy URL:', error);
@@ -160,7 +135,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         alt={address}
         className="w-full h-full object-cover transition-opacity duration-100"
         onError={handleImageError}
-        loading="lazy"
+        loading="eager"
         decoding="async"
         style={{ 
           willChange: 'opacity',
