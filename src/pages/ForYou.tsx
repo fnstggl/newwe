@@ -518,7 +518,7 @@ useEffect(() => {
         }
       } else {
         toast({
-          title: "Property Saved ❤️",
+          title: "Property Saved",
           description: "Added to your saved properties!",
         });
         // Don't call handleSwipeRight here as it will be called by the button click
