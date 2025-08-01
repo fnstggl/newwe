@@ -274,7 +274,7 @@ useEffect(() => {
     const masterTimer = setTimeout(() => {
       setIsLoading(false);
       setIsRevealing(true);
-    }, 7500);
+    }, 8000);
     
     return () => clearTimeout(masterTimer);
   }
