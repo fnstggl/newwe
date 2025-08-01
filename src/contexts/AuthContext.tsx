@@ -1,340 +1,180 @@
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+
+interface UserProfile {
+  id: string;
+  name?: string;
+  email_address?: string;
+  property_type?: string;
+  bedrooms?: number;
+  max_budget?: number;
+  preferred_neighborhoods?: string[];
+  must_haves?: string[];
+  discount_threshold?: number;
+  search_duration?: string;
+  frustrations?: string[];
+  searching_for?: string;
+  onboarding_completed?: boolean;
+  hasCompletedOnboarding?: boolean;
+  subscription_plan?: string;
+  subscription_renewal?: string;
+  stripe_customer_id?: string;
+  manual_unlimited?: boolean;
+  is_canceled?: boolean;
+}
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
-  signUp: (email: string, password: string, name: string) => Promise<{ error: any; needsOnboarding?: boolean }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signInWithGoogle: () => Promise<{ error: any }>;
+  userProfile: UserProfile | null;
+  loading: boolean;
   signOut: () => Promise<void>;
-  userProfile: { 
-    name: string; 
-    hasCompletedOnboarding?: boolean;
-    onboarding_completed?: boolean;
-    subscription_plan?: string;
-    subscription_renewal?: string;
-    subscription_end?: string;
-    is_canceled?: boolean;
-    search_duration?: string;
-    frustrations?: string[];
-    searching_for?: string;
-    property_type?: string;
-    bedrooms?: number;
-    max_budget?: number;
-    preferred_neighborhoods?: string[];
-    must_haves?: string[];
-    discount_threshold?: number;
-  } | null;
-  updateOnboardingStatus: (completed: boolean) => Promise<void>;
-  forceRefreshProfile: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [userProfile, setUserProfile] = useState<{ 
-    name: string; 
-    hasCompletedOnboarding?: boolean;
-    onboarding_completed?: boolean;
-    subscription_plan?: string;
-    subscription_renewal?: string;
-    subscription_end?: string;
-    is_canceled?: boolean;
-    search_duration?: string;
-    frustrations?: string[];
-    searching_for?: string;
-    property_type?: string;
-    bedrooms?: number;
-    max_budget?: number;
-    preferred_neighborhoods?: string[];
-    must_haves?: string[];
-    discount_threshold?: number;
-  } | null>(null);
-  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
-  
-  // Track if this is an actual login vs tab switch
-  const isInitialLoadRef = useRef(true);
-  const hasEverFetchedProfileRef = useRef(false);
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-  // Get cached subscription state from localStorage
-  const getCachedSubscriptionState = (userId: string) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserProfile = async (userId: string) => {
     try {
-      const cached = localStorage.getItem(`subscription_state_${userId}`);
-      return cached ? JSON.parse(cached) : null;
-    } catch {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+          id,
+          name, 
+          email_address,
+          property_type,
+          bedrooms,
+          max_budget,
+          preferred_neighborhoods,
+          must_haves,
+          discount_threshold,
+          search_duration,
+          frustrations,
+          searching_for,
+          subscription_plan,
+          subscription_renewal,
+          stripe_customer_id,
+          manual_unlimited,
+          is_canceled,
+          onboarding_completed
+        `)
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
       return null;
     }
   };
 
-  // Cache subscription state to localStorage
-  const cacheSubscriptionState = (userId: string, subscriptionData: any) => {
-    try {
-      localStorage.setItem(`subscription_state_${userId}`, JSON.stringify(subscriptionData));
-    } catch {
-      // Ignore localStorage errors
-    }
-  };
+  const refreshProfile = async () => {
+    if (!user) return;
+    
+    const profile = await fetchUserProfile(user.id);
+    if (profile) {
+      // Check localStorage for onboarding completion
+      const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding') === 'true';
+      
+      // Determine subscription info
+      let subscriptionInfo = {
+        subscription_plan: profile.subscription_plan || 'free',
+        subscription_renewal: profile.subscription_renewal || 'monthly',
+        stripe_customer_id: profile.stripe_customer_id,
+        manual_unlimited: profile.manual_unlimited || false,
+        is_canceled: profile.is_canceled || false
+      };
 
-  // Clear cached subscription state
-  const clearCachedSubscriptionState = (userId: string) => {
-    try {
-      localStorage.removeItem(`subscription_state_${userId}`);
-    } catch {
-      // Ignore localStorage errors
+      if (profile.manual_unlimited) {
+        subscriptionInfo.subscription_plan = 'unlimited';
+      }
+
+      const profileData: UserProfile = { 
+        ...profile,
+        hasCompletedOnboarding,
+        onboarding_completed: profile.onboarding_completed || hasCompletedOnboarding,
+        ...subscriptionInfo
+      };
+      
+      setUserProfile(profileData);
     }
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state change:', event, session?.user?.id);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Only fetch profile on actual login/signup or initial load - NOT on tab switches
-          if (event === 'SIGNED_IN' && !hasEverFetchedProfileRef.current) {
-            console.log('Actual login/signup detected, fetching profile');
-            fetchUserProfile(session.user.id);
-            hasEverFetchedProfileRef.current = true;
-          } else if (event === 'SIGNED_IN' && hasEverFetchedProfileRef.current) {
-            // This is a tab switch SIGNED_IN event - use cached state
-            console.log('Tab switch detected, using cached subscription state');
-            const cachedState = getCachedSubscriptionState(session.user.id);
-            if (cachedState) {
-              setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-            }
-          } else if (event === 'TOKEN_REFRESHED') {
-            // For token refresh, use cached state if available
-            const cachedState = getCachedSubscriptionState(session.user.id);
-            if (cachedState) {
-              console.log('Using cached subscription state for token refresh');
-              setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-            }
-          }
-        } else if (!session) {
-          setUserProfile(null);
-          hasEverFetchedProfileRef.current = false;
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.id);
-      setSession(session);
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
       
-      if (session?.user && isInitialLoadRef.current) {
-        // This is the initial load - fetch profile
-        fetchUserProfile(session.user.id);
-        hasEverFetchedProfileRef.current = true;
-        isInitialLoadRef.current = false;
-      } else if (session?.user) {
-        // Use cached state for non-initial loads
-        const cachedState = getCachedSubscriptionState(session.user.id);
-        if (cachedState) {
-          setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-        }
+      if (session?.user) {
+        await refreshProfile();
       }
+      setLoading(false);
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        await refreshProfile();
+      } else {
+        setUserProfile(null);
+      }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      console.log('Fetching user profile for:', userId);
-      
-      // Get cached state before making database call
-      const cachedState = getCachedSubscriptionState(userId);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          name, 
-          subscription_plan, 
-          subscription_renewal,
-          onboarding_completed
-        `)
-        .eq('id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        // On error, preserve existing cached state instead of defaulting to free
-        if (cachedState) {
-          console.log('Using cached subscription state due to database error');
-          setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-        }
-        return;
-      }
-      
-      console.log('Fetched profile data:', data);
-      
-      if (data) {
-        // Check if user has completed onboarding (for now, we'll use localStorage)
-        const hasCompletedOnboarding = localStorage.getItem(`onboarding_${userId}`) === 'completed';
-        
-        // Skip subscription check for staff and manual_unlimited plans
-        const isStaffOrManualUnlimited = data.subscription_plan === 'open_door_plan' || data.subscription_plan === 'staff';
-        
-        let subscriptionInfo = {
-          subscription_plan: data.subscription_plan || cachedState?.subscription_plan || userProfile?.subscription_plan,
-          subscription_renewal: data.subscription_renewal || cachedState?.subscription_renewal || userProfile?.subscription_renewal,
-          subscription_end: null,
-          is_canceled: false
-        };
-        
-        // Only check subscription status via edge function for regular unlimited plans
-        if (!isStaffOrManualUnlimited) {
-          const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription');
-          
-          if (!subscriptionError && subscriptionData) {
-            subscriptionInfo = {
-              subscription_plan: subscriptionData.subscription_tier || subscriptionInfo.subscription_plan,
-              subscription_renewal: subscriptionData.subscription_renewal || subscriptionInfo.subscription_renewal,
-              subscription_end: subscriptionData.subscription_end,
-              is_canceled: subscriptionData.is_canceled || false
-            };
-          }
-        }
-        
-        const profileData = { 
-          name: data.name || '',
-          hasCompletedOnboarding,
-          onboarding_completed: data.onboarding_completed || hasCompletedOnboarding,
-          ...subscriptionInfo
-        };
-        
-        // Cache the successful subscription state
-        if (subscriptionInfo.subscription_plan) {
-          cacheSubscriptionState(userId, subscriptionInfo);
-        }
-        
-        console.log('Setting user profile:', profileData);
-        setUserProfile(profileData);
-        setLastFetchTime(Date.now());
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      // On catch, preserve existing cached state
-      const cachedState = getCachedSubscriptionState(userId);
-      if (cachedState) {
-        console.log('Using cached subscription state due to fetch error');
-        setUserProfile(prev => prev ? { ...prev, ...cachedState } : cachedState);
-      }
-    }
-  };
-
-  const forceRefreshProfile = async () => {
-    if (!user?.id) return;
-    
-    console.log('Force refreshing profile for user:', user.id);
-    
-    // Clear the cached subscription state
-    clearCachedSubscriptionState(user.id);
-    
-    // Force fetch fresh profile data
-    await fetchUserProfile(user.id);
-  };
-
-  const updateOnboardingStatus = async (completed: boolean) => {
+  // Update refreshProfile to depend on user
+  useEffect(() => {
     if (user) {
-      localStorage.setItem(`onboarding_${user.id}`, completed ? 'completed' : 'pending');
-      setUserProfile(prev => prev ? { ...prev, hasCompletedOnboarding: completed, onboarding_completed: completed } : null);
+      refreshProfile();
     }
-  };
-
-  const signUp = async (email: string, password: string, name: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          name: name
-        }
-      }
-    });
-    
-    // If signup is successful, indicate that onboarding is needed
-    if (!error) {
-      return { error, needsOnboarding: true };
-    }
-    
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    // Reset the fetch tracking for actual login
-    hasEverFetchedProfileRef.current = false;
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    return { error };
-  };
-
-  const signInWithGoogle = async () => {
-    // Reset the fetch tracking for actual login
-    hasEverFetchedProfileRef.current = false;
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`
-      }
-    });
-    
-    return { error };
-  };
+  }, [user]);
 
   const signOut = async () => {
-    // Clear cached subscription state on sign out
-    if (user?.id) {
-      try {
-        localStorage.removeItem(`subscription_state_${user.id}`);
-      } catch {
-        // Ignore localStorage errors
-      }
-    }
-    hasEverFetchedProfileRef.current = false;
     await supabase.auth.signOut();
+    localStorage.removeItem('hasCompletedOnboarding');
+    setUser(null);
+    setUserProfile(null);
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
-    session,
-    signUp,
-    signIn,
-    signInWithGoogle,
-    signOut,
     userProfile,
-    updateOnboardingStatus,
-    forceRefreshProfile
+    loading,
+    signOut,
+    refreshProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

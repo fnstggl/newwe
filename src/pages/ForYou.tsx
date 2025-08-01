@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import SwipeablePropertyCard from '../components/SwipeablePropertyCard';
+import PropertyDetail from '../components/PropertyDetail';
 
 interface Property {
   id: string;
@@ -35,6 +36,7 @@ const ForYou = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -253,13 +255,29 @@ const ForYou = () => {
 
   const handlePropertyClick = () => {
     const property = properties[currentIndex];
-    if (!property) return;
+    if (property) {
+      setSelectedProperty(property);
+    }
+  };
 
-    // Navigate to the appropriate property detail page
-    if (property.property_type === 'rent') {
-      navigate(`/rent?property=${property.id}`);
+  const getTruncatedReasoning = (reasoning?: string) => {
+    if (!reasoning) return "This property shows strong market fundamentals with potential for appreciation.";
+    
+    // Clean up the reasoning text and truncate to about 100 characters
+    const cleaned = reasoning.replace(/['"]/g, '').trim();
+    if (cleaned.length <= 100) return cleaned;
+    
+    // Find the last complete sentence within 100 characters
+    const truncated = cleaned.substring(0, 100);
+    const lastPeriod = truncated.lastIndexOf('.');
+    const lastSpace = truncated.lastIndexOf(' ');
+    
+    if (lastPeriod > 50) {
+      return truncated.substring(0, lastPeriod + 1);
+    } else if (lastSpace > 50) {
+      return truncated.substring(0, lastSpace) + '...';
     } else {
-      navigate(`/buy?property=${property.id}`);
+      return truncated + '...';
     }
   };
 
@@ -283,42 +301,79 @@ const ForYou = () => {
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-black text-white font-inter flex justify-center items-center">
-        <div className="text-xl">No properties found matching your criteria.</div>
+      <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center p-4 space-y-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold">No More Deals</h1>
+          <p className="text-gray-400 max-w-md">
+            You've seen all available properties matching your criteria. Check back soon for new listings!
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center p-4">
-      {/* Header */}
-      <div className="w-full max-w-md text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">For You</h1>
-        <p className="text-gray-400">
-          Property {currentIndex + 1} of {properties.length}
-        </p>
-      </div>
+    <>
+      <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center p-4">
+        {/* Enhanced Header */}
+        <div className="w-full max-w-md text-center mb-6 space-y-2">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            For You
+          </h1>
+          <p className="text-sm text-gray-400 mb-1">
+            Curated deals matching your preferences
+          </p>
+          <p className="text-gray-500 text-sm">
+            Property {currentIndex + 1} of {properties.length}
+          </p>
+        </div>
 
-      {/* Swipeable Property Card */}
-      <SwipeablePropertyCard
-        property={property}
-        isRental={property.property_type === 'rent'}
-        onSwipeLeft={handleSwipeLeft}
-        onSwipeRight={handleSwipeRight}
-        onPropertyClick={handlePropertyClick}
-      />
+        {/* Swipeable Property Card */}
+        <div className="mb-6">
+          <SwipeablePropertyCard
+            property={property}
+            isRental={property.property_type === 'rent'}
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+            onPropertyClick={handlePropertyClick}
+          />
+        </div>
 
-      {/* Instructions */}
-      <div className="w-full max-w-md text-center mt-8 space-y-2">
-        <p className="text-gray-400 text-sm">
-          Drag left to discard • Drag right to save • Tap to view details
-        </p>
-        <div className="flex justify-between text-xs text-gray-500">
-          <span>← Discard</span>
-          <span>Save →</span>
+        {/* AI Analysis Bio */}
+        <div className="w-full max-w-md bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 mb-6 border border-gray-800">
+          <h3 className="text-sm font-semibold text-blue-400 mb-2">AI Analysis</h3>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            {getTruncatedReasoning(property.reasoning)}
+          </p>
+        </div>
+
+        {/* Enhanced Instructions */}
+        <div className="w-full max-w-md text-center space-y-3">
+          <div className="flex justify-between items-center text-sm">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <span className="text-gray-400">Drag left to discard</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-400">Drag right to save</span>
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500">
+            Tap property to view full details
+          </p>
         </div>
       </div>
-    </div>
+
+      {/* Property Detail Modal */}
+      {selectedProperty && (
+        <PropertyDetail
+          property={selectedProperty}
+          isRental={selectedProperty.property_type === 'rent'}
+          onClose={() => setSelectedProperty(null)}
+        />
+      )}
+    </>
   );
 };
 
