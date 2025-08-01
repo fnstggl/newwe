@@ -26,6 +26,7 @@ const SavedProperties = () => {
   const [savedProperties, setSavedProperties] = useState<SavedPropertyWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -40,6 +41,8 @@ const SavedProperties = () => {
       if (!user) return;
       
       setLoading(true);
+      setError(null);
+      
       try {
         // Get saved properties from user
         const { data: savedData, error: savedError } = await supabase
@@ -48,7 +51,13 @@ const SavedProperties = () => {
           .eq('user_id', user.id)
           .order('saved_at', { ascending: false });
 
-        if (savedError) throw savedError;
+        if (savedError) {
+          console.error('Error fetching saved properties:', savedError);
+          setError('Failed to load saved properties');
+          setSavedProperties([]);
+          setLoading(false);
+          return;
+        }
 
         if (!savedData || savedData.length === 0) {
           setSavedProperties([]);
@@ -65,36 +74,59 @@ const SavedProperties = () => {
           .filter(p => p.property_type === 'rental')
           .map(p => p.property_id);
 
-        // Fetch property details
-        const salesPromise = salesIds.length > 0 
-          ? supabase
+        // Fetch property details from all relevant tables
+        const promises = [];
+
+        // Sales properties
+        if (salesIds.length > 0) {
+          promises.push(
+            supabase
               .from('undervalued_sales')
               .select('*')
               .in('id', salesIds)
               .eq('status', 'active')
-          : Promise.resolve({ data: [], error: null });
+          );
+        } else {
+          promises.push(Promise.resolve({ data: [], error: null }));
+        }
 
-        const rentalsPromise = rentalIds.length > 0
-          ? supabase
+        // Regular rental properties
+        if (rentalIds.length > 0) {
+          promises.push(
+            supabase
               .from('undervalued_rentals')
               .select('*')
               .in('id', rentalIds)
               .eq('status', 'active')
-          : Promise.resolve({ data: [], error: null });
+          );
+        } else {
+          promises.push(Promise.resolve({ data: [], error: null }));
+        }
 
-        const stabilizedRentalsPromise = rentalIds.length > 0
-          ? supabase
+        // Rent stabilized properties
+        if (rentalIds.length > 0) {
+          promises.push(
+            supabase
               .from('undervalued_rent_stabilized')
               .select('*')
               .in('id', rentalIds)
               .eq('display_status', 'active')
-          : Promise.resolve({ data: [], error: null });
+          );
+        } else {
+          promises.push(Promise.resolve({ data: [], error: null }));
+        }
 
-        const [salesResult, rentalsResult, stabilizedRentalsResult] = await Promise.all([salesPromise, rentalsPromise, stabilizedRentalsPromise]);
+        const [salesResult, rentalsResult, stabilizedRentalsResult] = await Promise.all(promises);
 
-        if (salesResult.error) throw salesResult.error;
-        if (rentalsResult.error) throw rentalsResult.error;
-        if (stabilizedRentalsResult.error) throw stabilizedRentalsResult.error;
+        // Handle any errors from the queries
+        if (salesResult.error || rentalsResult.error || stabilizedRentalsResult.error) {
+          console.error('Error fetching property details:', {
+            salesError: salesResult.error,
+            rentalsError: rentalsResult.error,
+            stabilizedError: stabilizedRentalsResult.error
+          });
+          // Continue with partial data rather than failing completely
+        }
 
         // Combine the results
         const combinedProperties: SavedPropertyWithDetails[] = savedData.map(savedProp => {
@@ -122,6 +154,8 @@ const SavedProperties = () => {
 
       } catch (error) {
         console.error('Error fetching saved properties:', error);
+        setError('Failed to load saved properties');
+        setSavedProperties([]);
       } finally {
         setLoading(false);
       }
@@ -174,6 +208,27 @@ const SavedProperties = () => {
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center">
             <div className="text-lg tracking-tight">Loading your saved properties...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white font-inter">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
+              Find the best deals you've saved. Actually.
+            </h1>
+            <div className="text-red-400 mb-8">{error}</div>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-white text-black px-8 py-3 rounded-full font-semibold tracking-tight hover:bg-gray-100 hover:scale-105 transition-all duration-300"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
