@@ -88,14 +88,18 @@ const ForYou = () => {
                                typeof rental.images === 'string' ? JSON.parse(rental.images) : 
                                [];
           
+          const propertyVideos = Array.isArray(rental.videos) ? rental.videos : [];
+          const propertyFloorplans = Array.isArray(rental.floorplans) ? rental.floorplans : [];
+          const propertyAmenities = Array.isArray(rental.amenities) ? rental.amenities : [];
+          
           allProperties.push({
             ...rental,
             images: propertyImages,
             property_type: 'rent',
             table_source: 'undervalued_rentals',
-            videos: rental.videos || [],
-            floorplans: rental.floorplans || [],
-            amenities: rental.amenities || [],
+            videos: propertyVideos,
+            floorplans: propertyFloorplans,
+            amenities: propertyAmenities,
             no_fee: rental.no_fee || false
           });
         });
@@ -115,15 +119,17 @@ const ForYou = () => {
                                typeof property.images === 'string' ? JSON.parse(property.images) : 
                                [];
           
+          const propertyAmenities = Array.isArray(property.amenities) ? property.amenities : [];
+          
           allProperties.push({
             ...property,
             images: propertyImages,
             property_type: 'rent',
             table_source: 'undervalued_rent_stabilized',
             discount_percent: property.undervaluation_percent || 0,
-            videos: property.videos || [],
-            floorplans: property.floorplans || [],
-            amenities: property.amenities || [],
+            videos: [],
+            floorplans: [],
+            amenities: propertyAmenities,
             no_fee: false
           });
         });
@@ -143,14 +149,18 @@ const ForYou = () => {
                                typeof sale.images === 'string' ? JSON.parse(sale.images) : 
                                [];
           
+          const propertyVideos = Array.isArray(sale.videos) ? sale.videos : [];
+          const propertyFloorplans = Array.isArray(sale.floorplans) ? sale.floorplans : [];
+          const propertyAmenities = Array.isArray(sale.amenities) ? sale.amenities : [];
+          
           allProperties.push({
             ...sale,
             images: propertyImages,
             property_type: 'buy',
             table_source: 'undervalued_sales',
-            videos: sale.videos || [],
-            floorplans: sale.floorplans || [],
-            amenities: sale.amenities || [],
+            videos: propertyVideos,
+            floorplans: propertyFloorplans,
+            amenities: propertyAmenities,
             no_fee: false
           });
         });
