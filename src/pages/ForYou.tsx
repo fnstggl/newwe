@@ -104,7 +104,7 @@ const LoadingSequence = () => {
     if (currentScanIndex < scanningTexts.length - 1) {
       timer = setTimeout(() => {
         setCurrentScanIndex(currentScanIndex + 1);
-      }, 400);
+      }, 200);
     } else {
       // Scanning done, move to found
       timer = setTimeout(() => setCurrentPhase('found'), 300);
@@ -274,7 +274,7 @@ useEffect(() => {
     const masterTimer = setTimeout(() => {
       setIsLoading(false);
       setIsRevealing(true);
-    }, 4000);
+    }, 6000);
     
     return () => clearTimeout(masterTimer);
   }
