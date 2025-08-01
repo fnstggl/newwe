@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +18,7 @@ interface Property {
   borough?: string;
   listing_url?: string;
   discount_percent: number;
+  undervaluation_percent?: number;
   potential_monthly_savings?: number;
   potential_savings?: number;
   description?: string;
@@ -45,38 +47,22 @@ const ForYou = () => {
     const allProperties: Property[] = [];
 
     try {
-      // Check if user completed onboarding
+      // Check if user completed onboarding (either regular or pre-onboarding)
       if (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding) {
         setIsLoading(false);
         return;
       }
 
-      // Build filters based on user preferences
-      let bedroomFilter = '';
-      if (userProfile.bedrooms !== undefined && userProfile.bedrooms !== null) {
-        bedroomFilter = userProfile.bedrooms === 0 ? '>= 0' : `= ${userProfile.bedrooms}`;
-      }
-
-      let budgetFilter = '';
-      if (userProfile.max_budget && userProfile.property_type === 'rent') {
-        budgetFilter = `<= ${userProfile.max_budget}`;
-      } else if (userProfile.max_budget && userProfile.property_type === 'buy') {
-        budgetFilter = `<= ${userProfile.max_budget}`;
-      }
-
-      let discountFilter = '';
-      if (userProfile.discount_threshold) {
-        discountFilter = `>= ${userProfile.discount_threshold}`;
-      }
-
       // Fetch from undervalued_rentals if looking to rent
       if (!userProfile.property_type || userProfile.property_type === 'rent') {
-        const { data: rentals, error: rentalsError } = await supabase
+        let query = supabase
           .from('undervalued_rentals')
           .select('*')
           .eq('status', 'active')
           .order('discount_percent', { ascending: false })
           .limit(50);
+
+        const { data: rentals, error: rentalsError } = await query;
 
         if (!rentalsError && rentals) {
           rentals.forEach(rental => {
@@ -94,12 +80,14 @@ const ForYou = () => {
         }
 
         // Also fetch from undervalued_rent_stabilized
-        const { data: stabilized, error: stabilizedError } = await supabase
+        let stabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
           .eq('display_status', 'active')
           .order('undervaluation_percent', { ascending: false })
           .limit(50);
+
+        const { data: stabilized, error: stabilizedError } = await stabilizedQuery;
 
         if (!stabilizedError && stabilized) {
           stabilized.forEach(property => {
@@ -111,7 +99,8 @@ const ForYou = () => {
               ...property,
               images: propertyImages,
               property_type: 'rent',
-              table_source: 'undervalued_rent_stabilized'
+              table_source: 'undervalued_rent_stabilized',
+              discount_percent: property.undervaluation_percent || 0
             });
           });
         }
@@ -119,12 +108,14 @@ const ForYou = () => {
 
       // Fetch from undervalued_sales if looking to buy
       if (!userProfile.property_type || userProfile.property_type === 'buy') {
-        const { data: sales, error: salesError } = await supabase
+        let query = supabase
           .from('undervalued_sales')
           .select('*')
           .eq('status', 'active')
           .order('discount_percent', { ascending: false })
           .limit(50);
+
+        const { data: sales, error: salesError } = await query;
 
         if (!salesError && sales) {
           sales.forEach(sale => {
@@ -162,14 +153,37 @@ const ForYou = () => {
         });
       }
 
-      // Filter by neighborhoods
+      // Filter by neighborhoods - fixed logic
       if (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) {
-        filteredProperties = filteredProperties.filter(p => 
-          userProfile.preferred_neighborhoods!.some(neighborhood => 
-            p.neighborhood?.toLowerCase().includes(neighborhood.toLowerCase()) ||
-            p.borough?.toLowerCase().includes(neighborhood.toLowerCase())
-          )
-        );
+        const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+        const selectedBoroughs = userProfile.preferred_neighborhoods.filter(n => boroughs.includes(n));
+        const selectedNeighborhoods = userProfile.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+        
+        filteredProperties = filteredProperties.filter(p => {
+          // If "Anywhere with a train" is selected, show all properties
+          if (userProfile.preferred_neighborhoods!.includes('Anywhere with a train')) {
+            return true;
+          }
+          
+          // Check if property matches selected boroughs
+          if (selectedBoroughs.length > 0 && p.borough) {
+            if (selectedBoroughs.includes(p.borough)) return true;
+          }
+          
+          // Check if property matches selected neighborhoods
+          if (selectedNeighborhoods.length > 0 && p.neighborhood) {
+            if (selectedNeighborhoods.some(neighborhood => 
+              p.neighborhood?.toLowerCase().includes(neighborhood.toLowerCase())
+            )) return true;
+          }
+          
+          // If no boroughs or neighborhoods selected, but other areas selected, exclude
+          if (selectedBoroughs.length === 0 && selectedNeighborhoods.length === 0) {
+            return true;
+          }
+          
+          return false;
+        });
       }
 
       // Filter by discount threshold
@@ -177,6 +191,19 @@ const ForYou = () => {
         filteredProperties = filteredProperties.filter(p => 
           p.discount_percent >= userProfile.discount_threshold!
         );
+      }
+
+      // Filter by must-haves for rentals
+      if (userProfile.property_type === 'rent' && userProfile.must_haves && userProfile.must_haves.length > 0) {
+        filteredProperties = filteredProperties.filter(p => {
+          if (userProfile.must_haves!.includes('No broker fee') && p.table_source === 'undervalued_rentals') {
+            return (p as any).no_fee === true;
+          }
+          if (userProfile.must_haves!.includes('Rent-stabilized')) {
+            return p.table_source === 'undervalued_rent_stabilized';
+          }
+          return true;
+        });
       }
 
       // Shuffle and set properties
@@ -203,7 +230,7 @@ const ForYou = () => {
         .insert([{
           user_id: user.id,
           property_id: property.id,
-          property_type: property.property_type,
+          property_type: property.property_type || 'rent',
           table_source: property.table_source
         }]);
 
@@ -237,42 +264,6 @@ const ForYou = () => {
       toast({
         title: "No More Properties",
         description: "You've reached the end of available properties.",
-      });
-    }
-  };
-
-  const handleChatSubmit = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('property_chats')
-        .insert([{
-          user_id: user.id,
-          property_id: properties[currentIndex].id,
-          message: chatMessage,
-        }]);
-
-      if (error) {
-        console.error('Error submitting chat message:', error);
-        toast({
-          title: "Error",
-          description: "Failed to send your message. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Message Sent",
-          description: "Your message has been sent.",
-        });
-        setChatMessage(''); // Clear the input field
-      }
-    } catch (error) {
-      console.error('Error submitting chat message:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred while sending your message. Please try again.",
-        variant: "destructive",
       });
     }
   };
@@ -350,7 +341,7 @@ const ForYou = () => {
             onChange={(e) => setChatMessage(e.target.value)}
             className="w-full px-4 py-3 bg-transparent text-white focus:outline-none"
           />
-          <button onClick={handleChatSubmit} className="px-4 py-3 bg-blue-600 text-white hover:bg-blue-500 transition-colors">
+          <button className="px-4 py-3 bg-blue-600 text-white hover:bg-blue-500 transition-colors">
             <MessageCircle className="w-5 h-5" />
           </button>
         </div>

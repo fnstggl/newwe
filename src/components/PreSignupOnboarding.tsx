@@ -25,26 +25,12 @@ interface PreSignupOnboardingProps {
   onComplete: (data: OnboardingData) => void;
 }
 
-interface RealListing {
-  id: string;
-  address: string;
-  monthly_rent?: number;
-  price?: number;
-  bedrooms?: number;
-  neighborhood: string;
-  amenities: any[];
-  images: any[];
-  no_fee?: boolean;
-}
-
 const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
   const [scanningProgress, setScanningProgress] = useState(0);
   const [scanningStage, setScanningStage] = useState(0);
   const [matchedListings, setMatchedListings] = useState(0);
-  const [realListings, setRealListings] = useState<RealListing[]>([]);
-  const [showAuth, setShowAuth] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -89,37 +75,71 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     "In-unit laundry", "Doorman", "Gym", "Rooftop access"
   ];
 
-  // Get live counts for filters
+  // Get live counts for filters - Fixed logic
   const getLiveCount = async (filters: Partial<OnboardingData>): Promise<number> => {
     try {
       const propertyType = filters.property_type || onboardingData.property_type;
       
       if (propertyType === 'rent') {
-        let query = supabase
+        // Count from undervalued_rentals
+        let rentalQuery = supabase
           .from('undervalued_rentals')
           .select('id', { count: 'exact', head: true })
           .eq('status', 'active');
 
+        // Count from undervalued_rent_stabilized
+        let stabilizedQuery = supabase
+          .from('undervalued_rent_stabilized')
+          .select('id', { count: 'exact', head: true })
+          .eq('display_status', 'active');
+
+        // Apply filters to both queries
         if (filters.max_budget) {
-          query = query.lte('monthly_rent', filters.max_budget);
+          rentalQuery = rentalQuery.lte('monthly_rent', filters.max_budget);
+          stabilizedQuery = stabilizedQuery.lte('monthly_rent', filters.max_budget);
         }
         if (filters.bedrooms !== undefined) {
-          query = query.eq('bedrooms', filters.bedrooms);
+          rentalQuery = rentalQuery.eq('bedrooms', filters.bedrooms);
+          stabilizedQuery = stabilizedQuery.eq('bedrooms', filters.bedrooms);
         }
         if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
-          const specificNeighborhoods = filters.preferred_neighborhoods.filter(n => 
-            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
-          );
-          if (specificNeighborhoods.length > 0) {
-            query = query.in('neighborhood', specificNeighborhoods);
+          const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+          const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
+          const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          
+          if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
+            if (selectedBoroughs.length > 0) {
+              rentalQuery = rentalQuery.in('borough', selectedBoroughs);
+              stabilizedQuery = stabilizedQuery.in('borough', selectedBoroughs);
+            }
+            if (selectedNeighborhoods.length > 0) {
+              // For neighborhoods, we need to use ilike for partial matching
+              const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
+              rentalQuery = rentalQuery.or(neighborhoodConditions);
+              stabilizedQuery = stabilizedQuery.or(neighborhoodConditions);
+            }
           }
         }
         if (filters.discount_threshold) {
-          query = query.gte('discount_percent', filters.discount_threshold);
+          rentalQuery = rentalQuery.gte('discount_percent', filters.discount_threshold);
+          stabilizedQuery = stabilizedQuery.gte('undervaluation_percent', filters.discount_threshold);
+        }
+        if (filters.must_haves && filters.must_haves.includes('No broker fee')) {
+          rentalQuery = rentalQuery.eq('no_fee', true);
+        }
+        if (filters.must_haves && filters.must_haves.includes('Rent-stabilized')) {
+          // Only count stabilized rentals if this filter is selected
+          const { count: stabilizedCount } = await stabilizedQuery;
+          return stabilizedCount || 0;
         }
 
-        const { count } = await query;
-        return count || 0;
+        const [rentalResult, stabilizedResult] = await Promise.all([
+          rentalQuery,
+          stabilizedQuery
+        ]);
+
+        return (rentalResult.count || 0) + (stabilizedResult.count || 0);
+
       } else if (propertyType === 'buy') {
         let query = supabase
           .from('undervalued_sales')
@@ -133,11 +153,18 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           query = query.eq('bedrooms', filters.bedrooms);
         }
         if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
-          const specificNeighborhoods = filters.preferred_neighborhoods.filter(n => 
-            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
-          );
-          if (specificNeighborhoods.length > 0) {
-            query = query.in('neighborhood', specificNeighborhoods);
+          const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+          const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
+          const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          
+          if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
+            if (selectedBoroughs.length > 0) {
+              query = query.in('borough', selectedBoroughs);
+            }
+            if (selectedNeighborhoods.length > 0) {
+              const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
+              query = query.or(neighborhoodConditions);
+            }
           }
         }
         if (filters.discount_threshold) {
@@ -153,99 +180,6 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     return 0;
   };
 
-  const queryRealListings = async (data: OnboardingData) => {
-    try {
-      const propertyType = data.property_type || 'rent';
-      
-      if (propertyType === 'rent') {
-        let query = supabase
-          .from('undervalued_rentals')
-          .select('id, address, monthly_rent, bedrooms, neighborhood, amenities, images, no_fee')
-          .eq('status', 'active')
-          .order('discount_percent', { ascending: false });
-
-        if (data.max_budget) {
-          query = query.lte('monthly_rent', data.max_budget);
-        }
-        if (data.bedrooms !== undefined) {
-          query = query.eq('bedrooms', data.bedrooms);
-        }
-        if (data.preferred_neighborhoods && data.preferred_neighborhoods.length > 0) {
-          const specificNeighborhoods = data.preferred_neighborhoods.filter(n => 
-            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
-          );
-          if (specificNeighborhoods.length > 0) {
-            query = query.in('neighborhood', specificNeighborhoods);
-          }
-        }
-        if (data.discount_threshold) {
-          query = query.gte('discount_percent', data.discount_threshold);
-        }
-        if (data.must_haves && data.must_haves.includes('No broker fee')) {
-          query = query.eq('no_fee', true);
-        }
-
-        const { data: listings, error } = await query.limit(20);
-        if (error) {
-          console.error('Error querying rental listings:', error);
-          return [];
-        }
-
-        return (listings || []).map(listing => ({
-          ...listing,
-          images: Array.isArray(listing.images) ? listing.images : 
-                   typeof listing.images === 'string' ? JSON.parse(listing.images) : 
-                   [],
-          amenities: Array.isArray(listing.amenities) ? listing.amenities : []
-        }));
-
-      } else if (propertyType === 'buy') {
-        let query = supabase
-          .from('undervalued_sales')
-          .select('id, address, price, bedrooms, neighborhood, amenities, images')
-          .eq('status', 'active')
-          .order('discount_percent', { ascending: false });
-
-        if (data.max_budget) {
-          query = query.lte('price', data.max_budget);
-        }
-        if (data.bedrooms !== undefined) {
-          query = query.eq('bedrooms', data.bedrooms);
-        }
-        if (data.preferred_neighborhoods && data.preferred_neighborhoods.length > 0) {
-          const specificNeighborhoods = data.preferred_neighborhoods.filter(n => 
-            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
-          );
-          if (specificNeighborhoods.length > 0) {
-            query = query.in('neighborhood', specificNeighborhoods);
-          }
-        }
-        if (data.discount_threshold) {
-          query = query.gte('discount_percent', data.discount_threshold);
-        }
-
-        const { data: listings, error } = await query.limit(20);
-        if (error) {
-          console.error('Error querying sales listings:', error);
-          return [];
-        }
-
-        return (listings || []).map(listing => ({
-          ...listing,
-          images: Array.isArray(listing.images) ? listing.images : 
-                   typeof listing.images === 'string' ? JSON.parse(listing.images) : 
-                   [],
-          amenities: Array.isArray(listing.amenities) ? listing.amenities : []
-        }));
-      }
-
-      return [];
-    } catch (error) {
-      console.error('Error in queryRealListings:', error);
-      return [];
-    }
-  };
-
   useEffect(() => {
     if (currentStep === 7) {
       const interval = setInterval(() => {
@@ -257,9 +191,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           else if (newProgress <= 80) setScanningStage(3);
           else if (newProgress <= 100) {
             setScanningStage(4);
-            queryRealListings(onboardingData).then(listings => {
-              setRealListings(listings);
-              setMatchedListings(listings.length);
+            getLiveCount(onboardingData).then(count => {
+              setMatchedListings(count);
             });
           }
           
@@ -276,11 +209,11 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   }, [currentStep, onboardingData]);
 
   const updateData = (key: keyof OnboardingData, value: any) => {
-    setOnboardingData(prev => ({ ...prev, [key]: value }));
+    const newData = { ...onboardingData, [key]: value };
+    setOnboardingData(newData);
     
     // Update live count when relevant filters change
-    if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold'].includes(key)) {
-      const newData = { ...onboardingData, [key]: value };
+    if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
       getLiveCount(newData).then(count => {
         setLiveCounts(prev => ({ ...prev, [key]: count }));
       });
@@ -357,6 +290,12 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await saveOnboardingData(user.id);
+          }
+          
           navigate('/foryou');
         }
       } else {
@@ -405,6 +344,12 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           description: error.message,
           variant: "destructive",
         });
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await saveOnboardingData(user.id);
+        }
+        navigate('/foryou');
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
@@ -691,7 +636,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Must-haves</h3>
+                    <h3 className="text-lg font-medium">Must-haves {liveCounts.must_haves && `(${liveCounts.must_haves} listings)`}</h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
                         <TagButton
