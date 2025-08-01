@@ -107,9 +107,9 @@ const LoadingSequence = () => {
         if (currentScanIndex < scanningTexts.length - 1) {
           setCurrentScanIndex(currentScanIndex + 1);
         } else {
-          setCurrentPhase('found');
+          setTimeout(() => setCurrentPhase('found'), 800); // Add delay before "found" phase
         }
-      }, 600);
+      }, 700); // Slightly longer intervals
       return () => clearTimeout(timer);
     }
   }, [typewriterText, currentPhase, currentScanIndex]);
@@ -240,6 +240,7 @@ const ForYou = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isRevealing, setIsRevealing] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const { toast } = useToast();
@@ -262,13 +263,13 @@ const ForYou = () => {
     }
   }, [user, userProfile]);
 
-  // Add loading simulation and reveal animation
+  // Add loading simulation and reveal animation - Extended timing
   useEffect(() => {
     if (properties.length > 0) {
       const timeout = setTimeout(() => {
         setIsLoading(false);
-        setIsRevealing(true);
-      }, 1200);
+        setTimeout(() => setIsRevealing(true), 500);
+      }, 3500); // Extended from 1200 to 3500ms to allow full animation
       return () => clearTimeout(timeout);
     }
   }, [properties]);
@@ -486,11 +487,11 @@ const ForYou = () => {
     try {
       const { error } = await supabase
         .from('saved_properties')
-        .insert([{
+        .insert({
           user_id: user.id,
           property_id: property.id,
-          property_type: property.property_type || 'rent'
-        }]);
+          property_type: property.property_type === 'buy' ? 'sale' : 'rental'
+        });
 
       if (error) {
         // Check if it's a duplicate error
@@ -509,11 +510,11 @@ const ForYou = () => {
         }
       } else {
         toast({
-          title: "Property Saved",
-          description: "This property has been saved to your profile.",
+          title: "Property Saved ❤️",
+          description: "Added to your saved properties!",
         });
-        // Move to next property after saving
-        handleSkip();
+        // Move to next property after saving with animation
+        handleSwipeRight();
       }
     } catch (error) {
       console.error('Error saving property:', error);
@@ -525,13 +526,28 @@ const ForYou = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSwipeRight = () => {
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
-        setIsRevealing(true);
-      }, 200);
+        setTimeout(() => setIsRevealing(true), 100);
+      }, 400);
+    } else {
+      toast({
+        title: "No More Properties",
+        description: "You've reached the end of available properties.",
+      });
+    }
+  };
+
+  const handleSwipeLeft = () => {
+    if (currentIndex < properties.length - 1) {
+      setIsRevealing(false);
+      setTimeout(() => {
+        setCurrentIndex(currentIndex + 1);
+        setTimeout(() => setIsRevealing(true), 100);
+      }, 400);
     } else {
       toast({
         title: "No More Properties",
@@ -620,18 +636,49 @@ const ForYou = () => {
           </p>
         </motion.div>
 
-        {/* Property Card - Made thinner/longer */}
-        <div className="flex-1 flex items-center justify-center px-6">
+        {/* Property Card - Made thinner/longer with swipe animations */}
+        <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
           <AnimatePresence mode="wait">
             {isRevealing && (
               <motion.div
                 key={property.id}
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -30, scale: 1.05 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full max-w-lg mx-auto"
+                initial={{ 
+                  opacity: 0, 
+                  x: swipeDirection === 'left' ? -100 : swipeDirection === 'right' ? 100 : 0,
+                  y: 30, 
+                  scale: 0.95 
+                }}
+                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                exit={{ 
+                  opacity: 0, 
+                  x: swipeDirection === 'left' ? -300 : swipeDirection === 'right' ? 300 : 0,
+                  y: swipeDirection ? -20 : -30,
+                  scale: swipeDirection ? 1.05 : 1.05,
+                  rotate: swipeDirection === 'left' ? -5 : swipeDirection === 'right' ? 5 : 0
+                }}
+                transition={{ 
+                  duration: 0.6, 
+                  ease: "easeOut",
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30
+                }}
+                className="w-full max-w-lg mx-auto relative"
               >
+                {/* Glow effect based on swipe direction */}
+                {swipeDirection && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className={`absolute inset-0 rounded-3xl blur-xl ${
+                      swipeDirection === 'right' 
+                        ? 'bg-green-500/30 shadow-[0_0_50px_rgba(34,197,94,0.3)]' 
+                        : 'bg-red-500/30 shadow-[0_0_50px_rgba(239,68,68,0.3)]'
+                    } -z-10`}
+                  />
+                )}
+                
                 <div className="relative">
                   <PropertyCard
                     property={{
@@ -682,7 +729,10 @@ const ForYou = () => {
           className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 
-            onClick={() => handleSkip()} 
+            onClick={() => {
+              setSwipeDirection('left');
+              handleSwipeLeft();
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
@@ -692,7 +742,10 @@ const ForYou = () => {
           </motion.button>
           
           <motion.button 
-            onClick={() => handleSave(property)} 
+            onClick={() => {
+              setSwipeDirection('right');
+              handleSave(property);
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
