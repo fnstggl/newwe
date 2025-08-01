@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, X, MessageCircle, Sparkles, Home, Search, MapPin, CheckCircle } from 'lucide-react';
+import { Heart, X, MessageCircle, Sparkles, Home, Search, MapPin, CheckCircle, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
 import PropertyDetail from '@/components/PropertyDetail';
+import UpdateFiltersModal from '@/components/UpdateFiltersModal';
+import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Property {
@@ -88,16 +90,16 @@ const LoadingSequence = () => {
   const fullTypewriterText = "Finding your dream home...";
 
   useEffect(() => {
-    // Phase 1: Typewriter effect
+    // Phase 1: Typewriter effect - Extended to 4 seconds total
     if (currentPhase === 'typewriter') {
       const timer = setTimeout(() => {
         if (typewriterText.length < fullTypewriterText.length) {
           setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
         } else {
-          // Wait a bit then transition to scanning
-          setTimeout(() => setCurrentPhase('scanning'), 800);
+          // Wait longer to complete full 4 second animation
+          setTimeout(() => setCurrentPhase('scanning'), 1500);
         }
-      }, 80);
+      }, 120); // Slower typing for fuller animation
       return () => clearTimeout(timer);
     }
 
@@ -107,9 +109,9 @@ const LoadingSequence = () => {
         if (currentScanIndex < scanningTexts.length - 1) {
           setCurrentScanIndex(currentScanIndex + 1);
         } else {
-          setTimeout(() => setCurrentPhase('found'), 800); // Add delay before "found" phase
+          setTimeout(() => setCurrentPhase('found'), 600);
         }
-      }, 700); // Slightly longer intervals
+      }, 500); // Faster scanning to fit remaining time
       return () => clearTimeout(timer);
     }
   }, [typewriterText, currentPhase, currentScanIndex]);
@@ -235,7 +237,7 @@ const LoadingSequence = () => {
 };
 
 const ForYou = () => {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, forceRefreshProfile } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -244,6 +246,8 @@ const ForYou = () => {
   const [chatMessage, setChatMessage] = useState('');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [showLoadingTeaser, setShowLoadingTeaser] = useState(false);
+  const [showUpdateFilters, setShowUpdateFilters] = useState(false);
+  const [showEndScreen, setShowEndScreen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -269,8 +273,8 @@ const ForYou = () => {
     if (properties.length > 0) {
       const timeout = setTimeout(() => {
         setIsLoading(false);
-        setTimeout(() => setIsRevealing(true), 500);
-      }, 4500); // Extended from 3500 to 4500ms to allow full animation completion
+        setTimeout(() => setIsRevealing(true), 100); // Start showing property immediately after animation
+      }, 4000); // 4 seconds for full typewriter + scanning animation
       return () => clearTimeout(timeout);
     }
   }, [properties]);
@@ -486,11 +490,14 @@ const ForYou = () => {
     if (!user) return;
 
     try {
+      // Use the actual property ID from the database table, not the UUID
+      const propertyId = property.listing_id || property.id;
+      
       const { error } = await supabase
         .from('saved_properties')
         .insert({
           user_id: user.id,
-          property_id: property.id,
+          property_id: propertyId,
           property_type: property.property_type === 'buy' ? 'sale' : 'rental'
         });
 
@@ -545,10 +552,8 @@ const ForYou = () => {
         setTimeout(() => setIsRevealing(true), 50);
       }, 750); // 0.75s for loading teaser
     } else {
-      toast({
-        title: "No More Properties",
-        description: "You've reached the end of available properties.",
-      });
+      // Show end screen instead of toast
+      setShowEndScreen(true);
     }
   };
 
@@ -566,10 +571,8 @@ const ForYou = () => {
         setTimeout(() => setIsRevealing(true), 50);
       }, 750); // 0.75s for loading teaser
     } else {
-      toast({
-        title: "No More Properties",
-        description: "You've reached the end of available properties.",
-      });
+      // Show end screen instead of toast
+      setShowEndScreen(true);
     }
   };
 
@@ -602,15 +605,43 @@ const ForYou = () => {
     setIsLoading(true);
     setIsRevealing(false);
     setCurrentIndex(0);
+    setShowEndScreen(false);
     fetchPersonalizedProperties();
+  };
+
+  const handleFiltersUpdated = async () => {
+    // Refresh user profile to get updated filters
+    await forceRefreshProfile();
+    // Refresh properties with new filters
+    handleRefresh();
+  };
+
+  const handleRestartMatches = () => {
+    setCurrentIndex(0);
+    setShowEndScreen(false);
+    setIsRevealing(false);
+    setTimeout(() => setIsRevealing(true), 100);
   };
 
   if (isLoading) {
     return <LoadingSequence />;
   }
 
+  // Don't show the "Complete onboarding" message - let the loading animation play and then show properties
   if (!userProfile || (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding)) {
-    return <div className="flex justify-center items-center h-screen text-white">Complete onboarding to see personalized properties.</div>;
+    if (properties.length === 0) {
+      return <LoadingSequence />;
+    }
+  }
+
+  // Show end screen if no more properties and user has reached the end
+  if (showEndScreen) {
+    return (
+      <EndOfMatchesScreen 
+        onRestart={handleRestartMatches}
+        onUpdateFilters={() => setShowUpdateFilters(true)}
+      />
+    );
   }
 
   const property = properties[currentIndex];
@@ -641,6 +672,21 @@ const ForYou = () => {
   return (
     <>
       <div className="min-h-screen bg-black text-white font-inter flex flex-col relative overflow-hidden">
+        {/* Update Filters Button - Top Left */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute top-8 left-6 z-10"
+        >
+          <button
+            onClick={() => setShowUpdateFilters(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full hover:bg-gray-700/80 transition-colors"
+          >
+            <Settings className="w-4 h-4 text-gray-300" />
+            <span className="text-sm text-gray-300">Update Dream Home filters</span>
+          </button>
+        </motion.div>
+
         {/* Personalized Header */}
         <motion.div 
           key={currentHeaderIndex}
@@ -696,7 +742,7 @@ const ForYou = () => {
                 exit={{ 
                   opacity: 0, 
                   x: swipeDirection === 'left' ? -400 : swipeDirection === 'right' ? 400 : 0,
-                  y: swipeDirection ? -10 : -30,
+                  y: swipeDirection === 'left' ? -10 : swipeDirection === 'right' ? -10 : -30,
                   scale: 0.98
                 }}
                 transition={{ 
@@ -822,6 +868,13 @@ const ForYou = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Update Filters Modal */}
+      <UpdateFiltersModal
+        isOpen={showUpdateFilters}
+        onClose={() => setShowUpdateFilters(false)}
+        onFiltersUpdated={handleFiltersUpdated}
+      />
     </>
   );
 };
