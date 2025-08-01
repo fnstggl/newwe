@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,6 +34,23 @@ interface Property {
   price_per_sqft?: number;
   reasoning?: string;
   isRentStabilized?: boolean;
+  // Add missing fields for PropertyDetail component
+  videos?: any[];
+  floorplans?: any[];
+  amenities?: string[];
+  no_fee?: boolean;
+  days_on_market?: number;
+  built_in?: number;
+  listing_id?: string;
+  status?: string;
+  display_status?: string;
+  annual_savings?: number;
+  monthly_hoa?: number;
+  monthly_tax?: number;
+  undervaluation_analysis?: any;
+  rent_stabilization_analysis?: any;
+  rent_stabilized_confidence?: number;
+  potential_annual_savings?: number;
 }
 
 const ForYou = () => {
@@ -115,7 +133,10 @@ const ForYou = () => {
               ...rental,
               images: propertyImages,
               property_type: 'rent',
-              table_source: 'undervalued_rentals'
+              table_source: 'undervalued_rentals',
+              videos: rental.videos || [],
+              floorplans: rental.floorplans || [],
+              amenities: rental.amenities || []
             });
           });
         }
@@ -142,7 +163,10 @@ const ForYou = () => {
               property_type: 'rent',
               table_source: 'undervalued_rent_stabilized',
               discount_percent: property.undervaluation_percent || 0,
-              isRentStabilized: true
+              isRentStabilized: true,
+              videos: property.videos || [],
+              floorplans: property.floorplans || [],
+              amenities: property.amenities || []
             });
           });
         }
@@ -169,7 +193,10 @@ const ForYou = () => {
               ...sale,
               images: propertyImages,
               property_type: 'buy',
-              table_source: 'undervalued_sales'
+              table_source: 'undervalued_sales',
+              videos: sale.videos || [],
+              floorplans: sale.floorplans || [],
+              amenities: sale.amenities || []
             });
           });
         }
@@ -455,12 +482,12 @@ const ForYou = () => {
                     onClick={() => handlePropertyClick(property)}
                   />
                   
-                  {/* Why We Picked This */}
+                  {/* Why We Picked This - Moved further down to avoid overlap */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
+                    className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
                       <span>💡</span>
@@ -473,12 +500,12 @@ const ForYou = () => {
           </AnimatePresence>
         </div>
 
-        {/* Swipe Actions with Subtle Animations */}
+        {/* Swipe Actions with Subtle Animations - Moved down to avoid overlap */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="flex justify-center space-x-8 pb-8"
+          className="flex justify-center space-x-8 pb-8 mt-8"
         >
           <motion.button 
             onClick={() => handleSkip()} 
@@ -537,7 +564,7 @@ const ForYou = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <PropertyDetail
-                property={selectedProperty}
+                property={selectedProperty as any}
                 isRental={selectedProperty.property_type === 'rent'}
                 onClose={closePropertyDetail}
               />
