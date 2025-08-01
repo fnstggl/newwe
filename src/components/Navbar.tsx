@@ -163,7 +163,7 @@ const Navbar = () => {
                 }
               }}
             >
-              Manifesto
+              Mission
             </Link>
           </div>
 

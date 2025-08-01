@@ -521,7 +521,7 @@ const ForYou = () => {
             onClick={() => handleSave(property)} 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 rounded-full bg-blue-600/80 backdrop-blur-sm hover:bg-blue-500/80 transition-colors border border-blue-400/50 flex items-center space-x-2"
+            className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
           >
             <Heart className="w-6 h-6 text-green-400" />
             <span className="text-green-300">Save this one</span>
