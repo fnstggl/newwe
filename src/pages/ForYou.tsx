@@ -89,34 +89,32 @@ const LoadingSequence = () => {
   const fullTypewriterText = "Finding your dream home...";
 
   useEffect(() => {
-  // Phase 1: Typewriter effect - Takes 2 seconds
+  let timer: NodeJS.Timeout;
+
   if (currentPhase === 'typewriter') {
     if (typewriterText.length < fullTypewriterText.length) {
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
-      }, 120); // Typing speed
-      return () => clearTimeout(timer);
+      }, 120);
     } else {
-      // After typewriter completes, wait 0.5s then move to scanning
-      const timer = setTimeout(() => setCurrentPhase('scanning'), 500);
-      return () => clearTimeout(timer);
+      // Typewriter done, move to scanning after brief pause
+      timer = setTimeout(() => setCurrentPhase('scanning'), 500);
+    }
+  } else if (currentPhase === 'scanning') {
+    if (currentScanIndex < scanningTexts.length - 1) {
+      timer = setTimeout(() => {
+        setCurrentScanIndex(currentScanIndex + 1);
+      }, 400);
+    } else {
+      // Scanning done, move to found
+      timer = setTimeout(() => setCurrentPhase('found'), 300);
     }
   }
 
-  // Phase 2: Scanning feed - Takes remaining 1.5 seconds
-  if (currentPhase === 'scanning') {
-    if (currentScanIndex < scanningTexts.length - 1) {
-      const timer = setTimeout(() => {
-        setCurrentScanIndex(currentScanIndex + 1);
-      }, 300); // 300ms between each scan item
-      return () => clearTimeout(timer);
-    } else {
-      // After all scanning items, wait 0.5s then move to found
-      const timer = setTimeout(() => setCurrentPhase('found'), 500);
-      return () => clearTimeout(timer);
-    }
-  }
-}, [typewriterText, currentPhase, currentScanIndex, fullTypewriterText, scanningTexts]);
+  return () => {
+    if (timer) clearTimeout(timer);
+  };
+}, [typewriterText.length, currentPhase, currentScanIndex]);
 
   return (
     <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8">
@@ -270,15 +268,15 @@ const ForYou = () => {
     }
   }, [user, userProfile]);
 
-  // Set exact 4 second timing and immediate property reveal
+  // Single master timer for the entire loading sequence
 useEffect(() => {
   if (properties.length > 0) {
-    const timeout = setTimeout(() => {
+    const masterTimer = setTimeout(() => {
       setIsLoading(false);
-      // Start revealing property immediately after loading animation ends
-      setTimeout(() => setIsRevealing(true), 50);
-    }, 4000); // Exactly 4 seconds for full animation
-    return () => clearTimeout(timeout);
+      setIsRevealing(true);
+    }, 4000);
+    
+    return () => clearTimeout(masterTimer);
   }
 }, [properties]);
 
