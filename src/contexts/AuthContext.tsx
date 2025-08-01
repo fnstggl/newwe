@@ -168,7 +168,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name, 
           subscription_plan, 
           subscription_renewal,
-          onboarding_completed
+          property_type,
+          bedrooms,
+          max_budget,
+          preferred_neighborhoods,
+          must_haves,
+          discount_threshold,
+          search_duration,
+          frustrations,
+          searching_for
         `)
         .eq('id', userId)
         .single();
@@ -216,7 +224,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profileData = { 
           name: data.name || '',
           hasCompletedOnboarding,
-          onboarding_completed: data.onboarding_completed || hasCompletedOnboarding,
+          onboarding_completed: hasCompletedOnboarding, // Set this based on localStorage for now
+          search_duration: data.search_duration,
+          frustrations: data.frustrations,
+          searching_for: data.searching_for,
+          property_type: data.property_type,
+          bedrooms: data.bedrooms,
+          max_budget: data.max_budget,
+          preferred_neighborhoods: data.preferred_neighborhoods,
+          must_haves: data.must_haves,
+          discount_threshold: data.discount_threshold,
           ...subscriptionInfo
         };
         
