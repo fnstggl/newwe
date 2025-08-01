@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -90,28 +89,28 @@ const LoadingSequence = () => {
   const fullTypewriterText = "Finding your dream home...";
 
   useEffect(() => {
-    // Phase 1: Typewriter effect - Extended to 4 seconds total
+    // Phase 1: Typewriter effect - Full 4 seconds
     if (currentPhase === 'typewriter') {
       const timer = setTimeout(() => {
         if (typewriterText.length < fullTypewriterText.length) {
           setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
         } else {
-          // Wait longer to complete full 4 second animation
-          setTimeout(() => setCurrentPhase('scanning'), 1500);
+          // Wait to complete full 4 second typewriter animation
+          setTimeout(() => setCurrentPhase('scanning'), 2000); // Give more time for full typewriter
         }
-      }, 120); // Slower typing for fuller animation
+      }, 80); // Slower typing for better visibility
       return () => clearTimeout(timer);
     }
 
-    // Phase 2: Scanning feed
+    // Phase 2: Scanning feed - Faster to fit in remaining time
     if (currentPhase === 'scanning') {
       const timer = setTimeout(() => {
         if (currentScanIndex < scanningTexts.length - 1) {
           setCurrentScanIndex(currentScanIndex + 1);
         } else {
-          setTimeout(() => setCurrentPhase('found'), 600);
+          setTimeout(() => setCurrentPhase('found'), 300); // Quicker transition
         }
-      }, 500); // Faster scanning to fit remaining time
+      }, 300); // Much faster scanning
       return () => clearTimeout(timer);
     }
   }, [typewriterText, currentPhase, currentScanIndex]);
@@ -268,13 +267,14 @@ const ForYou = () => {
     }
   }, [user, userProfile]);
 
-  // Add loading simulation and reveal animation - Extended timing for full animation
+  // Set exact 4 second timing and immediate property reveal
   useEffect(() => {
     if (properties.length > 0) {
       const timeout = setTimeout(() => {
         setIsLoading(false);
-        setTimeout(() => setIsRevealing(true), 100); // Start showing property immediately after animation
-      }, 4000); // 4 seconds for full typewriter + scanning animation
+        // Start revealing property immediately after loading animation ends
+        setIsRevealing(true);
+      }, 4000); // Exactly 4 seconds for full animation
       return () => clearTimeout(timeout);
     }
   }, [properties]);
@@ -549,7 +549,7 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 750); // 0.75s for loading teaser
+      }, 500); // Reduced from 750ms to 500ms for faster transitions
     } else {
       // Show end screen instead of toast
       setShowEndScreen(true);
@@ -568,7 +568,7 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 750); // 0.75s for loading teaser
+      }, 500); // Reduced from 750ms to 500ms for faster transitions
     } else {
       // Show end screen instead of toast
       setShowEndScreen(true);
@@ -745,7 +745,7 @@ const ForYou = () => {
                   scale: 0.98
                 }}
                 transition={{ 
-                  duration: 0.35, 
+                  duration: 0.25, // Reduced from 0.35 for faster card transitions
                   ease: "easeInOut"
                 }}
                 className="w-full max-w-lg mx-auto relative"
@@ -792,7 +792,7 @@ const ForYou = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
+                    transition={{ delay: 0.5 }} // Reduced delay from 0.8 to 0.5
                     className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
@@ -810,7 +810,7 @@ const ForYou = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.7 }} // Reduced delay from 1 to 0.7
           className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 
