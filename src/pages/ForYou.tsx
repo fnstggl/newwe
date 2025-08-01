@@ -243,6 +243,7 @@ const ForYou = () => {
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [showLoadingTeaser, setShowLoadingTeaser] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -263,13 +264,13 @@ const ForYou = () => {
     }
   }, [user, userProfile]);
 
-  // Add loading simulation and reveal animation - Extended timing
+  // Add loading simulation and reveal animation - Extended timing for full animation
   useEffect(() => {
     if (properties.length > 0) {
       const timeout = setTimeout(() => {
         setIsLoading(false);
         setTimeout(() => setIsRevealing(true), 500);
-      }, 3500); // Extended from 1200 to 3500ms to allow full animation
+      }, 4500); // Extended from 3500 to 4500ms to allow full animation completion
       return () => clearTimeout(timeout);
     }
   }, [properties]);
@@ -535,11 +536,14 @@ const ForYou = () => {
     
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
+      setShowLoadingTeaser(true);
+      
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
         setSwipeDirection(null);
+        setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 350);
+      }, 750); // 0.75s for loading teaser
     } else {
       toast({
         title: "No More Properties",
@@ -553,11 +557,14 @@ const ForYou = () => {
     
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
+      setShowLoadingTeaser(true);
+      
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
         setSwipeDirection(null);
+        setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 350);
+      }, 750); // 0.75s for loading teaser
     } else {
       toast({
         title: "No More Properties",
@@ -648,6 +655,33 @@ const ForYou = () => {
 
         {/* Property Card - Made thinner/longer with swipe animations */}
         <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
+          {/* Loading Teaser Overlay */}
+          <AnimatePresence>
+            {showLoadingTeaser && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
+              >
+                <div className="text-center space-y-4">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-400 rounded-full mx-auto"
+                  />
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-blue-300 text-lg font-light"
+                  >
+                    {Math.random() > 0.66 ? "Refining matches…" : Math.random() > 0.33 ? "Scanning for your dream home…" : "Found one"}
+                  </motion.p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence mode="wait">
             {isRevealing && (
               <motion.div
