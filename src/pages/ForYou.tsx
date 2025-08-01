@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -134,9 +133,10 @@ const ForYou = () => {
               images: propertyImages,
               property_type: 'rent',
               table_source: 'undervalued_rentals',
-              videos: rental.videos || [],
-              floorplans: rental.floorplans || [],
-              amenities: rental.amenities || []
+              videos: (rental as any).videos || [],
+              floorplans: (rental as any).floorplans || [],
+              amenities: Array.isArray(rental.amenities) ? rental.amenities : 
+                        typeof rental.amenities === 'string' ? JSON.parse(rental.amenities || '[]') : []
             });
           });
         }
@@ -164,9 +164,10 @@ const ForYou = () => {
               table_source: 'undervalued_rent_stabilized',
               discount_percent: property.undervaluation_percent || 0,
               isRentStabilized: true,
-              videos: property.videos || [],
-              floorplans: property.floorplans || [],
-              amenities: property.amenities || []
+              videos: (property as any).videos || [],
+              floorplans: (property as any).floorplans || [],
+              amenities: Array.isArray(property.amenities) ? property.amenities : 
+                        typeof property.amenities === 'string' ? JSON.parse(property.amenities || '[]') : []
             });
           });
         }
@@ -194,9 +195,10 @@ const ForYou = () => {
               images: propertyImages,
               property_type: 'buy',
               table_source: 'undervalued_sales',
-              videos: sale.videos || [],
-              floorplans: sale.floorplans || [],
-              amenities: sale.amenities || []
+              videos: (sale as any).videos || [],
+              floorplans: (sale as any).floorplans || [],
+              amenities: Array.isArray(sale.amenities) ? sale.amenities : 
+                        typeof sale.amenities === 'string' ? JSON.parse(sale.amenities || '[]') : []
             });
           });
         }
@@ -482,12 +484,12 @@ const ForYou = () => {
                     onClick={() => handlePropertyClick(property)}
                   />
                   
-                  {/* Why We Picked This - Moved further down to avoid overlap */}
+                  {/* Why We Picked This - Positioned above buttons with proper spacing */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
+                    className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
                       <span>💡</span>
@@ -500,12 +502,12 @@ const ForYou = () => {
           </AnimatePresence>
         </div>
 
-        {/* Swipe Actions with Subtle Animations - Moved down to avoid overlap */}
+        {/* Swipe Actions with Subtle Animations - Positioned below "Why We Picked This" */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="flex justify-center space-x-8 pb-8 mt-8"
+          className="flex justify-center space-x-8 pb-8 mt-16"
         >
           <motion.button 
             onClick={() => handleSkip()} 
@@ -564,7 +566,7 @@ const ForYou = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <PropertyDetail
-                property={selectedProperty as any}
+                property={selectedProperty}
                 isRental={selectedProperty.property_type === 'rent'}
                 onClose={closePropertyDetail}
               />
