@@ -527,12 +527,19 @@ const ForYou = () => {
   };
 
   const handleSwipeRight = () => {
+    setSwipeDirection('right');
+    toast({
+      title: "✅ Saved",
+      description: "Added to your saved properties.",
+    });
+    
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
-        setTimeout(() => setIsRevealing(true), 100);
-      }, 400);
+        setSwipeDirection(null);
+        setTimeout(() => setIsRevealing(true), 50);
+      }, 350);
     } else {
       toast({
         title: "No More Properties",
@@ -542,12 +549,15 @@ const ForYou = () => {
   };
 
   const handleSwipeLeft = () => {
+    setSwipeDirection('left');
+    
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
-        setTimeout(() => setIsRevealing(true), 100);
-      }, 400);
+        setSwipeDirection(null);
+        setTimeout(() => setIsRevealing(true), 50);
+      }, 350);
     } else {
       toast({
         title: "No More Properties",
@@ -651,17 +661,13 @@ const ForYou = () => {
                 animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
                 exit={{ 
                   opacity: 0, 
-                  x: swipeDirection === 'left' ? -300 : swipeDirection === 'right' ? 300 : 0,
-                  y: swipeDirection ? -20 : -30,
-                  scale: swipeDirection ? 1.05 : 1.05,
-                  rotate: swipeDirection === 'left' ? -5 : swipeDirection === 'right' ? 5 : 0
+                  x: swipeDirection === 'left' ? -400 : swipeDirection === 'right' ? 400 : 0,
+                  y: swipeDirection ? -10 : -30,
+                  scale: 0.98
                 }}
                 transition={{ 
-                  duration: 0.6, 
-                  ease: "easeOut",
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30
+                  duration: 0.35, 
+                  ease: "easeInOut"
                 }}
                 className="w-full max-w-lg mx-auto relative"
               >
