@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, X, MessageCircle, Sparkles, Home } from 'lucide-react';
+import { Heart, X, MessageCircle, Sparkles, Home, Search, MapPin, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import PropertyCard from '@/components/PropertyCard';
@@ -72,6 +72,167 @@ interface Property {
   category_confidence?: number;
   amenity_count?: number;
 }
+
+const LoadingSequence = () => {
+  const [currentPhase, setCurrentPhase] = useState<'typewriter' | 'scanning' | 'found'>('typewriter');
+  const [typewriterText, setTypewriterText] = useState('');
+  const [scanningTexts, setScanningTexts] = useState([
+    'Analyzing NYC listings...',
+    'Scanning 4,219 rent-stabilized units...',
+    'Checking for 2BRs in Carroll Gardens...',
+    'Evaluating market discounts...',
+    'Cross-referencing neighborhood data...'
+  ]);
+  const [currentScanIndex, setCurrentScanIndex] = useState(0);
+
+  const fullTypewriterText = "Finding your dream home...";
+
+  useEffect(() => {
+    // Phase 1: Typewriter effect
+    if (currentPhase === 'typewriter') {
+      const timer = setTimeout(() => {
+        if (typewriterText.length < fullTypewriterText.length) {
+          setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
+        } else {
+          // Wait a bit then transition to scanning
+          setTimeout(() => setCurrentPhase('scanning'), 800);
+        }
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+
+    // Phase 2: Scanning feed
+    if (currentPhase === 'scanning') {
+      const timer = setTimeout(() => {
+        if (currentScanIndex < scanningTexts.length - 1) {
+          setCurrentScanIndex(currentScanIndex + 1);
+        } else {
+          setCurrentPhase('found');
+        }
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [typewriterText, currentPhase, currentScanIndex]);
+
+  return (
+    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8">
+      <AnimatePresence mode="wait">
+        {currentPhase === 'typewriter' && (
+          <motion.div
+            key="typewriter"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="text-center"
+          >
+            <div className="text-3xl font-light tracking-wide">
+              {typewriterText}
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="ml-1"
+              >
+                |
+              </motion.span>
+            </div>
+          </motion.div>
+        )}
+
+        {currentPhase === 'scanning' && (
+          <motion.div
+            key="scanning"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            className="text-center space-y-6"
+          >
+            {/* Radar Animation */}
+            <div className="relative w-32 h-32 mx-auto mb-8">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-2 border-blue-500/30 rounded-full"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="absolute inset-4 border border-blue-400/50 rounded-full"
+              />
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="absolute inset-8 border border-blue-300/70 rounded-full"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Search className="w-8 h-8 text-blue-400" />
+              </div>
+            </div>
+
+            {/* Scanning Text Feed */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentScanIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="text-xl text-blue-300 font-light tracking-wide"
+              >
+                {scanningTexts[currentScanIndex]}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Progress indicators */}
+            <div className="flex justify-center space-x-2">
+              {scanningTexts.map((_, index) => (
+                <motion.div
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index <= currentScanIndex ? 'bg-blue-400' : 'bg-gray-600'
+                  }`}
+                  animate={index === currentScanIndex ? { scale: [1, 1.3, 1] } : {}}
+                  transition={{ duration: 0.6, repeat: index === currentScanIndex ? Infinity : 0 }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {currentPhase === 'found' && (
+          <motion.div
+            key="found"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center space-y-4"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
+            >
+              <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-2xl font-light text-green-300"
+            >
+              ✅ Dream homes found
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="text-sm text-gray-400"
+            >
+              Preparing your personalized matches...
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const ForYou = () => {
   const { user, userProfile } = useAuth();
@@ -323,27 +484,36 @@ const ForYou = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('saved_properties')
         .insert([{
           user_id: user.id,
           property_id: property.id,
-          property_type: property.property_type || 'rent',
-          table_source: property.table_source
+          property_type: property.property_type || 'rent'
         }]);
 
       if (error) {
-        console.error('Error saving property:', error);
-        toast({
-          title: "Error",
-          description: "Failed to save the property. Please try again.",
-          variant: "destructive",
-        });
+        // Check if it's a duplicate error
+        if (error.code === '23505') {
+          toast({
+            title: "Already Saved",
+            description: "This property is already in your saved list.",
+          });
+        } else {
+          console.error('Error saving property:', error);
+          toast({
+            title: "Error",
+            description: "Failed to save the property. Please try again.",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Property Saved",
           description: "This property has been saved to your profile.",
         });
+        // Move to next property after saving
+        handleSkip();
       }
     } catch (error) {
       console.error('Error saving property:', error);
@@ -403,32 +573,7 @@ const ForYou = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-6">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-4"
-        >
-          <div className="flex items-center justify-center space-x-3">
-            <Sparkles className="w-6 h-6 text-blue-400 animate-pulse" />
-            <span className="text-2xl font-semibold animate-pulse">Scanning the market...</span>
-            <Sparkles className="w-6 h-6 text-blue-400 animate-pulse" />
-          </div>
-          <span className="text-lg text-white/70 flex items-center justify-center space-x-2">
-            <span>Finding your dream home</span>
-            <Home className="w-5 h-5" />
-          </span>
-        </motion.div>
-        
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full"
-        />
-      </div>
-    );
+    return <LoadingSequence />;
   }
 
   if (!userProfile || (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding)) {
@@ -534,7 +679,7 @@ const ForYou = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="flex justify-center space-x-8 pb-8 mt-20"
+          className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 
             onClick={() => handleSkip()} 
