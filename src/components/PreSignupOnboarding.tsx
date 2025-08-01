@@ -28,10 +28,11 @@ interface PreSignupOnboardingProps {
 interface RealListing {
   id: string;
   address: string;
-  monthly_rent: number;
+  monthly_rent?: number;
+  price?: number;
   bedrooms?: number;
   neighborhood: string;
-  amenities: string[];
+  amenities: any[];
   images: any[];
   no_fee?: boolean;
 }
@@ -51,6 +52,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [liveCounts, setLiveCounts] = useState<{[key: string]: number}>({});
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -77,52 +79,167 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     "Elmhurst", "Forest Hills", "Flushing", "Anywhere with a train"
   ];
 
-  const mustHaveOptions = [
+  const rentalMustHaveOptions = [
     "Rent-stabilized", "No broker fee", "Pet-friendly", "Outdoor space",
     "In-unit laundry", "Doorman", "Gym", "Rooftop access"
   ];
 
+  const salesMustHaveOptions = [
+    "No broker fee", "Pet-friendly", "Outdoor space",
+    "In-unit laundry", "Doorman", "Gym", "Rooftop access"
+  ];
+
+  // Get live counts for filters
+  const getLiveCount = async (filters: Partial<OnboardingData>): Promise<number> => {
+    try {
+      const propertyType = filters.property_type || onboardingData.property_type;
+      
+      if (propertyType === 'rent') {
+        let query = supabase
+          .from('undervalued_rentals')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'active');
+
+        if (filters.max_budget) {
+          query = query.lte('monthly_rent', filters.max_budget);
+        }
+        if (filters.bedrooms !== undefined) {
+          query = query.eq('bedrooms', filters.bedrooms);
+        }
+        if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
+          const specificNeighborhoods = filters.preferred_neighborhoods.filter(n => 
+            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
+          );
+          if (specificNeighborhoods.length > 0) {
+            query = query.in('neighborhood', specificNeighborhoods);
+          }
+        }
+        if (filters.discount_threshold) {
+          query = query.gte('discount_percent', filters.discount_threshold);
+        }
+
+        const { count } = await query;
+        return count || 0;
+      } else if (propertyType === 'buy') {
+        let query = supabase
+          .from('undervalued_sales')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'active');
+
+        if (filters.max_budget) {
+          query = query.lte('price', filters.max_budget);
+        }
+        if (filters.bedrooms !== undefined) {
+          query = query.eq('bedrooms', filters.bedrooms);
+        }
+        if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
+          const specificNeighborhoods = filters.preferred_neighborhoods.filter(n => 
+            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
+          );
+          if (specificNeighborhoods.length > 0) {
+            query = query.in('neighborhood', specificNeighborhoods);
+          }
+        }
+        if (filters.discount_threshold) {
+          query = query.gte('discount_percent', filters.discount_threshold);
+        }
+
+        const { count } = await query;
+        return count || 0;
+      }
+    } catch (error) {
+      console.error('Error getting live count:', error);
+    }
+    return 0;
+  };
+
   const queryRealListings = async (data: OnboardingData) => {
     try {
-      let query = supabase
-        .from('undervalued_rentals')
-        .select('id, address, monthly_rent, bedrooms, neighborhood, amenities, images, no_fee')
-        .eq('status', 'active')
-        .order('discount_percent', { ascending: false });
+      const propertyType = data.property_type || 'rent';
+      
+      if (propertyType === 'rent') {
+        let query = supabase
+          .from('undervalued_rentals')
+          .select('id, address, monthly_rent, bedrooms, neighborhood, amenities, images, no_fee')
+          .eq('status', 'active')
+          .order('discount_percent', { ascending: false });
 
-      if (data.max_budget) {
-        query = query.lte('monthly_rent', data.max_budget);
-      }
-
-      if (data.bedrooms !== undefined) {
-        query = query.eq('bedrooms', data.bedrooms);
-      }
-
-      if (data.preferred_neighborhoods && data.preferred_neighborhoods.length > 0) {
-        const specificNeighborhoods = data.preferred_neighborhoods.filter(n => 
-          !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
-        );
-        if (specificNeighborhoods.length > 0) {
-          query = query.in('neighborhood', specificNeighborhoods);
+        if (data.max_budget) {
+          query = query.lte('monthly_rent', data.max_budget);
         }
+        if (data.bedrooms !== undefined) {
+          query = query.eq('bedrooms', data.bedrooms);
+        }
+        if (data.preferred_neighborhoods && data.preferred_neighborhoods.length > 0) {
+          const specificNeighborhoods = data.preferred_neighborhoods.filter(n => 
+            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
+          );
+          if (specificNeighborhoods.length > 0) {
+            query = query.in('neighborhood', specificNeighborhoods);
+          }
+        }
+        if (data.discount_threshold) {
+          query = query.gte('discount_percent', data.discount_threshold);
+        }
+        if (data.must_haves && data.must_haves.includes('No broker fee')) {
+          query = query.eq('no_fee', true);
+        }
+
+        const { data: listings, error } = await query.limit(20);
+        if (error) {
+          console.error('Error querying rental listings:', error);
+          return [];
+        }
+
+        return (listings || []).map(listing => ({
+          ...listing,
+          images: Array.isArray(listing.images) ? listing.images : 
+                   typeof listing.images === 'string' ? JSON.parse(listing.images) : 
+                   [],
+          amenities: Array.isArray(listing.amenities) ? listing.amenities : []
+        }));
+
+      } else if (propertyType === 'buy') {
+        let query = supabase
+          .from('undervalued_sales')
+          .select('id, address, price, bedrooms, neighborhood, amenities, images')
+          .eq('status', 'active')
+          .order('discount_percent', { ascending: false });
+
+        if (data.max_budget) {
+          query = query.lte('price', data.max_budget);
+        }
+        if (data.bedrooms !== undefined) {
+          query = query.eq('bedrooms', data.bedrooms);
+        }
+        if (data.preferred_neighborhoods && data.preferred_neighborhoods.length > 0) {
+          const specificNeighborhoods = data.preferred_neighborhoods.filter(n => 
+            !['Anywhere with a train', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(n)
+          );
+          if (specificNeighborhoods.length > 0) {
+            query = query.in('neighborhood', specificNeighborhoods);
+          }
+        }
+        if (data.discount_threshold) {
+          query = query.gte('discount_percent', data.discount_threshold);
+        }
+
+        const { data: listings, error } = await query.limit(20);
+        if (error) {
+          console.error('Error querying sales listings:', error);
+          return [];
+        }
+
+        return (listings || []).map(listing => ({
+          ...listing,
+          images: Array.isArray(listing.images) ? listing.images : 
+                   typeof listing.images === 'string' ? JSON.parse(listing.images) : 
+                   [],
+          amenities: Array.isArray(listing.amenities) ? listing.amenities : []
+        }));
       }
 
-      if (data.discount_threshold) {
-        query = query.gte('discount_percent', data.discount_threshold);
-      }
-
-      if (data.must_haves && data.must_haves.includes('No broker fee')) {
-        query = query.eq('no_fee', true);
-      }
-
-      const { data: listings, error } = await query.limit(20);
-
-      if (error) {
-        console.error('Error querying listings:', error);
-        return [];
-      }
-
-      return listings || [];
+      return [];
     } catch (error) {
       console.error('Error in queryRealListings:', error);
       return [];
@@ -160,6 +277,14 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
   const updateData = (key: keyof OnboardingData, value: any) => {
     setOnboardingData(prev => ({ ...prev, [key]: value }));
+    
+    // Update live count when relevant filters change
+    if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold'].includes(key)) {
+      const newData = { ...onboardingData, [key]: value };
+      getLiveCount(newData).then(count => {
+        setLiveCounts(prev => ({ ...prev, [key]: count }));
+      });
+    }
   };
 
   const nextStep = () => {
@@ -455,6 +580,12 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
         );
 
       case 5:
+        const isRental = onboardingData.property_type === 'rent';
+        const maxBudget = isRental ? 8000 : 8000000;
+        const minBudget = isRental ? 1000 : 200000;
+        const step = isRental ? 100 : 50000;
+        const defaultBudget = isRental ? 3000 : 1000000;
+        
         return (
           <div className="min-h-screen bg-black text-white">
             <div className="fixed top-8 left-8 z-50">
@@ -483,7 +614,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                 
                 <div className="space-y-8">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Bedrooms</h3>
+                    <h3 className="text-lg font-medium">Bedrooms {liveCounts.bedrooms && `(${liveCounts.bedrooms} listings)`}</h3>
                     <div className="flex gap-2 justify-center flex-wrap">
                       {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
                         <button
@@ -503,30 +634,48 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Max Budget</h3>
+                    <h3 className="text-lg font-medium">
+                      Max Budget {liveCounts.max_budget && `(${liveCounts.max_budget} listings)`}
+                    </h3>
                     <div className="space-y-6">
                       <Slider
-                        value={[onboardingData.max_budget || 3000]}
+                        value={[onboardingData.max_budget || defaultBudget]}
                         onValueChange={(value) => updateData('max_budget', value[0])}
-                        max={8000}
-                        min={1000}
-                        step={100}
+                        max={maxBudget}
+                        min={minBudget}
+                        step={step}
                         className="w-full"
                       />
                       <div className="flex justify-between text-sm text-gray-400">
-                        <span>$1K</span>
-                        <span>$3K</span>
-                        <span>$5K</span>
-                        <span>$8K+</span>
+                        {isRental ? (
+                          <>
+                            <span>$1K</span>
+                            <span>$3K</span>
+                            <span>$5K</span>
+                            <span>$8K+</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>$200K</span>
+                            <span>$2M</span>
+                            <span>$4M</span>
+                            <span>$8M+</span>
+                          </>
+                        )}
                       </div>
                       <p className="text-center text-xl font-semibold">
-                        ${(onboardingData.max_budget || 3000).toLocaleString()}
+                        {isRental 
+                          ? `$${(onboardingData.max_budget || defaultBudget).toLocaleString()}/month`
+                          : `$${(onboardingData.max_budget || defaultBudget).toLocaleString()}`
+                        }
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Neighborhoods</h3>
+                    <h3 className="text-lg font-medium">
+                      Neighborhoods {liveCounts.preferred_neighborhoods && `(${liveCounts.preferred_neighborhoods} listings)`}
+                    </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {neighborhoods.map((neighborhood, index) => (
                         <TagButton
@@ -544,7 +693,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Must-haves</h3>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {mustHaveOptions.map((option, index) => (
+                      {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
                         <TagButton
                           key={option}
                           selected={onboardingData.must_haves?.includes(option)}
@@ -595,6 +744,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                 </div>
                 <p className="text-center text-xl font-semibold">
                   {onboardingData.discount_threshold || 20}% below market
+                  {liveCounts.discount_threshold && ` (${liveCounts.discount_threshold} listings)`}
                 </p>
               </div>
 
