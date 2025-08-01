@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -50,6 +51,26 @@ interface Property {
   rent_stabilization_analysis?: any;
   rent_stabilized_confidence?: number;
   potential_annual_savings?: number;
+  // Additional fields needed for complete property details
+  zipcode?: string;
+  listed_at?: string;
+  analysis_date?: string;
+  created_at?: string;
+  property_type_display?: string;
+  pet_friendly?: boolean;
+  laundry_available?: boolean;
+  gym_available?: boolean;
+  doorman_building?: boolean;
+  elevator_building?: boolean;
+  rooftop_access?: boolean;
+  agents?: any[];
+  building_info?: any;
+  likely_sold?: boolean;
+  likely_rented?: boolean;
+  last_seen_in_search?: string;
+  reliability_score?: number;
+  category_confidence?: number;
+  amenity_count?: number;
 }
 
 const ForYou = () => {
@@ -136,7 +157,9 @@ const ForYou = () => {
               videos: (rental as any).videos || [],
               floorplans: (rental as any).floorplans || [],
               amenities: Array.isArray(rental.amenities) ? rental.amenities : 
-                        typeof rental.amenities === 'string' ? JSON.parse(rental.amenities || '[]') : []
+                        typeof rental.amenities === 'string' ? JSON.parse(rental.amenities || '[]') : [],
+              agents: (rental as any).agents || [],
+              building_info: (rental as any).building_info || {}
             });
           });
         }
@@ -167,7 +190,9 @@ const ForYou = () => {
               videos: (property as any).videos || [],
               floorplans: (property as any).floorplans || [],
               amenities: Array.isArray(property.amenities) ? property.amenities : 
-                        typeof property.amenities === 'string' ? JSON.parse(property.amenities || '[]') : []
+                        typeof property.amenities === 'string' ? JSON.parse(property.amenities || '[]') : [],
+              agents: (property as any).agents || [],
+              building_info: (property as any).building_info || {}
             });
           });
         }
@@ -198,7 +223,9 @@ const ForYou = () => {
               videos: (sale as any).videos || [],
               floorplans: (sale as any).floorplans || [],
               amenities: Array.isArray(sale.amenities) ? sale.amenities : 
-                        typeof sale.amenities === 'string' ? JSON.parse(sale.amenities || '[]') : []
+                        typeof sale.amenities === 'string' ? JSON.parse(sale.amenities || '[]') : [],
+              agents: (sale as any).agents || [],
+              building_info: (sale as any).building_info || {}
             });
           });
         }
@@ -489,7 +516,7 @@ const ForYou = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
+                    className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
                       <span>💡</span>
@@ -502,12 +529,12 @@ const ForYou = () => {
           </AnimatePresence>
         </div>
 
-        {/* Swipe Actions with Subtle Animations - Positioned below "Why We Picked This" */}
+        {/* Swipe Actions with Subtle Animations - Positioned below "Why We Picked This" with increased margin */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="flex justify-center space-x-8 pb-8 mt-16"
+          className="flex justify-center space-x-8 pb-8 mt-20"
         >
           <motion.button 
             onClick={() => handleSkip()} 
@@ -566,7 +593,7 @@ const ForYou = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <PropertyDetail
-                property={selectedProperty}
+                property={selectedProperty as any}
                 isRental={selectedProperty.property_type === 'rent'}
                 onClose={closePropertyDetail}
               />
