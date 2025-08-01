@@ -17,7 +17,7 @@ interface SavedProperty {
 }
 
 interface SavedPropertyWithDetails extends SavedProperty {
-  property_details: UndervaluedSales | UndervaluedRentals | null;
+  property_details: any | null;
 }
 
 const SavedProperties = () => {
@@ -44,6 +44,8 @@ const SavedProperties = () => {
       setError(null);
       
       try {
+        console.log('🔍 Starting to fetch saved properties for user:', user.id);
+        
         // Get saved properties from user
         const { data: savedData, error: savedError } = await supabase
           .from('saved_properties')
@@ -52,14 +54,17 @@ const SavedProperties = () => {
           .order('saved_at', { ascending: false });
 
         if (savedError) {
-          console.error('Error fetching saved properties:', savedError);
+          console.error('❌ Error fetching saved properties:', savedError);
           setError('Failed to load saved properties');
           setSavedProperties([]);
           setLoading(false);
           return;
         }
 
+        console.log('📋 Saved properties from database:', savedData);
+
         if (!savedData || savedData.length === 0) {
+          console.log('📭 No saved properties found');
           setSavedProperties([]);
           setLoading(false);
           return;
@@ -74,57 +79,66 @@ const SavedProperties = () => {
           .filter(p => p.property_type === 'rental')
           .map(p => p.property_id);
 
-        // Fetch property details from all relevant tables
-        const promises = [];
+        console.log('🏠 Sales IDs to fetch:', salesIds);
+        console.log('🏠 Rental IDs to fetch:', rentalIds);
 
-        // Sales properties
-        if (salesIds.length > 0) {
-          promises.push(
-            supabase
+        // Initialize results
+        let salesData: any[] = [];
+        let rentalsData: any[] = [];
+        let stabilizedRentalsData: any[] = [];
+
+        // Fetch property details from all relevant tables with proper error handling
+        try {
+          // Sales properties
+          if (salesIds.length > 0) {
+            const salesResult = await supabase
               .from('undervalued_sales')
               .select('*')
               .in('id', salesIds)
-              .eq('status', 'active')
-          );
-        } else {
-          promises.push(Promise.resolve({ data: [], error: null }));
-        }
+              .eq('status', 'active');
+            
+            if (salesResult.error) {
+              console.error('❌ Error fetching sales:', salesResult.error);
+            } else {
+              salesData = salesResult.data || [];
+              console.log('🏠 Sales data fetched:', salesData.length);
+            }
+          }
 
-        // Regular rental properties
-        if (rentalIds.length > 0) {
-          promises.push(
-            supabase
+          // Regular rental properties
+          if (rentalIds.length > 0) {
+            const rentalsResult = await supabase
               .from('undervalued_rentals')
               .select('*')
               .in('id', rentalIds)
-              .eq('status', 'active')
-          );
-        } else {
-          promises.push(Promise.resolve({ data: [], error: null }));
-        }
+              .eq('status', 'active');
+            
+            if (rentalsResult.error) {
+              console.error('❌ Error fetching rentals:', rentalsResult.error);
+            } else {
+              rentalsData = rentalsResult.data || [];
+              console.log('🏠 Rentals data fetched:', rentalsData.length);
+            }
+          }
 
-        // Rent stabilized properties
-        if (rentalIds.length > 0) {
-          promises.push(
-            supabase
+          // Rent stabilized properties (from For You page)
+          if (rentalIds.length > 0) {
+            const stabilizedResult = await supabase
               .from('undervalued_rent_stabilized')
               .select('*')
               .in('id', rentalIds)
-              .eq('display_status', 'active')
-          );
-        } else {
-          promises.push(Promise.resolve({ data: [], error: null }));
-        }
+              .eq('display_status', 'active');
+            
+            if (stabilizedResult.error) {
+              console.error('❌ Error fetching stabilized rentals:', stabilizedResult.error);
+            } else {
+              stabilizedRentalsData = stabilizedResult.data || [];
+              console.log('🏠 Stabilized rentals data fetched:', stabilizedRentalsData.length);
+            }
+          }
 
-        const [salesResult, rentalsResult, stabilizedRentalsResult] = await Promise.all(promises);
-
-        // Handle any errors from the queries
-        if (salesResult.error || rentalsResult.error || stabilizedRentalsResult.error) {
-          console.error('Error fetching property details:', {
-            salesError: salesResult.error,
-            rentalsError: rentalsResult.error,
-            stabilizedError: stabilizedRentalsResult.error
-          });
+        } catch (fetchError) {
+          console.error('❌ Error during property fetching:', fetchError);
           // Continue with partial data rather than failing completely
         }
 
@@ -133,12 +147,17 @@ const SavedProperties = () => {
           let propertyDetails = null;
           
           if (savedProp.property_type === 'sale') {
-            propertyDetails = (salesResult.data || []).find(p => p.id === savedProp.property_id) || null;
+            propertyDetails = salesData.find(p => p.id === savedProp.property_id) || null;
           } else {
             // Check both rental tables for rental properties
-            propertyDetails = (rentalsResult.data || []).find(p => p.id === savedProp.property_id) || 
-                             (stabilizedRentalsResult.data || []).find(p => p.id === savedProp.property_id) || 
+            propertyDetails = rentalsData.find(p => p.id === savedProp.property_id) || 
+                             stabilizedRentalsData.find(p => p.id === savedProp.property_id) || 
                              null;
+            
+            // Mark rent-stabilized properties
+            if (propertyDetails && stabilizedRentalsData.find(p => p.id === savedProp.property_id)) {
+              propertyDetails.isRentStabilized = true;
+            }
           }
 
           return {
@@ -148,12 +167,16 @@ const SavedProperties = () => {
           };
         });
 
+        console.log('🔗 Combined properties:', combinedProperties);
+
         // Filter out properties that no longer exist
         const activeProperties = combinedProperties.filter(p => p.property_details !== null);
+        console.log('✅ Active properties to display:', activeProperties.length);
+        
         setSavedProperties(activeProperties);
 
       } catch (error) {
-        console.error('Error fetching saved properties:', error);
+        console.error('❌ Unexpected error fetching saved properties:', error);
         setError('Failed to load saved properties');
         setSavedProperties([]);
       } finally {
@@ -198,10 +221,7 @@ const SavedProperties = () => {
     }
   };
 
-  if (!user) {
-    return null;
-  }
-
+  // Show loading state without user check to prevent flash
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white font-inter">
@@ -212,6 +232,11 @@ const SavedProperties = () => {
         </div>
       </div>
     );
+  }
+
+  // Redirect check after loading
+  if (!user) {
+    return null;
   }
 
   if (error) {
@@ -274,7 +299,7 @@ const SavedProperties = () => {
             {savedProperties.map((savedProp) => {
               const property = savedProp.property_details!;
               const isRental = savedProp.property_type === 'rental';
-              const gradeColors = getGradeColors(property.grade);
+              const gradeColors = getGradeColors(property.grade || 'C');
               
               return (
                 <PropertyCard
