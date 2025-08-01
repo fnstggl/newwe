@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
-import { PropertyCard } from './PropertyCard';
+import PropertyCard from './PropertyCard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
