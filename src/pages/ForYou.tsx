@@ -574,31 +574,14 @@ const ForYou = () => {
         </div>
       </div>
 
-      {/* Glassmorphic Property Detail Popup */}
+      {/* Property Detail Popup - Using the same component as Buy/Rent pages */}
       <AnimatePresence>
         {selectedProperty && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-xl z-50 flex items-center justify-center p-4"
-            onClick={closePropertyDetail}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.3 }}
-              className="bg-black/80 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <PropertyDetail
-                property={selectedProperty as any}
-                isRental={selectedProperty.property_type === 'rent'}
-                onClose={closePropertyDetail}
-              />
-            </motion.div>
-          </motion.div>
+          <PropertyDetail
+            property={selectedProperty as any}
+            isRental={selectedProperty.property_type === 'rent'}
+            onClose={closePropertyDetail}
+          />
         )}
       </AnimatePresence>
     </>
