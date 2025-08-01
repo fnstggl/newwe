@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,8 +46,10 @@ const ForYou = () => {
     const allProperties: Property[] = [];
 
     try {
-      // Check if user completed onboarding (either regular or pre-onboarding)
-      if (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding) {
+      // Check if user completed onboarding (either regular onboarding or pre-onboarding)
+      const hasCompletedAnyOnboarding = userProfile.onboarding_completed || userProfile.hasCompletedOnboarding;
+      
+      if (!hasCompletedAnyOnboarding) {
         setIsLoading(false);
         return;
       }
