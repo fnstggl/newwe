@@ -80,7 +80,7 @@ const LoadingSequence = () => {
   const [scanningTexts, setScanningTexts] = useState([
     'Analyzing NYC listings...',
     'Scanning 4,219 rent-stabilized units...',
-    'Checking for 2BRs in Carroll Gardens...',
+    'Finding the best deals in the city...',
     'Evaluating market discounts...',
     'Cross-referencing neighborhood data...'
   ]);
@@ -104,7 +104,7 @@ const LoadingSequence = () => {
     if (currentScanIndex < scanningTexts.length - 1) {
       timer = setTimeout(() => {
         setCurrentScanIndex(currentScanIndex + 1);
-      }, 600);
+      }, 750);
     } else {
       // Scanning done, move to found
       timer = setTimeout(() => setCurrentPhase('found'), 300);
@@ -274,7 +274,7 @@ useEffect(() => {
     const masterTimer = setTimeout(() => {
       setIsLoading(false);
       setIsRevealing(true);
-    }, 6000);
+    }, 7500);
     
     return () => clearTimeout(masterTimer);
   }
