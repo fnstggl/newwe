@@ -63,10 +63,10 @@ const Index = () => {
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
             <div className="text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
-                Your unfair advantage in real estate.
+                Affordable homes. Found for you.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
-                The best deals in the city—found for you.
+                We'll find the deals. So you don't get priced out.
               </p>
               <Link to="/rent" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
@@ -123,7 +123,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
-            The real estate game is rigged. Now you can win. 
+            The housing system isn’t built for everyone. We are. 
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
