@@ -288,7 +288,6 @@ useEffect(() => {
   const fetchPersonalizedProperties = async () => {
     if (!userProfile) return;
 
-    setIsLoading(true);
     const allProperties: Property[] = [];
 
     try {
@@ -476,15 +475,15 @@ useEffect(() => {
       const shuffled = filteredProperties.sort(() => 0.5 - Math.random());
       setProperties(shuffled);
     } catch (error) {
-      console.error('Error fetching personalized properties:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load your personalized properties. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  console.error('Error fetching personalized properties:', error);
+  toast({
+    title: "Error",
+    description: "Failed to load your personalized properties. Please try again.",
+    variant: "destructive",
+  });
+  setIsLoading(false); // Only set loading false on error
+}
+// Remove the finally block entirely
   };
 
   const handleSave = async (property: Property) => {
