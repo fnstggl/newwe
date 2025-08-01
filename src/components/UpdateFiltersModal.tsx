@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check } from 'lucide-react';
@@ -91,6 +92,13 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
       const { error } = await supabase
         .from('profiles')
         .update({
+          searching_for: searchingFor,
+          property_type: propertyType,
+          bedrooms: bedrooms,
+          max_budget: maxBudget,
+          preferred_neighborhoods: preferredNeighborhoods,
+          must_haves: mustHaves,
+          discount_threshold: discountThreshold,
           neighborhood_preferences: preferredNeighborhoods
         })
         .eq('id', user.id);
