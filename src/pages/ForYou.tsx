@@ -269,16 +269,15 @@ const ForYou = () => {
   }, [user, userProfile]);
 
   // Single master timer for the entire loading sequence
-useEffect(() => {
-  if (properties.length > 0) {
+  useEffect(() => {
+    // Always set loading to false after the animation sequence, regardless of properties length
     const masterTimer = setTimeout(() => {
       setIsLoading(false);
       setIsRevealing(true);
     }, 8000);
     
     return () => clearTimeout(masterTimer);
-  }
-}, [properties]);
+  }, []);
 
   // Rotate headers when swiping to new properties
   useEffect(() => {
@@ -295,7 +294,6 @@ useEffect(() => {
       const hasCompletedAnyOnboarding = userProfile.onboarding_completed || userProfile.hasCompletedOnboarding;
       
       if (!hasCompletedAnyOnboarding) {
-        setIsLoading(false);
         return;
       }
 
@@ -475,15 +473,15 @@ useEffect(() => {
       const shuffled = filteredProperties.sort(() => 0.5 - Math.random());
       setProperties(shuffled);
     } catch (error) {
-  console.error('Error fetching personalized properties:', error);
-  toast({
-    title: "Error",
-    description: "Failed to load your personalized properties. Please try again.",
-    variant: "destructive",
-  });
-  setIsLoading(false); // Only set loading false on error
-}
-// Remove the finally block entirely
+      console.error('Error fetching personalized properties:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load your personalized properties. Please try again.",
+        variant: "destructive",
+      });
+      // Set empty array so we show "no properties" screen instead of staying in loading
+      setProperties([]);
+    }
   };
 
   const handleSave = async (property: Property) => {
@@ -645,6 +643,62 @@ useEffect(() => {
 
   const property = properties[currentIndex];
 
+  // Show "no properties found" screen if no properties match filters
+  if (!property && properties.length === 0) {
+    return (
+      <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-6"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
+            className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+          >
+            <span className="text-4xl">🏠</span>
+          </motion.div>
+          
+          <div className="space-y-3">
+            <h1 className="text-3xl font-bold">Your dream home isn't on the market yet.</h1>
+            <p className="text-white/70 text-lg">
+              No properties match your current criteria. Try adjusting your filters to see more options.
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-4 w-full max-w-md"
+        >
+          <motion.button
+            onClick={() => setShowUpdateFilters(true)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors flex items-center justify-center space-x-3 font-medium"
+          >
+            <Settings className="w-5 h-5" />
+            <span>Adjust filters?</span>
+          </motion.button>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-sm text-white/50 text-center max-w-md"
+        >
+          New listings appear daily. We'll keep watching the market for you and notify you when new matches are found.
+        </motion.p>
+      </div>
+    );
+  }
+
+  // Show regular "no property at current index" screen if we've gone through all properties
   if (!property) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-6">
