@@ -89,31 +89,34 @@ const LoadingSequence = () => {
   const fullTypewriterText = "Finding your dream home...";
 
   useEffect(() => {
-    // Phase 1: Typewriter effect - Full 4 seconds
-    if (currentPhase === 'typewriter') {
+  // Phase 1: Typewriter effect - Takes 2 seconds
+  if (currentPhase === 'typewriter') {
+    if (typewriterText.length < fullTypewriterText.length) {
       const timer = setTimeout(() => {
-        if (typewriterText.length < fullTypewriterText.length) {
-          setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
-        } else {
-          // Wait to complete full 4 second typewriter animation
-          setTimeout(() => setCurrentPhase('scanning'), 2000); // Give more time for full typewriter
-        }
-      }, 80); // Slower typing for better visibility
+        setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
+      }, 120); // Typing speed
+      return () => clearTimeout(timer);
+    } else {
+      // After typewriter completes, wait 0.5s then move to scanning
+      const timer = setTimeout(() => setCurrentPhase('scanning'), 500);
       return () => clearTimeout(timer);
     }
+  }
 
-    // Phase 2: Scanning feed - Faster to fit in remaining time
-    if (currentPhase === 'scanning') {
+  // Phase 2: Scanning feed - Takes remaining 1.5 seconds
+  if (currentPhase === 'scanning') {
+    if (currentScanIndex < scanningTexts.length - 1) {
       const timer = setTimeout(() => {
-        if (currentScanIndex < scanningTexts.length - 1) {
-          setCurrentScanIndex(currentScanIndex + 1);
-        } else {
-          setTimeout(() => setCurrentPhase('found'), 300); // Quicker transition
-        }
-      }, 300); // Much faster scanning
+        setCurrentScanIndex(currentScanIndex + 1);
+      }, 300); // 300ms between each scan item
+      return () => clearTimeout(timer);
+    } else {
+      // After all scanning items, wait 0.5s then move to found
+      const timer = setTimeout(() => setCurrentPhase('found'), 500);
       return () => clearTimeout(timer);
     }
-  }, [typewriterText, currentPhase, currentScanIndex]);
+  }
+}, [typewriterText, currentPhase, currentScanIndex, fullTypewriterText, scanningTexts]);
 
   return (
     <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8">
@@ -268,16 +271,16 @@ const ForYou = () => {
   }, [user, userProfile]);
 
   // Set exact 4 second timing and immediate property reveal
-  useEffect(() => {
-    if (properties.length > 0) {
-      const timeout = setTimeout(() => {
-        setIsLoading(false);
-        // Start revealing property immediately after loading animation ends
-        setIsRevealing(true);
-      }, 4000); // Exactly 4 seconds for full animation
-      return () => clearTimeout(timeout);
-    }
-  }, [properties]);
+useEffect(() => {
+  if (properties.length > 0) {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+      // Start revealing property immediately after loading animation ends
+      setTimeout(() => setIsRevealing(true), 50);
+    }, 4000); // Exactly 4 seconds for full animation
+    return () => clearTimeout(timeout);
+  }
+}, [properties]);
 
   // Rotate headers when swiping to new properties
   useEffect(() => {
