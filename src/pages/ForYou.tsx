@@ -986,7 +986,7 @@ const ForYou = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
+                    className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
                       <span>💡</span>
@@ -1004,7 +1004,7 @@ const ForYou = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex justify-center space-x-8 pb-8 mt-16"
+          className="flex justify-center space-x-8 pb-8 mt-8"
         >
           <motion.button 
             onClick={handleSwipeLeft}
