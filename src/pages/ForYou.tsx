@@ -9,6 +9,7 @@ import PropertyDetail from '@/components/PropertyDetail';
 import UpdateFiltersModal from '@/components/UpdateFiltersModal';
 import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
 import { motion, AnimatePresence } from 'framer-motion';
+import AISearch from '@/components/AISearch';
 
 interface Property {
   id: string;
@@ -298,7 +299,6 @@ const ForYou = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRevealing, setIsRevealing] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
-  const [chatMessage, setChatMessage] = useState('');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [showLoadingTeaser, setShowLoadingTeaser] = useState(false);
   const [showUpdateFilters, setShowUpdateFilters] = useState(false);
@@ -1027,21 +1027,26 @@ const ForYou = () => {
 </motion.button>
 </motion.div>
 
-        {/* Chat Input */}
-        <div className="w-full max-w-lg mx-auto px-6 pb-8">
-          <div className="flex rounded-full overflow-hidden border border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
-            <input
-              type="text"
-              placeholder="Send a message..."
-              value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
-              className="w-full px-4 py-3 bg-transparent text-white focus:outline-none"
-            />
-            <button className="px-4 py-3 bg-blue-600/80 text-white hover:bg-blue-500/80 transition-colors">
-              <MessageCircle className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+       {/* AI Search Input */}
+<AISearch 
+  onResults={(results, interpretation) => {
+    if (results.length > 0) {
+      setProperties(results);
+      setCurrentIndex(0);
+      setIsRevealing(true);
+      toast({
+        title: "🎯 AI Search Complete",
+        description: `Found ${results.length} matches!`,
+      });
+    } else {
+      toast({
+        title: "No matches found",
+        description: interpretation,
+        variant: "destructive",
+      });
+    }
+  }}
+/>
       </div>
 
       {/* Property Detail Popup */}
