@@ -1010,9 +1010,10 @@ const ForYou = () => {
   onClick={handleSwipeLeft}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="w-16 h-16 rounded-full bg-gray-800/80 backdrop-blur-xl border border-red-500/30 hover:bg-red-500/20 transition-all duration-300 flex items-center justify-center shadow-xl"
+  className="px-8 py-4 rounded-full bg-red-500/10 backdrop-blur-xl border border-red-500/20 hover:bg-red-500/15 transition-all duration-300 flex items-center space-x-2"
 >
-  <X className="w-7 h-7 text-red-400" />
+  <X className="w-6 h-6 text-red-400" />
+  <span className="text-red-300 font-medium">Not for me</span>
 </motion.button>
   
 <motion.button 
