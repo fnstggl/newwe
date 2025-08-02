@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -828,15 +827,15 @@ const ForYou = () => {
           </p>
         </motion.div>
 
-        {/* Property Card - Made thinner/longer with swipe animations */}
+        {/* Property Card - Simplified animation for smoother image loading */}
         <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
           {/* Loading Teaser Overlay */}
           <AnimatePresence>
             {showLoadingTeaser && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
               >
                 <div className="text-center space-y-4">
@@ -862,21 +861,18 @@ const ForYou = () => {
               <motion.div
                 key={property.id}
                 initial={{ 
-                  opacity: 0, 
-                  x: swipeDirection === 'left' ? -100 : swipeDirection === 'right' ? 100 : 0,
-                  y: 30, 
-                  scale: 0.95 
+                  opacity: 0,
+                  x: swipeDirection === 'left' ? -100 : swipeDirection === 'right' ? 100 : 0
                 }}
-                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                animate={{ opacity: 1, x: 0 }}
                 exit={{ 
                   opacity: 0, 
                   x: swipeDirection === 'left' ? -400 : swipeDirection === 'right' ? 400 : 0,
-                  y: swipeDirection === 'left' ? -10 : swipeDirection === 'right' ? -10 : -30,
-                  scale: 0.98
+                  y: swipeDirection === 'left' ? -10 : swipeDirection === 'right' ? -10 : -30
                 }}
                 transition={{ 
-                  duration: 0.25, // Reduced from 0.35 for faster card transitions
-                  ease: "easeInOut"
+                  duration: 0.2, // Reduced duration for faster transitions
+                  ease: "easeOut" // Smoother easing
                 }}
                 className="w-full max-w-lg mx-auto relative"
               >
@@ -922,7 +918,7 @@ const ForYou = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }} // Reduced delay from 0.8 to 0.5
+                    transition={{ delay: 0.3 }} // Reduced delay for faster appearance
                     className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
@@ -940,7 +936,7 @@ const ForYou = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }} // Reduced delay from 1 to 0.7
+          transition={{ delay: 0.5 }} // Reduced delay
           className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 

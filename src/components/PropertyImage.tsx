@@ -17,6 +17,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [imageOpacity, setImageOpacity] = useState(1); // New state for smooth transitions
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -63,63 +64,82 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Only preload the first image immediately
+  // Preload first few images immediately for smoother experience
   useEffect(() => {
-    if (processedImages.length > 0 && !loadedImages.has(0)) {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, 0]));
-      };
-      img.src = processedImages[0];
+    if (processedImages.length > 0) {
+      // Preload current and next 2 images
+      const imagesToPreload = [0, 1, 2].filter(index => 
+        index < processedImages.length && !loadedImages.has(index)
+      );
+      
+      imagesToPreload.forEach(index => {
+        if (processedImages[index]) {
+          const img = new Image();
+          img.onload = () => {
+            setLoadedImages(prev => new Set([...prev, index]));
+          };
+          img.src = processedImages[index];
+        }
+      });
     }
   }, [processedImages]);
 
-  // Lazy load images when user hovers or navigates
+  // Preload adjacent images when hovering for smoother navigation
   useEffect(() => {
     if (isHovered && processedImages.length > 1) {
-      // Load the next image when hovering
       const nextIndex = (currentImageIndex + 1) % processedImages.length;
-      if (!loadedImages.has(nextIndex)) {
-        const img = new Image();
-        img.onload = () => {
-          setLoadedImages(prev => new Set([...prev, nextIndex]));
-        };
-        img.src = processedImages[nextIndex];
-      }
+      const prevIndex = (currentImageIndex - 1 + processedImages.length) % processedImages.length;
+      
+      [nextIndex, prevIndex].forEach(index => {
+        if (!loadedImages.has(index) && processedImages[index]) {
+          const img = new Image();
+          img.onload = () => {
+            setLoadedImages(prev => new Set([...prev, index]));
+          };
+          img.src = processedImages[index];
+        }
+      });
     }
   }, [isHovered, currentImageIndex, processedImages, loadedImages]);
 
-  // Load current image if not already loaded
-  useEffect(() => {
-    if (!loadedImages.has(currentImageIndex) && processedImages[currentImageIndex]) {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set([...prev, currentImageIndex]));
-      };
-      img.src = processedImages[currentImageIndex];
-    }
-  }, [currentImageIndex, processedImages, loadedImages]);
-
-  // Navigation functions with event.stopPropagation()
+  // Navigation functions with smooth fade transitions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (hasMultipleImages) {
-      setCurrentImageIndex((prevIndex) => 
-        (prevIndex + 1) % processedImages.length
-      );
+      const nextIndex = (currentImageIndex + 1) % processedImages.length;
+      
+      // Only fade if next image isn't loaded yet
+      if (!loadedImages.has(nextIndex)) {
+        setImageOpacity(0);
+        setTimeout(() => {
+          setCurrentImageIndex(nextIndex);
+          setImageOpacity(1);
+        }, 150);
+      } else {
+        setCurrentImageIndex(nextIndex);
+      }
     }
-  }, [processedImages.length, hasMultipleImages]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex, loadedImages]);
 
   const prevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (hasMultipleImages) {
-      setCurrentImageIndex((prevIndex) => 
-        (prevIndex - 1 + processedImages.length) % processedImages.length
-      );
+      const prevIndex = (currentImageIndex - 1 + processedImages.length) % processedImages.length;
+      
+      // Only fade if previous image isn't loaded yet
+      if (!loadedImages.has(prevIndex)) {
+        setImageOpacity(0);
+        setTimeout(() => {
+          setCurrentImageIndex(prevIndex);
+          setImageOpacity(1);
+        }, 150);
+      } else {
+        setCurrentImageIndex(prevIndex);
+      }
     }
-  }, [processedImages.length, hasMultipleImages]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex, loadedImages]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -145,6 +165,11 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   };
 
+  const handleImageLoad = () => {
+    // Ensure opacity is set to 1 when image loads
+    setImageOpacity(1);
+  };
+
   const getCurrentImageUrl = () => {
     return processedImages[currentImageIndex] || '';
   };
@@ -158,14 +183,16 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       <img
         src={getCurrentImageUrl()}
         alt={address}
-        className="w-full h-full object-cover transition-opacity duration-100"
-        onError={handleImageError}
-        loading="lazy"
-        decoding="async"
+        className={`w-full h-full object-cover transition-opacity duration-300 ease-in-out`}
         style={{ 
+          opacity: imageOpacity,
           willChange: 'opacity',
           imageRendering: 'auto'
         }}
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        loading="lazy"
+        decoding="async"
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
