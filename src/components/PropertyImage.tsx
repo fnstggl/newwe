@@ -19,15 +19,12 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
-  // Transparent SVG placeholder - completely invisible
-  const transparentPlaceholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8L3N2Zz4K';
-
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
     const processImageUrl = (url: string) => {
-      if (typeof url !== 'string') return transparentPlaceholder;
+      if (typeof url !== 'string') return '';
       
       // Check if it's a Zillow image URL
       if (url.startsWith('https://photos.zillowstatic.com/')) {
@@ -52,18 +49,18 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       return images.map((img: any) => {
         if (typeof img === 'string') return processImageUrl(img);
         if (typeof img === 'object' && img !== null) {
-          return processImageUrl(img.url || img.image_url || transparentPlaceholder);
+          return processImageUrl(img.url || img.image_url || '');
         }
-        return transparentPlaceholder;
-      });
+        return '';
+      }).filter(Boolean); // Remove empty strings
     }
 
     if (typeof images === 'string') {
-      return [processImageUrl(images)];
+      return [processImageUrl(images)].filter(Boolean);
     }
 
     return [];
-  }, [images, transparentPlaceholder]);
+  }, [images]);
 
   const hasMultipleImages = processedImages.length > 1;
 
@@ -72,7 +69,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
     
     imagesToPreload.forEach((imageUrl, index) => {
-      if (imageUrl && imageUrl !== transparentPlaceholder) {
+      if (imageUrl) {
         const img = new Image();
         img.onload = () => {
           if (index < processedImages.length) {
@@ -82,7 +79,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         img.src = imageUrl;
       }
     });
-  }, [processedImages, preloadImages, transparentPlaceholder]);
+  }, [processedImages, preloadImages]);
 
   // Navigation functions with instant transitions (no opacity changes)
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -103,35 +100,8 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const img = e.currentTarget;
-    const currentSrc = img.src;
-    
-    // Mark this image index as having an error
-    setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
-    
-    // If optimized proxy failed, try original URL with exponential backoff
-    if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
-      try {
-        const urlParams = new URLSearchParams(currentSrc.split('?')[1]);
-        const originalUrl = decodeURIComponent(urlParams.get('url') || '');
-        if (originalUrl) {
-          // Add delay before fallback to reduce load
-          setTimeout(() => {
-            img.src = originalUrl;
-          }, Math.random() * 1000 + 500); // Random delay between 500-1500ms
-        }
-      } catch (error) {
-        console.error('Error parsing proxy URL:', error);
-      }
-    } else {
-      // If original URL also fails, use transparent placeholder
-      img.src = transparentPlaceholder;
-    }
-  };
-
   const getCurrentImageUrl = () => {
-    return processedImages[currentImageIndex] || transparentPlaceholder;
+    return processedImages[currentImageIndex] || '';
   };
 
   return (
@@ -140,13 +110,15 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img
-        src={getCurrentImageUrl()}
-        alt={address}
-        className="w-full h-full object-cover"
-        onError={handleImageError}
-        loading="eager"
-        decoding="sync"
+      {/* Use background-image instead of img tag to prevent placeholder flashing */}
+      <div
+        className="w-full h-full bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: getCurrentImageUrl() ? `url(${getCurrentImageUrl()})` : 'none',
+          backgroundColor: getCurrentImageUrl() ? 'transparent' : '#1f2937' // subtle dark background when no image
+        }}
+        role="img"
+        aria-label={address}
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
