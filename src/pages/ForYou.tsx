@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -520,7 +521,9 @@ const ForYou = () => {
           title: "Property Saved",
           description: "Added to your saved properties!",
         });
-        // Don't call handleSwipeRight here as it will be called by the button click
+        
+        // Trigger the swipe animation and transition
+        handleSwipeRight();
       }
     } catch (error) {
       console.error('Error saving property:', error);
@@ -534,10 +537,6 @@ const ForYou = () => {
 
   const handleSwipeRight = () => {
     setSwipeDirection('right');
-    toast({
-      title: "✅ Saved",
-      description: "Added to your saved properties.",
-    });
     
     if (currentIndex < properties.length - 1) {
       setIsRevealing(false);
@@ -635,10 +634,75 @@ const ForYou = () => {
   // Show end screen if no more properties and user has reached the end
   if (showEndScreen) {
     return (
-      <EndOfMatchesScreen 
-        onRestart={handleRestartMatches}
-        onUpdateFilters={() => setShowUpdateFilters(true)}
-      />
+      <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8 px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-6"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
+            className="w-24 h-24 mx-auto"
+          >
+            <img 
+              src="/lovable-uploads/6779d8c3-0363-44cb-b0c3-498ba44a369e.png" 
+              alt="Dream Home Logo" 
+              className="w-full h-full object-contain"
+            />
+          </motion.div>
+          
+          <div className="space-y-3">
+            <h1 className="text-3xl font-bold">You've reached the end of your dream-home matches</h1>
+            <p className="text-white/70 text-lg">
+              No more properties match your current criteria.
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="space-y-4 w-full max-w-md"
+        >
+          <motion.button
+            onClick={handleRestartMatches}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full px-6 py-4 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 hover:bg-blue-500/30 text-white rounded-full transition-all duration-200 flex items-center justify-center space-x-3 font-medium shadow-lg"
+          >
+            <span>See them again</span>
+          </motion.button>
+          
+          <motion.button
+            onClick={() => setShowUpdateFilters(true)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full px-6 py-4 bg-gray-800/20 backdrop-blur-md border border-gray-600/30 hover:bg-gray-700/30 text-white rounded-full transition-all duration-200 flex items-center justify-center space-x-3 font-medium shadow-lg"
+          >
+            <Settings className="w-5 h-5" />
+            <span>Change your filters</span>
+          </motion.button>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-sm text-white/50 text-center max-w-md"
+        >
+          New listings appear daily. We'll keep watching the market for you and notify you when new matches are found.
+        </motion.p>
+
+        {/* Update Filters Modal */}
+        <UpdateFiltersModal
+          isOpen={showUpdateFilters}
+          onClose={() => setShowUpdateFilters(false)}
+          onFiltersUpdated={handleFiltersUpdated}
+        />
+      </div>
     );
   }
 
@@ -880,10 +944,7 @@ const ForYou = () => {
           className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 
-            onClick={() => {
-              setSwipeDirection('left');
-              handleSwipeLeft();
-            }}
+            onClick={handleSwipeLeft}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
@@ -893,10 +954,7 @@ const ForYou = () => {
           </motion.button>
           
           <motion.button 
-            onClick={() => {
-              setSwipeDirection('right');
-              handleSave(property);
-            }}
+            onClick={() => handleSave(property)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
