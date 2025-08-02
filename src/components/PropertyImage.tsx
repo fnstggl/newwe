@@ -119,12 +119,12 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       <img
         src={currentImageUrl}
         alt={address}
-        className="w-full h-full object-cover transition-opacity duration-300"
+        className={`w-full h-full object-cover transition-all duration-500 ${
+          isImageLoaded ? 'blur-0 opacity-100' : 'blur-sm opacity-80'
+        }`}
         loading="eager"
         decoding="async"
-        style={{
-          opacity: isImageLoaded ? 1 : 0.3
-        }}
+        onLoad={() => setLoadedImages(prev => new Set([...prev, currentImageUrl]))}
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
