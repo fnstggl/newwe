@@ -9,37 +9,17 @@ interface PropertyImageProps {
   preloadImages?: string[]; // Add prop to preload additional images
 }
 
-// Global cache for image URLs to prevent duplicate requests
-const imageCache = new Map<string, string>();
-const pendingRequests = new Map<string, Promise<string>>();
-
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Process images with deduplication and lazy loading
+  // Process images - use original URLs directly
   const processedImages = React.useMemo(() => {
     if (!images) return [];
 
     const processImageUrl = (url: string) => {
       if (typeof url !== 'string') return '';
-      
-      // Check if it's a Zillow image URL
-      if (url.startsWith('https://photos.zillowstatic.com/')) {
-        // Create a cache key
-        const cacheKey = `${url}_250_25`;
-        
-        // Return cached URL if available
-        if (imageCache.has(cacheKey)) {
-          return imageCache.get(cacheKey)!;
-        }
-        
-        // Create optimized URL
-        const optimizedUrl = `https://rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image?url=${encodeURIComponent(url)}&width=250&quality=25`;
-        imageCache.set(cacheKey, optimizedUrl);
-        return optimizedUrl;
-      }
-      
+      // Return the original URL without any proxy processing
       return url;
     };
 
@@ -74,7 +54,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     });
   }, [processedImages, preloadImages]);
 
-  // Navigation functions with instant transitions
+  // Navigation functions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -101,15 +81,14 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image display - show immediately without opacity transitions */}
+      {/* Image display */}
       {currentImageUrl ? (
         <img
           src={currentImageUrl}
           alt={address}
           className="w-full h-full object-cover"
-          style={{
-            imageRendering: 'auto'
-          }}
+          loading="eager"
+          decoding="async"
         />
       ) : (
         <div className="w-full h-full bg-gray-700" />
