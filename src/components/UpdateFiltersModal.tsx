@@ -166,8 +166,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     }}
                     className={`p-3 rounded-full border transition-colors ${
   searchingFor === option
-    ? 'border-white/30 bg-white/15 text-white'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
 }`}
                   >
                     {option}
@@ -186,8 +186,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     onClick={() => setBedrooms(index)}
                     className={`p-3 rounded-full border transition-colors ${
   bedrooms === index
-    ? 'border-white/30 bg-white/15 text-white'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
 }`}
                   >
                     {option}
@@ -218,8 +218,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     onClick={() => handleNeighborhoodToggle(neighborhood)}
                    className={`p-2 text-sm rounded-full border transition-colors text-left ${
   preferredNeighborhoods.includes(neighborhood)
-    ? 'border-white/30 bg-white/15 text-white'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
 }`}
                   >
                     {neighborhood}
@@ -239,8 +239,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                       onClick={() => handleMustHaveToggle(mustHave)}
                      className={`p-2 text-sm rounded-full border transition-colors text-left ${
   mustHaves.includes(mustHave)
-    ? 'border-white/30 bg-white/15 text-white'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
 }`}
                     >
                       {mustHave}
