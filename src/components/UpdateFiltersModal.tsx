@@ -25,6 +25,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
   const [mustHaves, setMustHaves] = useState<string[]>(userProfile?.must_haves || []);
   const [discountThreshold, setDiscountThreshold] = useState<number | undefined>(userProfile?.discount_threshold);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [liveCount, setLiveCount] = useState<number>(0);
+  const [isCountLoading, setIsCountLoading] = useState(false);
 
   const neighborhoods = [
     // Manhattan
@@ -56,6 +58,110 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
     ...boroughs,
     ...neighborhoods
   ];
+
+  // Get live counts for filters - copied from PreSignupOnboarding
+const getLiveCount = async (filters: Partial<typeof userProfile>): Promise<number> => {
+  try {
+    const propertyType = filters.property_type;
+    
+    if (propertyType === 'rent') {
+      // Count from undervalued_rentals
+      let rentalQuery = supabase
+        .from('undervalued_rentals')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active');
+
+      // Count from undervalued_rent_stabilized
+      let stabilizedQuery = supabase
+        .from('undervalued_rent_stabilized')
+        .select('id', { count: 'exact', head: true })
+        .eq('display_status', 'active');
+
+      // Apply filters to both queries
+      if (filters.max_budget) {
+        rentalQuery = rentalQuery.lte('monthly_rent', filters.max_budget);
+        stabilizedQuery = stabilizedQuery.lte('monthly_rent', filters.max_budget);
+      }
+      if (filters.bedrooms !== undefined) {
+        rentalQuery = rentalQuery.eq('bedrooms', filters.bedrooms);
+        stabilizedQuery = stabilizedQuery.eq('bedrooms', filters.bedrooms);
+      }
+      if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
+        const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+        const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
+        const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+        
+        if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
+          if (selectedBoroughs.length > 0) {
+            rentalQuery = rentalQuery.in('borough', selectedBoroughs);
+            stabilizedQuery = stabilizedQuery.in('borough', selectedBoroughs);
+          }
+          if (selectedNeighborhoods.length > 0) {
+            const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
+            rentalQuery = rentalQuery.or(neighborhoodConditions);
+            stabilizedQuery = stabilizedQuery.or(neighborhoodConditions);
+          }
+        }
+      }
+      if (filters.discount_threshold) {
+        rentalQuery = rentalQuery.gte('discount_percent', filters.discount_threshold);
+        stabilizedQuery = stabilizedQuery.gte('undervaluation_percent', filters.discount_threshold);
+      }
+      if (filters.must_haves && filters.must_haves.includes('No broker fee')) {
+        rentalQuery = rentalQuery.eq('no_fee', true);
+      }
+      if (filters.must_haves && filters.must_haves.includes('Rent-stabilized')) {
+        // Only count stabilized rentals if this filter is selected
+        const { count: stabilizedCount } = await stabilizedQuery;
+        return stabilizedCount || 0;
+      }
+
+      const [rentalResult, stabilizedResult] = await Promise.all([
+        rentalQuery,
+        stabilizedQuery
+      ]);
+
+      return (rentalResult.count || 0) + (stabilizedResult.count || 0);
+
+    } else if (propertyType === 'buy') {
+      let query = supabase
+        .from('undervalued_sales')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active');
+
+      if (filters.max_budget) {
+        query = query.lte('price', filters.max_budget);
+      }
+      if (filters.bedrooms !== undefined) {
+        query = query.eq('bedrooms', filters.bedrooms);
+      }
+      if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
+        const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
+        const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
+        const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+        
+        if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
+          if (selectedBoroughs.length > 0) {
+            query = query.in('borough', selectedBoroughs);
+          }
+          if (selectedNeighborhoods.length > 0) {
+            const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
+            query = query.or(neighborhoodConditions);
+          }
+        }
+      }
+      if (filters.discount_threshold) {
+        query = query.gte('discount_percent', filters.discount_threshold);
+      }
+
+      const { count } = await query;
+      return count || 0;
+    }
+  } catch (error) {
+    console.error('Error getting live count:', error);
+  }
+  return 0;
+};
 
   const rentMustHaves = [
     'No broker fee',
@@ -124,6 +230,26 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
     }
   };
 
+// Update live count when filters change
+useEffect(() => {
+  if (propertyType) {
+    setIsCountLoading(true);
+    const currentFilters = {
+      property_type: propertyType,
+      bedrooms: bedrooms,
+      max_budget: maxBudget,
+      preferred_neighborhoods: preferredNeighborhoods,
+      must_haves: mustHaves,
+      discount_threshold: discountThreshold
+    };
+    
+    getLiveCount(currentFilters).then(count => {
+      setLiveCount(count);
+      setIsCountLoading(false);
+    });
+  }
+}, [propertyType, bedrooms, maxBudget, preferredNeighborhoods, mustHaves, discountThreshold]);
+  
   if (!isOpen) return null;
 
   return (
@@ -143,7 +269,7 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
           className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Update Dream Home Filters</h2>
+            <h2 className="text-2xl font-bold text-white">Update Personalized Search Filters</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
@@ -166,8 +292,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     }}
                     className={`p-3 rounded-full border transition-colors ${
   searchingFor === option
-    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
+    ? 'border-blue-800/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-800/10'
 }`}
                   >
                     {option}
@@ -186,8 +312,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     onClick={() => setBedrooms(index)}
                     className={`p-3 rounded-full border transition-colors ${
   bedrooms === index
-    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
+    ? 'border-blue-800/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-800/10'
 }`}
                   >
                     {option}
@@ -218,8 +344,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     onClick={() => handleNeighborhoodToggle(neighborhood)}
                    className={`p-2 text-sm rounded-full border transition-colors text-left ${
   preferredNeighborhoods.includes(neighborhood)
-    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
+    ? 'border-blue-800/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-800/10'
 }`}
                   >
                     {neighborhood}
@@ -239,8 +365,8 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                       onClick={() => handleMustHaveToggle(mustHave)}
                      className={`p-2 text-sm rounded-full border transition-colors text-left ${
   mustHaves.includes(mustHave)
-    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-500/10'
+    ? 'border-blue-800/40 bg-blue-500/15 text-blue-300'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-800/10'
 }`}
                     >
                       {mustHave}
@@ -265,6 +391,27 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
             </div>
           </div>
 
+{/* Live Count Display */}
+{propertyType && (
+  <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-center">
+    <div className="flex items-center justify-center space-x-2">
+      {isCountLoading ? (
+        <>
+          <div className="w-4 h-4 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin" />
+          <span className="text-blue-300 font-medium">Counting listings...</span>
+        </>
+      ) : (
+        <>
+          <span className="text-blue-300 font-medium">
+            {liveCount.toLocaleString()} listings match your filters
+          </span>
+        </>
+      )}
+    </div>
+  </div>
+)}
+
+          
           <div className="flex space-x-4 mt-8">
            <button
   onClick={onClose}
