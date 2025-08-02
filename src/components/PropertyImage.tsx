@@ -18,6 +18,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [currentLoadedImage, setCurrentLoadedImage] = useState<string>('');
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -64,7 +65,23 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Preload all images for this property and any additional preload images
+  // Preload current image and set it when loaded
+  useEffect(() => {
+    const currentImageUrl = processedImages[currentImageIndex];
+    if (currentImageUrl) {
+      const img = new Image();
+      img.onload = () => {
+        setCurrentLoadedImage(currentImageUrl);
+        setLoadedImages(prev => new Set([...prev, currentImageIndex]));
+      };
+      img.onerror = () => {
+        setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
+      };
+      img.src = currentImageUrl;
+    }
+  }, [processedImages, currentImageIndex]);
+
+  // Preload additional images for this property and any additional preload images
   useEffect(() => {
     const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
     
@@ -100,22 +117,18 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
-  const getCurrentImageUrl = () => {
-    return processedImages[currentImageIndex] || '';
-  };
-
   return (
     <div 
       className={`relative overflow-hidden group ${className || ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Use background-image instead of img tag to prevent placeholder flashing */}
+      {/* Use background-image to prevent placeholder flashing, but only show when image is loaded */}
       <div
         className="w-full h-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: getCurrentImageUrl() ? `url(${getCurrentImageUrl()})` : 'none',
-          backgroundColor: getCurrentImageUrl() ? 'transparent' : '#1f2937' // subtle dark background when no image
+          backgroundImage: currentLoadedImage ? `url(${currentLoadedImage})` : 'none',
+          backgroundColor: currentLoadedImage ? 'transparent' : '#1f2937' // subtle dark background when no image
         }}
         role="img"
         aria-label={address}
