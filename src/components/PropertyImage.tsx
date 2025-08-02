@@ -6,17 +6,13 @@ interface PropertyImageProps {
   images: any;
   address: string;
   className?: string;
-  preloadImages?: string[]; // Add prop to preload additional images
+  preloadImages?: string[];
 }
-
-// Global cache for loaded images to prevent re-loading
-const loadedImageCache = new Set<string>();
-const imageLoadPromises = new Map<string, Promise<string>>();
 
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [readyImages, setReadyImages] = useState<Set<number>>(new Set());
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   // Process images with deduplication
   const processedImages = React.useMemo(() => {
@@ -54,119 +50,65 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Preload image with promise-based loading
-  const preloadImage = useCallback((imageUrl: string): Promise<string> => {
-    if (loadedImageCache.has(imageUrl)) {
-      return Promise.resolve(imageUrl);
-    }
-
-    if (imageLoadPromises.has(imageUrl)) {
-      return imageLoadPromises.get(imageUrl)!;
-    }
-
-    const promise = new Promise<string>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        loadedImageCache.add(imageUrl);
-        imageLoadPromises.delete(imageUrl);
-        resolve(imageUrl);
-      };
-      img.onerror = () => {
-        imageLoadPromises.delete(imageUrl);
-        // Try fallback to original URL if proxy fails
-        if (imageUrl.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
-          try {
-            const urlParams = new URLSearchParams(imageUrl.split('?')[1]);
-            const originalUrl = decodeURIComponent(urlParams.get('url') || '');
-            if (originalUrl) {
-              const fallbackImg = new Image();
-              fallbackImg.onload = () => {
-                loadedImageCache.add(originalUrl);
-                resolve(originalUrl);
-              };
-              fallbackImg.onerror = () => resolve('/placeholder.svg');
-              fallbackImg.src = originalUrl;
-            } else {
-              resolve('/placeholder.svg');
-            }
-          } catch {
-            resolve('/placeholder.svg');
-          }
-        } else {
-          resolve('/placeholder.svg');
-        }
-      };
-      img.src = imageUrl;
-    });
-
-    imageLoadPromises.set(imageUrl, promise);
-    return promise;
-  }, []);
-
-  // Preload current and next images immediately
+  // Preload images in the background
   useEffect(() => {
     const imagesToPreload = [
       ...processedImages,
       ...preloadImages
     ].filter(Boolean);
 
-    // Preload all images but mark current as ready immediately if cached
-    imagesToPreload.forEach(async (imageUrl, index) => {
-      if (imageUrl && imageUrl !== '/placeholder.svg') {
-        try {
-          await preloadImage(imageUrl);
-          if (index < processedImages.length) {
-            setReadyImages(prev => new Set([...prev, index]));
+    imagesToPreload.forEach((imageUrl) => {
+      if (imageUrl && imageUrl !== '/placeholder.svg' && !loadedImages.has(imageUrl)) {
+        const img = new Image();
+        img.onload = () => {
+          setLoadedImages(prev => new Set([...prev, imageUrl]));
+        };
+        img.onerror = () => {
+          // Try fallback to original URL if proxy fails
+          if (imageUrl.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
+            try {
+              const urlParams = new URLSearchParams(imageUrl.split('?')[1]);
+              const originalUrl = decodeURIComponent(urlParams.get('url') || '');
+              if (originalUrl) {
+                const fallbackImg = new Image();
+                fallbackImg.onload = () => {
+                  setLoadedImages(prev => new Set([...prev, originalUrl]));
+                };
+                fallbackImg.src = originalUrl;
+              }
+            } catch {
+              // Ignore fallback errors
+            }
           }
-        } catch (error) {
-          console.error('Failed to preload image:', error);
-        }
+        };
+        img.src = imageUrl;
       }
     });
-  }, [processedImages, preloadImages, preloadImage]);
+  }, [processedImages, preloadImages, loadedImages]);
 
-  // Navigation functions - only navigate if next image is ready or cached
-  const nextImage = useCallback(async (e: React.MouseEvent) => {
+  // Simple navigation - no waiting for image load
+  const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (hasMultipleImages) {
-      const nextIndex = (currentImageIndex + 1) % processedImages.length;
-      const nextImageUrl = processedImages[nextIndex];
-      
-      // Ensure next image is loaded before switching
-      if (nextImageUrl && !loadedImageCache.has(nextImageUrl)) {
-        await preloadImage(nextImageUrl);
-      }
-      
-      setCurrentImageIndex(nextIndex);
+      setCurrentImageIndex((currentImageIndex + 1) % processedImages.length);
     }
-  }, [processedImages, hasMultipleImages, currentImageIndex, preloadImage]);
+  }, [processedImages, hasMultipleImages, currentImageIndex]);
 
-  const prevImage = useCallback(async (e: React.MouseEvent) => {
+  const prevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (hasMultipleImages) {
-      const prevIndex = (currentImageIndex - 1 + processedImages.length) % processedImages.length;
-      const prevImageUrl = processedImages[prevIndex];
-      
-      // Ensure prev image is loaded before switching
-      if (prevImageUrl && !loadedImageCache.has(prevImageUrl)) {
-        await preloadImage(prevImageUrl);
-      }
-      
-      setCurrentImageIndex(prevIndex);
+      setCurrentImageIndex((currentImageIndex - 1 + processedImages.length) % processedImages.length);
     }
-  }, [processedImages, hasMultipleImages, currentImageIndex, preloadImage]);
+  }, [processedImages, hasMultipleImages, currentImageIndex]);
 
   const getCurrentImageUrl = () => {
-    const url = processedImages[currentImageIndex] || '/placeholder.svg';
-    // Only return the URL if it's loaded or is the placeholder
-    if (url === '/placeholder.svg' || loadedImageCache.has(url)) {
-      return url;
-    }
-    // Return a data URL with the same aspect ratio while loading
-    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExIi8+PC9zdmc+';
+    return processedImages[currentImageIndex] || '/placeholder.svg';
   };
+
+  const currentImageUrl = getCurrentImageUrl();
+  const isImageLoaded = loadedImages.has(currentImageUrl) || currentImageUrl === '/placeholder.svg';
 
   return (
     <div 
@@ -175,14 +117,13 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseLeave={() => setIsHovered(false)}
     >
       <img
-        src={getCurrentImageUrl()}
+        src={currentImageUrl}
         alt={address}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover transition-opacity duration-300"
         loading="eager"
-        decoding="sync"
+        decoding="async"
         style={{
-          opacity: loadedImageCache.has(processedImages[currentImageIndex]) || processedImages[currentImageIndex] === '/placeholder.svg' ? 1 : 0.1,
-          transition: 'opacity 0.2s ease-in-out'
+          opacity: isImageLoaded ? 1 : 0.3
         }}
       />
       
