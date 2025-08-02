@@ -330,7 +330,7 @@ useEffect(() => {
                 value={maxBudget || ''}
                 onChange={(e) => setMaxBudget(e.target.value ? parseInt(e.target.value) : undefined)}
                 placeholder={propertyType === 'rent' ? 'Monthly rent' : 'Purchase price'}
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
 
@@ -386,7 +386,7 @@ useEffect(() => {
                 placeholder="15"
                 min="0"
                 max="100"
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
