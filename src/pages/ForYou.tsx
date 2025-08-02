@@ -1006,22 +1006,22 @@ const ForYou = () => {
           transition={{ delay: 0.2 }}
           className="flex justify-center space-x-8 pb-8 mt-8"
         >
-          <motion.button 
-            onClick={handleSwipeLeft}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
-          >
+        <motion.button 
+  onClick={handleSwipeLeft}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
+>
             <X className="w-6 h-6 text-red-400" />
             <span className="text-red-300">Not for me</span>
           </motion.button>
           
-          <motion.button 
-            onClick={() => handleSave(property)}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 rounded-full bg-gray-800/80 backdrop-blur-sm hover:bg-gray-700/80 transition-colors border border-gray-600/50 flex items-center space-x-2"
-          >
+         <motion.button 
+  onClick={() => handleSave(property)}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
+>
             <Heart className="w-6 h-6 text-green-400" />
             <span className="text-green-300">Save this one</span>
           </motion.button>
