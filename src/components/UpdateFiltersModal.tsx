@@ -59,137 +59,171 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
     ...neighborhoods
   ];
 
-  // Get live counts for filters - copied from PreSignupOnboarding
-const getLiveCount = async (filters: Partial<typeof userProfile>): Promise<number> => {
-  try {
-    const propertyType = filters.property_type;
-    
-    if (propertyType === 'rent') {
-      // Count from undervalued_rentals
-      let rentalQuery = supabase
-        .from('undervalued_rentals')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'active');
+  // Updated getLiveCount to fetch all properties and apply client-side filtering like ForYou.tsx
+  const getLiveCount = async (filters: Partial<typeof userProfile>): Promise<number> => {
+    try {
+      const propertyType = filters.property_type;
+      const allProperties: any[] = [];
+      
+      if (propertyType === 'rent') {
+        // Fetch from undervalued_rentals
+        const { data: rentals } = await supabase
+          .from('undervalued_rentals')
+          .select('*')
+          .eq('status', 'active');
 
-      // Count from undervalued_rent_stabilized
-      let stabilizedQuery = supabase
-        .from('undervalued_rent_stabilized')
-        .select('id', { count: 'exact', head: true })
-        .eq('display_status', 'active');
+        if (rentals) {
+          rentals.forEach(rental => {
+            allProperties.push({
+              ...rental,
+              property_type: 'rent',
+              table_source: 'undervalued_rentals'
+            });
+          });
+        }
 
-      // Apply filters to both queries
+        // Fetch from undervalued_rent_stabilized
+        const { data: stabilized } = await supabase
+          .from('undervalued_rent_stabilized')
+          .select('*')
+          .eq('display_status', 'active');
+
+        if (stabilized) {
+          stabilized.forEach(property => {
+            allProperties.push({
+              ...property,
+              property_type: 'rent',
+              table_source: 'undervalued_rent_stabilized',
+              discount_percent: property.undervaluation_percent || 0,
+              isRentStabilized: true
+            });
+          });
+        }
+
+      } else if (propertyType === 'buy') {
+        const { data: sales } = await supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('status', 'active');
+
+        if (sales) {
+          sales.forEach(sale => {
+            allProperties.push({
+              ...sale,
+              property_type: 'buy',
+              table_source: 'undervalued_sales'
+            });
+          });
+        }
+      }
+
+      // Apply client-side filters exactly like ForYou.tsx
+      let filteredProperties = allProperties;
+
+      // Filter by bedrooms
+      if (filters.bedrooms !== undefined && filters.bedrooms !== null) {
+        filteredProperties = filteredProperties.filter(p => p.bedrooms === filters.bedrooms);
+      }
+
+      // Filter by budget
       if (filters.max_budget) {
-        rentalQuery = rentalQuery.lte('monthly_rent', filters.max_budget);
-        stabilizedQuery = stabilizedQuery.lte('monthly_rent', filters.max_budget);
+        filteredProperties = filteredProperties.filter(p => {
+          if (p.property_type === 'rent' && p.monthly_rent) {
+            return p.monthly_rent <= filters.max_budget!;
+          } else if (p.property_type === 'buy' && p.price) {
+            return p.price <= filters.max_budget!;
+          }
+          return true;
+        });
       }
-      if (filters.bedrooms !== undefined) {
-        rentalQuery = rentalQuery.eq('bedrooms', filters.bedrooms);
-        stabilizedQuery = stabilizedQuery.eq('bedrooms', filters.bedrooms);
-      }
+
+      // Filter by neighborhoods using the same flexible matching as ForYou.tsx
       if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
         const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
         const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
         const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
         
-        if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
-          if (selectedBoroughs.length > 0) {
-            rentalQuery = rentalQuery.in('borough', selectedBoroughs);
-            stabilizedQuery = stabilizedQuery.in('borough', selectedBoroughs);
+        filteredProperties = filteredProperties.filter(p => {
+          // If "Anywhere with a train" is selected, show all properties
+          if (filters.preferred_neighborhoods!.includes('Anywhere with a train')) {
+            return true;
           }
-          if (selectedNeighborhoods.length > 0) {
-  // Create more flexible neighborhood matching
-  const neighborhoodFilters = selectedNeighborhoods.map(n => {
-    const cleanName = n.toLowerCase().replace(/['\s-]/g, '');
-    return `neighborhood.ilike.%${cleanName}%`;
-  });
-  
-  // Also try exact matches and common variations
-  const exactMatches = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`);
-  const variations = selectedNeighborhoods.flatMap(n => [
-    `neighborhood.ilike.%${n.replace(/'/g, '')}%`, // Remove apostrophes
-    `neighborhood.ilike.%${n.replace(/\s+/g, '-')}%`, // Spaces to hyphens
-    `neighborhood.ilike.%${n.replace(/-/g, ' ')}%` // Hyphens to spaces
-  ]);
-  
-  const allConditions = [...exactMatches, ...neighborhoodFilters, ...variations].join(',');
-  rentalQuery = rentalQuery.or(allConditions);
-  stabilizedQuery = stabilizedQuery.or(allConditions);
-}
-        }
-      }
-      if (filters.discount_threshold) {
-        rentalQuery = rentalQuery.gte('discount_percent', filters.discount_threshold);
-        stabilizedQuery = stabilizedQuery.gte('undervaluation_percent', filters.discount_threshold);
-      }
-      if (filters.must_haves && filters.must_haves.includes('No broker fee')) {
-        rentalQuery = rentalQuery.eq('no_fee', true);
-      }
-      if (filters.must_haves && filters.must_haves.includes('Rent-stabilized')) {
-        // Only count stabilized rentals if this filter is selected
-        const { count: stabilizedCount } = await stabilizedQuery;
-        return stabilizedCount || 0;
-      }
-
-      const [rentalResult, stabilizedResult] = await Promise.all([
-        rentalQuery,
-        stabilizedQuery
-      ]);
-
-      return (rentalResult.count || 0) + (stabilizedResult.count || 0);
-
-    } else if (propertyType === 'buy') {
-      let query = supabase
-        .from('undervalued_sales')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'active');
-
-      if (filters.max_budget) {
-        query = query.lte('price', filters.max_budget);
-      }
-      if (filters.bedrooms !== undefined) {
-        query = query.eq('bedrooms', filters.bedrooms);
-      }
-      if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
-        const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
-        const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
-        const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
-        
-        if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
-          if (selectedBoroughs.length > 0) {
-            query = query.in('borough', selectedBoroughs);
+          
+          // Check if property matches selected boroughs
+          if (selectedBoroughs.length > 0 && p.borough) {
+            if (selectedBoroughs.includes(p.borough)) return true;
           }
-         if (selectedNeighborhoods.length > 0) {
-  // Create more flexible neighborhood matching
-  const neighborhoodFilters = selectedNeighborhoods.map(n => {
-    const cleanName = n.toLowerCase().replace(/['\s-]/g, '');
-    return `neighborhood.ilike.%${cleanName}%`;
-  });
-  
-  // Also try exact matches and common variations
-  const exactMatches = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`);
-  const variations = selectedNeighborhoods.flatMap(n => [
-    `neighborhood.ilike.%${n.replace(/'/g, '')}%`, // Remove apostrophes
-    `neighborhood.ilike.%${n.replace(/\s+/g, '-')}%`, // Spaces to hyphens
-    `neighborhood.ilike.%${n.replace(/-/g, ' ')}%` // Hyphens to spaces
-  ]);
-  
-  const allConditions = [...exactMatches, ...neighborhoodFilters, ...variations].join(',');
-  query = query.or(allConditions);
-}
-        }
-      }
-      if (filters.discount_threshold) {
-        query = query.gte('discount_percent', filters.discount_threshold);
+          
+          // Check if property matches selected neighborhoods using flexible matching
+          if (selectedNeighborhoods.length > 0 && p.neighborhood) {
+            const propertyNeighborhood = p.neighborhood.toLowerCase();
+            
+            for (const selectedNeighborhood of selectedNeighborhoods) {
+              const selected = selectedNeighborhood.toLowerCase();
+              
+              // Try exact match first
+              if (propertyNeighborhood.includes(selected)) {
+                return true;
+              }
+              
+              // Try with cleaned names (remove apostrophes, spaces, hyphens)
+              const cleanPropertyName = propertyNeighborhood.replace(/['\s-]/g, '');
+              const cleanSelectedName = selected.replace(/['\s-]/g, '');
+              if (cleanPropertyName.includes(cleanSelectedName) || cleanSelectedName.includes(cleanPropertyName)) {
+                return true;
+              }
+              
+              // Try variations
+              const variations = [
+                selected.replace(/'/g, ''),  // Remove apostrophes
+                selected.replace(/\s+/g, '-'), // Spaces to hyphens  
+                selected.replace(/-/g, ' ')   // Hyphens to spaces
+              ];
+              
+              for (const variation of variations) {
+                if (propertyNeighborhood.includes(variation)) {
+                  return true;
+                }
+              }
+            }
+          }
+          
+          // If no boroughs or neighborhoods selected, but other areas selected, exclude
+          if (selectedBoroughs.length === 0 && selectedNeighborhoods.length === 0) {
+            return true;
+          }
+          
+          return false;
+        });
       }
 
-      const { count } = await query;
-      return count || 0;
+      // Filter by discount threshold
+      if (filters.discount_threshold) {
+        filteredProperties = filteredProperties.filter(p => 
+          p.discount_percent >= filters.discount_threshold!
+        );
+      }
+
+      // Filter by must-haves for rentals
+      if (filters.property_type === 'rent' && filters.must_haves && filters.must_haves.length > 0) {
+        filteredProperties = filteredProperties.filter(p => {
+          if (filters.must_haves!.includes('No broker fee') && p.table_source === 'undervalued_rentals') {
+            return p.no_fee === true;
+          }
+          if (filters.must_haves!.includes('Rent-stabilized')) {
+            return p.table_source === 'undervalued_rent_stabilized';
+          }
+          return true;
+        });
+      }
+
+      return filteredProperties.length;
+
+    } catch (error) {
+      console.error('Error getting live count:', error);
+      return 0;
     }
-  } catch (error) {
-    console.error('Error getting live count:', error);
-  }
-  return 0;
-};
+  };
 
   const rentMustHaves = [
     'No broker fee',
