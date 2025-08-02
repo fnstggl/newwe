@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -472,7 +473,7 @@ const ForYou = () => {
         });
       }
 
-      // Filter by neighborhoods - fixed logic
+      // Filter by neighborhoods - using the same flexible matching as UpdateFiltersModal
       if (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) {
         const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
         const selectedBoroughs = userProfile.preferred_neighborhoods.filter(n => boroughs.includes(n));
@@ -489,11 +490,38 @@ const ForYou = () => {
             if (selectedBoroughs.includes(p.borough)) return true;
           }
           
-          // Check if property matches selected neighborhoods
+          // Check if property matches selected neighborhoods using flexible matching
           if (selectedNeighborhoods.length > 0 && p.neighborhood) {
-            if (selectedNeighborhoods.some(neighborhood => 
-              p.neighborhood?.toLowerCase().includes(neighborhood.toLowerCase())
-            )) return true;
+            const propertyNeighborhood = p.neighborhood.toLowerCase();
+            
+            for (const selectedNeighborhood of selectedNeighborhoods) {
+              const selected = selectedNeighborhood.toLowerCase();
+              
+              // Try exact match first
+              if (propertyNeighborhood.includes(selected)) {
+                return true;
+              }
+              
+              // Try with cleaned names (remove apostrophes, spaces, hyphens)
+              const cleanPropertyName = propertyNeighborhood.replace(/['\s-]/g, '');
+              const cleanSelectedName = selected.replace(/['\s-]/g, '');
+              if (cleanPropertyName.includes(cleanSelectedName) || cleanSelectedName.includes(cleanPropertyName)) {
+                return true;
+              }
+              
+              // Try variations
+              const variations = [
+                selected.replace(/'/g, ''),  // Remove apostrophes
+                selected.replace(/\s+/g, '-'), // Spaces to hyphens  
+                selected.replace(/-/g, ' ')   // Hyphens to spaces
+              ];
+              
+              for (const variation of variations) {
+                if (propertyNeighborhood.includes(variation)) {
+                  return true;
+                }
+              }
+            }
           }
           
           // If no boroughs or neighborhoods selected, but other areas selected, exclude
