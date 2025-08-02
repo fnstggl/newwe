@@ -16,7 +16,6 @@ const pendingRequests = new Map<string, Promise<string>>();
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -75,11 +74,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     });
   }, [processedImages, preloadImages]);
 
-  // Reset image loaded state when index changes
-  useEffect(() => {
-    setImageLoaded(false);
-  }, [currentImageIndex]);
-
   // Navigation functions with instant transitions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -101,33 +95,20 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const currentImageUrl = processedImages[currentImageIndex] || '';
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-
-  const handleImageError = () => {
-    setImageLoaded(false);
-  };
-
   return (
     <div 
       className={`relative overflow-hidden group ${className || ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image display */}
+      {/* Image display - show immediately without opacity transitions */}
       {currentImageUrl ? (
         <img
           src={currentImageUrl}
           alt={address}
-          className={`w-full h-full object-cover transition-opacity duration-200 ${
-            imageLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
+          className="w-full h-full object-cover"
           style={{
-            imageRendering: 'auto',
-            filter: imageLoaded ? 'none' : 'blur(0px)'
+            imageRendering: 'auto'
           }}
         />
       ) : (
