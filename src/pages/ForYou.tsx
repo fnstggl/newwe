@@ -1006,26 +1006,57 @@ const ForYou = () => {
           transition={{ delay: 0.2 }}
           className="flex justify-center space-x-8 pb-8 mt-8"
         >
-        <motion.button 
+       <motion.button 
   onClick={handleSwipeLeft}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
- className="px-8 py-4 rounded-full bg-gradient-to-b from-white/15 to-white/5 backdrop-blur-xl hover:from-white/20 hover:to-white/10 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
+  className="relative px-8 py-4 rounded-full overflow-hidden backdrop-blur-2xl transition-all duration-300 flex items-center space-x-2"
+  style={{
+    background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+    border: '1px solid rgba(255,255,255,0.18)',
+    boxShadow: `
+      0 8px 32px rgba(0,0,0,0.37),
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -1px 0 rgba(255,255,255,0.1)
+    `
+  }}
 >
-            <X className="w-6 h-6 text-red-400" />
-            <span className="text-red-300">Not for me</span>
-          </motion.button>
+  {/* Glass highlight overlay */}
+  <div 
+    className="absolute inset-0 rounded-full opacity-50"
+    style={{
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.1) 100%)'
+    }}
+  />
+  <X className="w-6 h-6 text-red-400 relative z-10" />
+  <span className="text-red-300 relative z-10">Not for me</span>
+</motion.button>
           
          <motion.button 
   onClick={() => handleSave(property)}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-white/8 backdrop-blur-2xl hover:bg-white/12 transition-all duration-300 border border-white/25 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center space-x-2"
+  className="relative px-8 py-4 rounded-full overflow-hidden backdrop-blur-2xl transition-all duration-300 flex items-center space-x-2"
+  style={{
+    background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+    border: '1px solid rgba(255,255,255,0.18)',
+    boxShadow: `
+      0 8px 32px rgba(0,0,0,0.37),
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -1px 0 rgba(255,255,255,0.1)
+    `
+  }}
 >
-            <Heart className="w-6 h-6 text-green-400" />
-            <span className="text-green-300">Save this one</span>
-          </motion.button>
-        </motion.div>
+  {/* Glass highlight overlay */}
+  <div 
+    className="absolute inset-0 rounded-full opacity-50"
+    style={{
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.1) 100%)'
+    }}
+  />
+  <Heart className="w-6 h-6 text-green-400 relative z-10" />
+  <span className="text-green-300 relative z-10">Save this one</span>
+</motion.button>
 
         {/* Chat Input */}
         <div className="w-full max-w-lg mx-auto px-6 pb-8">
