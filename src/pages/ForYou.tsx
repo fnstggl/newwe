@@ -329,7 +329,7 @@ const ForYou = () => {
       const masterTimer = setTimeout(() => {
         setIsLoading(false);
         setIsRevealing(true);
-      }, 9000);
+      }, 11000);
       
       return () => clearTimeout(masterTimer);
     }
