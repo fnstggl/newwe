@@ -1008,22 +1008,22 @@ const ForYou = () => {
 >
 <motion.button 
   onClick={handleSwipeLeft}
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-red-500/10 backdrop-blur-xl border border-red-500/20 hover:bg-red-500/15 transition-all duration-300 flex items-center space-x-2"
+  whileHover={{ scale: 1.02 }}  // More subtle hover
+  whileTap={{ scale: 0.98 }}
+  className="px-10 py-4 rounded-full bg-red-500/8 backdrop-blur-2xl border border-red-500/15 hover:bg-red-500/12 transition-all duration-200 flex items-center space-x-3 shadow-sm"
 >
-  <X className="w-6 h-6 text-red-400" />
-  <span className="text-red-300 font-medium">Not for me</span>
+  <X className="w-5 h-5 text-red-400" /> 
+  <span className="text-red-300 font-medium text-sm tracking-tight">Not for me</span>
 </motion.button>
   
 <motion.button 
   onClick={() => handleSave(property)}
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-green-500/10 backdrop-blur-xl border border-green-500/20 hover:bg-green-500/15 transition-all duration-300 flex items-center space-x-2"
+  whileHover={{ scale: 1.02 }}
+  whileTap={{ scale: 0.98 }}
+  className="px-10 py-4 rounded-full bg-green-500/8 backdrop-blur-2xl border border-green-500/15 hover:bg-green-500/12 transition-all duration-200 flex items-center space-x-3 shadow-sm"
 >
-  <Heart className="w-6 h-6 text-green-400" />
-  <span className="text-green-300 font-medium">Save this one</span>
+  <Heart className="w-5 h-5 text-green-400" />
+  <span className="text-green-300 font-medium text-sm tracking-tight">Save this one</span>
 </motion.button>
 </motion.div>
 
