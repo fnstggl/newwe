@@ -919,7 +919,7 @@ const ForYou = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center pt-8 pb-4"
         >
-          <p className="text-xl font-medium text-white/90">
+          className="text-xl font-inter font-semibold tracking-tighter text-white/90"
             {personalizedHeaders[currentHeaderIndex]}
           </p>
         </motion.div>
