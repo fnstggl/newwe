@@ -1034,25 +1034,25 @@ const ForYou = () => {
   transition={{ delay: 0.2 }}
   className="flex justify-center space-x-8 pb-8 mt-16"
 >
-<motion.button 
-  onClick={handleSwipeLeft}
-  whileHover={{ scale: 1.02 }}  // More subtle hover
-  whileTap={{ scale: 0.98 }}
-  className="px-10 py-4 rounded-full bg-red-500/8 backdrop-blur-2xl border border-red-500/15 hover:bg-red-500/12 transition-all duration-200 flex items-center space-x-3 shadow-sm"
->
-  <X className="w-5 h-5 text-red-400" /> 
-  <span className="text-red-300 font-medium text-sm tracking-tight">Not for me</span>
-</motion.button>
+  <motion.button 
+    onClick={handleSwipeLeft}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-40 py-4 rounded-full bg-black border border-gray-600 hover:border-gray-500 transition-all duration-200 flex items-center justify-center space-x-3"
+  >
+    <X className="w-5 h-5 text-red-400" /> 
+    <span className="text-white font-medium text-sm tracking-tight">Not for me</span>
+  </motion.button>
   
-<motion.button 
-  onClick={() => handleSave(property)}
-  whileHover={{ scale: 1.02 }}
-  whileTap={{ scale: 0.98 }}
-  className="px-10 py-4 rounded-full bg-green-500/8 backdrop-blur-2xl border border-green-500/15 hover:bg-green-500/12 transition-all duration-200 flex items-center space-x-3 shadow-sm"
->
-  <Heart className="w-5 h-5 text-green-400" />
-  <span className="text-green-300 font-medium text-sm tracking-tight">Save this one</span>
-</motion.button>
+  <motion.button 
+    onClick={() => handleSave(property)}
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-40 py-4 rounded-full bg-white hover:bg-gray-100 transition-all duration-200 flex items-center justify-center space-x-3"
+  >
+    <Heart className="w-5 h-5 text-green-500" />
+    <span className="text-black font-medium text-sm tracking-tight">Save this one</span>
+  </motion.button>
 </motion.div>
 
        {/* AI Search Input */}
