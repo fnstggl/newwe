@@ -1010,7 +1010,7 @@ const ForYou = () => {
   onClick={handleSwipeLeft}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
+ className="px-8 py-4 rounded-full bg-gradient-to-b from-white/15 to-white/5 backdrop-blur-xl hover:from-white/20 hover:to-white/10 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
 >
             <X className="w-6 h-6 text-red-400" />
             <span className="text-red-300">Not for me</span>
@@ -1020,7 +1020,7 @@ const ForYou = () => {
   onClick={() => handleSave(property)}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/15 transition-all duration-300 border border-white/20 shadow-2xl shadow-black/20 flex items-center space-x-2"
+  className="px-8 py-4 rounded-full bg-white/8 backdrop-blur-2xl hover:bg-white/12 transition-all duration-300 border border-white/25 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center space-x-2"
 >
             <Heart className="w-6 h-6 text-green-400" />
             <span className="text-green-300">Save this one</span>
