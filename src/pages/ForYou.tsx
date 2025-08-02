@@ -546,7 +546,7 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 500); // Reduced from 750ms to 500ms for faster transitions
+      }, 300); // Reduced for faster transitions
     } else {
       // Show end screen instead of toast
       setShowEndScreen(true);
@@ -565,7 +565,7 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 500); // Reduced from 750ms to 500ms for faster transitions
+      }, 300); // Reduced for faster transitions
     } else {
       // Show end screen instead of toast
       setShowEndScreen(true);
@@ -705,6 +705,20 @@ const ForYou = () => {
     );
   }
 
+  const getPreloadImages = () => {
+    if (currentIndex + 1 < properties.length) {
+      const nextProperty = properties[currentIndex + 1];
+      if (nextProperty && nextProperty.images) {
+        if (Array.isArray(nextProperty.images)) {
+          return nextProperty.images.slice(0, 3);
+        } else if (typeof nextProperty.images === 'string') {
+          return [nextProperty.images];
+        }
+      }
+    }
+    return [];
+  };
+
   const property = properties[currentIndex];
 
   // Show "no properties found" screen if no properties match filters
@@ -827,7 +841,7 @@ const ForYou = () => {
           </p>
         </motion.div>
 
-        {/* Property Card - Simplified animation for smoother image loading */}
+        {/* Property Card */}
         <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
           {/* Loading Teaser Overlay */}
           <AnimatePresence>
@@ -860,19 +874,16 @@ const ForYou = () => {
             {isRevealing && (
               <motion.div
                 key={property.id}
-                initial={{ 
-                  opacity: 0,
-                  x: swipeDirection === 'left' ? -100 : swipeDirection === 'right' ? 100 : 0
-                }}
+                initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ 
-                  opacity: 0, 
+                  opacity: 1, 
                   x: swipeDirection === 'left' ? -400 : swipeDirection === 'right' ? 400 : 0,
                   y: swipeDirection === 'left' ? -10 : swipeDirection === 'right' ? -10 : -30
                 }}
                 transition={{ 
-                  duration: 0.2, // Reduced duration for faster transitions
-                  ease: "easeOut" // Smoother easing
+                  duration: 0.2,
+                  ease: "easeOut"
                 }}
                 className="w-full max-w-lg mx-auto relative"
               >
@@ -908,17 +919,18 @@ const ForYou = () => {
                       discount_percent: property.discount_percent,
                       reasoning: property.reasoning,
                       images: property.images,
-                      isRentStabilized: property.isRentStabilized
+                      isRentStabilized: property.isRentStabilized,
+                      preloadImages: getPreloadImages()
                     }}
                     isRental={property.property_type === 'rent'}
                     onClick={() => handlePropertyClick(property)}
                   />
                   
-                  {/* Why We Picked This - Positioned above buttons with proper spacing */}
+                  {/* Why We Picked This */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }} // Reduced delay for faster appearance
+                    transition={{ delay: 0.1 }}
                     className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
                   >
                     <p className="text-sm text-blue-300 flex items-center space-x-2">
@@ -932,11 +944,11 @@ const ForYou = () => {
           </AnimatePresence>
         </div>
 
-        {/* Swipe Actions with Subtle Animations - Positioned below "Why We Picked This" with increased margin */}
+        {/* Swipe Actions */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }} // Reduced delay
+          transition={{ delay: 0.2 }}
           className="flex justify-center space-x-8 pb-8 mt-32"
         >
           <motion.button 
@@ -977,7 +989,7 @@ const ForYou = () => {
         </div>
       </div>
 
-      {/* Property Detail Popup - Using the same component as Buy/Rent pages */}
+      {/* Property Detail Popup */}
       <AnimatePresence>
         {selectedProperty && (
           <PropertyDetail
