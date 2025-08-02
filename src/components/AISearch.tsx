@@ -1,7 +1,7 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowUpIcon } from 'lucide-react';
-import { GlowEffect } from '@/components/ui/glow-effect';
+import { MessageCircle } from 'lucide-react';
 
 interface AISearchProps {
   onResults: (results: any[], interpretation: string) => void;
@@ -22,7 +22,6 @@ const AISearch = ({ onResults }: AISearchProps) => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [lastInterpretation, setLastInterpretation] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
 
   const neighborhoods = [
     // Manhattan
@@ -336,74 +335,42 @@ const AISearch = ({ onResults }: AISearchProps) => {
   };
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-6 z-10">
-      <div className="relative">
-        {/* Glow Effect - Only visible on hover/focus */}
-        {isFocused && (
-          <div className="absolute inset-0 rounded-full p-[2px]">
-            <GlowEffect
-              colors={['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981']}
-              mode="rotate"
-              blur="soft"
-              duration={3}
-              className="rounded-full"
-            />
-          </div>
-        )}
-        
-        {/* Main Chat Input Container */}
-        <div className={`
-          relative bg-gray-900/80 backdrop-blur-md border transition-all duration-300 rounded-full flex items-center
-          ${isFocused 
-            ? 'border-transparent shadow-lg' 
-            : 'border-gray-600/50 hover:border-gray-500/70'
-          }
-        `}>
-          <input
-            type="text"
-            placeholder="Describe your dream home... we'll find it for you"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="flex-1 px-6 py-3 bg-transparent border-none text-white placeholder:text-gray-400 focus:outline-none text-base font-medium tracking-tight"
-          />
-          
-          <button 
-            onClick={handleSearch}
-            disabled={isLoading || !query.trim()}
-            className={`
-              mr-3 rounded-full p-2.5 transition-all duration-200 border-none
-              ${query.trim() && !isLoading
-                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md' 
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              }
-            `}
-          >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <ArrowUpIcon className="w-5 h-5" />
-            )}
-          </button>
-        </div>
+    <div className="w-full max-w-lg mx-auto px-6 pb-8">
+      <div className="flex rounded-full overflow-hidden border border-gray-700/50 bg-gray-900/50 backdrop-blur-sm">
+        <input
+          type="text"
+          placeholder="Describe your dream home..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="w-full px-4 py-3 bg-transparent text-white focus:outline-none placeholder-gray-400"
+        />
+        <button 
+          onClick={handleSearch}
+          disabled={isLoading}
+          className="px-4 py-3 bg-blue-600/80 text-white hover:bg-blue-500/80 transition-colors disabled:opacity-50"
+        >
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <MessageCircle className="w-5 h-5" />
+          )}
+        </button>
       </div>
       
-      {/* Last interpretation display */}
       {lastInterpretation && (
-        <div className="mt-3 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-center">
+        <div className="mt-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-center">
           <p className="text-blue-300 text-sm">🎯 {lastInterpretation}</p>
         </div>
       )}
 
-      {/* Search suggestions chips */}
-      <div className="flex justify-center space-x-3 mt-4">
+      {/* Example prompts */}
+      <div className="mt-3 flex flex-wrap gap-2 justify-center">
         {['2BR under $4k in Brooklyn', 'Pet-friendly with gym', 'Rent stabilized deals'].map((example) => (
           <button
             key={example}
             onClick={() => setQuery(example)}
-            className="px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full text-sm text-gray-300 hover:text-white hover:border-gray-500/70 transition-all duration-200"
+            className="px-3 py-1 text-xs bg-gray-800/50 text-gray-400 rounded-full hover:bg-gray-700/50 hover:text-gray-300 transition-colors"
           >
             {example}
           </button>
