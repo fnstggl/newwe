@@ -224,7 +224,7 @@ const LoadingSequence = () => {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.8 }}
-        className="absolute inset-0 border-4 border-green-400 rounded-full"
+        className="absolute inset-0 border-4 border-blue-400 rounded-full"
       />
       
       {/* Checkmark with Path Animation */}
@@ -244,7 +244,7 @@ const LoadingSequence = () => {
           height="32"
           viewBox="0 0 24 24"
           fill="none"
-          className="text-green-400"
+          className="text-blue-400"
         >
           <motion.path
             d="M20 6L9 17l-5-5"
