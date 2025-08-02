@@ -1006,16 +1006,11 @@ const ForYou = () => {
   transition={{ delay: 0.2 }}
   className="flex justify-center space-x-8 pb-8 mt-16"
 >
-  <motion.button 
+<motion.button 
   onClick={handleSwipeLeft}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="relative px-8 py-4 rounded-full backdrop-blur-2xl transition-all duration-300 flex items-center space-x-2"
-  style={{
-    background: 'rgba(255, 255, 255, 0.08)',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)'
-  }}
+  className="px-8 py-4 rounded-full backdrop-blur-xl border border-white/10 bg-white/5 hover:bg-white/8 transition-all duration-300 flex items-center space-x-2 shadow-lg"
 >
   <X className="w-6 h-6 text-red-400" />
   <span className="text-red-300">Not for me</span>
