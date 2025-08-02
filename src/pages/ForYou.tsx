@@ -913,16 +913,16 @@ const ForYou = () => {
         </motion.div>
 
         {/* Personalized Header */}
-        <motion.div 
-          key={currentHeaderIndex}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center pt-8 pb-4"
-        >
-          className="text-xl font-inter font-semibold tracking-tighter text-white/90"
-            {personalizedHeaders[currentHeaderIndex]}
-          </p>
-        </motion.div>
+<motion.div 
+  key={currentHeaderIndex}
+  initial={{ opacity: 0, y: -10 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="text-center pt-8 pb-4"
+>
+  <p className="text-xl font-inter font-semibold tracking-tighter text-white/90">
+    {personalizedHeaders[currentHeaderIndex]}
+  </p>
+</motion.div>
 
         {/* Property Card */}
         <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
