@@ -107,7 +107,7 @@ const LoadingSequence = () => {
       }, 750);
     } else {
       // Scanning done, move to found
-      timer = setTimeout(() => setCurrentPhase('found'), 800);
+      timer = setTimeout(() => setCurrentPhase('found'), 1300);
     }
   }
 
