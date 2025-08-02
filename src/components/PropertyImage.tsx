@@ -24,7 +24,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     if (!images) return [];
 
     const processImageUrl = (url: string) => {
-      if (typeof url !== 'string') return '/placeholder.svg';
+      if (typeof url !== 'string') return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=';
       
       // Check if it's a Zillow image URL
       if (url.startsWith('https://photos.zillowstatic.com/')) {
@@ -49,9 +49,9 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       return images.map((img: any) => {
         if (typeof img === 'string') return processImageUrl(img);
         if (typeof img === 'object' && img !== null) {
-          return processImageUrl(img.url || img.image_url || '/placeholder.svg');
+          return processImageUrl(img.url || img.image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=');
         }
-        return '/placeholder.svg';
+        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=';
       });
     }
 
@@ -69,7 +69,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
     
     imagesToPreload.forEach((imageUrl, index) => {
-      if (imageUrl && imageUrl !== '/placeholder.svg') {
+      if (imageUrl && imageUrl !== 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=') {
         const img = new Image();
         img.onload = () => {
           if (index < processedImages.length) {
@@ -121,11 +121,14 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       } catch (error) {
         console.error('Error parsing proxy URL:', error);
       }
+    } else {
+      // If original URL also fails, use solid black placeholder
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=';
     }
   };
 
   const getCurrentImageUrl = () => {
-    return processedImages[currentImageIndex] || '';
+    return processedImages[currentImageIndex] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDAwIi8+Cjwvc3ZnPgo=';
   };
 
   return (
