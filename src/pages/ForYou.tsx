@@ -270,15 +270,14 @@ const ForYou = () => {
 
   // Single master timer for the entire loading sequence
   useEffect(() => {
-    if (isLoading) {
-      const masterTimer = setTimeout(() => {
-        setIsLoading(false);
-        setIsRevealing(true);
-      }, 8000);
-      
-      return () => clearTimeout(masterTimer);
-    }
-  }, [isLoading]);
+    // Always set loading to false after the animation sequence, regardless of properties length
+    const masterTimer = setTimeout(() => {
+      setIsLoading(false);
+      setIsRevealing(true);
+    }, 8000);
+    
+    return () => clearTimeout(masterTimer);
+  }, []);
 
   // Rotate headers when swiping to new properties
   useEffect(() => {
