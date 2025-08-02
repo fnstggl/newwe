@@ -16,6 +16,7 @@ const pendingRequests = new Map<string, Promise<string>>();
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -74,6 +75,11 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     });
   }, [processedImages, preloadImages]);
 
+  // Reset image loaded state when index changes
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentImageIndex]);
+
   // Navigation functions with instant transitions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -95,22 +101,38 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const currentImageUrl = processedImages[currentImageIndex] || '';
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageLoaded(false);
+  };
+
   return (
     <div 
       className={`relative overflow-hidden group ${className || ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Always show the image if URL exists, use background-image for smooth transitions */}
-      <div
-        className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300"
-        style={{
-          backgroundImage: currentImageUrl ? `url(${currentImageUrl})` : 'none',
-          backgroundColor: currentImageUrl ? 'transparent' : '#374151'
-        }}
-        role="img"
-        aria-label={address}
-      />
+      {/* Image display */}
+      {currentImageUrl ? (
+        <img
+          src={currentImageUrl}
+          alt={address}
+          className={`w-full h-full object-cover transition-opacity duration-200 ${
+            imageLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          style={{
+            imageRendering: 'auto',
+            filter: imageLoaded ? 'none' : 'blur(0px)'
+          }}
+        />
+      ) : (
+        <div className="w-full h-full bg-gray-700" />
+      )}
       
       {/* Navigation arrows - only show on hover and if multiple images */}
       {hasMultipleImages && isHovered && (
