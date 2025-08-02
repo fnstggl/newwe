@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MessageCircle } from 'lucide-react';
@@ -47,76 +48,43 @@ const AISearch = ({ onResults }: AISearchProps) => {
 
   const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
 
-  const SYSTEM_PROMPT = `You are an AI real estate assistant for NYC. Convert natural language search queries into structured filters for our property database.
-
-AVAILABLE TABLES & COLUMNS:
-1. undervalued_sales: price, bedrooms, bathrooms, sqft, neighborhood, borough, discount_percent, no_fee, pet_friendly, doorman_building, elevator_building, laundry_available, gym_available, rooftop_access
-2. undervalued_rentals: monthly_rent, bedrooms, bathrooms, sqft, neighborhood, borough, discount_percent, no_fee, pet_friendly, doorman_building, elevator_building, laundry_available, gym_available, rooftop_access  
-3. undervalued_rent_stabilized: monthly_rent, bedrooms, bathrooms, sqft, neighborhood, borough, undervaluation_percent, rent_stabilized_confidence
-
-NYC NEIGHBORHOODS: ${neighborhoods.join(', ')}
-NYC BOROUGHS: ${boroughs.join(', ')}
-
-RESPOND ONLY WITH VALID JSON (no markdown formatting):
-{
-  "property_type": "rent|buy",
-  "max_budget": number,
-  "bedrooms": number,
-  "neighborhoods": ["neighborhood1", "neighborhood2"],
-  "boroughs": ["borough1"],
-  "must_haves": ["feature1", "feature2"],
-  "discount_threshold": number,
-  "interpretation": "Clear explanation of what you understood from the user's request"
-}
-
-EXAMPLES:
-"2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals under $4,000/month in Brooklyn"}
-
-"Safe family neighborhood with good schools" → {"neighborhoods": ["Park Slope", "Carroll Gardens", "Brooklyn Heights"], "interpretation": "Looking for family-friendly neighborhoods known for safety and good schools"}
-
-"Pet-friendly with gym and doorman" → {"must_haves": ["pet_friendly", "gym_available", "doorman_building"], "interpretation": "Looking for pet-friendly properties with gym and doorman"}
-
-"Rent stabilized apartments" → {"must_haves": ["rent_stabilized"], "interpretation": "Looking specifically for rent-stabilized apartments"}
-
-"Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}`;
-
   const callClaudeAPI = async (userQuery: string): Promise<AIFilters> => {
-  try {
-    // Get Supabase client
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    
-    // Call your Supabase Edge Function
-    const response = await fetch(`${supabaseUrl}/functions/v1/ai-search`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseAnonKey}`,
-      },
-      body: JSON.stringify({ query: userQuery })
-    })
+    try {
+      console.log('Calling AI search with query:', userQuery);
+      
+      // Call the Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('ai-search', {
+        body: { query: userQuery }
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      if (error) {
+        console.error('Supabase Edge Function error:', error);
+        throw new Error(`Edge function error: ${error.message}`);
+      }
+
+      console.log('AI search response:', data);
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.fallback) {
+        return data.fallback;
+      }
+
+      return data.filters || {};
+    } catch (error) {
+      console.error('AI search error:', error);
+      throw new Error('Failed to process your request');
     }
-
-    const data = await response.json()
-    
-    if (data.error) {
-      throw new Error(data.error)
-    }
-
-    return data.filters
-  } catch (error) {
-    console.error('Supabase Edge Function error:', error)
-    throw new Error('Failed to process your request')
-  }
-}
+  };
 
   const searchWithFilters = async (filters: AIFilters) => {
     const results: any[] = [];
 
     try {
+      console.log('Searching with filters:', filters);
+
       // Search rentals if not specifically looking to buy
       if (!filters.property_type || filters.property_type === 'rent') {
         
@@ -326,6 +294,7 @@ EXAMPLES:
         return bDiscount - aDiscount;
       });
 
+      console.log('Search results:', results.length, 'properties found');
       return results.slice(0, 20); // Limit to 20 results
     } catch (error) {
       console.error('Database search error:', error);
@@ -338,12 +307,17 @@ EXAMPLES:
     
     setIsLoading(true);
     try {
+      console.log('Starting AI search for:', query);
+      
       // Call Claude API to parse the query
       const filters = await callClaudeAPI(query);
+      console.log('Parsed filters:', filters);
+      
       setLastInterpretation(filters.interpretation || '');
       
       // Search with the parsed filters
       const results = await searchWithFilters(filters);
+      console.log('Final results:', results);
       
       onResults(results, filters.interpretation || '');
     } catch (error) {
