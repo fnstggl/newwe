@@ -16,10 +16,8 @@ const pendingRequests = new Map<string, Promise<string>>();
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const [currentBackgroundImage, setCurrentBackgroundImage] = useState<string>('');
-  const [nextBackgroundImage, setNextBackgroundImage] = useState<string>('');
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -66,15 +64,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Initialize the first background image
-  useEffect(() => {
-    if (processedImages.length > 0 && !currentBackgroundImage) {
-      const firstImage = processedImages[0];
-      setCurrentBackgroundImage(firstImage);
-    }
-  }, [processedImages, currentBackgroundImage]);
-
-  // Preload images in background
+  // Preload all images for this property and any additional preload images
   useEffect(() => {
     const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
     
@@ -91,55 +81,52 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     });
   }, [processedImages, preloadImages]);
 
-  // Handle image transitions with crossfade
-  const transitionToImage = useCallback((newIndex: number) => {
-    if (newIndex < 0 || newIndex >= processedImages.length) return;
-    
-    const newImageUrl = processedImages[newIndex];
-    
-    // Start transition
-    setIsTransitioning(true);
-    setNextBackgroundImage(newImageUrl);
-    
-    // Preload the new image
-    const img = new Image();
-    img.onload = () => {
-      // After image loads, complete the transition
-      setTimeout(() => {
-        setCurrentBackgroundImage(newImageUrl);
-        setNextBackgroundImage('');
-        setIsTransitioning(false);
-      }, 50); // Brief delay for smooth transition
-    };
-    img.onerror = () => {
-      // If image fails to load, still complete transition to avoid stuck state
-      setCurrentBackgroundImage(newImageUrl);
-      setNextBackgroundImage('');
-      setIsTransitioning(false);
-    };
-    img.src = newImageUrl;
-  }, [processedImages]);
-
-  // Navigation functions with crossfade transitions
+  // Navigation functions with instant transitions (no opacity changes)
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (hasMultipleImages && !isTransitioning) {
+    if (hasMultipleImages) {
       const nextIndex = (currentImageIndex + 1) % processedImages.length;
       setCurrentImageIndex(nextIndex);
-      transitionToImage(nextIndex);
     }
-  }, [processedImages.length, hasMultipleImages, currentImageIndex, isTransitioning, transitionToImage]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
   const prevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (hasMultipleImages && !isTransitioning) {
+    if (hasMultipleImages) {
       const prevIndex = (currentImageIndex - 1 + processedImages.length) % processedImages.length;
       setCurrentImageIndex(prevIndex);
-      transitionToImage(prevIndex);
     }
-  }, [processedImages.length, hasMultipleImages, currentImageIndex, isTransitioning, transitionToImage]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const currentSrc = img.src;
+    
+    // Mark this image index as having an error
+    setImageLoadErrors(prev => new Set([...prev, currentImageIndex]));
+    
+    // If optimized proxy failed, try original URL with exponential backoff
+    if (currentSrc.includes('rskcssgjpbshagjocdre.supabase.co/functions/v1/proxy-image')) {
+      try {
+        const urlParams = new URLSearchParams(currentSrc.split('?')[1]);
+        const originalUrl = decodeURIComponent(urlParams.get('url') || '');
+        if (originalUrl) {
+          // Add delay before fallback to reduce load
+          setTimeout(() => {
+            img.src = originalUrl;
+          }, Math.random() * 1000 + 500); // Random delay between 500-1500ms
+        }
+      } catch (error) {
+        console.error('Error parsing proxy URL:', error);
+      }
+    }
+  };
+
+  const getCurrentImageUrl = () => {
+    return processedImages[currentImageIndex] || '';
+  };
 
   return (
     <div 
@@ -147,25 +134,14 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Current background image */}
-      <div
-        className="w-full h-full bg-cover bg-center bg-no-repeat transition-opacity duration-300"
-        style={{ 
-          backgroundImage: currentBackgroundImage ? `url(${currentBackgroundImage})` : 'none',
-          opacity: isTransitioning ? 0.7 : 1
-        }}
+      <img
+        src={getCurrentImageUrl()}
+        alt={address}
+        className="w-full h-full object-cover"
+        onError={handleImageError}
+        loading="eager"
+        decoding="sync"
       />
-      
-      {/* Next background image for crossfade */}
-      {nextBackgroundImage && (
-        <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transition-opacity duration-300"
-          style={{ 
-            backgroundImage: `url(${nextBackgroundImage})`,
-            opacity: isTransitioning ? 1 : 0
-          }}
-        />
-      )}
       
       {/* Navigation arrows - only show on hover and if multiple images */}
       {hasMultipleImages && isHovered && (
