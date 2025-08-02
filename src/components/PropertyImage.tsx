@@ -16,8 +16,6 @@ const pendingRequests = new Map<string, Promise<string>>();
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -64,29 +62,19 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Preload all images for this property and any additional preload images
+  // Preload images for better performance
   useEffect(() => {
     const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
     
-    imagesToPreload.forEach((imageUrl, index) => {
+    imagesToPreload.forEach((imageUrl) => {
       if (imageUrl) {
         const img = new Image();
-        img.onload = () => {
-          if (index < processedImages.length) {
-            setLoadedImages(prev => new Set([...prev, index]));
-          }
-        };
-        img.onerror = () => {
-          if (index < processedImages.length) {
-            setImageLoadErrors(prev => new Set([...prev, index]));
-          }
-        };
         img.src = imageUrl;
       }
     });
   }, [processedImages, preloadImages]);
 
-  // Navigation functions with instant transitions (no opacity changes)
+  // Navigation functions with instant transitions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -105,12 +93,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
-  const getCurrentImageUrl = () => {
-    return processedImages[currentImageIndex] || '';
-  };
-
-  const isCurrentImageLoaded = loadedImages.has(currentImageIndex);
-  const currentImageUrl = getCurrentImageUrl();
+  const currentImageUrl = processedImages[currentImageIndex] || '';
 
   return (
     <div 
@@ -118,24 +101,16 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Only show image when it's loaded, otherwise show transparent background */}
-      {isCurrentImageLoaded && currentImageUrl ? (
-        <div
-          className="w-full h-full bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${currentImageUrl})`
-          }}
-          role="img"
-          aria-label={address}
-        />
-      ) : (
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundColor: 'transparent'
-          }}
-        />
-      )}
+      {/* Always show the image if URL exists, use background-image for smooth transitions */}
+      <div
+        className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300"
+        style={{
+          backgroundImage: currentImageUrl ? `url(${currentImageUrl})` : 'none',
+          backgroundColor: currentImageUrl ? 'transparent' : '#374151'
+        }}
+        role="img"
+        aria-label={address}
+      />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
       {hasMultipleImages && isHovered && (
