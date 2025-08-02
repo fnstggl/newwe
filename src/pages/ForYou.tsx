@@ -336,7 +336,7 @@ const AISearch = ({ onResults }: AISearchProps) => {
   };
 
   return (
-    <div className="fixed bottom-40 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-6 z-10">
+    <div className="fixed bottom-65 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-6 z-10">
       <div className="relative">
         {/* Glow Effect - Only visible on hover/focus */}
         {isFocused && (
