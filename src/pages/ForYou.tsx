@@ -107,7 +107,7 @@ const LoadingSequence = () => {
       }, 750);
     } else {
       // Scanning done, move to found
-      timer = setTimeout(() => setCurrentPhase('found'), 300);
+      timer = setTimeout(() => setCurrentPhase('found'), 800);
     }
   }
 
@@ -127,7 +127,7 @@ const LoadingSequence = () => {
             exit={{ opacity: 0, y: -20 }}
             className="text-center"
           >
-            <div className="text-3xl font-light tracking-wide">
+            <div className="text-3xl font-semibold tracking-tighter">
               {typewriterText}
               <motion.span
                 animate={{ opacity: [1, 0] }}
@@ -140,97 +140,152 @@ const LoadingSequence = () => {
           </motion.div>
         )}
 
-        {currentPhase === 'scanning' && (
-          <motion.div
-            key="scanning"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            className="text-center space-y-6"
-          >
-            {/* Radar Animation */}
-            <div className="relative w-32 h-32 mx-auto mb-8">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border-2 border-blue-500/30 rounded-full"
-              />
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="absolute inset-4 border border-blue-400/50 rounded-full"
-              />
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-                className="absolute inset-8 border border-blue-300/70 rounded-full"
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Search className="w-8 h-8 text-blue-400" />
-              </div>
-            </div>
+       {currentPhase === 'scanning' && (
+  <motion.div
+    key="scanning"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    className="text-center space-y-8"
+  >
+    {/* Progress Bar */}
+    <div className="w-80 mx-auto">
+      <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-white rounded-full"
+          initial={{ width: "0%" }}
+          animate={{ 
+            width: `${((currentScanIndex + 1) / scanningTexts.length) * 100}%` 
+          }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
+      </div>
+    </div>
 
-            {/* Scanning Text Feed */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentScanIndex}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="text-xl text-blue-300 font-light tracking-wide"
-              >
-                {scanningTexts[currentScanIndex]}
-              </motion.div>
-            </AnimatePresence>
+    {/* Current Step Text */}
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={currentScanIndex}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className="text-lg font-semibold tracking-tighter text-white"
+      >
+        {scanningTexts[currentScanIndex]}
+      </motion.div>
+    </AnimatePresence>
 
-            {/* Progress indicators */}
-            <div className="flex justify-center space-x-2">
-              {scanningTexts.map((_, index) => (
-                <motion.div
-                  key={index}
-                  className={`w-2 h-2 rounded-full ${
-                    index <= currentScanIndex ? 'bg-blue-400' : 'bg-gray-600'
-                  }`}
-                  animate={index === currentScanIndex ? { scale: [1, 1.3, 1] } : {}}
-                  transition={{ duration: 0.6, repeat: index === currentScanIndex ? Infinity : 0 }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {currentPhase === 'found' && (
-          <motion.div
-            key="found"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center space-y-4"
-          >
+    {/* Step Checkmarks */}
+    <div className="flex justify-center space-x-6">
+      {scanningTexts.map((_, index) => (
+        <motion.div
+          key={index}
+          className="flex items-center justify-center"
+        >
+          {index <= currentScanIndex ? (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
+              transition={{ type: "spring", bounce: 0.6 }}
+              className="w-6 h-6 bg-white rounded-full flex items-center justify-center"
             >
-              <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+              <CheckCircle className="w-4 h-4 text-black" />
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-2xl font-light text-green-300"
-            >
-              ✅ Dream homes found
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="text-sm text-gray-400"
-            >
-              Preparing your personalized matches...
-            </motion.div>
-          </motion.div>
-        )}
+          ) : (
+            <div className="w-6 h-6 border-2 border-gray-600 rounded-full" />
+          )}
+        </motion.div>
+      ))}
+    </div>
+  </motion.div>
+)}
+
+       {currentPhase === 'found' && (
+  <motion.div
+    key="found"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="text-center space-y-8"
+  >
+    {/* Animated Checkmark with Apple-like Animation */}
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ 
+        type: "spring", 
+        bounce: 0.3, 
+        delay: 0.2,
+        duration: 1.2
+      }}
+      className="relative mx-auto w-24 h-24"
+    >
+      {/* Outer Ring Animation */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.8 }}
+        className="absolute inset-0 border-4 border-green-400 rounded-full"
+      />
+      
+      {/* Checkmark with Path Animation */}
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ 
+          delay: 0.6, 
+          type: "spring", 
+          bounce: 0.4,
+          duration: 0.8
+        }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          className="text-green-400"
+        >
+          <motion.path
+            d="M20 6L9 17l-5-5"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
+          />
+        </svg>
+      </motion.div>
+    </motion.div>
+
+    {/* Success Message */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.2 }}
+      className="space-y-3"
+    >
+      <h2 className="text-3xl font-semibold tracking-tighter text-white">
+        Your dream homes await
+      </h2>
+      <p className="text-lg font-medium tracking-tight text-gray-300">
+        We found properties perfectly matched to your preferences
+      </p>
+    </motion.div>
+
+    {/* Subtle Glow Effect */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 1.4 }}
+      className="text-sm font-medium tracking-tight text-gray-400"
+    >
+      Preparing your personalized matches...
+    </motion.div>
+  </motion.div>
+)}
       </AnimatePresence>
     </div>
   );
@@ -274,7 +329,7 @@ const ForYou = () => {
       const masterTimer = setTimeout(() => {
         setIsLoading(false);
         setIsRevealing(true);
-      }, 8000);
+      }, 9000);
       
       return () => clearTimeout(masterTimer);
     }
