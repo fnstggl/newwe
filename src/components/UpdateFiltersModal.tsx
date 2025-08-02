@@ -164,11 +164,11 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                       setSearchingFor(option);
                       setPropertyType(option === 'A place to rent' ? 'rent' : 'buy');
                     }}
-                    className={`p-3 rounded-lg border transition-colors ${
-                      searchingFor === option
-                        ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                        : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500'
-                    }`}
+                    className={`p-3 rounded-full border transition-colors ${
+  searchingFor === option
+    ? 'border-white/30 bg-white/15 text-white'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+}`}
                   >
                     {option}
                   </button>
@@ -184,11 +184,11 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                   <button
                     key={option}
                     onClick={() => setBedrooms(index)}
-                    className={`p-3 rounded-lg border transition-colors ${
-                      bedrooms === index
-                        ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                        : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500'
-                    }`}
+                    className={`p-3 rounded-full border transition-colors ${
+  bedrooms === index
+    ? 'border-white/30 bg-white/15 text-white'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+}`}
                   >
                     {option}
                   </button>
@@ -216,11 +216,11 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                   <button
                     key={neighborhood}
                     onClick={() => handleNeighborhoodToggle(neighborhood)}
-                    className={`p-2 text-sm rounded-lg border transition-colors text-left ${
-                      preferredNeighborhoods.includes(neighborhood)
-                        ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                        : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500'
-                    }`}
+                   className={`p-2 text-sm rounded-full border transition-colors text-left ${
+  preferredNeighborhoods.includes(neighborhood)
+    ? 'border-white/30 bg-white/15 text-white'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+}`}
                   >
                     {neighborhood}
                   </button>
@@ -237,11 +237,11 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
                     <button
                       key={mustHave}
                       onClick={() => handleMustHaveToggle(mustHave)}
-                      className={`p-2 text-sm rounded-lg border transition-colors text-left ${
-                        mustHaves.includes(mustHave)
-                          ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                          : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500'
-                      }`}
+                     className={`p-2 text-sm rounded-full border transition-colors text-left ${
+  mustHaves.includes(mustHave)
+    ? 'border-white/30 bg-white/15 text-white'
+    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-white/20 hover:bg-white/5'
+}`}
                     >
                       {mustHave}
                     </button>
@@ -266,17 +266,17 @@ const UpdateFiltersModal = ({ isOpen, onClose, onFiltersUpdated }: UpdateFilters
           </div>
 
           <div className="flex space-x-4 mt-8">
-            <button
-              onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-800/50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-            >
+           <button
+  onClick={onClose}
+  className="flex-1 px-6 py-3 border border-gray-600 text-gray-300 rounded-full hover:bg-gray-800/50 transition-colors"
+>
+  Cancel
+</button>
+<button
+  onClick={handleSubmit}
+  disabled={isSubmitting}
+  className="flex-1 px-6 py-3 bg-white/15 text-white rounded-full hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+>
               {isSubmitting ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (

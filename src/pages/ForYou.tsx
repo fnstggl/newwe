@@ -224,7 +224,7 @@ const LoadingSequence = () => {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.8 }}
-        className="absolute inset-0 border-4 border-blue-400 rounded-full"
+        className="absolute inset-0 border-4 border-blue-600 rounded-full"
       />
       
       {/* Checkmark with Path Animation */}
@@ -244,7 +244,7 @@ const LoadingSequence = () => {
           height="32"
           viewBox="0 0 24 24"
           fill="none"
-          className="text-blue-400"
+          className="text-blue-600"
         >
           <motion.path
             d="M20 6L9 17l-5-5"
@@ -900,30 +900,30 @@ const ForYou = () => {
         <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
           {/* Loading Teaser Overlay */}
           <AnimatePresence>
-            {showLoadingTeaser && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
-              >
-                <div className="text-center space-y-4">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-400 rounded-full mx-auto"
-                  />
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-blue-300 text-lg font-light"
-                  >
-                    {Math.random() > 0.66 ? "Refining matches…" : Math.random() > 0.33 ? "Scanning for your dream home…" : "Found one"}
-                  </motion.p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+  {showLoadingTeaser && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
+    >
+      <div className="text-center space-y-4">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full mx-auto"
+        />
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-white font-semibold tracking-tighter text-lg"
+        >
+          {Math.random() > 0.66 ? "Refining matches…" : Math.random() > 0.33 ? "Scanning for your dream home…" : "Found one"}
+        </motion.p>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
           <AnimatePresence mode="wait">
             {isRevealing && (
