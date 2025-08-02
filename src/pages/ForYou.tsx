@@ -1020,10 +1020,10 @@ const ForYou = () => {
   onClick={() => handleSave(property)}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="px-8 py-4 rounded-full bg-gradient-to-r from-green-500/5 to-green-600/10 backdrop-blur-xl border border-green-500/15 hover:from-green-500/10 hover:to-green-600/15 transition-all duration-300 flex items-center space-x-2 shadow-lg"
+  className="px-8 py-4 rounded-full bg-green-500/10 backdrop-blur-xl border border-green-500/20 hover:bg-green-500/15 transition-all duration-300 flex items-center space-x-2"
 >
   <Heart className="w-6 h-6 text-green-400" />
-  <span className="text-green-300 font-semibold tracking-tight">Love it</span>
+  <span className="text-green-300 font-medium">Save this one</span>
 </motion.button>
 </motion.div>
 
