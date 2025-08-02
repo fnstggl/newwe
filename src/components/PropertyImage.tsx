@@ -18,7 +18,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const [displayedImageIndex, setDisplayedImageIndex] = useState(0);
 
   // Process images with deduplication and lazy loading
   const processedImages = React.useMemo(() => {
@@ -82,13 +81,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     });
   }, [processedImages, preloadImages]);
 
-  // Update displayed image only after the new image is loaded
-  useEffect(() => {
-    if (loadedImages.has(currentImageIndex)) {
-      setDisplayedImageIndex(currentImageIndex);
-    }
-  }, [currentImageIndex, loadedImages]);
-
   // Navigation functions with instant transitions (no opacity changes)
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -133,7 +125,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   };
 
   const getCurrentImageUrl = () => {
-    return processedImages[displayedImageIndex] || processedImages[0] || '';
+    return processedImages[currentImageIndex] || '';
   };
 
   return (
@@ -142,11 +134,13 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div
-        className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out"
-        style={{
-          backgroundImage: `url("${getCurrentImageUrl()}")`,
-        }}
+      <img
+        src={getCurrentImageUrl()}
+        alt={address}
+        className="w-full h-full object-cover"
+        onError={handleImageError}
+        loading="eager"
+        decoding="sync"
       />
       
       {/* Navigation arrows - only show on hover and if multiple images */}
