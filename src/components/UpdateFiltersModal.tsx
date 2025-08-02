@@ -97,10 +97,24 @@ const getLiveCount = async (filters: Partial<typeof userProfile>): Promise<numbe
             stabilizedQuery = stabilizedQuery.in('borough', selectedBoroughs);
           }
           if (selectedNeighborhoods.length > 0) {
-            const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
-            rentalQuery = rentalQuery.or(neighborhoodConditions);
-            stabilizedQuery = stabilizedQuery.or(neighborhoodConditions);
-          }
+  // Create more flexible neighborhood matching
+  const neighborhoodFilters = selectedNeighborhoods.map(n => {
+    const cleanName = n.toLowerCase().replace(/['\s-]/g, '');
+    return `neighborhood.ilike.%${cleanName}%`;
+  });
+  
+  // Also try exact matches and common variations
+  const exactMatches = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`);
+  const variations = selectedNeighborhoods.flatMap(n => [
+    `neighborhood.ilike.%${n.replace(/'/g, '')}%`, // Remove apostrophes
+    `neighborhood.ilike.%${n.replace(/\s+/g, '-')}%`, // Spaces to hyphens
+    `neighborhood.ilike.%${n.replace(/-/g, ' ')}%` // Hyphens to spaces
+  ]);
+  
+  const allConditions = [...exactMatches, ...neighborhoodFilters, ...variations].join(',');
+  rentalQuery = rentalQuery.or(allConditions);
+  stabilizedQuery = stabilizedQuery.or(allConditions);
+}
         }
       }
       if (filters.discount_threshold) {
@@ -144,10 +158,24 @@ const getLiveCount = async (filters: Partial<typeof userProfile>): Promise<numbe
           if (selectedBoroughs.length > 0) {
             query = query.in('borough', selectedBoroughs);
           }
-          if (selectedNeighborhoods.length > 0) {
-            const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
-            query = query.or(neighborhoodConditions);
-          }
+         if (selectedNeighborhoods.length > 0) {
+  // Create more flexible neighborhood matching
+  const neighborhoodFilters = selectedNeighborhoods.map(n => {
+    const cleanName = n.toLowerCase().replace(/['\s-]/g, '');
+    return `neighborhood.ilike.%${cleanName}%`;
+  });
+  
+  // Also try exact matches and common variations
+  const exactMatches = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`);
+  const variations = selectedNeighborhoods.flatMap(n => [
+    `neighborhood.ilike.%${n.replace(/'/g, '')}%`, // Remove apostrophes
+    `neighborhood.ilike.%${n.replace(/\s+/g, '-')}%`, // Spaces to hyphens
+    `neighborhood.ilike.%${n.replace(/-/g, ' ')}%` // Hyphens to spaces
+  ]);
+  
+  const allConditions = [...exactMatches, ...neighborhoodFilters, ...variations].join(',');
+  query = query.or(allConditions);
+}
         }
       }
       if (filters.discount_threshold) {
