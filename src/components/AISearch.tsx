@@ -339,18 +339,18 @@ const AISearch = ({ onResults }: AISearchProps) => {
   return (
     <div className="w-full max-w-2xl mx-auto px-6 mt-8">
       <div className="relative">
-        {/* Glow Effect - Visible on hover/focus */}
-{(isFocused || isHovered) && (
-  <div className="absolute -inset-[8px] rounded-full opacity-70">
-    <GlowEffect
-      colors={['#3357FF', '#8b5cf6', '#ef4444']}
-      mode="rotate"
-      blur="soft"
-      duration={12}
-      className="rounded-full"
-    />
-  </div>
-)}
+{/* Glow Effect - Animated expand on hover/focus */}
+<div className={`absolute -inset-[8px] rounded-full transition-all duration-700 ease-out ${
+  (isFocused || isHovered) ? 'opacity-70 scale-100' : 'opacity-0 scale-95'
+}`}>
+  <GlowEffect
+    colors={['#3b82f6', '#8b5cf6', '#06b6d4']}
+    mode="rotate"
+    blur="soft"
+    duration={15}
+    className="rounded-full"
+  />
+</div>
         
         {/* Main Chat Input Container */}
        <div 

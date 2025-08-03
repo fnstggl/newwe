@@ -1067,15 +1067,15 @@ const ForYou = () => {
     }}
   />
   
-  {/* Tooltip */}
-  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full pl-4 group">
-    <div className="w-6 h-6 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50">
-      <span className="text-gray-400 text-sm font-bold">?</span>
+{/* Tooltip - Much closer */}
+  <div className="relative group">
+    <div className="w-7 h-7 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
+      <span className="text-gray-300 text-xs font-bold">?</span>
     </div>
     
-    {/* Tooltip Content */}
-    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-      <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
+    {/* Tooltip Content - Positioned much closer */}
+    <div className="absolute left-10 top-1/2 -translate-y-1/2 w-72 p-3 bg-black/80 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 shadow-2xl">
+      <p className="text-white text-xs font-inter tracking-tighter leading-relaxed">
         Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 3BR in a safe neighborhood, by the water, under $1.4M
       </p>
     </div>
