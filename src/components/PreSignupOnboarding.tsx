@@ -298,7 +298,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
             await saveOnboardingData(user.id);
           }
           
-          navigate('/foryou');
+          // Use window.location.href to force a full page navigation
+          window.location.href = '/foryou';
         }
       } else {
         const { error } = await signUp(email, password, name);
@@ -320,7 +321,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
             await saveOnboardingData(user.id);
           }
           
-          navigate('/foryou');
+          // Use window.location.href to force a full page navigation
+          window.location.href = '/foryou';
         }
       }
     } catch (error) {
@@ -351,7 +353,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
         if (user) {
           await saveOnboardingData(user.id);
         }
-        navigate('/foryou');
+        // Use window.location.href to force a full page navigation
+        window.location.href = '/foryou';
       }
     } catch (error) {
       console.error("Google sign-in error:", error);

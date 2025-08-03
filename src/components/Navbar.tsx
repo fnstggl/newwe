@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -57,30 +58,28 @@ const Navbar = () => {
               Buy
             </Link>
             
-            {/* For You Tab - only show for authenticated users who completed onboarding */}
-            {user && userProfile?.onboarding_completed && (
-              <Link 
-                to="/foryou" 
-                className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                  location.pathname === '/foryou' ? 'text-white' : 'text-gray-300'
-                }`}
-                style={{
-                  textShadow: location.pathname === '/foryou' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (location.pathname !== '/foryou') {
-                    e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location.pathname !== '/foryou') {
-                    e.currentTarget.style.textShadow = 'none';
-                  }
-                }}
-              >
-                For You
-              </Link>
-            )}
+            {/* For You Tab - now always visible for all users */}
+            <Link 
+              to="/foryou" 
+              className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
+                location.pathname === '/foryou' ? 'text-white' : 'text-gray-300'
+              }`}
+              style={{
+                textShadow: location.pathname === '/foryou' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/foryou') {
+                  e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/foryou') {
+                  e.currentTarget.style.textShadow = 'none';
+                }
+              }}
+            >
+              For You
+            </Link>
             
             <Link
               to="/rent" 
