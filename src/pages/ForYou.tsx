@@ -1032,7 +1032,7 @@ const ForYou = () => {
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ delay: 0.2 }}
-  className="flex justify-center space-x-6 pb-10 mt-16"
+  className="flex justify-center space-x-6 pb-10 mt-16 z-[10]"
 >
   {/* Not for me */}
   <motion.button 
