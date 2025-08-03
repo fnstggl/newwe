@@ -376,8 +376,8 @@ const AISearch = ({ onResults }: AISearchProps) => {
             className={`
               mr-3 rounded-full p-2.5 transition-all duration-200 border-none
               ${query.trim() && !isLoading
-                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md' 
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                    ? 'bg-white hover:bg-gray-100 text-black shadow-md' 
+                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }
             `}
           >
