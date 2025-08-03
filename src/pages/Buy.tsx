@@ -991,14 +991,14 @@ const getVisibilityLimit = () => {
           </div>
         )}
 
-        {/* Load More Button - only show for unlimited users or when there are visible properties */}
-        {!loading && hasMore && properties.length > 0 && isUnlimitedUser && (
-          <div className="text-center py-8">
-            <HoverButton onClick={loadMore} textColor="text-white">
-              Load More Properties
-            </HoverButton>
-          </div>
-        )}
+        {/* Load More Button - show for all users when there are more properties */}
+{!loading && hasMore && properties.length > 0 && (
+  <div className="text-center py-8">
+    <HoverButton onClick={loadMore} textColor="text-white">
+      Load More Properties
+    </HoverButton>
+  </div>
+)}
 
         {/* Empty State */}
         {!loading && properties.length === 0 && (
