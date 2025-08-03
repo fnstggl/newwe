@@ -67,6 +67,8 @@ AVAILABLE TABLES & COLUMNS:
 NYC NEIGHBORHOODS: ${neighborhoods.join(', ')}
 NYC BOROUGHS: ${boroughs.join(', ')}
 
+IMPORTANT: When users specify a price or budget (e.g., "3 bedroom for 5M", "2BR for 2.5k/month"), interpret this as the MAXIMUM budget (at or below that amount), not an exact price match. Use the max_budget field for filtering properties AT OR BELOW the specified amount.
+
 RESPOND ONLY WITH VALID JSON (no markdown formatting):
 {
   "property_type": "rent|buy",
@@ -80,7 +82,11 @@ RESPOND ONLY WITH VALID JSON (no markdown formatting):
 }
 
 EXAMPLES:
-"2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals under $4,000/month in Brooklyn"}
+"2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals at or under $4,000/month in Brooklyn"}
+
+"3 bedroom for 5M" → {"property_type": "buy", "max_budget": 5000000, "bedrooms": 3, "interpretation": "Looking for 3-bedroom properties at or under $5M"}
+
+"2BR for 2.5k month" → {"property_type": "rent", "max_budget": 2500, "bedrooms": 2, "interpretation": "Looking for 2-bedroom rentals at or under $2,500/month"}
 
 "Safe family neighborhood with good schools" → {"neighborhoods": ["Park Slope", "Carroll Gardens", "Brooklyn Heights"], "interpretation": "Looking for family-friendly neighborhoods known for safety and good schools"}
 
