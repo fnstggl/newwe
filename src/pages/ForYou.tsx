@@ -1067,8 +1067,8 @@ const ForYou = () => {
     }}
   />
   
-  {/* Tooltip - Simple positioning next to search bar */}
-  <div className="absolute top-1/2 -translate-y-1/2 -right-4 group">
+ {/* Tooltip - Moved closer to the left */}
+  <div className="absolute top-1/2 -translate-y-1/2 right-2 group">
     <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
       <span className="text-gray-300 text-sm font-bold">?</span>
     </div>
