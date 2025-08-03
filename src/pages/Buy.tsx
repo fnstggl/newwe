@@ -946,7 +946,7 @@ const getVisibilityLimit = () => {
                           Create free account to see more
                         </button>
                            <p className="text-xs text-gray-400 mt-3">
-  6,000+ New Yorkers · As seen on CBS & AP
+  6,000+ New Yorkers already beating the market
 </p>
                       </div>
                     </div>
@@ -973,7 +973,7 @@ const getVisibilityLimit = () => {
   Unlock the rest for just $3
 </button>
                           <p className="text-xs text-gray-400 mt-3">
-  6,000+ New Yorkers · Seen on CBS & AP
+  Homes hundreds of thousands below-market
 </p>
                       </div>
                     </div>

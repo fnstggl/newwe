@@ -61,7 +61,7 @@ const Rent = () => {
     isLoggedOut: false
   });
 
-  const ITEMS_PER_PAGE = 30;
+  const ITEMS_PER_PAGE = 24;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
   const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'];
   const discountOptions = ['50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%'];
@@ -78,9 +78,9 @@ const Rent = () => {
 
   // Determine visibility limits based on user status
   const getVisibilityLimit = () => {
-    if (!user) return 3; // Signed out users see 3
+    if (!user) return 6; // Signed out users see 6
     if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') return Infinity; // Unlimited and open_door_plan users see all
-    return 9; // Free plan users see 9
+    return 24; // Free plan users see 24
   };
 
   useEffect(() => {
@@ -1176,14 +1176,14 @@ const Rent = () => {
                   )}
 
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
-                  {!user && index === 4 && properties.length > 4 && (
+                  {!user && index === 7 && properties.length > 7 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                       <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          This is only 3 of 2,193 deals.
+                          This is only 6 of 2,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
@@ -1192,21 +1192,21 @@ const Rent = () => {
                           Create free account to see more
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
-                          6,000+ New Yorkers · As seen on CBS & AP
+                        6,000+ New Yorkers already beating the market
                         </p>
                       </div>
                     </div>
                   )}
 
                   {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
-                  {isFreeUser && index === 10 && properties.length > 10 && (
+                  {isFreeUser && index === 25 && properties.length > 25 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                       <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
-                          You're only seeing 9 of 2,193 deals.
+                          You're only seeing 24 of 2,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/pricing')}
@@ -1219,7 +1219,7 @@ const Rent = () => {
                           Unlock the rest for just $3
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
-                          6,000+ New Yorkers · As seen on CBS & AP
+                          Save thousands on rent every month
                         </p>
                       </div>
                     </div>
