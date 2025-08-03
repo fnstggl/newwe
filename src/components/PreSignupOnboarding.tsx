@@ -434,7 +434,7 @@ const ChoiceButton = ({
                   selected={onboardingData.search_duration === option}
                   onClick={() => {
                     updateData('search_duration', option);
-                    
+                    setTimeout(nextStep, 700); // ← Add this back!
                   }}
                   delay={index * 100}
                 >
