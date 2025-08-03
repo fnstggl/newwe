@@ -865,7 +865,7 @@ const Rent = () => {
                 <div className="relative flex items-center">
                   <div className="flex items-center w-full pl-4 pr-4 py-3 bg-black/50 border border-gray-700 rounded-xl min-h-[48px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
                     {selectedNeighborhoods.length > 0 && (
-                      <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+                      <div className="flex flex-wrap items-center gap-2 mr-2">
                         {selectedNeighborhoods.map((neighborhood) => (
                           <div
                             key={neighborhood}
