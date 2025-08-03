@@ -39,9 +39,11 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [liveCounts, setLiveCounts] = useState<{[key: string]: number}>({});
+  const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState<{[key: number]: boolean}>({});
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
 
   const totalSteps = 8;
 
@@ -373,22 +375,36 @@ const ChoiceButton = ({
   selected?: boolean; 
   onClick: () => void;
   delay?: number;
-}) => (
-  <button
-    onClick={onClick}
-    className={`w-full p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 opacity-0 animate-slide-up ${
-      selected
-        ? 'border-white bg-white text-black'
-        : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-    }`}
-    style={{ 
-      animationDelay: `${delay}ms`,
-      animationFillMode: 'forwards'
-    }}
-  >
-    {children}
-  </button>
-);
+}) => {
+  const stepAnimated = hasInitiallyAnimated[currentStep];
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
+    }, delay + 600); // 600ms is your animation duration
+    
+    return () => clearTimeout(timer);
+  }, [currentStep, delay]);
+
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+      }`}
+      style={!stepAnimated ? { 
+        animationDelay: `${delay}ms`,
+        animationFillMode: 'forwards'
+      } : {}}
+    >
+      {children}
+    </button>
+  );
+};
 
   const TagButton = ({ 
   children, 
@@ -400,22 +416,28 @@ const ChoiceButton = ({
   selected?: boolean; 
   onClick: () => void;
   delay?: number;
-}) => (
-  <button
-    onClick={onClick}
-    className={`px-4 py-2 rounded-full border transition-all duration-300 hover:scale-105 opacity-0 animate-slide-up ${
-      selected
-        ? 'border-white bg-white text-black'
-        : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-    }`}
-    style={{ 
-      animationDelay: `${delay}ms`,
-      animationFillMode: 'forwards'
-    }}
-  >
-    {children}
-  </button>
-);
+}) => {
+  const stepAnimated = hasInitiallyAnimated[currentStep];
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-full border transition-all duration-300 hover:scale-105 ${
+        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+      }`}
+      style={!stepAnimated ? { 
+        animationDelay: `${delay}ms`,
+        animationFillMode: 'forwards'
+      } : {}}
+    >
+      {children}
+    </button>
+  );
+};
 
   const renderStep = () => {
     switch (currentStep) {
