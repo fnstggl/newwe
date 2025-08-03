@@ -391,28 +391,31 @@ const ChoiceButton = ({
 );
 
   const TagButton = ({ 
-    children, 
-    selected, 
-    onClick, 
-    delay = 0 
-  }: { 
-    children: React.ReactNode; 
-    selected?: boolean; 
-    onClick: () => void;
-    delay?: number;
-  }) => (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-full border transition-all duration-300 hover:scale-105 ${
-        selected
-          ? 'border-white bg-white text-black'
-          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-      }`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      {children}
-    </button>
-  );
+  children, 
+  selected, 
+  onClick, 
+  delay = 0 
+}: { 
+  children: React.ReactNode; 
+  selected?: boolean; 
+  onClick: () => void;
+  delay?: number;
+}) => (
+  <button
+    onClick={onClick}
+    className={`px-4 py-2 rounded-full border transition-all duration-300 hover:scale-105 opacity-0 animate-slide-up ${
+      selected
+        ? 'border-white bg-white text-black'
+        : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+    }`}
+    style={{ 
+      animationDelay: `${delay}ms`,
+      animationFillMode: 'forwards'
+    }}
+  >
+    {children}
+  </button>
+);
 
   const renderStep = () => {
     switch (currentStep) {
@@ -431,7 +434,7 @@ const ChoiceButton = ({
                   selected={onboardingData.search_duration === option}
                   onClick={() => {
                     updateData('search_duration', option);
-                    setTimeout(nextStep, 300);
+                    
                   }}
                   delay={index * 100}
                 >
@@ -494,7 +497,7 @@ const ChoiceButton = ({
                   selected={onboardingData.searching_for === option}
                   onClick={() => {
                     updateData('searching_for', option);
-                    setTimeout(nextStep, 300);
+                    setTimeout(nextStep, 700);
                   }}
                   delay={index * 100}
                 >
@@ -520,7 +523,7 @@ const ChoiceButton = ({
                   selected={onboardingData.property_type === option}
                   onClick={() => {
                     updateData('property_type', option);
-                    setTimeout(nextStep, 300);
+                    setTimeout(nextStep, 700);
                   }}
                   delay={index * 200}
                 >
@@ -570,7 +573,7 @@ const ChoiceButton = ({
                     <div className="flex gap-2 justify-center flex-wrap">
                       {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
                         <button
-                          key={bed}
+                          key={`${currentStep}-${bed}`}
                           onClick={() => updateData('bedrooms', bed === '5+' ? 5 : bed)}
                           className={`px-4 py-2 rounded-xl border transition-all duration-300 ${
                             onboardingData.bedrooms === (bed === '5+' ? 5 : bed)
