@@ -445,13 +445,24 @@ const ChoiceButton = ({
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <OnboardingStep
-             key={`step-${currentStep}`}
-            step={currentStep}
-            totalSteps={totalSteps}
-            title="How long have you been searching?"
-          >
+  return (
+    <>
+      {/* Back arrow for first step */}
+      <div className="fixed top-8 left-8 z-50">
+        <button
+          onClick={() => window.history.back()}
+          className="p-3 rounded-full bg-transparent hover:bg-gray-800/50 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-400" />
+        </button>
+      </div>
+      
+      <OnboardingStep
+         key={`step-${currentStep}`}
+        step={currentStep}
+        totalSteps={totalSteps}
+        title="How long have you been searching?"
+      >
             <div className="space-y-4">
               {['Just started', '1–3 months', '3–6 months', 'Over 6 months'].map((option, index) => (
                 <ChoiceButton
@@ -468,6 +479,7 @@ const ChoiceButton = ({
               ))}
             </div>
           </OnboardingStep>
+        </>
         );
 
       case 2:
