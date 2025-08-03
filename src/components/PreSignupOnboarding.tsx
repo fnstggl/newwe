@@ -434,7 +434,7 @@ const ChoiceButton = ({
                   selected={onboardingData.search_duration === option}
                   onClick={() => {
                     updateData('search_duration', option);
-                    setTimeout(nextStep, 700); // ← Add this back!
+                    setTimeout(nextStep, 100); // ← Add this back!
                   }}
                   delay={index * 100}
                 >
@@ -497,7 +497,7 @@ const ChoiceButton = ({
                   selected={onboardingData.searching_for === option}
                   onClick={() => {
                     updateData('searching_for', option);
-                    setTimeout(nextStep, 700);
+                    setTimeout(nextStep, 100);
                   }}
                   delay={index * 100}
                 >
@@ -523,7 +523,7 @@ const ChoiceButton = ({
                   selected={onboardingData.property_type === option}
                   onClick={() => {
                     updateData('property_type', option);
-                    setTimeout(nextStep, 700);
+                    setTimeout(nextStep, 100);
                   }}
                   delay={index * 200}
                 >
