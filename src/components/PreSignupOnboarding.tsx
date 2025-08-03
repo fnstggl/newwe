@@ -381,7 +381,7 @@ const ChoiceButton = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
-    }, delay + 600);
+    }, delay + 600); // 600ms is your animation duration
     
     return () => clearTimeout(timer);
   }, [currentStep, delay]);
@@ -389,20 +389,17 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-className={`w-full p-4 rounded-2xl border-2 hover:px-5 hover:py-5 ${
-  stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
-} ${
-  selected
-    ? 'border-white bg-white text-black'
-    : 'border-gray-600 bg-transparent text-white'
-}`}
-style={{
-  transition: 'padding 0.15s ease-out',
-  ...((!stepAnimated) ? { 
-    animationDelay: `${delay}ms`,
-    animationFillMode: 'forwards'
-  } : {})
-}}
+      className={`w-full p-4 rounded-2xl border-2 transition-transform duration-200 ease-out hover:scale-105 ${
+        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+      }`}
+      style={!stepAnimated ? { 
+        animationDelay: `${delay}ms`,
+        animationFillMode: 'forwards'
+      } : {}}
     >
       {children}
     </button>
@@ -422,31 +419,20 @@ style={{
 }) => {
   const stepAnimated = hasInitiallyAnimated[currentStep];
   
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
-    }, delay + 600);
-    
-    return () => clearTimeout(timer);
-  }, [currentStep, delay]);
-  
   return (
     <button
       onClick={onClick}
-className={`px-4 py-2 rounded-full border hover:px-5 hover:py-3 ${
-  stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
-} ${
-  selected
-    ? 'border-white bg-white text-black'
-    : 'border-gray-600 bg-transparent text-white'
-}`}
-style={{
-  transition: 'padding 0.15s ease-out',
-  ...((!stepAnimated) ? { 
-    animationDelay: `${delay}ms`,
-    animationFillMode: 'forwards'
-  } : {})
-}}
+      className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
+        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+      }`}
+      style={!stepAnimated ? { 
+        animationDelay: `${delay}ms`,
+        animationFillMode: 'forwards'
+      } : {}}
     >
       {children}
     </button>
