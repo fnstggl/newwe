@@ -446,41 +446,40 @@ const ChoiceButton = ({
         );
 
       case 2:
-        return (
-          <OnboardingStep
-             key={`step-${currentStep}`}
-            step={currentStep}
-            totalSteps={totalSteps}
-            title="What's been the most frustrating part?"
-            subtitle="Select all that apply"
+  return (
+    <OnboardingStep
+       key={`step-${currentStep}`}
+      step={currentStep}
+      totalSteps={totalSteps}
+      title="What's been the most frustrating part?"
+      subtitle="Select all that apply"
+    >
+      <div className="space-y-4">
+        {[
+          'Every good listing is gone in 24 hours',
+          'I can\'t find anything nice I can actually afford',
+          'Broker\'s fees are way too high',
+          'Rent keeps climbing year after year'
+        ].map((option, index) => (
+          <ChoiceButton
+            key={`${currentStep}-${option}`}
+            selected={onboardingData.frustrations?.includes(option)}
+            onClick={() => handleArrayToggle('frustrations', option)}
+            delay={index * 100}
           >
-            <div className="flex flex-wrap gap-3">
-              {[
-                'Every listing\'s already gone',
-                'I can\'t find anything under my budget',
-                'Broker fees and scams',
-                'Rent keeps going up',
-                'I don\'t even know where to look anymore'
-              ].map((option, index) => (
-                <TagButton
-                  key={`${currentStep}-${option}`}
-                  selected={onboardingData.frustrations?.includes(option)}
-                  onClick={() => handleArrayToggle('frustrations', option)}
-                  delay={index * 100}
-                >
-                  {option}
-                </TagButton>
-              ))}
-            </div>
-            <button
-              onClick={nextStep}
-              disabled={!onboardingData.frustrations?.length}
-              className="mt-8 w-full p-4 bg-white text-black rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
-            >
-              Next
-            </button>
-          </OnboardingStep>
-        );
+            {option}
+          </ChoiceButton>
+        ))}
+      </div>
+      <button
+        onClick={nextStep}
+        disabled={!onboardingData.frustrations?.length}
+        className="mt-8 w-full p-4 bg-white text-black rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
+      >
+        Next
+      </button>
+    </OnboardingStep>
+  );
 
       case 3:
         return (
