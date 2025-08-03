@@ -344,9 +344,10 @@ const AISearch = ({ onResults }: AISearchProps) => {
             <GlowEffect
               colors={['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8b5cf6', '#06b6d4', '#10b981', '#f97316']}
               mode="rotate"
-              blur="medium"
-              duration={4}
-              className="rounded-full"
+              blur="soft"
+              duration={8}
+              scale={0.7}
+              className="rounded-full opacity-60"
             />
           </div>
         )}
