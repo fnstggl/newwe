@@ -1076,7 +1076,7 @@ const ForYou = () => {
     {/* Tooltip Content - Positioned to the left to stay on screen */}
     <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[60] shadow-2xl">
       <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
-        Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 3BR in a safe neighborhood, by the water, under $5.5k
+        Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 1BR in a safe neighborhood, by the water, under $2.9k
       </p>
     </div>
   </div>
