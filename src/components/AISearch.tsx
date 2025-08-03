@@ -346,8 +346,8 @@ const AISearch = ({ onResults }: AISearchProps) => {
               mode="rotate"
               blur="soft"
               duration={8}
-              scale={0.7}
-              className="rounded-full opacity-60"
+              scale={0.9}
+              className="rounded-full opacity-80"
             />
           </div>
         )}
