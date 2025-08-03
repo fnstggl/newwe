@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -76,7 +75,8 @@ interface Property {
   amenity_count?: number;
 }
 
-const LoadingSequence = () => {
+const LoadingSequence = ({ isLoggedOut = false }: { isLoggedOut?: boolean }) => {
+  const navigate = useNavigate();
   const [currentPhase, setCurrentPhase] = useState<'typewriter' | 'scanning' | 'found'>('typewriter');
   const [typewriterText, setTypewriterText] = useState('');
   const [scanningTexts, setScanningTexts] = useState([
@@ -117,6 +117,17 @@ const LoadingSequence = () => {
     if (timer) clearTimeout(timer);
   };
 }, [typewriterText.length, currentPhase, currentScanIndex]);
+
+  // Add redirect logic for logged-out users after success screen
+  useEffect(() => {
+    if (currentPhase === 'found' && isLoggedOut) {
+      const redirectTimer = setTimeout(() => {
+        navigate('/join');
+      }, 2000); // 2 second delay after success screen shows
+
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [currentPhase, isLoggedOut, navigate]);
 
   return (
     <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8">
@@ -273,7 +284,10 @@ const LoadingSequence = () => {
         Your dream homes await
       </h2>
       <p className="text-lg font-medium tracking-tight text-gray-300">
-        We found properties perfectly matched to your preferences
+        {isLoggedOut 
+          ? "Let's get you signed up to see your matches"
+          : "We found properties perfectly matched to your preferences"
+        }
       </p>
     </motion.div>
 
@@ -284,7 +298,10 @@ const LoadingSequence = () => {
       transition={{ delay: 1.4 }}
       className="text-sm font-medium tracking-tight text-gray-400"
     >
-      Preparing your personalized matches...
+      {isLoggedOut 
+        ? "Redirecting you to sign up..."
+        : "Preparing your personalized matches..."
+      }
     </motion.div>
   </motion.div>
 )}
@@ -703,13 +720,13 @@ const ForYou = () => {
   };
 
   if (isLoading) {
-    return <LoadingSequence />;
+    return <LoadingSequence isLoggedOut={!user} />;
   }
 
   // Don't show the "Complete onboarding" message - let the loading animation play and then show properties
   if (!userProfile || (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding)) {
     if (properties.length === 0) {
-      return <LoadingSequence />;
+      return <LoadingSequence isLoggedOut={!user} />;
     }
   }
 
