@@ -499,7 +499,7 @@ const ChoiceButton = ({
       <button
         onClick={nextStep}
         disabled={!onboardingData.frustrations?.length}
-        className="mt-8 w-full p-4 bg-white text-black rounded-2xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
+        className="mt-8 w-full p-4 bg-white text-black rounded-full font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
       >
         Next
       </button>
@@ -687,7 +687,7 @@ const ChoiceButton = ({
 
                   <button
                     onClick={nextStep}
-                    className="w-full p-4 bg-white text-black rounded-2xl font-semibold hover:scale-105 transition-all duration-300 animate-scale-in"
+                    className="w-full p-4 bg-white text-black rounded-full font-semibold hover:scale-105 transition-all duration-300 animate-scale-in"
                   >
                     Find my deals →
                   </button>
@@ -730,7 +730,7 @@ const ChoiceButton = ({
 
               <button
                 onClick={nextStep}
-                className="w-full p-4 bg-white text-black rounded-2xl font-semibold hover:scale-105 transition-all duration-300"
+                className="w-full p-4 bg-white text-black rounded-full font-semibold hover:scale-105 transition-all duration-300"
               >
                 Continue
               </button>
