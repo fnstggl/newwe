@@ -419,6 +419,7 @@ const ChoiceButton = ({
       case 1:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="How long have you been searching?"
@@ -426,7 +427,7 @@ const ChoiceButton = ({
             <div className="space-y-4">
               {['Just started', '1–3 months', '3–6 months', 'Over 6 months'].map((option, index) => (
                 <ChoiceButton
-                  key={option}
+                  key={`${currentStep}-${option}`} 
                   selected={onboardingData.search_duration === option}
                   onClick={() => {
                     updateData('search_duration', option);
@@ -444,6 +445,7 @@ const ChoiceButton = ({
       case 2:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="What's been the most frustrating part?"
@@ -458,7 +460,7 @@ const ChoiceButton = ({
                 'I don\'t even know where to look anymore'
               ].map((option, index) => (
                 <TagButton
-                  key={option}
+                  key={`${currentStep}-${option}`}
                   selected={onboardingData.frustrations?.includes(option)}
                   onClick={() => handleArrayToggle('frustrations', option)}
                   delay={index * 100}
@@ -480,6 +482,7 @@ const ChoiceButton = ({
       case 3:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="Who are you searching for?"
@@ -487,7 +490,7 @@ const ChoiceButton = ({
             <div className="space-y-4">
               {['Just me', 'Me + partner', 'Me + family', 'Other'].map((option, index) => (
                 <ChoiceButton
-                  key={option}
+                  key={`${currentStep}-${option}`}
                   selected={onboardingData.searching_for === option}
                   onClick={() => {
                     updateData('searching_for', option);
@@ -505,6 +508,7 @@ const ChoiceButton = ({
       case 4:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="Are you looking to buy or rent?"
@@ -512,7 +516,7 @@ const ChoiceButton = ({
             <div className="flex gap-4">
               {['rent', 'buy'].map((option, index) => (
                 <ChoiceButton
-                  key={option}
+                  key={`${currentStep}-${option}`}
                   selected={onboardingData.property_type === option}
                   onClick={() => {
                     updateData('property_type', option);
@@ -627,7 +631,7 @@ const ChoiceButton = ({
                     <div className="flex flex-wrap gap-2 justify-center">
                       {neighborhoods.map((neighborhood, index) => (
                         <TagButton
-                          key={neighborhood}
+                          key={`${currentStep}-${neighborhood}`}
                           selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
                           onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
                           delay={index * 20}
@@ -643,7 +647,7 @@ const ChoiceButton = ({
                     <div className="flex flex-wrap gap-2 justify-center">
                       {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
                         <TagButton
-                          key={option}
+                          key={`${currentStep}-${option}`}
                           selected={onboardingData.must_haves?.includes(option)}
                           onClick={() => handleArrayToggle('must_haves', option)}
                           delay={index * 50}
@@ -669,6 +673,7 @@ const ChoiceButton = ({
       case 6:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="How good of a deal do you want?"
@@ -709,6 +714,7 @@ const ChoiceButton = ({
       case 7:
         return (
           <OnboardingStep
+             key={`step-${currentStep}`}
             step={currentStep}
             totalSteps={totalSteps}
             title="Scanning NYC listings..."
