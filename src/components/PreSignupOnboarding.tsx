@@ -389,7 +389,7 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 hover:scale-105 ${
+className={`w-full p-4 rounded-2xl border-2 hover:px-5 hover:py-5 ${
   stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
 } ${
   selected
@@ -397,7 +397,7 @@ const ChoiceButton = ({
     : 'border-gray-600 bg-transparent text-white'
 }`}
 style={{
-  transition: 'transform 0.15s ease-in-out',
+  transition: 'padding 0.15s ease-out',
   ...((!stepAnimated) ? { 
     animationDelay: `${delay}ms`,
     animationFillMode: 'forwards'
@@ -433,7 +433,7 @@ style={{
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-full border hover:scale-105 ${
+className={`px-4 py-2 rounded-full border hover:px-5 hover:py-3 ${
   stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
 } ${
   selected
@@ -441,7 +441,7 @@ style={{
     : 'border-gray-600 bg-transparent text-white'
 }`}
 style={{
-  transition: 'transform 0.15s ease-in-out',
+  transition: 'padding 0.15s ease-out',
   ...((!stepAnimated) ? { 
     animationDelay: `${delay}ms`,
     animationFillMode: 'forwards'
