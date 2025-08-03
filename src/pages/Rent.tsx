@@ -1238,7 +1238,7 @@ const Rent = () => {
         )}
 
         {/* Load More Button - only show for unlimited users or when there are visible properties */}
-        {!loading && hasMore && properties.length > 0 && isUnlimitedUser && (
+        {!loading && hasMore && properties.length > 0 && (
           <div className="text-center py-8">
             <HoverButton onClick={loadMore} textColor="text-white">
               Load More Properties
