@@ -381,7 +381,7 @@ const ChoiceButton = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
-    }, delay + 600); // 600ms is your animation duration
+    }, delay + 600);
     
     return () => clearTimeout(timer);
   }, [currentStep, delay]);
@@ -389,12 +389,13 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 transition-colors duration-200 ${
-className={`w-full p-4 rounded-2xl border-2 transition-transform duration-150 ease-in-out hover:scale-105 ${
-  selected
-    ? 'border-white bg-white text-black'
-    : 'border-gray-600 bg-transparent text-white'
-}`}
+      className={`w-full p-4 rounded-2xl border-2 transition-transform duration-150 ease-in-out hover:scale-105 ${
+        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white'
+      }`}
       style={!stepAnimated ? { 
         animationDelay: `${delay}ms`,
         animationFillMode: 'forwards'
