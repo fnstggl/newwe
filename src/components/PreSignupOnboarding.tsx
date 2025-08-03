@@ -389,7 +389,7 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+      className={`w-full p-4 rounded-2xl border-2 transition-transform duration-200 ease-out hover:scale-105 ${
         stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
       } ${
         selected
@@ -422,7 +422,7 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-full border transition-all duration-300 hover:scale-105 ${
+      className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
         stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
       } ${
         selected
