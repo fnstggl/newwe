@@ -363,29 +363,32 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     }
   };
 
-  const ChoiceButton = ({ 
-    children, 
-    selected, 
-    onClick, 
-    delay = 0 
-  }: { 
-    children: React.ReactNode; 
-    selected?: boolean; 
-    onClick: () => void;
-    delay?: number;
-  }) => (
-    <button
-      onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 animate-slide-up ${
-        selected
-          ? 'border-white bg-white text-black'
-          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-      }`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      {children}
-    </button>
-  );
+const ChoiceButton = ({ 
+  children, 
+  selected, 
+  onClick, 
+  delay = 0 
+}: { 
+  children: React.ReactNode; 
+  selected?: boolean; 
+  onClick: () => void;
+  delay?: number;
+}) => (
+  <button
+    onClick={onClick}
+    className={`w-full p-4 rounded-2xl border-2 transition-all duration-300 hover:scale-105 opacity-0 animate-slide-up ${
+      selected
+        ? 'border-white bg-white text-black'
+        : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+    }`}
+    style={{ 
+      animationDelay: `${delay}ms`,
+      animationFillMode: 'forwards'
+    }}
+  >
+    {children}
+  </button>
+);
 
   const TagButton = ({ 
     children, 
