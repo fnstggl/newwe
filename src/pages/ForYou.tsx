@@ -1008,19 +1008,7 @@ const ForYou = () => {
                     isRental={property.property_type === 'rent'}
                     onClick={() => handlePropertyClick(property)}
                   />
-                  
-                  {/* Why We Picked This */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-full px-4 py-2"
-                  >
-                    <p className="text-sm text-blue-300 flex items-center space-x-2">
-                      <span>💡</span>
-                      <span>{getWhyWePickedThis(property)}</span>
-                    </p>
-                  </motion.div>
+      
                 </div>
               </motion.div>
             )}
@@ -1032,7 +1020,7 @@ const ForYou = () => {
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ delay: 0.2 }}
-  className="flex justify-center space-x-6 pb-10 mt-16 z-[10]"
+  className="flex justify-center space-x-6 pb-6 mt-8 z-[10]"
 >
   {/* Not for me */}
   <motion.button 
@@ -1057,26 +1045,42 @@ const ForYou = () => {
   </motion.button>
 </motion.div>
 
-       {/* AI Search Input */}
-<AISearch 
-  onResults={(results, interpretation) => {
-    if (results.length > 0) {
-      setProperties(results);
-      setCurrentIndex(0);
-      setIsRevealing(true);
-      toast({
-        title: "🎯 AI Search Complete",
-        description: `Found ${results.length} matches!`,
-      });
-    } else {
-      toast({
-        title: "No matches found",
-        description: interpretation,
-        variant: "destructive",
-      });
-    }
-  }}
-/>
+{/* AI Search Input with Tooltip */}
+<div className="relative">
+  <AISearch 
+    onResults={(results, interpretation) => {
+      if (results.length > 0) {
+        setProperties(results);
+        setCurrentIndex(0);
+        setIsRevealing(true);
+        toast({
+          title: "🎯 AI Search Complete",
+          description: `Found ${results.length} matches!`,
+        });
+      } else {
+        toast({
+          title: "No matches found",
+          description: interpretation,
+          variant: "destructive",
+        });
+      }
+    }}
+  />
+  
+  {/* Tooltip */}
+  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full pl-4 group">
+    <div className="w-6 h-6 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50">
+      <span className="text-gray-400 text-sm font-bold">?</span>
+    </div>
+    
+    {/* Tooltip Content */}
+    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+      <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
+        Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 3BR in a safe neighborhood, by the water, under $1.4M
+      </p>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* Property Detail Popup */}

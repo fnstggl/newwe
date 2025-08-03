@@ -23,6 +23,7 @@ const AISearch = ({ onResults }: AISearchProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastInterpretation, setLastInterpretation] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const neighborhoods = [
     // Manhattan
@@ -338,27 +339,31 @@ const AISearch = ({ onResults }: AISearchProps) => {
   return (
     <div className="w-full max-w-2xl mx-auto px-6 mt-8">
       <div className="relative">
-        {/* Glow Effect - Only visible on hover/focus */}
-        {isFocused && (
-          <div className="absolute -inset-[8px] rounded-full opacity-70">
-            <GlowEffect
-              colors={['#3357FF', '#8b5cf6', '#06b6d4']}
-              mode="rotate"
-              blur="soft"
-              duration={12}
-              className="rounded-full"
-            />
-          </div>
-        )}
+        {/* Glow Effect - Visible on hover/focus */}
+{(isFocused || isHovered) && (
+  <div className="absolute -inset-[8px] rounded-full opacity-70">
+    <GlowEffect
+      colors={['#3357FF', '#8b5cf6', '#ef4444']}
+      mode="rotate"
+      blur="soft"
+      duration={12}
+      className="rounded-full"
+    />
+  </div>
+)}
         
         {/* Main Chat Input Container */}
-        <div className={`
-          relative bg-gray-900/80 backdrop-blur-md border transition-all duration-300 rounded-full flex items-center
-          ${isFocused 
-            ? 'border-transparent shadow-lg' 
-            : 'border-gray-600/50 hover:border-gray-500/70'
-          }
-        `}>
+       <div 
+  className={`
+    relative bg-gray-900/80 backdrop-blur-md border transition-all duration-300 rounded-full flex items-center
+    ${isFocused 
+      ? 'border-transparent shadow-lg' 
+      : 'border-gray-600/50 hover:border-gray-500/70'
+    }
+  `}
+  onMouseEnter={() => setIsHovered(true)}
+  onMouseLeave={() => setIsHovered(false)}
+>
           <input
             type="text"
             placeholder="Describe your dream home... we'll find it for you"
