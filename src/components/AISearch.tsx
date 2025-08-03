@@ -340,15 +340,16 @@ const AISearch = ({ onResults }: AISearchProps) => {
       <div className="relative">
         {/* Glow Effect - Only visible on hover/focus */}
         {isFocused && (
-          <div className="absolute -inset-1 rounded-full">
+          <div className="absolute -inset-[2px] rounded-full p-[2px]">
             <GlowEffect
               colors={['#FF5733', '#33FF57', '#3357FF', '#F1C40F', '#8b5cf6', '#06b6d4', '#10b981', '#f97316']}
               mode="rotate"
-              blur="soft"
+              blur="none"
               duration={8}
-              scale={0.9}
-              className="rounded-full opacity-80"
+              className="rounded-full"
             />
+            {/* Inner mask to create border-only effect */}
+            <div className="absolute inset-[2px] bg-gray-900/80 backdrop-blur-md rounded-full"></div>
           </div>
         )}
         
