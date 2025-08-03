@@ -1067,15 +1067,15 @@ const ForYou = () => {
     }}
   />
   
- {/* Tooltip - Positioned relative to AI search */}
-  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full pl-3 group">
-    <div className="w-7 h-7 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
-      <span className="text-gray-300 text-xs font-bold">?</span>
+  {/* Tooltip - Simple positioning next to search bar */}
+  <div className="absolute top-1/2 -translate-y-1/2 -right-4 group">
+    <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
+      <span className="text-gray-300 text-sm font-bold">?</span>
     </div>
     
-    {/* Tooltip Content */}
-    <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 w-72 p-3 bg-black/80 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 shadow-2xl">
-      <p className="text-white text-xs font-inter tracking-tighter leading-relaxed">
+    {/* Tooltip Content - Positioned to the left to stay on screen */}
+    <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[60] shadow-2xl">
+      <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
         Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 3BR in a safe neighborhood, by the water, under $1.4M
       </p>
     </div>
