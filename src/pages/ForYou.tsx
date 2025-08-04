@@ -322,8 +322,8 @@ const { scrollYProgress } = useScroll({
   offset: ["start end", "end start"]
 });
 
-const opacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
+const opacity1 = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
@@ -1168,6 +1168,16 @@ const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
         <div ref={containerRef} className="relative h-[400vh] w-full">
           <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
             <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
+
+              {/* Social Proof Review Card - positioned above images */}
+              <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
+                  <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight">
+                    "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+                  </p>
+                  <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
+                </div>
+              </div>
 
               {/* First Image - fades out as you scroll */}
               <motion.img
