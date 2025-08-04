@@ -78,9 +78,9 @@ const Rent = () => {
 
   // Determine visibility limits based on user status
   const getVisibilityLimit = () => {
-    if (!user) return 6; // Signed out users see 6
+    if (!user) return 24; // Signed out users see 6
     if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') return Infinity; // Unlimited and open_door_plan users see all
-    return 24; // Free plan users see 24
+    return 48; // Free plan users see 24
   };
 
   useEffect(() => {
@@ -775,7 +775,7 @@ const Rent = () => {
     }
 
     // For logged out users clicking on blurred listings, show soft-gate modal
-    if (!user && index >= 3) {
+    if (!user && index >= 24) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -785,7 +785,7 @@ const Rent = () => {
     }
 
     // For free plan users clicking on blurred listings, show soft-gate modal
-    if (isFreeUser && index >= 9) {
+    if (isFreeUser && index >= 48) {
       setSoftGateModal({
         isOpen: true,
         property: property,
