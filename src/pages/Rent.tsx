@@ -223,30 +223,75 @@ const Rent = () => {
 
       const dbNeighborhoods = [...new Set(data.map(item => item.neighborhood).filter(Boolean))];
       
-      // Add missing neighborhoods that should be available
-      const additionalNeighborhoods = [
-        // Manhattan
-        'west-village',
-        'lower-east-side', 
-        'little-italy',
-        'nolita',
-        'soho',
-        'tribeca',
-        'two-bridges',
-        'murray-hill',
-        // Brooklyn
-        'williamsburg',
-        'prospect-heights',
-        'park-slope',
-        // Queens
-        'long-island-city',
-        'sunnyside',
-        'woodside',
-        // Bronx
-        'mott-haven',
-        'melrose',
-        'south-bronx'
-      ];
+     // Add missing neighborhoods that should be available
+const additionalNeighborhoods = [
+  // Manhattan (existing)
+  'west-village',
+  'lower-east-side', 
+  'little-italy',
+  'nolita',
+  'soho',
+  'tribeca',
+  'two-bridges',
+  'murray-hill',
+  
+  // Manhattan (NEW - missing from LIST 1)
+  'midtown',
+  'kips-bay',
+  'midtown-east',
+  'midtown-west',
+  'hells-kitchen',
+  'upper-east-side',
+  'upper-west-side',
+  'morningside-heights',
+  'hamilton-heights',
+  'washington-heights',
+  'inwood',
+  'greenwich-village',
+  'noho',
+  'civic-center',
+  'hudson-square',
+  'roosevelt-island',
+  'hudson-yards',
+  'nomad',
+  'manhattan-valley',
+  'central-harlem',
+  
+  // Brooklyn (existing)
+  'williamsburg',
+  'prospect-heights',
+  'park-slope',
+  
+  // Brooklyn (NEW - missing from LIST 1)
+  'red-hook',
+  'prospect-lefferts-gardens',
+  'sunset-park',
+  'vinegar-hill',
+  'windsor-terrace',
+  
+  // Queens (existing)
+  'long-island-city',
+  'sunnyside',
+  'woodside',
+  
+  // Queens (NEW - missing from LIST 1)
+  'jackson-heights',
+  'corona',
+  'ridgewood',
+  'maspeth',
+  'rego-park',
+  'bayside',
+  'ditmars-steinway',
+  
+  // Bronx (existing)
+  'mott-haven',
+  'melrose',
+  'south-bronx',
+  
+  // Bronx (NEW - missing from LIST 1)
+  'kingsbridge',
+  'norwood'
+];
 
       // Combine database neighborhoods with additional ones, removing duplicates
       const allNeighborhoods = [...new Set([...dbNeighborhoods, ...additionalNeighborhoods])].sort();
