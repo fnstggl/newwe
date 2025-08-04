@@ -66,7 +66,7 @@ const Index = () => {
                 Affordable homes. Found for you.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
-                Below-market & rent-stabilized deals so you never get priced out.
+                Your unfair advantage in NYC real estate.
               </p>
               <Link to="/rent" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
                 Start Searching
@@ -123,7 +123,7 @@ const Index = () => {
       <section className="py-20 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
-            Affordable housing should be accessible—not hidden. 
+            The real estate market is rigged. Now you can win. 
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
@@ -131,7 +131,7 @@ const Index = () => {
               <p className="text-gray-400 tracking-tight">Real-time scraping of listings and analysis of comps, market trends to identify true value.</p>
             </div>
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We find affordable opportunities</h3>
+              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We find the hidden gems</h3>
               <p className="text-gray-400 tracking-tight">Advanced algorithms identify undervalued properties you'd never find.</p>
             </div>
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
@@ -146,7 +146,7 @@ const Index = () => {
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Below-market homes in every neighborhood.
+            Stop overpaying in every neighborhood.
           </h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
             <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all">

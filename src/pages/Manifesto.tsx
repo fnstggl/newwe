@@ -47,14 +47,14 @@ const Manifesto = () => {
         {/* Hero */}
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-            Finding affordable housing.
+            Finding a home in NYC is rigged.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-              For all New Yorkers.
+              Now you can win.
             </span>
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
-            Don't get priced out in NYC ever again.
+            Only see below-market & rent stabilized apartments.
           </p>
         </div>
 
@@ -90,7 +90,7 @@ const Manifesto = () => {
               "Finally, a platform that works for buyers, not agents."
             </p>
             <p className="text-gray-400 tracking-tight">
-              This isn't guesswork. It's stable housing opportunities, found with data.
+              This isn't guesswork. It's your unfair advantage.
             </p>
           </blockquote>
 
