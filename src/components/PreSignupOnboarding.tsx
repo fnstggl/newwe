@@ -18,19 +18,30 @@ const OnboardingSlider = ({ value, onValueChange, max, min, step, className = ""
   step: number;
   className?: string;
 }) => {
+  const uniqueId = `slider-${Math.random().toString(36).substr(2, 9)}`;
+  
   return (
     <div className={`relative w-full ${className}`}>
       <style dangerouslySetInnerHTML={{
         __html: `
-          .custom-slider [data-radix-slider-track] {
+          .${uniqueId} [data-radix-slider-track] {
             background-color: #1e293b !important;
+            height: 8px !important;
           }
-          .custom-slider [data-radix-slider-range] {
+          .${uniqueId} [data-radix-slider-range] {
             background-color: white !important;
+            height: 8px !important;
           }
-          .custom-slider [data-radix-slider-thumb] {
+          .${uniqueId} [data-radix-slider-thumb] {
             background-color: white !important;
             border: 2px solid white !important;
+            width: 20px !important;
+            height: 20px !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+          }
+          .${uniqueId} [data-radix-slider-thumb]:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
           }
         `
       }} />
@@ -40,7 +51,7 @@ const OnboardingSlider = ({ value, onValueChange, max, min, step, className = ""
         max={max}
         min={min}
         step={step}
-        className="w-full custom-slider"
+        className={`w-full ${uniqueId}`}
       />
     </div>
   );
