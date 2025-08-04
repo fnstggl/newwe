@@ -1166,7 +1166,7 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
       {/* Scroll-jacking paywall section */}
       {showPaywall && (
         <div ref={containerRef} className="relative h-[400vh] w-full">
-          <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
+         <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
             <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
 
               {/* Social Proof Review Card - positioned at top */}
