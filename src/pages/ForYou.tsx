@@ -1215,5 +1215,4 @@ const ForYou = () => {
   );
   };  // <- ADD THIS LINE
 
-
 export default ForYou;
