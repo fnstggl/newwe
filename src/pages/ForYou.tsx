@@ -334,11 +334,16 @@ const ForYou = () => {
       const masterTimer = setTimeout(() => {
         setIsLoading(false);
         setIsRevealing(true);
+        
+        // Show paywall for free users after loading
+        if (userProfile?.subscription_plan === 'free') {
+          setShowPaywall(true);
+        }
       }, 11000);
       
       return () => clearTimeout(masterTimer);
     }
-  }, [isLoading]);
+  }, [isLoading, userProfile?.subscription_plan]);
 
   useEffect(() => {
     setCurrentHeaderIndex(Math.floor(Math.random() * personalizedHeaders.length));
@@ -546,6 +551,63 @@ const ForYou = () => {
         variant: "destructive",
       });
       setProperties([]);
+    }
+  };
+
+  const getPreloadImages = () => {
+    if (currentIndex + 1 < properties.length) {
+      const nextProperty = properties[currentIndex + 1];
+      if (nextProperty && nextProperty.images) {
+        if (Array.isArray(nextProperty.images)) {
+          return nextProperty.images.slice(0, 3);
+        } else if (typeof nextProperty.images === 'string') {
+          return [nextProperty.images];
+        }
+      }
+    }
+    return [];
+  };
+
+  const getSavingsText = (property: Property) => {
+    if (property.property_type === 'buy' && property.potential_savings) {
+      return `$${Math.round(property.potential_savings).toLocaleString()}`;
+    } else if (property.property_type === 'rent' && property.potential_annual_savings) {
+      const monthlySavings = Math.round(property.potential_annual_savings / 12);
+      return `$${monthlySavings}/mo`;
+    }
+    return `${Math.round(property.discount_percent)}%`;
+  };
+
+  const handleUnlockMatch = async () => {
+    if (!user) return;
+    
+    setIsProcessingCheckout(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { billing_cycle: 'annual' }
+      });
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessingCheckout(false);
     }
   };
 
