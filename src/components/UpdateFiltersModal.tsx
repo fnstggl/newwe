@@ -320,7 +320,7 @@ useEffect(() => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
         onClick={onClose}
       >
         <motion.div
@@ -328,7 +328,7 @@ useEffect(() => {
   animate={{ opacity: 1, scale: 1, y: 0 }}
   exit={{ opacity: 0, scale: 0.9, y: 20 }}
   onClick={(e) => e.stopPropagation()}
-  className="bg-black/70 backdrop-blur-xl border border-white/10 rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+  className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-white/5"
 >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">Update Personalized Search Filters</h2>
