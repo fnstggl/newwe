@@ -8,6 +8,7 @@ import { HoverButton } from './ui/hover-button';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { getSimilarNeighborhoods, normalizeNeighborhoodForSimilar } from '../data/similarNeighborhoods';
 
 interface OnboardingData {
   search_duration?: string;
@@ -41,6 +42,9 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const [currentLiveCount, setCurrentLiveCount] = useState(0);
   const [lastUpdatedFilter, setLastUpdatedFilter] = useState<string>('');
   const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState<{[key: number]: boolean}>({});
+  const [isCheckingSimilar, setIsCheckingSimilar] = useState(false);
+  const [similarListingsFound, setSimilarListingsFound] = useState(0);
+  const [usedSimilarFilters, setUsedSimilarFilters] = useState<Partial<OnboardingData> | null>(null);
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -101,60 +105,96 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     return variations;
   };
 
-  // Get similar neighborhoods when count is 0
-  const getSimilarNeighborhoods = (selectedNeighborhoods: string[], propertyType: string): string[] => {
-    if (!selectedNeighborhoods.length) return [];
-    
-    const similarMap: {[key: string]: string[]} = {
-      'carroll gardens': ['cobble hill', 'boerum hill', 'red hook'],
-      'bed-stuy': ['crown heights', 'fort greene', 'clinton hill'],
-      'williamsburg': ['greenpoint', 'bushwick', 'dumbo'],
-      'astoria': ['long island city', 'sunnyside', 'woodside'],
-      'long island city': ['astoria', 'sunnyside', 'greenpoint'],
-      'park slope': ['prospect heights', 'windsor terrace', 'gowanus'],
-      'greenpoint': ['williamsburg', 'long island city', 'bushwick'],
-      'bushwick': ['williamsburg', 'bed-stuy', 'ridgewood'],
-      'crown heights': ['bed-stuy', 'prospect heights', 'park slope'],
-      'sunset park': ['park slope', 'bay ridge', 'red hook'],
-      'red hook': ['carroll gardens', 'sunset park', 'cobble hill'],
-      'dumbo': ['brooklyn heights', 'williamsburg', 'downtown brooklyn'],
-      'fort greene': ['bed-stuy', 'clinton hill', 'downtown brooklyn'],
-      'prospect heights': ['crown heights', 'park slope', 'fort greene'],
-      'chelsea': ['west village', 'midtown', 'hell\'s kitchen'],
-      'soho': ['tribeca', 'west village', 'nolita'],
-      'east village': ['lower east side', 'west village', 'nolita'],
-      'west village': ['east village', 'soho', 'chelsea'],
-      'lower east side': ['east village', 'chinatown', 'nolita'],
-      'tribeca': ['soho', 'financial district', 'west village'],
-      'financial district': ['tribeca', 'battery park city', 'south street seaport'],
-      'midtown': ['hell\'s kitchen', 'chelsea', 'murray hill'],
-      'upper east side': ['upper west side', 'midtown east', 'yorkville'],
-      'upper west side': ['upper east side', 'morningside heights', 'hell\'s kitchen'],
-      'harlem': ['morningside heights', 'washington heights', 'east harlem'],
-      'washington heights': ['harlem', 'inwood', 'morningside heights'],
-      'inwood': ['washington heights', 'harlem', 'bronx'],
-      'jackson heights': ['elmhurst', 'woodside', 'corona'],
-      'elmhurst': ['jackson heights', 'forest hills', 'corona'],
-      'forest hills': ['elmhurst', 'kew gardens', 'rego park'],
-      'flushing': ['bayside', 'whitestone', 'corona']
-    };
-
-    const similar: string[] = [];
-    selectedNeighborhoods.forEach(neighborhood => {
-      const normalized = normalizeNeighborhoodName(neighborhood);
-      if (similarMap[normalized]) {
-        similar.push(...similarMap[normalized]);
-      }
-    });
-
-    return [...new Set(similar)]; // Remove duplicates
-  };
-
-  // Get live counts for filters - Fixed logic with better neighborhood matching
-  const getLiveCount = async (filters: Partial<OnboardingData>, includeSimilar = false): Promise<number> => {
+  // Get live counts for filters with fallback logic
+  const getLiveCount = async (filters: Partial<OnboardingData>, trySimilar = false): Promise<{ direct: number; similar: number; adjustedFilters?: Partial<OnboardingData> }> => {
     try {
       const propertyType = filters.property_type || onboardingData.property_type;
       
+      // First try with direct filters
+      const directCount = await getDirectListingCount(filters, propertyType);
+      
+      if (directCount > 0 || !trySimilar) {
+        return { direct: directCount, similar: 0 };
+      }
+
+      // If no direct results and trySimilar is true, try fallback strategies
+      let adjustedFilters = { ...filters };
+      let similarCount = 0;
+
+      // Strategy 1: Remove must-haves (except rent-stabilized for rentals)
+      if (adjustedFilters.must_haves && adjustedFilters.must_haves.length > 0) {
+        const originalMustHaves = [...adjustedFilters.must_haves];
+        if (propertyType === 'rent') {
+          adjustedFilters.must_haves = adjustedFilters.must_haves.filter(item => item === 'Rent-stabilized');
+        } else {
+          adjustedFilters.must_haves = [];
+        }
+        
+        similarCount = await getDirectListingCount(adjustedFilters, propertyType);
+        if (similarCount > 0) {
+          return { direct: 0, similar: similarCount, adjustedFilters };
+        }
+        adjustedFilters.must_haves = originalMustHaves; // Reset for next strategy
+      }
+
+      // Strategy 2: Try similar neighborhoods
+      if (adjustedFilters.preferred_neighborhoods && adjustedFilters.preferred_neighborhoods.length > 0) {
+        const originalNeighborhoods = [...adjustedFilters.preferred_neighborhoods];
+        const allSimilarNeighborhoods = new Set<string>();
+        
+        originalNeighborhoods.forEach(neighborhood => {
+          if (neighborhood !== 'Anywhere with a train' && !['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'].includes(neighborhood)) {
+            const similar = getSimilarNeighborhoods(neighborhood);
+            similar.forEach(s => allSimilarNeighborhoods.add(s));
+          }
+        });
+
+        if (allSimilarNeighborhoods.size > 0) {
+          adjustedFilters.preferred_neighborhoods = [...originalNeighborhoods, ...Array.from(allSimilarNeighborhoods)];
+          similarCount = await getDirectListingCount(adjustedFilters, propertyType);
+          if (similarCount > 0) {
+            return { direct: 0, similar: similarCount, adjustedFilters };
+          }
+        }
+        adjustedFilters.preferred_neighborhoods = originalNeighborhoods; // Reset for next strategy
+      }
+
+      // Strategy 3: Reduce bedrooms (if not already studio)
+      if (adjustedFilters.bedrooms && adjustedFilters.bedrooms > 0) {
+        const originalBedrooms = adjustedFilters.bedrooms;
+        adjustedFilters.bedrooms = originalBedrooms - 1;
+        similarCount = await getDirectListingCount(adjustedFilters, propertyType);
+        if (similarCount > 0) {
+          return { direct: 0, similar: similarCount, adjustedFilters };
+        }
+        adjustedFilters.bedrooms = originalBedrooms; // Reset for next strategy
+      }
+
+      // Strategy 4: Increase budget by 20% increments until we find at least 3 listings
+      if (adjustedFilters.max_budget) {
+        const originalBudget = adjustedFilters.max_budget;
+        let budgetMultiplier = 1.2;
+        
+        while (budgetMultiplier <= 2.0) { // Don't go beyond 2x original budget
+          adjustedFilters.max_budget = Math.round(originalBudget * budgetMultiplier);
+          similarCount = await getDirectListingCount(adjustedFilters, propertyType);
+          if (similarCount >= 3) {
+            return { direct: 0, similar: similarCount, adjustedFilters };
+          }
+          budgetMultiplier += 0.2;
+        }
+      }
+
+      return { direct: 0, similar: 0 };
+
+    } catch (error) {
+      console.error('Error getting live count:', error);
+      return { direct: 0, similar: 0 };
+    }
+  };
+
+  const getDirectListingCount = async (filters: Partial<OnboardingData>, propertyType?: string): Promise<number> => {
+    try {
       if (propertyType === 'rent') {
         // Count from undervalued_rentals
         let rentalQuery = supabase
@@ -181,12 +221,6 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
           const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
           let selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
-          
-          // If includeSimilar is true and we have 0 results, try similar neighborhoods
-          if (includeSimilar && selectedNeighborhoods.length > 0) {
-            const similarNeighborhoods = getSimilarNeighborhoods(selectedNeighborhoods, propertyType);
-            selectedNeighborhoods = [...selectedNeighborhoods, ...similarNeighborhoods];
-          }
           
           if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
             if (selectedBoroughs.length > 0) {
@@ -245,12 +279,6 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
           let selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
           
-          // If includeSimilar is true and we have 0 results, try similar neighborhoods
-          if (includeSimilar && selectedNeighborhoods.length > 0) {
-            const similarNeighborhoods = getSimilarNeighborhoods(selectedNeighborhoods, propertyType);
-            selectedNeighborhoods = [...selectedNeighborhoods, ...similarNeighborhoods];
-          }
-          
           if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
             if (selectedBoroughs.length > 0) {
               query = query.in('borough', selectedBoroughs);
@@ -277,7 +305,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
         return count || 0;
       }
     } catch (error) {
-      console.error('Error getting live count:', error);
+      console.error('Error getting direct listing count:', error);
     }
     return 0;
   };
@@ -293,8 +321,15 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           else if (newProgress <= 80) setScanningStage(3);
           else if (newProgress <= 100) {
             setScanningStage(4);
-            getLiveCount(onboardingData).then(count => {
-              setMatchedListings(count);
+            getLiveCount(onboardingData, true).then(result => {
+              if (result.direct > 0) {
+                setMatchedListings(result.direct);
+              } else if (result.similar > 0) {
+                setMatchedListings(result.similar);
+                setUsedSimilarFilters(result.adjustedFilters || null);
+              } else {
+                setMatchedListings(0);
+              }
             });
           }
           
@@ -317,13 +352,21 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     
     // Update live count when relevant filters change
     if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
-      getLiveCount(newData).then(async (count) => {
-        // If count is 0, try with similar neighborhoods for a fallback count
-        if (count === 0 && (key === 'preferred_neighborhoods' || key === 'max_budget')) {
-          const similarCount = await getLiveCount(newData, true);
-          setCurrentLiveCount(similarCount);
-        } else {
-          setCurrentLiveCount(count);
+      setIsCheckingSimilar(false);
+      setSimilarListingsFound(0);
+      setUsedSimilarFilters(null);
+      
+      getLiveCount(newData, false).then(result => {
+        setCurrentLiveCount(result.direct);
+        if (result.direct === 0) {
+          setIsCheckingSimilar(true);
+          getLiveCount(newData, true).then(similarResult => {
+            setIsCheckingSimilar(false);
+            setSimilarListingsFound(similarResult.similar);
+            if (similarResult.adjustedFilters) {
+              setUsedSimilarFilters(similarResult.adjustedFilters);
+            }
+          });
         }
       });
     }
@@ -333,7 +376,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete(onboardingData);
+      onComplete(usedSimilarFilters || onboardingData);
     }
   };
 
@@ -429,16 +472,17 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
   const saveOnboardingData = async (userId: string) => {
     try {
+      const dataToSave = usedSimilarFilters || onboardingData;
       const updateData: any = {
-        search_duration: onboardingData.search_duration,
-        frustrations: onboardingData.frustrations,
-        searching_for: onboardingData.searching_for,
-        property_type: onboardingData.property_type,
-        bedrooms: onboardingData.bedrooms,
-        max_budget: onboardingData.max_budget,
-        preferred_neighborhoods: onboardingData.preferred_neighborhoods,
-        must_haves: onboardingData.must_haves,
-        discount_threshold: onboardingData.discount_threshold,
+        search_duration: dataToSave.search_duration,
+        frustrations: dataToSave.frustrations,
+        searching_for: dataToSave.searching_for,
+        property_type: dataToSave.property_type,
+        bedrooms: dataToSave.bedrooms,
+        max_budget: dataToSave.max_budget,
+        preferred_neighborhoods: dataToSave.preferred_neighborhoods,
+        must_haves: dataToSave.must_haves,
+        discount_threshold: dataToSave.discount_threshold,
         onboarding_completed: true,
         onboarding_completed_at: new Date().toISOString(),
       };
@@ -548,6 +592,23 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
       });
     } finally {
       setIsGoogleLoading(false);
+    }
+  };
+
+  // Helper function to get the live count display text
+  const getLiveCountDisplay = (filterKey: string) => {
+    if (lastUpdatedFilter !== filterKey) return '';
+    
+    if (isCheckingSimilar) {
+      return '(checking similar...)';
+    }
+    
+    if (currentLiveCount > 0) {
+      return `(${currentLiveCount.toLocaleString()} perfect matches)`;
+    } else if (similarListingsFound > 0) {
+      return `(0 direct matches, ${similarListingsFound.toLocaleString()} similar found)`;
+    } else {
+      return '(0 listings found)';
     }
   };
 
@@ -715,8 +776,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                 <div className="space-y-8">
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Bedrooms {lastUpdatedFilter === 'bedrooms' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
-                      {lastUpdatedFilter === 'bedrooms' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                      Bedrooms {getLiveCountDisplay('bedrooms')}
                     </h3>
                     <div className="flex gap-2 justify-center flex-wrap">
                       {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
@@ -737,8 +797,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Max Budget {lastUpdatedFilter === 'max_budget' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
-                      {lastUpdatedFilter === 'max_budget' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                      Max Budget {getLiveCountDisplay('max_budget')}
                     </h3>
                     <div className="space-y-6">
                       <Slider
@@ -777,8 +836,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Neighborhoods {lastUpdatedFilter === 'preferred_neighborhoods' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
-                      {lastUpdatedFilter === 'preferred_neighborhoods' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                      Neighborhoods {getLiveCountDisplay('preferred_neighborhoods')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {neighborhoods.map((neighborhood, index) => (
@@ -797,8 +855,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Must-haves {lastUpdatedFilter === 'must_haves' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
-                      {lastUpdatedFilter === 'must_haves' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                      Must-haves {getLiveCountDisplay('must_haves')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
@@ -854,8 +911,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                 </div>
                 <p className="text-center text-xl font-semibold">
                   {onboardingData.discount_threshold || 20}% below market
-                  {lastUpdatedFilter === 'discount_threshold' && currentLiveCount > 0 && ` (${currentLiveCount.toLocaleString()} listings)`}
-                  {lastUpdatedFilter === 'discount_threshold' && currentLiveCount === 0 && ` (0 listings, checking similar...)`}
+                  {getLiveCountDisplay('discount_threshold')}
                 </p>
               </div>
 
@@ -909,12 +965,18 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   );
 
       case 8:
+        const finalListingCount = matchedListings;
+        const hasDirectMatches = currentLiveCount > 0 || !usedSimilarFilters;
+        const listingText = hasDirectMatches 
+          ? `We found ${finalListingCount} listings exactly like your dream home.`
+          : `We found ${finalListingCount} listings similar to your dream home.`;
+        
         return (
           <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full text-center space-y-8">
               <div className="space-y-4">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                  We found {matchedListings} listings that match your dream home.
+                  {listingText}
                 </h1>
                 <p className="text-gray-400 text-lg">
                   Sign up to see your personalized list of deals
