@@ -23,10 +23,10 @@ const OnboardingSlider = ({ value, onValueChange, max, min, step, className = ""
       <style dangerouslySetInnerHTML={{
         __html: `
           .custom-slider [data-radix-slider-track] {
-            background-color: white !important;
+            background-color: #1e293b !important;
           }
           .custom-slider [data-radix-slider-range] {
-            background-color: #1e293b !important;
+            background-color: white !important;
           }
           .custom-slider [data-radix-slider-thumb] {
             background-color: white !important;
