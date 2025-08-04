@@ -47,10 +47,10 @@ const Manifesto = () => {
         {/* Hero */}
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
-            Affordable homes shouldn't be this hard to find.
+            Finding affordable housing.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-              Now they're not.
+              For all New Yorkers.
             </span>
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">

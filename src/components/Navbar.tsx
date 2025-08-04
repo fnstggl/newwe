@@ -147,18 +147,18 @@ const Navbar = () => {
             <Link 
               to="/mission" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
-                location.pathname === '/manifesto' ? 'text-white' : 'text-gray-300'
+                location.pathname === '/mission' ? 'text-white' : 'text-gray-300'
               }`}
               style={{
-                textShadow: location.pathname === '/manifesto' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
+                textShadow: location.pathname === '/mission' ? '0 0 10px rgba(255, 255, 255, 0.8)' : 'none'
               }}
               onMouseEnter={(e) => {
-                if (location.pathname !== '/manifesto') {
+                if (location.pathname !== '/mission') {
                   e.currentTarget.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (location.pathname !== '/manifesto') {
+                if (location.pathname !== '/mission') {
                   e.currentTarget.style.textShadow = 'none';
                 }
               }}
