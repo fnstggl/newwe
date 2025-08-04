@@ -1026,14 +1026,18 @@ const ForYou = () => {
                   </div>
                   
                   {showPaywall && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="absolute inset-0 rounded-3xl backdrop-blur-md bg-black/20 flex flex-col items-center justify-center z-30 border border-white/10"
-                    >
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="absolute inset-0 rounded-3xl backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden"
+    style={{
+      backdropFilter: 'blur(8px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+    }}
+  >
                       <div className="text-center space-y-4 px-8">
                         <h2 className="text-2xl font-semibold tracking-tighter text-white">
-                          We found your perfect home for you
+                          We found your dream home
                         </h2>
                         <p className="text-lg font-medium tracking-tighter text-white">
                           And it's {getSavingsText(property)} below-market
