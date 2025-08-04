@@ -46,7 +46,7 @@ const AppContent = () => {
         <Route path="/rent/:listingId" element={<Rent />} />
         <Route path="/saved" element={<SavedProperties />} />
         <Route path="/foryou" element={<ForYou />} />
-        <Route path="/manifesto" element={<Manifesto />} />
+        <Route path="/mission" element={<Manifesto />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/cancel-subscription" element={<CancelSubscription />} />
