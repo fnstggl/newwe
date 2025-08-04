@@ -312,10 +312,15 @@ const ForYou = () => {
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-    // ADD THE SCROLL HOOKS HERE:
-  const { scrollY, scrollYProgress } = useScroll();
-  const scrollYTransform = useTransform(scrollY, [0, 1000], [0, -200]);
-  const scrollProgressValue = scrollYProgress.get();
+ const containerRef = useRef(null);
+
+const { scrollYProgress } = useScroll({
+  target: containerRef,
+  offset: ["start end", "end start"], // adjust if needed
+});
+
+const opacity1 = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+const opacity2 = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
