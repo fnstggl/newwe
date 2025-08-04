@@ -312,16 +312,18 @@ const ForYou = () => {
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
- // REPLACE YOUR CURRENT SCROLL HOOKS WITH THIS:
-  const containerRef = useRef<HTMLDivElement>(null);
+ // Replace your scroll hooks section with this conditional version:
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
+const containerRef = useRef<HTMLDivElement>(null);
 
-  const opacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
+// Only create scroll hooks when paywall is showing
+const { scrollYProgress } = useScroll({
+  target: showPaywall ? containerRef : undefined,
+  offset: ["start end", "end start"]
+});
+
+const opacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
