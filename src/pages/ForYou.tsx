@@ -11,6 +11,14 @@ import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import AISearch from '@/components/AISearch';
 
+// Add this CSS for forced glow effect
+const forcedGlowStyles = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+
 interface Property {
   id: string;
   address: string;
@@ -1102,12 +1110,8 @@ const ForYou = () => {
           </motion.button>
         </motion.div>
 
- <div className="relative">
-  <div 
-    className={showPaywall ? 'relative' : ''}
-    onClick={showPaywall ? (e) => e.stopPropagation() : undefined}
-    onKeyDown={showPaywall ? (e) => e.preventDefault() : undefined}
-  >
+<div className="relative">
+  <div className={showPaywall ? 'pointer-events-none' : ''}>
     <AISearch 
       onResults={(results, interpretation) => {
         if (!showPaywall) {
@@ -1129,14 +1133,20 @@ const ForYou = () => {
         }
       }}
     />
-    {showPaywall && (
-      <div 
-        className="absolute inset-0 cursor-not-allowed" 
-        onClick={(e) => e.stopPropagation()}
-        onFocus={(e) => e.preventDefault()}
-      />
-    )}
   </div>
+  
+  {/* Force glow effect when paywall is active */}
+  {showPaywall && (
+    <div className="absolute inset-0 pointer-events-none">
+      <div 
+        className="absolute inset-0 rounded-full blur-md opacity-60"
+        style={{
+          background: 'conic-gradient(from 0deg at 50% 50%, #FF5733, #33FF57, #3357FF, #F1C40F)',
+          animation: 'spin 5s linear infinite'
+        }}
+      />
+    </div>
+  )}
           
           <div className={`absolute top-1/2 -translate-y-1/2 right-2 group ${showPaywall ? 'opacity-50' : ''}`}>
             <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
