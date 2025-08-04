@@ -312,18 +312,17 @@ const ForYou = () => {
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
- // Replace your scroll hooks section with this conditional version:
 
-const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-// Only create scroll hooks when paywall is showing
-const { scrollYProgress } = useScroll({
-  target: showPaywall ? containerRef : undefined,
-  offset: ["start end", "end start"]
-});
+  // Only create scroll hooks when paywall is showing
+  const { scrollYProgress } = useScroll({
+    target: showPaywall ? containerRef : undefined,
+    offset: ["start end", "end start"]
+  });
 
-const opacity1 = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
+  const opacity1 = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
@@ -370,6 +369,85 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
       const hasCompletedAnyOnboarding = userProfile.onboarding_completed || userProfile.hasCompletedOnboarding;
       
       if (!hasCompletedAnyOnboarding) {
+        return;
+      }
+
+      // Check if user has any filters set
+      const hasFilters = userProfile.property_type || 
+                        userProfile.bedrooms !== undefined || 
+                        userProfile.max_budget || 
+                        (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) ||
+                        userProfile.discount_threshold ||
+                        (userProfile.must_haves && userProfile.must_haves.length > 0);
+
+      // If no filters are set, show random SoHo listings
+      if (!hasFilters) {
+        // Fetch random rentals from SoHo
+        let sohoQuery = supabase
+          .from('undervalued_rentals')
+          .select('*')
+          .eq('status', 'active')
+          .eq('neighborhood', 'SoHo')
+          .order('discount_percent', { ascending: false })
+          .limit(20);
+
+        const { data: sohoRentals, error: sohoError } = await sohoQuery;
+
+        if (!sohoError && sohoRentals) {
+          sohoRentals.forEach(rental => {
+            const propertyImages = Array.isArray(rental.images) ? rental.images : 
+                                 typeof rental.images === 'string' ? JSON.parse(rental.images) : 
+                                 [];
+            
+            allProperties.push({
+              ...rental,
+              images: propertyImages,
+              property_type: 'rent',
+              table_source: 'undervalued_rentals',
+              videos: (rental as any).videos || [],
+              floorplans: (rental as any).floorplans || [],
+              amenities: Array.isArray(rental.amenities) ? rental.amenities : 
+                        typeof rental.amenities === 'string' ? JSON.parse(rental.amenities || '[]') : [],
+              agents: (rental as any).agents || [],
+              building_info: (rental as any).building_info || {}
+            });
+          });
+        }
+
+        // Also fetch some SoHo sales
+        let sohoSalesQuery = supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('status', 'active')
+          .eq('neighborhood', 'SoHo')
+          .order('discount_percent', { ascending: false })
+          .limit(10);
+
+        const { data: sohoSales, error: sohoSalesError } = await sohoSalesQuery;
+
+        if (!sohoSalesError && sohoSales) {
+          sohoSales.forEach(sale => {
+            const propertyImages = Array.isArray(sale.images) ? sale.images : 
+                                 typeof sale.images === 'string' ? JSON.parse(sale.images) : 
+                                 [];
+            
+            allProperties.push({
+              ...sale,
+              images: propertyImages,
+              property_type: 'buy',
+              table_source: 'undervalued_sales',
+              videos: (sale as any).videos || [],
+              floorplans: (sale as any).floorplans || [],
+              amenities: Array.isArray(sale.amenities) ? sale.amenities : 
+                        typeof sale.amenities === 'string' ? JSON.parse(sale.amenities || '[]') : [],
+              agents: (sale as any).agents || [],
+              building_info: (sale as any).building_info || {}
+            });
+          });
+        }
+
+        const shuffled = allProperties.sort(() => 0.5 - Math.random());
+        setProperties(shuffled);
         return;
       }
 
@@ -1225,6 +1303,6 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
       )}
     </>
   );
-  };  // <- ADD THIS LINE
+  };
 
 export default ForYou;
