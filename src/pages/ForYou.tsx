@@ -1163,10 +1163,9 @@ const ForYou = () => {
         {/* First Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          animate={{ 
-            opacity: scrollYProgress.get() < 0.3 ? 1 : 0 
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.5], [1, 0])
           }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           <img 
             src="/lovable-uploads/marketing-image-1.jpg" 
@@ -1178,10 +1177,9 @@ const ForYou = () => {
         {/* Second Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          animate={{ 
-            opacity: scrollYProgress.get() > 0.3 ? 1 : 0 
+          style={{
+            opacity: useTransform(scrollYProgress, [0.5, 1], [0, 1])
           }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           <img 
             src="/lovable-uploads/marketing-image-2.jpg" 
