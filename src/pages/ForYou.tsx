@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Heart, X, MessageCircle, Sparkles, Home, Search, MapPin, CheckCircle, Settings } from 'lucide-react';
@@ -1160,41 +1160,32 @@ const opacity2 = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
         </div>
       </div>
 
-{/* Scroll-jacking marketing images - only for paywall users */}
+{/* Scroll-jacking paywall section */}
 {showPaywall && (
-  <div className="relative h-[300vh] w-full">
-    {/* Sticky container that stays in place */}
+  <div ref={containerRef} className="relative h-[400vh] w-full">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
       <div className="relative w-full max-w-6xl mx-auto px-6">
+
         {/* First Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 1 }}
-        >
-          <img 
-            src="/lovable-uploads/marketing-image-1.jpg" 
-            alt="The best deals in the city" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
+        <motion.img
+          src="/lovable-uploads/marketing-image-1.jpg"
+          alt="The best deals in the city"
+          className="absolute inset-0 w-full h-auto object-contain max-h-[80vh]"
+          style={{ opacity: opacity1 }}
+        />
 
         {/* Second Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ amount: 0.1, margin: "-99% 0px -99% 0px" }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        >
-          <img 
-            src="/lovable-uploads/marketing-image-2.jpg" 
-            alt="Just describe your dream home" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
+        <motion.img
+          src="/lovable-uploads/marketing-image-2.jpg"
+          alt="Just describe your dream home"
+          className="absolute inset-0 w-full h-auto object-contain max-h-[80vh]"
+          style={{ opacity: opacity2 }}
+        />
+
       </div>
     </div>
+  </div>
+)}
 
     {/* Invisible trigger at the very bottom */}
     <div className="absolute bottom-0 w-full h-10" />
