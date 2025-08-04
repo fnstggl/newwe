@@ -38,7 +38,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [liveCounts, setLiveCounts] = useState<{[key: string]: number}>({});
+  const [currentLiveCount, setCurrentLiveCount] = useState(0);
+  const [lastUpdatedFilter, setLastUpdatedFilter] = useState<string>('');
   const [hasInitiallyAnimated, setHasInitiallyAnimated] = useState<{[key: number]: boolean}>({});
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -77,8 +78,80 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     "In-unit laundry", "Doorman", "Gym", "Rooftop access"
   ];
 
-  // Get live counts for filters - Fixed logic
-  const getLiveCount = async (filters: Partial<OnboardingData>): Promise<number> => {
+  // Helper function to normalize neighborhood names for matching
+  const normalizeNeighborhoodName = (name: string): string => {
+    return name.toLowerCase()
+      .replace(/\s+/g, '-')  // Replace spaces with hyphens
+      .replace(/'/g, '');    // Remove apostrophes
+  };
+
+  // Helper function to get neighborhood variations for flexible matching
+  const getNeighborhoodVariations = (neighborhood: string): string[] => {
+    const variations = [neighborhood.toLowerCase()];
+    
+    // Add hyphenated version
+    variations.push(neighborhood.toLowerCase().replace(/\s+/g, '-'));
+    
+    // Add version without apostrophes and spaces replaced with hyphens
+    variations.push(neighborhood.toLowerCase().replace(/['\s]/g, '').replace(/-+/g, '-'));
+    
+    // Add version with spaces replaced by hyphens and apostrophes removed
+    variations.push(neighborhood.toLowerCase().replace(/'/g, '').replace(/\s+/g, '-'));
+    
+    return variations;
+  };
+
+  // Get similar neighborhoods when count is 0
+  const getSimilarNeighborhoods = (selectedNeighborhoods: string[], propertyType: string): string[] => {
+    if (!selectedNeighborhoods.length) return [];
+    
+    const similarMap: {[key: string]: string[]} = {
+      'carroll gardens': ['cobble hill', 'boerum hill', 'red hook'],
+      'bed-stuy': ['crown heights', 'fort greene', 'clinton hill'],
+      'williamsburg': ['greenpoint', 'bushwick', 'dumbo'],
+      'astoria': ['long island city', 'sunnyside', 'woodside'],
+      'long island city': ['astoria', 'sunnyside', 'greenpoint'],
+      'park slope': ['prospect heights', 'windsor terrace', 'gowanus'],
+      'greenpoint': ['williamsburg', 'long island city', 'bushwick'],
+      'bushwick': ['williamsburg', 'bed-stuy', 'ridgewood'],
+      'crown heights': ['bed-stuy', 'prospect heights', 'park slope'],
+      'sunset park': ['park slope', 'bay ridge', 'red hook'],
+      'red hook': ['carroll gardens', 'sunset park', 'cobble hill'],
+      'dumbo': ['brooklyn heights', 'williamsburg', 'downtown brooklyn'],
+      'fort greene': ['bed-stuy', 'clinton hill', 'downtown brooklyn'],
+      'prospect heights': ['crown heights', 'park slope', 'fort greene'],
+      'chelsea': ['west village', 'midtown', 'hell\'s kitchen'],
+      'soho': ['tribeca', 'west village', 'nolita'],
+      'east village': ['lower east side', 'west village', 'nolita'],
+      'west village': ['east village', 'soho', 'chelsea'],
+      'lower east side': ['east village', 'chinatown', 'nolita'],
+      'tribeca': ['soho', 'financial district', 'west village'],
+      'financial district': ['tribeca', 'battery park city', 'south street seaport'],
+      'midtown': ['hell\'s kitchen', 'chelsea', 'murray hill'],
+      'upper east side': ['upper west side', 'midtown east', 'yorkville'],
+      'upper west side': ['upper east side', 'morningside heights', 'hell\'s kitchen'],
+      'harlem': ['morningside heights', 'washington heights', 'east harlem'],
+      'washington heights': ['harlem', 'inwood', 'morningside heights'],
+      'inwood': ['washington heights', 'harlem', 'bronx'],
+      'jackson heights': ['elmhurst', 'woodside', 'corona'],
+      'elmhurst': ['jackson heights', 'forest hills', 'corona'],
+      'forest hills': ['elmhurst', 'kew gardens', 'rego park'],
+      'flushing': ['bayside', 'whitestone', 'corona']
+    };
+
+    const similar: string[] = [];
+    selectedNeighborhoods.forEach(neighborhood => {
+      const normalized = normalizeNeighborhoodName(neighborhood);
+      if (similarMap[normalized]) {
+        similar.push(...similarMap[normalized]);
+      }
+    });
+
+    return [...new Set(similar)]; // Remove duplicates
+  };
+
+  // Get live counts for filters - Fixed logic with better neighborhood matching
+  const getLiveCount = async (filters: Partial<OnboardingData>, includeSimilar = false): Promise<number> => {
     try {
       const propertyType = filters.property_type || onboardingData.property_type;
       
@@ -107,7 +180,13 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
         if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
           const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
           const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
-          const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          let selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          
+          // If includeSimilar is true and we have 0 results, try similar neighborhoods
+          if (includeSimilar && selectedNeighborhoods.length > 0) {
+            const similarNeighborhoods = getSimilarNeighborhoods(selectedNeighborhoods, propertyType);
+            selectedNeighborhoods = [...selectedNeighborhoods, ...similarNeighborhoods];
+          }
           
           if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
             if (selectedBoroughs.length > 0) {
@@ -115,10 +194,17 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
               stabilizedQuery = stabilizedQuery.in('borough', selectedBoroughs);
             }
             if (selectedNeighborhoods.length > 0) {
-              // For neighborhoods, we need to use ilike for partial matching
-              const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
-              rentalQuery = rentalQuery.or(neighborhoodConditions);
-              stabilizedQuery = stabilizedQuery.or(neighborhoodConditions);
+              // Create flexible neighborhood matching conditions
+              const neighborhoodConditions: string[] = [];
+              selectedNeighborhoods.forEach(neighborhood => {
+                const variations = getNeighborhoodVariations(neighborhood);
+                variations.forEach(variation => {
+                  neighborhoodConditions.push(`neighborhood.ilike.%${variation}%`);
+                });
+              });
+              const conditionString = neighborhoodConditions.join(',');
+              rentalQuery = rentalQuery.or(conditionString);
+              stabilizedQuery = stabilizedQuery.or(conditionString);
             }
           }
         }
@@ -157,15 +243,29 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
         if (filters.preferred_neighborhoods && filters.preferred_neighborhoods.length > 0) {
           const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
           const selectedBoroughs = filters.preferred_neighborhoods.filter(n => boroughs.includes(n));
-          const selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          let selectedNeighborhoods = filters.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
+          
+          // If includeSimilar is true and we have 0 results, try similar neighborhoods
+          if (includeSimilar && selectedNeighborhoods.length > 0) {
+            const similarNeighborhoods = getSimilarNeighborhoods(selectedNeighborhoods, propertyType);
+            selectedNeighborhoods = [...selectedNeighborhoods, ...similarNeighborhoods];
+          }
           
           if (!filters.preferred_neighborhoods.includes('Anywhere with a train')) {
             if (selectedBoroughs.length > 0) {
               query = query.in('borough', selectedBoroughs);
             }
             if (selectedNeighborhoods.length > 0) {
-              const neighborhoodConditions = selectedNeighborhoods.map(n => `neighborhood.ilike.%${n}%`).join(',');
-              query = query.or(neighborhoodConditions);
+              // Create flexible neighborhood matching conditions
+              const neighborhoodConditions: string[] = [];
+              selectedNeighborhoods.forEach(neighborhood => {
+                const variations = getNeighborhoodVariations(neighborhood);
+                variations.forEach(variation => {
+                  neighborhoodConditions.push(`neighborhood.ilike.%${variation}%`);
+                });
+              });
+              const conditionString = neighborhoodConditions.join(',');
+              query = query.or(conditionString);
             }
           }
         }
@@ -213,11 +313,18 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const updateData = (key: keyof OnboardingData, value: any) => {
     const newData = { ...onboardingData, [key]: value };
     setOnboardingData(newData);
+    setLastUpdatedFilter(key);
     
     // Update live count when relevant filters change
     if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
-      getLiveCount(newData).then(count => {
-        setLiveCounts(prev => ({ ...prev, [key]: count }));
+      getLiveCount(newData).then(async (count) => {
+        // If count is 0, try with similar neighborhoods for a fallback count
+        if (count === 0 && (key === 'preferred_neighborhoods' || key === 'max_budget')) {
+          const similarCount = await getLiveCount(newData, true);
+          setCurrentLiveCount(similarCount);
+        } else {
+          setCurrentLiveCount(count);
+        }
       });
     }
   };
@@ -242,6 +349,82 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
       ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
     updateData(key, newArray);
+  };
+
+  const ChoiceButton = ({ 
+    children, 
+    selected, 
+    onClick, 
+    delay = 0 
+  }: { 
+    children: React.ReactNode; 
+    selected?: boolean; 
+    onClick: () => void;
+    delay?: number;
+  }) => {
+    const stepAnimated = hasInitiallyAnimated[currentStep];
+    
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
+      }, delay + 600); // 600ms is your animation duration
+      
+      return () => clearTimeout(timer);
+    }, [currentStep, delay]);
+  
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full p-4 rounded-2xl border-2 hover:shadow-lg hover:shadow-white/10 ${
+    stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+  } ${
+    selected
+      ? 'border-white bg-white text-black'
+      : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+  }`}
+  style={!stepAnimated ? { 
+    animationDelay: `${delay}ms`,
+    animationFillMode: 'forwards'
+  } : {}}
+      >
+        {children}
+      </button>
+    );
+  };
+
+  const TagButton = ({ 
+    children, 
+    selected, 
+    onClick, 
+    delay = 0,
+    noAnimation = false
+  }: { 
+    children: React.ReactNode; 
+    selected?: boolean; 
+    onClick: () => void;
+    delay?: number;
+    noAnimation?: boolean;
+  }) => {
+    const stepAnimated = hasInitiallyAnimated[currentStep];
+    
+    return (
+      <button
+        onClick={onClick}
+        className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
+          (stepAnimated || noAnimation) ? 'opacity-100' : 'opacity-0 animate-slide-up'
+        } ${
+          selected
+            ? 'border-white bg-white text-black'
+            : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+        }`}
+        style={(!stepAnimated && !noAnimation) ? { 
+          animationDelay: `${delay}ms`,
+          animationFillMode: 'forwards'
+        } : {}}
+      >
+        {children}
+      </button>
+    );
   };
 
   const saveOnboardingData = async (userId: string) => {
@@ -367,80 +550,6 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
       setIsGoogleLoading(false);
     }
   };
-
-const ChoiceButton = ({ 
-  children, 
-  selected, 
-  onClick, 
-  delay = 0 
-}: { 
-  children: React.ReactNode; 
-  selected?: boolean; 
-  onClick: () => void;
-  delay?: number;
-}) => {
-  const stepAnimated = hasInitiallyAnimated[currentStep];
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasInitiallyAnimated(prev => ({ ...prev, [currentStep]: true }));
-    }, delay + 600); // 600ms is your animation duration
-    
-    return () => clearTimeout(timer);
-  }, [currentStep, delay]);
-
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 hover:shadow-lg hover:shadow-white/10 ${
-  stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
-} ${
-  selected
-    ? 'border-white bg-white text-black'
-    : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-}`}
-style={!stepAnimated ? { 
-  animationDelay: `${delay}ms`,
-  animationFillMode: 'forwards'
-} : {}}
-    >
-      {children}
-    </button>
-  );
-};
-
-  const TagButton = ({ 
-  children, 
-  selected, 
-  onClick, 
-  delay = 0 
-}: { 
-  children: React.ReactNode; 
-  selected?: boolean; 
-  onClick: () => void;
-  delay?: number;
-}) => {
-  const stepAnimated = hasInitiallyAnimated[currentStep];
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
-        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
-      } ${
-        selected
-          ? 'border-white bg-white text-black'
-          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-      }`}
-      style={!stepAnimated ? { 
-        animationDelay: `${delay}ms`,
-        animationFillMode: 'forwards'
-      } : {}}
-    >
-      {children}
-    </button>
-  );
-};
 
   const renderStep = () => {
     switch (currentStep) {
@@ -605,7 +714,10 @@ style={!stepAnimated ? {
                 
                 <div className="space-y-8">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Bedrooms {liveCounts.bedrooms && `(${liveCounts.bedrooms} listings)`}</h3>
+                    <h3 className="text-lg font-medium">
+                      Bedrooms {lastUpdatedFilter === 'bedrooms' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
+                      {lastUpdatedFilter === 'bedrooms' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                    </h3>
                     <div className="flex gap-2 justify-center flex-wrap">
                       {[0, 1, 2, 3, 4, '5+'].map((bed, index) => (
                         <button
@@ -616,7 +728,6 @@ style={!stepAnimated ? {
                               ? 'border-white bg-white text-black'
                               : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
                           }`}
-                          style={{ animationDelay: `${index * 50}ms` }}
                         >
                           {bed}
                         </button>
@@ -626,7 +737,8 @@ style={!stepAnimated ? {
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Max Budget {liveCounts.max_budget && `(${liveCounts.max_budget} listings)`}
+                      Max Budget {lastUpdatedFilter === 'max_budget' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
+                      {lastUpdatedFilter === 'max_budget' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
                     </h3>
                     <div className="space-y-6">
                       <Slider
@@ -665,7 +777,8 @@ style={!stepAnimated ? {
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">
-                      Neighborhoods {liveCounts.preferred_neighborhoods && `(${liveCounts.preferred_neighborhoods} listings)`}
+                      Neighborhoods {lastUpdatedFilter === 'preferred_neighborhoods' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
+                      {lastUpdatedFilter === 'preferred_neighborhoods' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {neighborhoods.map((neighborhood, index) => (
@@ -674,6 +787,7 @@ style={!stepAnimated ? {
                           selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
                           onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
                           delay={index * 20}
+                          noAnimation={lastUpdatedFilter === 'preferred_neighborhoods'}
                         >
                           {neighborhood}
                         </TagButton>
@@ -682,7 +796,10 @@ style={!stepAnimated ? {
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Must-haves {liveCounts.must_haves && `(${liveCounts.must_haves} listings)`}</h3>
+                    <h3 className="text-lg font-medium">
+                      Must-haves {lastUpdatedFilter === 'must_haves' && currentLiveCount > 0 && `(${currentLiveCount.toLocaleString()} listings)`}
+                      {lastUpdatedFilter === 'must_haves' && currentLiveCount === 0 && `(0 listings, checking similar...)`}
+                    </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
                       {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
                         <TagButton
@@ -690,6 +807,7 @@ style={!stepAnimated ? {
                           selected={onboardingData.must_haves?.includes(option)}
                           onClick={() => handleArrayToggle('must_haves', option)}
                           delay={index * 50}
+                          noAnimation={lastUpdatedFilter === 'must_haves'}
                         >
                           {option}
                         </TagButton>
@@ -736,7 +854,8 @@ style={!stepAnimated ? {
                 </div>
                 <p className="text-center text-xl font-semibold">
                   {onboardingData.discount_threshold || 20}% below market
-                  {liveCounts.discount_threshold && ` (${liveCounts.discount_threshold} listings)`}
+                  {lastUpdatedFilter === 'discount_threshold' && currentLiveCount > 0 && ` (${currentLiveCount.toLocaleString()} listings)`}
+                  {lastUpdatedFilter === 'discount_threshold' && currentLiveCount === 0 && ` (0 listings, checking similar...)`}
                 </p>
               </div>
 
