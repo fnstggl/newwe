@@ -392,7 +392,7 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 hover:shadow-lg hover:shadow-white/10 ${
+     className={`w-full p-4 rounded-2xl border-2 choice-button-hover ${...}`}
   stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
 } ${
   selected
