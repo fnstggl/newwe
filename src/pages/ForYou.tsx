@@ -36,7 +36,6 @@ interface Property {
   price_per_sqft?: number;
   reasoning?: string;
   isRentStabilized?: boolean;
-  // Add missing fields for PropertyDetail component
   videos?: any[];
   floorplans?: any[];
   amenities?: string[];
@@ -53,7 +52,6 @@ interface Property {
   rent_stabilization_analysis?: any;
   rent_stabilized_confidence?: number;
   potential_annual_savings?: number;
-  // Additional fields needed for complete property details
   zipcode?: string;
   listed_at?: string;
   analysis_date?: string;
@@ -91,39 +89,36 @@ const LoadingSequence = ({ isLoggedOut = false }: { isLoggedOut?: boolean }) => 
   const fullTypewriterText = "Finding your dream home...";
 
   useEffect(() => {
-  let timer: NodeJS.Timeout;
+    let timer: NodeJS.Timeout;
 
-  if (currentPhase === 'typewriter') {
-    if (typewriterText.length < fullTypewriterText.length) {
-      timer = setTimeout(() => {
-        setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
-      }, 120);
-    } else {
-      // Typewriter done, move to scanning after brief pause
-      timer = setTimeout(() => setCurrentPhase('scanning'), 500);
+    if (currentPhase === 'typewriter') {
+      if (typewriterText.length < fullTypewriterText.length) {
+        timer = setTimeout(() => {
+          setTypewriterText(fullTypewriterText.slice(0, typewriterText.length + 1));
+        }, 120);
+      } else {
+        timer = setTimeout(() => setCurrentPhase('scanning'), 500);
+      }
+    } else if (currentPhase === 'scanning') {
+      if (currentScanIndex < scanningTexts.length - 1) {
+        timer = setTimeout(() => {
+          setCurrentScanIndex(currentScanIndex + 1);
+        }, 750);
+      } else {
+        timer = setTimeout(() => setCurrentPhase('found'), 1300);
+      }
     }
-  } else if (currentPhase === 'scanning') {
-    if (currentScanIndex < scanningTexts.length - 1) {
-      timer = setTimeout(() => {
-        setCurrentScanIndex(currentScanIndex + 1);
-      }, 750);
-    } else {
-      // Scanning done, move to found
-      timer = setTimeout(() => setCurrentPhase('found'), 1300);
-    }
-  }
 
-  return () => {
-    if (timer) clearTimeout(timer);
-  };
-}, [typewriterText.length, currentPhase, currentScanIndex]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [typewriterText.length, currentPhase, currentScanIndex]);
 
-  // Add redirect logic for logged-out users after success screen
   useEffect(() => {
     if (currentPhase === 'found' && isLoggedOut) {
       const redirectTimer = setTimeout(() => {
         navigate('/join');
-      }, 2000); // 2 second delay after success screen shows
+      }, 2000);
 
       return () => clearTimeout(redirectTimer);
     }
@@ -153,158 +148,150 @@ const LoadingSequence = ({ isLoggedOut = false }: { isLoggedOut?: boolean }) => 
           </motion.div>
         )}
 
-       {currentPhase === 'scanning' && (
-  <motion.div
-    key="scanning"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    className="text-center space-y-8"
-  >
-    {/* Progress Bar */}
-    <div className="w-80 mx-auto">
-      <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-white rounded-full"
-          initial={{ width: "0%" }}
-          animate={{ 
-            width: `${((currentScanIndex + 1) / scanningTexts.length) * 100}%` 
-          }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-      </div>
-    </div>
+        {currentPhase === 'scanning' && (
+          <motion.div
+            key="scanning"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="text-center space-y-8"
+          >
+            <div className="w-80 mx-auto">
+              <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-white rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{ 
+                    width: `${((currentScanIndex + 1) / scanningTexts.length) * 100}%` 
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              </div>
+            </div>
 
-    {/* Current Step Text */}
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={currentScanIndex}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="text-lg font-semibold tracking-tighter text-white"
-      >
-        {scanningTexts[currentScanIndex]}
-      </motion.div>
-    </AnimatePresence>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentScanIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="text-lg font-semibold tracking-tighter text-white"
+              >
+                {scanningTexts[currentScanIndex]}
+              </motion.div>
+            </AnimatePresence>
 
-    {/* Step Checkmarks */}
-    <div className="flex justify-center space-x-6">
-      {scanningTexts.map((_, index) => (
-        <motion.div
-          key={index}
-          className="flex items-center justify-center"
-        >
-          {index <= currentScanIndex ? (
+            <div className="flex justify-center space-x-6">
+              {scanningTexts.map((_, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center justify-center"
+                >
+                  {index <= currentScanIndex ? (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", bounce: 0.6 }}
+                      className="w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                    >
+                      <CheckCircle className="w-4 h-4 text-black" />
+                    </motion.div>
+                  ) : (
+                    <div className="w-6 h-6 border-2 border-gray-600 rounded-full" />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {currentPhase === 'found' && (
+          <motion.div
+            key="found"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center space-y-8"
+          >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", bounce: 0.6 }}
-              className="w-6 h-6 bg-white rounded-full flex items-center justify-center"
+              transition={{ 
+                type: "spring", 
+                bounce: 0.3, 
+                delay: 0.2,
+                duration: 1.2
+              }}
+              className="relative mx-auto w-24 h-24"
             >
-              <CheckCircle className="w-4 h-4 text-black" />
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.8 }}
+                className="absolute inset-0 border-4 border-white rounded-full"
+              />
+              
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  delay: 0.6, 
+                  type: "spring", 
+                  bounce: 0.4,
+                  duration: 0.8
+                }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="text-white"
+                >
+                  <motion.path
+                    d="M20 6L9 17l-5-5"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
+                  />
+                </svg>
+              </motion.div>
             </motion.div>
-          ) : (
-            <div className="w-6 h-6 border-2 border-gray-600 rounded-full" />
-          )}
-        </motion.div>
-      ))}
-    </div>
-  </motion.div>
-)}
 
-       {currentPhase === 'found' && (
-  <motion.div
-    key="found"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="text-center space-y-8"
-  >
-    {/* Animated Checkmark with Apple-like Animation */}
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ 
-        type: "spring", 
-        bounce: 0.3, 
-        delay: 0.2,
-        duration: 1.2
-      }}
-      className="relative mx-auto w-24 h-24"
-    >
-      {/* Outer Ring Animation */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.1, duration: 0.8 }}
-        className="absolute inset-0 border-4 border-white rounded-full"
-      />
-      
-      {/* Checkmark with Path Animation */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ 
-          delay: 0.6, 
-          type: "spring", 
-          bounce: 0.4,
-          duration: 0.8
-        }}
-        className="absolute inset-0 flex items-center justify-center"
-      >
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          className="text-white"
-        >
-          <motion.path
-            d="M20 6L9 17l-5-5"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
-          />
-        </svg>
-      </motion.div>
-    </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+              className="space-y-3"
+            >
+              <h2 className="text-3xl font-semibold tracking-tighter text-white">
+                Your dream homes await
+              </h2>
+              <p className="text-lg font-medium tracking-tight text-gray-300">
+                {isLoggedOut 
+                  ? "Let's get you signed up to see your matches"
+                  : "We found properties perfectly matched to your preferences"
+                }
+              </p>
+            </motion.div>
 
-    {/* Success Message */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.2 }}
-      className="space-y-3"
-    >
-      <h2 className="text-3xl font-semibold tracking-tighter text-white">
-        Your dream homes await
-      </h2>
-      <p className="text-lg font-medium tracking-tight text-gray-300">
-        {isLoggedOut 
-          ? "Let's get you signed up to see your matches"
-          : "We found properties perfectly matched to your preferences"
-        }
-      </p>
-    </motion.div>
-
-    {/* Subtle Glow Effect */}
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.4 }}
-      className="text-sm font-medium tracking-tight text-gray-400"
-    >
-      {isLoggedOut 
-        ? "Redirecting you to sign up..."
-        : "Preparing your personalized matches..."
-      }
-    </motion.div>
-  </motion.div>
-)}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4 }}
+              className="text-sm font-medium tracking-tight text-gray-400"
+            >
+              {isLoggedOut 
+                ? "Redirecting you to sign up..."
+                : "Preparing your personalized matches..."
+              }
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
@@ -321,10 +308,11 @@ const ForYou = () => {
   const [showLoadingTeaser, setShowLoadingTeaser] = useState(false);
   const [showUpdateFilters, setShowUpdateFilters] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Personalized headers that rotate
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
     "This one feels like home.",
@@ -341,7 +329,6 @@ const ForYou = () => {
     }
   }, [user, userProfile]);
 
-  // Single master timer for the entire loading sequence
   useEffect(() => {
     if (isLoading) {
       const masterTimer = setTimeout(() => {
@@ -353,7 +340,6 @@ const ForYou = () => {
     }
   }, [isLoading]);
 
-  // Rotate headers when swiping to new properties
   useEffect(() => {
     setCurrentHeaderIndex(Math.floor(Math.random() * personalizedHeaders.length));
   }, [currentIndex]);
@@ -364,14 +350,12 @@ const ForYou = () => {
     const allProperties: Property[] = [];
 
     try {
-      // Check if user completed onboarding (either regular onboarding or pre-onboarding)
       const hasCompletedAnyOnboarding = userProfile.onboarding_completed || userProfile.hasCompletedOnboarding;
       
       if (!hasCompletedAnyOnboarding) {
         return;
       }
 
-      // Fetch from undervalued_rentals if looking to rent
       if (!userProfile.property_type || userProfile.property_type === 'rent') {
         let query = supabase
           .from('undervalued_rentals')
@@ -402,7 +386,6 @@ const ForYou = () => {
           });
         }
 
-        // Also fetch from undervalued_rent_stabilized
         let stabilizedQuery = supabase
           .from('undervalued_rent_stabilized')
           .select('*')
@@ -435,7 +418,6 @@ const ForYou = () => {
         }
       }
 
-      // Fetch from undervalued_sales if looking to buy
       if (!userProfile.property_type || userProfile.property_type === 'buy') {
         let query = supabase
           .from('undervalued_sales')
@@ -467,15 +449,12 @@ const ForYou = () => {
         }
       }
 
-      // Apply filters
       let filteredProperties = allProperties;
 
-      // Filter by bedrooms
       if (userProfile.bedrooms !== undefined && userProfile.bedrooms !== null) {
         filteredProperties = filteredProperties.filter(p => p.bedrooms === userProfile.bedrooms);
       }
 
-      // Filter by budget
       if (userProfile.max_budget) {
         filteredProperties = filteredProperties.filter(p => {
           if (p.property_type === 'rent' && p.monthly_rent) {
@@ -487,47 +466,40 @@ const ForYou = () => {
         });
       }
 
-      // Filter by neighborhoods - using the same flexible matching as UpdateFiltersModal
       if (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) {
         const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island'];
         const selectedBoroughs = userProfile.preferred_neighborhoods.filter(n => boroughs.includes(n));
         const selectedNeighborhoods = userProfile.preferred_neighborhoods.filter(n => !boroughs.includes(n) && n !== 'Anywhere with a train');
         
         filteredProperties = filteredProperties.filter(p => {
-          // If "Anywhere with a train" is selected, show all properties
           if (userProfile.preferred_neighborhoods!.includes('Anywhere with a train')) {
             return true;
           }
           
-          // Check if property matches selected boroughs
           if (selectedBoroughs.length > 0 && p.borough) {
             if (selectedBoroughs.includes(p.borough)) return true;
           }
           
-          // Check if property matches selected neighborhoods using flexible matching
           if (selectedNeighborhoods.length > 0 && p.neighborhood) {
             const propertyNeighborhood = p.neighborhood.toLowerCase();
             
             for (const selectedNeighborhood of selectedNeighborhoods) {
               const selected = selectedNeighborhood.toLowerCase();
               
-              // Try exact match first
               if (propertyNeighborhood.includes(selected)) {
                 return true;
               }
               
-              // Try with cleaned names (remove apostrophes, spaces, hyphens)
               const cleanPropertyName = propertyNeighborhood.replace(/['\s-]/g, '');
               const cleanSelectedName = selected.replace(/['\s-]/g, '');
               if (cleanPropertyName.includes(cleanSelectedName) || cleanSelectedName.includes(cleanPropertyName)) {
                 return true;
               }
               
-              // Try variations
               const variations = [
-                selected.replace(/'/g, ''),  // Remove apostrophes
-                selected.replace(/\s+/g, '-'), // Spaces to hyphens  
-                selected.replace(/-/g, ' ')   // Hyphens to spaces
+                selected.replace(/'/g, ''),
+                selected.replace(/\s+/g, '-'),
+                selected.replace(/-/g, ' ')
               ];
               
               for (const variation of variations) {
@@ -538,7 +510,6 @@ const ForYou = () => {
             }
           }
           
-          // If no boroughs or neighborhoods selected, but other areas selected, exclude
           if (selectedBoroughs.length === 0 && selectedNeighborhoods.length === 0) {
             return true;
           }
@@ -547,14 +518,12 @@ const ForYou = () => {
         });
       }
 
-      // Filter by discount threshold
       if (userProfile.discount_threshold) {
         filteredProperties = filteredProperties.filter(p => 
           p.discount_percent >= userProfile.discount_threshold!
         );
       }
 
-      // Filter by must-haves for rentals
       if (userProfile.property_type === 'rent' && userProfile.must_haves && userProfile.must_haves.length > 0) {
         filteredProperties = filteredProperties.filter(p => {
           if (userProfile.must_haves!.includes('No broker fee') && p.table_source === 'undervalued_rentals') {
@@ -567,7 +536,6 @@ const ForYou = () => {
         });
       }
 
-      // Shuffle and set properties
       const shuffled = filteredProperties.sort(() => 0.5 - Math.random());
       setProperties(shuffled);
     } catch (error) {
@@ -577,7 +545,6 @@ const ForYou = () => {
         description: "Failed to load your personalized properties. Please try again.",
         variant: "destructive",
       });
-      // Set empty array so we show "no properties" screen instead of staying in loading
       setProperties([]);
     }
   };
@@ -586,7 +553,6 @@ const ForYou = () => {
     if (!user) return;
 
     try {
-      // Use the actual UUID property ID, not the listing_id
       const propertyId = property.id;
       
       const { error } = await supabase
@@ -598,7 +564,6 @@ const ForYou = () => {
         });
 
       if (error) {
-        // Check if it's a duplicate error
         if (error.code === '23505') {
           toast({
             title: "Already Saved",
@@ -618,7 +583,6 @@ const ForYou = () => {
           description: "Added to your saved properties!",
         });
         
-        // Trigger the swipe animation and transition
         handleSwipeRight();
       }
     } catch (error) {
@@ -643,9 +607,8 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 300); // Reduced for faster transitions
+      }, 300);
     } else {
-      // Show end screen instead of toast
       setShowEndScreen(true);
     }
   };
@@ -662,9 +625,8 @@ const ForYou = () => {
         setSwipeDirection(null);
         setShowLoadingTeaser(false);
         setTimeout(() => setIsRevealing(true), 50);
-      }, 300); // Reduced for faster transitions
+      }, 300);
     } else {
-      // Show end screen instead of toast
       setShowEndScreen(true);
     }
   };
@@ -703,9 +665,7 @@ const ForYou = () => {
   };
 
   const handleFiltersUpdated = async () => {
-    // Refresh user profile to get updated filters
     await forceRefreshProfile();
-    // Refresh properties with new filters
     handleRefresh();
   };
 
@@ -720,14 +680,12 @@ const ForYou = () => {
     return <LoadingSequence isLoggedOut={!user} />;
   }
 
-  // Don't show the "Complete onboarding" message - let the loading animation play and then show properties
   if (!userProfile || (!userProfile.onboarding_completed && !userProfile.hasCompletedOnboarding)) {
     if (properties.length === 0) {
       return <LoadingSequence isLoggedOut={!user} />;
     }
   }
 
-  // Show end screen if no more properties and user has reached the end
   if (showEndScreen) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8 px-6">
@@ -792,7 +750,6 @@ const ForYou = () => {
           New listings appear daily. We'll keep watching the market for you and notify you when new matches are found.
         </motion.p>
 
-        {/* Update Filters Modal */}
         <UpdateFiltersModal
           isOpen={showUpdateFilters}
           onClose={() => setShowUpdateFilters(false)}
@@ -802,23 +759,8 @@ const ForYou = () => {
     );
   }
 
-  const getPreloadImages = () => {
-    if (currentIndex + 1 < properties.length) {
-      const nextProperty = properties[currentIndex + 1];
-      if (nextProperty && nextProperty.images) {
-        if (Array.isArray(nextProperty.images)) {
-          return nextProperty.images.slice(0, 3);
-        } else if (typeof nextProperty.images === 'string') {
-          return [nextProperty.images];
-        }
-      }
-    }
-    return [];
-  };
-
   const property = properties[currentIndex];
 
-  // Show "no properties found" screen if no properties match filters
   if (!property && properties.length === 0) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8 px-6">
@@ -874,7 +816,6 @@ const ForYou = () => {
           New listings appear daily. We'll keep watching the market for you and notify you when new matches are found.
         </motion.p>
 
-        {/* Update Filters Modal */}
         <UpdateFiltersModal
           isOpen={showUpdateFilters}
           onClose={() => setShowUpdateFilters(false)}
@@ -884,7 +825,6 @@ const ForYou = () => {
     );
   }
 
-  // Show regular "no property at current index" screen if we've gone through all properties
   if (!property) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-6">
@@ -911,61 +851,60 @@ const ForYou = () => {
   return (
     <>
       <div className="min-h-screen bg-black text-white font-inter flex flex-col relative overflow-hidden">
-        {/* Update Filters Button - Top Left */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="absolute top-8 left-6 z-10"
         >
           <button
-            onClick={() => setShowUpdateFilters(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full hover:bg-gray-700/80 transition-colors"
+            onClick={() => !showPaywall && setShowUpdateFilters(true)}
+            disabled={showPaywall}
+            className={`flex items-center space-x-2 px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full transition-colors ${
+              showPaywall ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700/80'
+            }`}
           >
             <Settings className="w-4 h-4 text-gray-300" />
             <span className="text-sm text-gray-300">Update Dream Home filters</span>
           </button>
         </motion.div>
 
-        {/* Personalized Header */}
-<motion.div 
-  key={currentHeaderIndex}
-  initial={{ opacity: 0, y: -10 }}
-  animate={{ opacity: 1, y: 0 }}
-  className="text-center pt-8 pb-4"
->
-  <p className="text-xl font-inter font-semibold tracking-tighter text-white/90">
-    {personalizedHeaders[currentHeaderIndex]}
-  </p>
-</motion.div>
-
-        {/* Property Card */}
-        <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
-          {/* Loading Teaser Overlay */}
-          <AnimatePresence>
-  {showLoadingTeaser && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
-    >
-      <div className="text-center space-y-4">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full mx-auto"
-        />
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
+        <motion.div 
+          key={currentHeaderIndex}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-white font-semibold tracking-tighter text-lg"
+          className="text-center pt-8 pb-4"
         >
-          {Math.random() > 0.66 ? "Refining matches…" : Math.random() > 0.33 ? "Scanning for your dream home…" : "Found one"}
-        </motion.p>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+          <p className="text-xl font-inter font-semibold tracking-tighter text-white/90">
+            {personalizedHeaders[currentHeaderIndex]}
+          </p>
+        </motion.div>
+
+        <div className="flex-1 flex items-center justify-center px-6 relative overflow-hidden">
+          <AnimatePresence>
+            {showLoadingTeaser && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center"
+              >
+                <div className="text-center space-y-4">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full mx-auto"
+                  />
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-white font-semibold tracking-tighter text-lg"
+                  >
+                    {Math.random() > 0.66 ? "Refining matches…" : Math.random() > 0.33 ? "Scanning for your dream home…" : "Found one"}
+                  </motion.p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence mode="wait">
             {isRevealing && (
@@ -984,8 +923,7 @@ const ForYou = () => {
                 }}
                 className="w-full max-w-lg mx-auto relative"
               >
-                {/* Glow effect based on swipe direction */}
-                {swipeDirection && (
+                {swipeDirection && !showPaywall && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -999,107 +937,145 @@ const ForYou = () => {
                 )}
                 
                 <div className="relative">
-                  <PropertyCard
-                    property={{
-                      id: property.id,
-                      address: property.address,
-                      grade: property.grade || 'B',
-                      score: property.score || 85,
-                      price: property.price,
-                      monthly_rent: property.monthly_rent,
-                      price_per_sqft: property.price_per_sqft,
-                      rent_per_sqft: property.rent_per_sqft,
-                      bedrooms: property.bedrooms,
-                      bathrooms: property.bathrooms,
-                      sqft: property.sqft,
-                      neighborhood: property.neighborhood,
-                      discount_percent: property.discount_percent,
-                      reasoning: property.reasoning,
-                      images: property.images,
-                      isRentStabilized: property.isRentStabilized,
-                      preloadImages: getPreloadImages()
-                    }}
-                    isRental={property.property_type === 'rent'}
-                    onClick={() => handlePropertyClick(property)}
-                  />
-      
+                  <div className={showPaywall ? 'pointer-events-none' : ''}>
+                    <PropertyCard
+                      property={{
+                        id: property.id,
+                        address: property.address,
+                        grade: property.grade || 'B',
+                        score: property.score || 85,
+                        price: property.price,
+                        monthly_rent: property.monthly_rent,
+                        price_per_sqft: property.price_per_sqft,
+                        rent_per_sqft: property.rent_per_sqft,
+                        bedrooms: property.bedrooms,
+                        bathrooms: property.bathrooms,
+                        sqft: property.sqft,
+                        neighborhood: property.neighborhood,
+                        discount_percent: property.discount_percent,
+                        reasoning: property.reasoning,
+                        images: property.images,
+                        isRentStabilized: property.isRentStabilized,
+                        preloadImages: getPreloadImages()
+                      }}
+                      isRental={property.property_type === 'rent'}
+                      onClick={() => !showPaywall && handlePropertyClick(property)}
+                    />
+                  </div>
+                  
+                  {showPaywall && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 rounded-3xl backdrop-blur-md bg-black/20 flex flex-col items-center justify-center z-30 border border-white/10"
+                    >
+                      <div className="text-center space-y-4 px-8">
+                        <h2 className="text-2xl font-semibold tracking-tighter text-white">
+                          We found your perfect home for you
+                        </h2>
+                        <p className="text-lg font-medium tracking-tighter text-white">
+                          And it's {getSavingsText(property)} below-market
+                        </p>
+                        
+                        <div className="space-y-3 pt-4">
+                          <motion.button
+                            onClick={handleUnlockMatch}
+                            disabled={isProcessingCheckout}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="px-8 py-3 bg-white text-black rounded-full font-semibold tracking-tight transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isProcessingCheckout ? 'Processing...' : 'Unlock your match'}
+                          </motion.button>
+                          
+                          <p className="text-sm text-gray-400 tracking-tight">
+                            $18/year — billed annually<br />
+                            Cancel anytime • Less than $1.50/month
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-{/* Swipe Actions */}
-<motion.div 
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 0.2 }}
-  className="flex justify-center space-x-6 pb-6 mt-8 z-[10]"
->
-  {/* Not for me */}
-  <motion.button 
-    onClick={handleSwipeLeft}
-    whileHover={{ scale: 1.03 }}
-    whileTap={{ scale: 0.97 }}
-    className="w-40 py-3 rounded-full bg-black/80 backdrop-blur border border-white/30 hover:border-white/50 transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2"
-  >
-    <X className="w-4 h-4 text-white/80" /> 
-    <span className="text-white text-sm font-medium tracking-tight">Not for me</span>
-  </motion.button>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex justify-center space-x-6 pb-6 mt-8 z-[10]"
+        >
+          <motion.button 
+            onClick={!showPaywall ? handleSwipeLeft : undefined}
+            disabled={showPaywall}
+            whileHover={!showPaywall ? { scale: 1.03 } : {}}
+            whileTap={!showPaywall ? { scale: 0.97 } : {}}
+            className={`w-40 py-3 rounded-full bg-black/80 backdrop-blur border border-white/30 transition-all duration-200 shadow-sm flex items-center justify-center space-x-2 ${
+              showPaywall ? 'opacity-50 cursor-not-allowed' : 'hover:border-white/50 hover:shadow-md'
+            }`}
+          >
+            <X className="w-4 h-4 text-white/80" /> 
+            <span className="text-white text-sm font-medium tracking-tight">Not for me</span>
+          </motion.button>
 
-  {/* Save this one */}
-  <motion.button 
-    onClick={() => handleSave(property)}
-    whileHover={{ scale: 1.03 }}
-    whileTap={{ scale: 0.97 }}
-    className="w-40 py-3 rounded-full bg-white text-black border border-white/10 hover:bg-white/90 transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2"
-  >
-    <Heart className="w-4 h-4 text-black/80" />
-    <span className="text-sm font-medium tracking-tight">Save this one</span>
-  </motion.button>
-</motion.div>
+          <motion.button 
+            onClick={!showPaywall ? () => handleSave(property) : undefined}
+            disabled={showPaywall}
+            whileHover={!showPaywall ? { scale: 1.03 } : {}}
+            whileTap={!showPaywall ? { scale: 0.97 } : {}}
+            className={`w-40 py-3 rounded-full bg-white text-black border border-white/10 transition-all duration-200 shadow-sm flex items-center justify-center space-x-2 ${
+              showPaywall ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/90 hover:shadow-md'
+            }`}
+          >
+            <Heart className="w-4 h-4 text-black/80" />
+            <span className="text-sm font-medium tracking-tight">Save this one</span>
+          </motion.button>
+        </motion.div>
 
-{/* AI Search Input with Tooltip */}
-<div className="relative">
-  <AISearch 
-    onResults={(results, interpretation) => {
-      if (results.length > 0) {
-        setProperties(results);
-        setCurrentIndex(0);
-        setIsRevealing(true);
-        toast({
-          title: "🎯 AI Search Complete",
-          description: `Found ${results.length} matches!`,
-        });
-      } else {
-        toast({
-          title: "No matches found",
-          description: interpretation,
-          variant: "destructive",
-        });
-      }
-    }}
-  />
-  
- {/* Tooltip - Moved closer to the left */}
-  <div className="absolute top-1/2 -translate-y-1/2 right-2 group">
-    <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
-      <span className="text-gray-300 text-sm font-bold">?</span>
-    </div>
-    
-    {/* Tooltip Content - Positioned to the left to stay on screen */}
-    <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[60] shadow-2xl">
-      <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
-        Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 1BR in a safe neighborhood, by the water, under $3.9k
-      </p>
-    </div>
-  </div>
-</div>
+        <div className="relative">
+          <div className={showPaywall ? 'pointer-events-none opacity-50' : ''}>
+            <AISearch 
+              onResults={(results, interpretation) => {
+                if (!showPaywall) {
+                  if (results.length > 0) {
+                    setProperties(results);
+                    setCurrentIndex(0);
+                    setIsRevealing(true);
+                    toast({
+                      title: "🎯 AI Search Complete",
+                      description: `Found ${results.length} matches!`,
+                    });
+                  } else {
+                    toast({
+                      title: "No matches found",
+                      description: interpretation,
+                      variant: "destructive",
+                    });
+                  }
+                }
+              }}
+            />
+          </div>
+          
+          <div className={`absolute top-1/2 -translate-y-1/2 right-2 group ${showPaywall ? 'opacity-50' : ''}`}>
+            <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
+              <span className="text-gray-300 text-sm font-bold">?</span>
+            </div>
+            
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 w-80 p-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[60] shadow-2xl">
+              <p className="text-white text-sm font-inter tracking-tighter leading-relaxed">
+                Just describe your dream home in natural language, and we'll find you it. Be specific to get better results, like: 1BR in a safe neighborhood, by the water, under $3.9k
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Property Detail Popup */}
       <AnimatePresence>
-        {selectedProperty && (
+        {selectedProperty && !showPaywall && (
           <PropertyDetail
             property={selectedProperty as any}
             isRental={selectedProperty.property_type === 'rent'}
@@ -1108,12 +1084,13 @@ const ForYou = () => {
         )}
       </AnimatePresence>
 
-      {/* Update Filters Modal */}
-      <UpdateFiltersModal
-        isOpen={showUpdateFilters}
-        onClose={() => setShowUpdateFilters(false)}
-        onFiltersUpdated={handleFiltersUpdated}
-      />
+      {!showPaywall && (
+        <UpdateFiltersModal
+          isOpen={showUpdateFilters}
+          onClose={() => setShowUpdateFilters(false)}
+          onFiltersUpdated={handleFiltersUpdated}
+        />
+      )}
     </>
   );
 };
