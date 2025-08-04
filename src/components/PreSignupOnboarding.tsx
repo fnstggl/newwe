@@ -20,18 +20,20 @@ const OnboardingSlider = ({ value, onValueChange, max, min, step, className = ""
 }) => {
   return (
     <div className={`relative w-full ${className}`}>
-      <style jsx>{`
-        .custom-slider [data-radix-slider-track] {
-          background-color: white !important;
-        }
-        .custom-slider [data-radix-slider-range] {
-          background-color: #1e293b !important;
-        }
-        .custom-slider [data-radix-slider-thumb] {
-          background-color: white !important;
-          border: 2px solid white !important;
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .custom-slider [data-radix-slider-track] {
+            background-color: white !important;
+          }
+          .custom-slider [data-radix-slider-range] {
+            background-color: #1e293b !important;
+          }
+          .custom-slider [data-radix-slider-thumb] {
+            background-color: white !important;
+            border: 2px solid white !important;
+          }
+        `
+      }} />
       <Slider
         value={value}
         onValueChange={onValueChange}
