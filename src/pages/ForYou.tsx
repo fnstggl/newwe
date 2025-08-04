@@ -366,12 +366,77 @@ const ForYou = () => {
     const allProperties: Property[] = [];
 
     try {
-      const hasCompletedAnyOnboarding = userProfile.onboarding_completed || userProfile.hasCompletedOnboarding;
+      // Check onboarding status
+      const hasCompletedOnboarding = userProfile.onboarding_completed;
       
-      if (!hasCompletedAnyOnboarding) {
+      // If onboarding not completed, show random good deals (A+ grade properties)
+      if (!hasCompletedOnboarding) {
+        // Fetch A+ grade rentals
+        const { data: topRentals, error: rentalsError } = await supabase
+          .from('undervalued_rentals')
+          .select('*')
+          .eq('status', 'active')
+          .eq('grade', 'A+')
+          .order('discount_percent', { ascending: false })
+          .limit(15);
+
+        if (!rentalsError && topRentals) {
+          topRentals.forEach(rental => {
+            const propertyImages = Array.isArray(rental.images) ? rental.images : 
+                                 typeof rental.images === 'string' ? JSON.parse(rental.images) : 
+                                 [];
+            
+            allProperties.push({
+              ...rental,
+              images: propertyImages,
+              property_type: 'rent',
+              table_source: 'undervalued_rentals',
+              videos: (rental as any).videos || [],
+              floorplans: (rental as any).floorplans || [],
+              amenities: Array.isArray(rental.amenities) ? rental.amenities : 
+                        typeof rental.amenities === 'string' ? JSON.parse(rental.amenities || '[]') : [],
+              agents: (rental as any).agents || [],
+              building_info: (rental as any).building_info || {}
+            });
+          });
+        }
+
+        // Fetch A+ grade sales
+        const { data: topSales, error: salesError } = await supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('status', 'active')
+          .eq('grade', 'A+')
+          .order('discount_percent', { ascending: false })
+          .limit(15);
+
+        if (!salesError && topSales) {
+          topSales.forEach(sale => {
+            const propertyImages = Array.isArray(sale.images) ? sale.images : 
+                                 typeof sale.images === 'string' ? JSON.parse(sale.images) : 
+                                 [];
+            
+            allProperties.push({
+              ...sale,
+              images: propertyImages,
+              property_type: 'buy',
+              table_source: 'undervalued_sales',
+              videos: (sale as any).videos || [],
+              floorplans: (sale as any).floorplans || [],
+              amenities: Array.isArray(sale.amenities) ? sale.amenities : 
+                        typeof sale.amenities === 'string' ? JSON.parse(sale.amenities || '[]') : [],
+              agents: (sale as any).agents || [],
+              building_info: (sale as any).building_info || {}
+            });
+          });
+        }
+
+        const shuffled = allProperties.sort(() => 0.5 - Math.random());
+        setProperties(shuffled);
         return;
       }
 
+      // For users with completed onboarding, use their filters
       // Check if user has any filters set
       const hasFilters = userProfile.property_type || 
                         userProfile.bedrooms !== undefined || 
