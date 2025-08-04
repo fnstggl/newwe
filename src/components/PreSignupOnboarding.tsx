@@ -61,17 +61,42 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     "✅ Found matching listings"
   ];
 
-  const neighborhoods = [
-    "Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island",
-    "Carroll Gardens", "Bed-Stuy", "Williamsburg", "Astoria", 
-    "Long Island City", "Park Slope", "Greenpoint", "Bushwick",
-    "Crown Heights", "Sunset Park", "Red Hook", "Dumbo",
-    "Fort Greene", "Prospect Heights", "Chelsea", "SoHo",
-    "East Village", "West Village", "Lower East Side", "Tribeca",
-    "Financial District", "Midtown", "Upper East Side", "Upper West Side",
-    "Harlem", "Washington Heights", "Inwood", "Jackson Heights",
-    "Elmhurst", "Forest Hills", "Flushing", "Anywhere with a train"
-  ];
+ const neighborhoods = [
+  "Manhattan", "Brooklyn", "Queens", "Bronx", "Carroll Gardens", "Bed-Stuy", "Williamsburg", "Astoria", 
+  "Long Island City", "Park Slope", "Greenpoint", "Bushwick",
+  "Crown Heights", "Sunset Park", "Red Hook", "Dumbo",
+  "Fort Greene", "Prospect Heights", "Chelsea", "SoHo",
+  "East Village", "West Village", "Lower East Side", "Tribeca",
+  "Financial District", "Midtown", "Upper East Side", "Upper West Side",
+  "Harlem", "Washington Heights", "Inwood", "Jackson Heights",
+  "Elmhurst", "Forest Hills", "Flushing",
+  
+  // NEW NEIGHBORHOODS ADDED FROM LIST 2:
+  // Manhattan
+  "Kips Bay", "Midtown East", "Midtown West", "Hell's Kitchen",
+  "Morningside Heights", "Hamilton Heights", "Greenwich Village",
+  "NoHo", "Civic Center", "Hudson Square", "Roosevelt Island",
+  "Hudson Yards", "NoMad", "Manhattan Valley", "Central Harlem",
+  "Little Italy", "NoLita", "Two Bridges", "Murray Hill",
+  "Battery Park City",
+  
+  // Brooklyn
+  "Prospect Lefferts Gardens", "Vinegar Hill", "Windsor Terrace",
+  "Cobble Hill", "Boerum Hill", "Gowanus", "Clinton Hill",
+  "Downtown Brooklyn", "Columbia St Waterfront District",
+  "Brooklyn Heights", "Ditmas Park",
+  
+  // Queens
+  "Corona", "Ridgewood", "Maspeth", "Rego Park", "Bayside",
+  "Ditmars Steinway", "Sunnyside", "Woodside", "Briarwood",
+  "Fresh Meadows",
+  
+  // Bronx
+  "Kingsbridge", "Norwood", "Mott Haven", "Melrose", "South Bronx",
+  "Concourse",
+  
+  "Anywhere with a train"
+];
 
   const rentalMustHaveOptions = [
     "Rent-stabilized", "No broker fee", "Pet-friendly", "Outdoor space",
