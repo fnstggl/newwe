@@ -1163,44 +1163,36 @@ const ForYou = () => {
         {/* First Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 1 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ amount: 1 }}
-          transition={{ duration: 0 }}
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.33, 0.5], [1, 1, 0])
+          }}
         >
-          <motion.img 
+          <img 
             src="/lovable-uploads/your-actual-image-1.jpg" 
             alt="The best deals in the city" 
             className="w-full h-auto object-contain max-h-[80vh]"
-            animate={{ 
-              opacity: scrollYProgress.get() > 0.33 ? 0 : 1 
-            }}
-            transition={{ duration: 2, ease: "easeInOut" }}
           />
         </motion.div>
 
         {/* Black fade overlay */}
         <motion.div
           className="absolute inset-0 bg-black"
-          animate={{ 
-            opacity: scrollYProgress.get() > 0.33 && scrollYProgress.get() < 0.66 ? 1 : 0 
+          style={{
+            opacity: useTransform(scrollYProgress, [0.33, 0.5, 0.66, 0.8], [0, 1, 1, 0])
           }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
         />
 
         {/* Second Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
+          style={{
+            opacity: useTransform(scrollYProgress, [0.66, 0.8, 1], [0, 1, 1])
+          }}
         >
-          <motion.img 
+          <img 
             src="/lovable-uploads/your-actual-image-2.jpg" 
             alt="Just describe your dream home" 
             className="w-full h-auto object-contain max-h-[80vh]"
-            animate={{ 
-              opacity: scrollYProgress.get() > 0.66 ? 1 : 0 
-            }}
-            transition={{ duration: 2, ease: "easeInOut" }}
           />
         </motion.div>
       </div>
