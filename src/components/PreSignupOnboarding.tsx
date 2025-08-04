@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { getSimilarNeighborhoods, normalizeNeighborhoodForSimilar } from '../data/similarNeighborhoods';
 
-// ADD THE OnboardingSlider COMPONENT HERE
 const OnboardingSlider = ({ value, onValueChange, max, min, step, className = "" }: {
   value: number[];
   onValueChange: (value: number[]) => void;
@@ -21,13 +20,25 @@ const OnboardingSlider = ({ value, onValueChange, max, min, step, className = ""
 }) => {
   return (
     <div className={`relative w-full ${className}`}>
+      <style jsx>{`
+        .custom-slider [data-radix-slider-track] {
+          background-color: white !important;
+        }
+        .custom-slider [data-radix-slider-range] {
+          background-color: #1e293b !important;
+        }
+        .custom-slider [data-radix-slider-thumb] {
+          background-color: white !important;
+          border: 2px solid white !important;
+        }
+      `}</style>
       <Slider
         value={value}
         onValueChange={onValueChange}
         max={max}
         min={min}
         step={step}
-        className="w-full [&_[data-radix-slider-track]]:bg-slate-800 [&_[data-radix-slider-range]]:bg-white [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-white"
+        className="w-full custom-slider"
       />
     </div>
   );
