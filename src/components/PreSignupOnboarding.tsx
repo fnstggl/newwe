@@ -750,38 +750,44 @@ style={!stepAnimated ? {
           </OnboardingStep>
         );
 
-      case 7:
-        return (
-          <OnboardingStep
-             key={`step-${currentStep}`}
-            step={currentStep}
-            totalSteps={totalSteps}
-            title="Scanning NYC listings..."
-          >
-            <div className="space-y-8">
-              <Progress value={scanningProgress} className="w-full h-2" />
-              
-              <div className="space-y-4">
-                {scanningStages.map((stage, index) => (
-                  <div
-                    key={stage}
-                    className={`text-left transition-all duration-500 ${
-                      index <= scanningStage 
-                        ? index === scanningStage 
-                          ? 'text-white opacity-100' 
-                          : 'text-green-400 opacity-100'
-                        : 'text-gray-600 opacity-50'
-                    }`}
-                  >
-                    {index === 4 && scanningStage >= 4 
-                      ? `✅ Found ${matchedListings} matching listings` 
-                      : stage}
-                  </div>
-                ))}
-              </div>
+     case 7:
+  return (
+    <OnboardingStep
+       key={`step-${currentStep}`}
+      step={currentStep}
+      totalSteps={totalSteps}
+      title="Scanning NYC listings..."
+    >
+      <div className="space-y-8">
+        {/* Custom Progress Bar */}
+        <div className="w-full h-2 bg-black rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-white rounded-full transition-all duration-300 ease-out"
+            style={{ width: `${scanningProgress}%` }}
+          />
+        </div>
+        
+        <div className="space-y-4">
+          {scanningStages.map((stage, index) => (
+            <div
+              key={stage}
+              className={`text-left transition-all duration-500 font-inter font-semibold tracking-tighter ${
+                index <= scanningStage 
+                  ? index === scanningStage 
+                    ? 'text-white opacity-100' 
+                    : 'text-green-400 opacity-100'
+                  : 'text-gray-600 opacity-50'
+              }`}
+            >
+              {index === 4 && scanningStage >= 4 
+                ? `✅ Found ${matchedListings} matching listings` 
+                : stage}
             </div>
-          </OnboardingStep>
-        );
+          ))}
+        </div>
+      </div>
+    </OnboardingStep>
+  );
 
       case 8:
         return (
