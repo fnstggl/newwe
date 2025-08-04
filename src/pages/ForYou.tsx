@@ -1055,7 +1055,7 @@ const ForYou = () => {
                             whileTap={{ scale: 0.98 }}
                             className="px-8 py-3 bg-white text-black rounded-full font-semibold tracking-tight transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {isProcessingCheckout ? 'Processing...' : 'Unlock your match'}
+                            {isProcessingCheckout ? 'Processing...' : 'Reveal your match'}
                           </motion.button>
                           
                           <p className="text-sm text-gray-400 tracking-tight">
