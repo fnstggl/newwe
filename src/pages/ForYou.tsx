@@ -1157,7 +1157,7 @@ const ForYou = () => {
 
 {/* Scroll-jacking marketing images - only for paywall users */}
 {showPaywall && (
-  <div className="relative h-screen w-full overflow-hidden">
+  <div className="relative h-[300vh] w-full overflow-hidden">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center">
       <div className="relative w-full max-w-6xl mx-auto px-6">
         {/* First Image */}
@@ -1165,27 +1165,42 @@ const ForYou = () => {
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 1 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ amount: 0.5 }}
+          viewport={{ amount: 1 }}
+          transition={{ duration: 0 }}
         >
-          <img 
-            src="/lovable-uploads/marketing-image-1.jpg" 
+          <motion.img 
+            src="/lovable-uploads/your-actual-image-1.jpg" 
             alt="The best deals in the city" 
             className="w-full h-auto object-contain max-h-[80vh]"
+            animate={{ 
+              opacity: scrollYProgress.get() > 0.33 ? 0 : 1 
+            }}
+            transition={{ duration: 2, ease: "easeInOut" }}
           />
         </motion.div>
+
+        {/* Black fade overlay */}
+        <motion.div
+          className="absolute inset-0 bg-black"
+          animate={{ 
+            opacity: scrollYProgress.get() > 0.33 && scrollYProgress.get() < 0.66 ? 1 : 0 
+          }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+        />
 
         {/* Second Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ amount: 0.8 }}
-          transition={{ delay: 1 }}
         >
-          <img 
-            src="/lovable-uploads/marketing-image-2.jpg" 
+          <motion.img 
+            src="/lovable-uploads/your-actual-image-2.jpg" 
             alt="Just describe your dream home" 
             className="w-full h-auto object-contain max-h-[80vh]"
+            animate={{ 
+              opacity: scrollYProgress.get() > 0.66 ? 1 : 0 
+            }}
+            transition={{ duration: 2, ease: "easeInOut" }}
           />
         </motion.div>
       </div>
