@@ -1161,7 +1161,6 @@ const ForYou = () => {
         </div>
       </div>
 
-{{/* Scroll-jacking paywall section */}
 {showPaywall && (
   <div ref={containerRef} className="relative h-[400vh] w-full">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
