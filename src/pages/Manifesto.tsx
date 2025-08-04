@@ -70,7 +70,7 @@ const Manifesto = () => {
             
             <p className="text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
               Rent is up. Inventory is down. And the platforms built to help you? 
-              Weren't built for you. They were built for agents who want to extract maximum commission from every deal.
+              Weren't built for renters or buyers. They were built for agents who want to extract maximum commission from every deal.
             </p>
           </div>
 
