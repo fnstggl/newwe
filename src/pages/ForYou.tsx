@@ -1179,7 +1179,7 @@ const ForYou = () => {
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ amount: 1 }}
+          viewport={{ amount: 0.1, margin: "-90% 0px -90% 0px" }}
           transition={{ duration: 2, ease: "easeInOut" }}
         >
           <img 
@@ -1190,6 +1190,9 @@ const ForYou = () => {
         </motion.div>
       </div>
     </div>
+
+    {/* Invisible trigger at the very bottom */}
+    <div className="absolute bottom-0 w-full h-10" />
   </div>
 )}
       
