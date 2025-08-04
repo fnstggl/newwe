@@ -322,8 +322,8 @@ const { scrollYProgress } = useScroll({
   offset: ["start end", "end start"]
 });
 
-const opacity1 = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
+const opacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
