@@ -1157,45 +1157,43 @@ const ForYou = () => {
 
 {/* Scroll-jacking marketing images - only for paywall users */}
 {showPaywall && (
-  <div className="relative h-[300vh] w-full overflow-hidden">
-    <div className="sticky top-0 h-screen w-full flex items-center justify-center">
-      <div className="relative w-full max-w-6xl mx-auto px-6">
-        {/* First Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: useTransform(scrollYProgress, [0, 0.33, 0.5], [1, 1, 0])
-          }}
-        >
-          <img 
-            src="/lovable-uploads/your-actual-image-1.jpg" 
-            alt="The best deals in the city" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
-
-        {/* Black fade overlay */}
-        <motion.div
-          className="absolute inset-0 bg-black"
-          style={{
-            opacity: useTransform(scrollYProgress, [0.33, 0.5, 0.66, 0.8], [0, 1, 1, 0])
-          }}
+  <div className="relative w-full">
+    {/* First Image Section */}
+    <div className="h-screen w-full flex items-center justify-center bg-black">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: false, amount: 0.5 }}
+        className="w-full max-w-6xl mx-auto px-6"
+      >
+        <img 
+          src="/lovable-uploads/your-actual-image-1.jpg" 
+          alt="The best deals in the city" 
+          className="w-full h-auto object-contain max-h-[80vh]"
         />
+      </motion.div>
+    </div>
 
-        {/* Second Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: useTransform(scrollYProgress, [0.66, 0.8, 1], [0, 1, 1])
-          }}
-        >
-          <img 
-            src="/lovable-uploads/your-actual-image-2.jpg" 
-            alt="Just describe your dream home" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
-      </div>
+    {/* Transition Section */}
+    <div className="h-screen w-full bg-black"></div>
+
+    {/* Second Image Section */}
+    <div className="h-screen w-full flex items-center justify-center bg-black">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: false, amount: 0.5 }}
+        className="w-full max-w-6xl mx-auto px-6"
+      >
+        <img 
+          src="/lovable-uploads/your-actual-image-2.jpg" 
+          alt="Just describe your dream home" 
+          className="w-full h-auto object-contain max-h-[80vh]"
+        />
+      </motion.div>
     </div>
   </div>
 )}
