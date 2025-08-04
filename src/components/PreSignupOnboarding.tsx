@@ -392,17 +392,17 @@ const ChoiceButton = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 rounded-2xl border-2 transition-transform duration-200 ease-out hover:scale-105 ${
-        stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
-      } ${
-        selected
-          ? 'border-white bg-white text-black'
-          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-      }`}
-      style={!stepAnimated ? { 
-        animationDelay: `${delay}ms`,
-        animationFillMode: 'forwards'
-      } : {}}
+      className={`w-full p-4 rounded-2xl border-2 hover:shadow-lg hover:shadow-white/10 ${
+  stepAnimated ? 'opacity-100' : 'opacity-0 animate-slide-up'
+} ${
+  selected
+    ? 'border-white bg-white text-black'
+    : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+}`}
+style={!stepAnimated ? { 
+  animationDelay: `${delay}ms`,
+  animationFillMode: 'forwards'
+} : {}}
     >
       {children}
     </button>
