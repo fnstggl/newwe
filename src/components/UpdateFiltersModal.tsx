@@ -324,12 +324,12 @@ useEffect(() => {
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          onClick={(e) => e.stopPropagation()}
-          className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-        >
+  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+  animate={{ opacity: 1, scale: 1, y: 0 }}
+  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+  onClick={(e) => e.stopPropagation()}
+  className="bg-black/70 backdrop-blur-xl border border-white/10 rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">Update Personalized Search Filters</h2>
             <button
@@ -352,10 +352,10 @@ useEffect(() => {
                       setSearchingFor(option);
                       setPropertyType(option === 'A place to rent' ? 'rent' : 'buy');
                     }}
-                    className={`p-3 rounded-full border transition-colors ${
+                    className={`p-3 rounded-full border transition-all duration-200 ${
   searchingFor === option
-    ? 'border-blue-800/40 bg-blue-500/15 text-blue-300'
-    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-blue-500/30 hover:bg-blue-800/10'
+    ? 'border-white/40 bg-white/10 text-white backdrop-blur-sm'
+    : 'border-white/20 bg-black/30 text-gray-300 hover:border-white/30 hover:bg-white/5 backdrop-blur-sm'
 }`}
                   >
                     {option}
@@ -392,7 +392,7 @@ useEffect(() => {
                 value={maxBudget || ''}
                 onChange={(e) => setMaxBudget(e.target.value ? parseInt(e.target.value) : undefined)}
                 placeholder={propertyType === 'rent' ? 'Monthly rent' : 'Purchase price'}
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full p-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-all duration-200"
               />
             </div>
 
@@ -448,14 +448,14 @@ useEffect(() => {
                 placeholder="15"
                 min="0"
                 max="100"
-                className="w-full p-3 bg-gray-800 border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                className="w-full p-3 bg-black/30 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-gray-400 focus:border-white/40 focus:outline-none transition-all duration-200"
               />
             </div>
           </div>
 
 {/* Live Count Display */}
 {propertyType && (
-  <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-center">
+  <div className="mt-6 p-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl text-center">
     <div className="flex items-center justify-center space-x-2">
       {isCountLoading ? (
         <>
@@ -475,16 +475,16 @@ useEffect(() => {
 
           
           <div className="flex space-x-4 mt-8">
-           <button
+<button
   onClick={onClose}
-  className="flex-1 px-6 py-3 border border-gray-600 text-gray-300 rounded-full hover:bg-gray-800/50 transition-colors"
+  className="flex-1 px-6 py-3 border border-white/20 text-gray-300 rounded-full hover:bg-white/5 backdrop-blur-sm transition-all duration-200"
 >
   Cancel
 </button>
 <button
   onClick={handleSubmit}
   disabled={isSubmitting}
-  className="flex-1 px-6 py-3 bg-white/15 text-white rounded-full hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+  className="flex-1 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
 >
               {isSubmitting ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
