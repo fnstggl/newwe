@@ -377,8 +377,7 @@ const ForYou = () => {
           .from('undervalued_rentals')
           .select('*')
           .eq('status', 'active')
-          .order('discount_percent', { ascending: false })
-          .limit(50);
+          .order('discount_percent', { ascending: false });
 
         const { data: rentals, error: rentalsError } = await query;
 
@@ -408,8 +407,7 @@ const ForYou = () => {
           .from('undervalued_rent_stabilized')
           .select('*')
           .eq('display_status', 'active')
-          .order('undervaluation_percent', { ascending: false })
-          .limit(50);
+          .order('undervaluation_percent', { ascending: false });
 
         const { data: stabilized, error: stabilizedError } = await stabilizedQuery;
 
@@ -443,8 +441,7 @@ const ForYou = () => {
           .from('undervalued_sales')
           .select('*')
           .eq('status', 'active')
-          .order('discount_percent', { ascending: false })
-          .limit(50);
+          .order('discount_percent', { ascending: false });
 
         const { data: sales, error: salesError } = await query;
 
