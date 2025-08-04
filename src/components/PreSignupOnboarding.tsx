@@ -23,7 +23,7 @@ interface OnboardingData {
 }
 
 interface PreSignupOnboardingProps {
-  onComplete: (data: OnboardingData) => void;
+  onComplete: (data: OnboardingData, adjustedFilters?: OnboardingData | null) => void;
 }
 
 const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete }) => {
@@ -380,7 +380,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete(finalFiltersToSave || onboardingData);
+      onComplete(onboardingData, finalFiltersToSave);
     }
   };
 

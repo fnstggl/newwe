@@ -24,6 +24,7 @@ const NewJoin = () => {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
+  const [adjustedFilters, setAdjustedFilters] = useState<OnboardingData | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,24 +40,28 @@ const NewJoin = () => {
     document.title = "Join Realer Estate - Get Your Unfair Advantage in NYC Real Estate";
   }, []);
 
-  const handleOnboardingComplete = (data: OnboardingData) => {
+  const handleOnboardingComplete = (data: OnboardingData, finalAdjustedFilters?: OnboardingData | null) => {
     setOnboardingData(data);
+    setAdjustedFilters(finalAdjustedFilters || null);
     setShowOnboarding(false);
     setShowAuth(true);
   };
 
   const saveOnboardingData = async (userId: string) => {
     try {
+      // Use adjusted filters if they exist (meaning similar listings were found), otherwise use original data
+      const dataToSave = adjustedFilters || onboardingData;
+      
       const updateData: any = {
-        search_duration: onboardingData.search_duration,
-        frustrations: onboardingData.frustrations,
-        searching_for: onboardingData.searching_for,
-        property_type: onboardingData.property_type,
-        bedrooms: onboardingData.bedrooms,
-        max_budget: onboardingData.max_budget,
-        preferred_neighborhoods: onboardingData.preferred_neighborhoods,
-        must_haves: onboardingData.must_haves,
-        discount_threshold: onboardingData.discount_threshold,
+        search_duration: dataToSave.search_duration,
+        frustrations: dataToSave.frustrations,
+        searching_for: dataToSave.searching_for,
+        property_type: dataToSave.property_type,
+        bedrooms: dataToSave.bedrooms,
+        max_budget: dataToSave.max_budget,
+        preferred_neighborhoods: dataToSave.preferred_neighborhoods,
+        must_haves: dataToSave.must_haves,
+        discount_threshold: dataToSave.discount_threshold,
         onboarding_completed: true,
         onboarding_completed_at: new Date().toISOString(),
       };
