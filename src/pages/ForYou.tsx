@@ -8,7 +8,7 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyDetail from '@/components/PropertyDetail';
 import UpdateFiltersModal from '@/components/UpdateFiltersModal';
 import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import AISearch from '@/components/AISearch';
 
 interface Property {
@@ -312,6 +312,10 @@ const ForYou = () => {
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+    // ADD THE SCROLL HOOKS HERE:
+  const { scrollY, scrollYProgress } = useScroll();
+  const scrollYTransform = useTransform(scrollY, [0, 1000], [0, -200]);
+  const scrollProgressValue = scrollYProgress.get();
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
@@ -1151,6 +1155,50 @@ const ForYou = () => {
         </div>
       </div>
 
+{/* Scroll-jacking marketing images - only for paywall users */}
+{showPaywall && (
+  <div className="relative h-screen w-full overflow-hidden">
+    <div className="sticky top-0 h-screen w-full flex items-center justify-center">
+      <motion.div
+        className="relative w-full max-w-6xl mx-auto px-6"
+        style={{ y: scrollYTransform }}
+      >
+        {/* First Image */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 1 }}
+          animate={{ 
+            opacity: scrollProgressValue > 0.5 ? 0 : 1 
+          }}
+          transition={{ duration: 0.5 }}
+        >
+          <img 
+            src="/lovable-uploads/marketing-image-1.jpg" 
+            alt="The best deals in the city" 
+            className="w-full h-auto object-contain max-h-[80vh]"
+          />
+        </motion.div>
+
+        {/* Second Image */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: scrollProgressValue > 0.5 ? 1 : 0 
+          }}
+          transition={{ duration: 0.5 }}
+        >
+          <img 
+            src="/lovable-uploads/marketing-image-2.jpg" 
+            alt="Just describe your dream home" 
+            className="w-full h-auto object-contain max-h-[80vh]"
+          />
+        </motion.div>
+      </motion.div>
+    </div>
+  </div>
+)}
+      
       <AnimatePresence>
         {selectedProperty && !showPaywall && (
           <PropertyDetail
