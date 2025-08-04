@@ -1169,7 +1169,7 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
           <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
             <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
 
-              {/* Social Proof Review Card - positioned above images */}
+              {/* Social Proof Review Card - positioned at top */}
               <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10">
                 <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
                   <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight">
@@ -1179,22 +1179,22 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
                 </div>
               </div>
 
-              {/* First Image - fades out as you scroll */}
+              {/* First Image - fades out as you scroll - LOWERED */}
               <motion.img
                 src="/lovable-uploads/marketing-image-1.jpg"
                 alt="The best deals in the city"
-                className="absolute inset-0 w-full h-full object-contain"
+                className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain"
                 style={{ 
                   opacity: opacity1,
                   zIndex: 2
                 }}
               />
 
-              {/* Second Image - fades in as you scroll */}
+              {/* Second Image - fades in as you scroll - LOWERED */}
               <motion.img
                 src="/lovable-uploads/marketing-image-2.jpg"
                 alt="Just describe your dream home"
-                className="absolute inset-0 w-full h-full object-contain"
+                className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain"
                 style={{ 
                   opacity: opacity2,
                   zIndex: 1
