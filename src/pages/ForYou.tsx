@@ -1161,7 +1161,7 @@ const ForYou = () => {
         </div>
       </div>
 
-{/* Scroll-jacking paywall section */}
+{{/* Scroll-jacking paywall section */}
 {showPaywall && (
   <div ref={containerRef} className="relative h-[400vh] w-full">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
@@ -1194,10 +1194,7 @@ const ForYou = () => {
   </div>
 )}
 
-    {/* Invisible trigger at the very bottom */}
-    <div className="absolute bottom-0 w-full h-10" />
-  </div>
-)}
+      </div>
       
       <AnimatePresence>
         {selectedProperty && !showPaywall && (
