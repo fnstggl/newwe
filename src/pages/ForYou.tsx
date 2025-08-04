@@ -1179,7 +1179,7 @@ const ForYou = () => {
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ amount: 0.1, margin: "-90% 0px -90% 0px" }}
+          viewport={{ amount: 0.1, margin: "-99% 0px -99% 0px" }}
           transition={{ duration: 2, ease: "easeInOut" }}
         >
           <img 
