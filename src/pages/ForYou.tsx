@@ -1159,18 +1159,14 @@ const ForYou = () => {
 {showPaywall && (
   <div className="relative h-screen w-full overflow-hidden">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center">
-      <motion.div
-        className="relative w-full max-w-6xl mx-auto px-6"
-        style={{ y: scrollYTransform }}
-      >
+      <motion.div className="relative w-full max-w-6xl mx-auto px-6">
         {/* First Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 1 }}
           animate={{ 
-            opacity: scrollProgressValue > 0.5 ? 0 : 1 
+            opacity: scrollYProgress.get() < 0.3 ? 1 : 0 
           }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           <img 
             src="/lovable-uploads/marketing-image-1.jpg" 
@@ -1182,11 +1178,10 @@ const ForYou = () => {
         {/* Second Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
           animate={{ 
-            opacity: scrollProgressValue > 0.5 ? 1 : 0 
+            opacity: scrollYProgress.get() > 0.3 ? 1 : 0 
           }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           <img 
             src="/lovable-uploads/marketing-image-2.jpg" 
