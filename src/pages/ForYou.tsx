@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Heart, X, MessageCircle, Sparkles, Home, Search, MapPin, CheckCircle, Settings } from 'lucide-react';
@@ -920,7 +920,7 @@ const ForYou = () => {
     );
   }
 
-  return (
+    return (
     <>
       <div className="min-h-screen bg-black text-white font-inter flex flex-col relative overflow-hidden">
         <motion.div
@@ -1036,15 +1036,15 @@ const ForYou = () => {
                   </div>
                   
                   {showPaywall && (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden rounded-2xl"
-    style={{
-      backdropFilter: 'blur(8px) saturate(180%)',
-      WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-    }}
-  >
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden rounded-2xl"
+                      style={{
+                        backdropFilter: 'blur(8px) saturate(180%)',
+                        WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+                      }}
+                    >
                       <div className="text-center space-y-4 px-8">
                         <h2 className="text-2xl font-semibold tracking-tighter text-white">
                           We found your dream home
@@ -1111,42 +1111,42 @@ const ForYou = () => {
           </motion.button>
         </motion.div>
 
- <div className="relative">
-  <div 
-    className={showPaywall ? 'relative' : ''}
-    onClick={showPaywall ? (e) => e.stopPropagation() : undefined}
-    onKeyDown={showPaywall ? (e) => e.preventDefault() : undefined}
-  >
-    <AISearch 
-      onResults={(results, interpretation) => {
-        if (!showPaywall) {
-          if (results.length > 0) {
-            setProperties(results);
-            setCurrentIndex(0);
-            setIsRevealing(true);
-            toast({
-              title: "🎯 AI Search Complete",
-              description: `Found ${results.length} matches!`,
-            });
-          } else {
-            toast({
-              title: "No matches found",
-              description: interpretation,
-              variant: "destructive",
-            });
-          }
-        }
-      }}
-    />
-    {showPaywall && (
-      <div 
-        className="absolute inset-0 cursor-not-allowed" 
-        onClick={(e) => e.stopPropagation()}
-        onFocus={(e) => e.preventDefault()}
-      />
-    )}
-  </div>
-          
+        <div className="relative">
+          <div 
+            className={showPaywall ? 'relative' : ''}
+            onClick={showPaywall ? (e) => e.stopPropagation() : undefined}
+            onKeyDown={showPaywall ? (e) => e.preventDefault() : undefined}
+          >
+            <AISearch 
+              onResults={(results, interpretation) => {
+                if (!showPaywall) {
+                  if (results.length > 0) {
+                    setProperties(results);
+                    setCurrentIndex(0);
+                    setIsRevealing(true);
+                    toast({
+                      title: "🎯 AI Search Complete",
+                      description: `Found ${results.length} matches!`,
+                    });
+                  } else {
+                    toast({
+                      title: "No matches found",
+                      description: interpretation,
+                      variant: "destructive",
+                    });
+                  }
+                }
+              }}
+            />
+            {showPaywall && (
+              <div 
+                className="absolute inset-0 cursor-not-allowed" 
+                onClick={(e) => e.stopPropagation()}
+                onFocus={(e) => e.preventDefault()}
+              />
+            )}
+          </div>
+              
           <div className={`absolute top-1/2 -translate-y-1/2 right-2 group ${showPaywall ? 'opacity-50' : ''}`}>
             <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
               <span className="text-gray-300 text-sm font-bold">?</span>
@@ -1161,39 +1161,38 @@ const ForYou = () => {
         </div>
       </div>
 
-{showPaywall && (
-  <div ref={containerRef} className="relative h-[400vh] w-full">
-    <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
-      <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
+      {/* Scroll-jacking paywall section */}
+      {showPaywall && (
+        <div ref={containerRef} className="relative h-[400vh] w-full">
+          <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
+            <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
 
-        {/* First Image - fades out as you scroll */}
-        <motion.img
-          src="/lovable-uploads/marketing-image-1.jpg"
-          alt="The best deals in the city"
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ 
-            opacity: opacity1,
-            zIndex: 2
-          }}
-        />
+              {/* First Image - fades out as you scroll */}
+              <motion.img
+                src="/lovable-uploads/marketing-image-1.jpg"
+                alt="The best deals in the city"
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: opacity1,
+                  zIndex: 2
+                }}
+              />
 
-        {/* Second Image - fades in as you scroll */}
-        <motion.img
-          src="/lovable-uploads/marketing-image-2.jpg"
-          alt="Just describe your dream home"
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ 
-            opacity: opacity2,
-            zIndex: 1
-          }}
-        />
+              {/* Second Image - fades in as you scroll */}
+              <motion.img
+                src="/lovable-uploads/marketing-image-2.jpg"
+                alt="Just describe your dream home"
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: opacity2,
+                  zIndex: 1
+                }}
+              />
 
-      </div>
-    </div>
-  </div>
-)}
-
-      </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <AnimatePresence>
         {selectedProperty && !showPaywall && (
@@ -1214,6 +1213,5 @@ const ForYou = () => {
       )}
     </>
   );
-};
 
 export default ForYou;
