@@ -1183,7 +1183,7 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
               <motion.img
                 src="/lovable-uploads/marketing-image-1.jpg"
                 alt="The best deals in the city"
-                className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain"
+                  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-110 contrast-110"
                 style={{ 
                   opacity: opacity1,
                   zIndex: 2
@@ -1194,7 +1194,7 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
               <motion.img
                 src="/lovable-uploads/marketing-image-2.jpg"
                 alt="Just describe your dream home"
-                className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain"
+                  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-110 contrast-110"
                 style={{ 
                   opacity: opacity2,
                   zIndex: 1
