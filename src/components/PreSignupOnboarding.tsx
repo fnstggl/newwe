@@ -10,6 +10,29 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { getSimilarNeighborhoods, normalizeNeighborhoodForSimilar } from '../data/similarNeighborhoods';
 
+// ADD THE OnboardingSlider COMPONENT HERE
+const OnboardingSlider = ({ value, onValueChange, max, min, step, className = "" }: {
+  value: number[];
+  onValueChange: (value: number[]) => void;
+  max: number;
+  min: number;
+  step: number;
+  className?: string;
+}) => {
+  return (
+    <div className={`relative w-full ${className}`}>
+      <Slider
+        value={value}
+        onValueChange={onValueChange}
+        max={max}
+        min={min}
+        step={step}
+        className="w-full [&_[data-radix-slider-track]]:bg-slate-800 [&_[data-radix-slider-range]]:bg-white [&_[data-radix-slider-thumb]]:bg-white [&_[data-radix-slider-thumb]]:border-white"
+      />
+    </div>
+  );
+};
+
 interface OnboardingData {
   search_duration?: string;
   frustrations?: string[];
@@ -830,14 +853,14 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                       Max Budget {getLiveCountDisplay('max_budget')}
                     </h3>
                     <div className="space-y-6">
-                      <Slider
-                        value={[onboardingData.max_budget || defaultBudget]}
-                        onValueChange={(value) => updateData('max_budget', value[0])}
-                        max={maxBudget}
-                        min={minBudget}
-                        step={step}
-                        className="w-full"
-                      />
+                      <OnboardingSlider
+  value={[onboardingData.max_budget || defaultBudget]}
+  onValueChange={(value) => updateData('max_budget', value[0])}
+  max={maxBudget}
+  min={minBudget}
+  step={step}
+  className="w-full"
+/>
                       <div className="flex justify-between text-sm text-gray-400">
                         {isRental ? (
                           <>
@@ -925,14 +948,14 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
           >
             <div className="space-y-8">
               <div className="space-y-6">
-                <Slider
-                  value={[onboardingData.discount_threshold || 20]}
-                  onValueChange={(value) => updateData('discount_threshold', value[0])}
-                  max={50}
-                  min={10}
-                  step={5}
-                  className="w-full animate-slide-in-left"
-                />
+                <OnboardingSlider
+  value={[onboardingData.discount_threshold || 20]}
+  onValueChange={(value) => updateData('discount_threshold', value[0])}
+  max={50}
+  min={10}
+  step={5}
+  className="w-full"
+/>
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>10%</span>
                   <span>20%</span>
