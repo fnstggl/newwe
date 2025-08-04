@@ -45,6 +45,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const [isCheckingSimilar, setIsCheckingSimilar] = useState(false);
   const [similarListingsFound, setSimilarListingsFound] = useState(0);
   const [usedSimilarFilters, setUsedSimilarFilters] = useState<Partial<OnboardingData> | null>(null);
+  const [finalFiltersToSave, setFinalFiltersToSave] = useState<Partial<OnboardingData> | null>(null);
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -324,11 +325,14 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
             getLiveCount(onboardingData, true).then(result => {
               if (result.direct > 0) {
                 setMatchedListings(result.direct);
+                setFinalFiltersToSave(onboardingData);
               } else if (result.similar > 0) {
                 setMatchedListings(result.similar);
                 setUsedSimilarFilters(result.adjustedFilters || null);
+                setFinalFiltersToSave(result.adjustedFilters || null);
               } else {
                 setMatchedListings(0);
+                setFinalFiltersToSave(onboardingData);
               }
             });
           }
@@ -376,7 +380,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete(usedSimilarFilters || onboardingData);
+      onComplete(finalFiltersToSave || onboardingData);
     }
   };
 
@@ -472,8 +476,8 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
   const saveOnboardingData = async (userId: string) => {
     try {
-      // Use adjusted filters if similar listings were found, otherwise use original data
-      const dataToSave = usedSimilarFilters || onboardingData;
+      // Use the final filters that were determined during the scanning process
+      const dataToSave = finalFiltersToSave || onboardingData;
       const updateData: any = {
         search_duration: dataToSave.search_duration,
         frustrations: dataToSave.frustrations,
