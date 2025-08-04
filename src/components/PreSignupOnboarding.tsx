@@ -472,6 +472,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
 
   const saveOnboardingData = async (userId: string) => {
     try {
+      // Use adjusted filters if similar listings were found, otherwise use original data
       const dataToSave = usedSimilarFilters || onboardingData;
       const updateData: any = {
         search_duration: dataToSave.search_duration,
