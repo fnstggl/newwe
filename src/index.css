@@ -143,12 +143,12 @@
 
 /* Custom slider styling for onboarding */
 .onboarding-slider [data-radix-slider-track] {
-  background-color: #1e293b !important;
+  background-color: white !important;
   height: 8px !important;
 }
 
 .onboarding-slider [data-radix-slider-range] {
-  background-color: white !important;
+  background-color: #1e293b !important;
   height: 8px !important;
 }
 
