@@ -1179,27 +1179,29 @@ const opacity2 = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
                 </div>
               </div>
 
-              {/* First Image - fades out as you scroll - LOWERED */}
-              <motion.img
-                src="/lovable-uploads/marketing-image-1.jpg"
-                alt="The best deals in the city"
-                  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-110 contrast-110"
-                style={{ 
-                  opacity: opacity1,
-                  zIndex: 2
-                }}
-              />
+              {/* First Image - MUCH BRIGHTER */}
+<motion.img
+  src="/lovable-uploads/marketing-image-1.jpg"
+  alt="The best deals in the city"
+  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-150 contrast-125 saturate-110"
+  style={{ 
+    opacity: opacity1,
+    zIndex: 2,
+    filter: 'brightness(1.5) contrast(1.25) saturate(1.1)' // CSS fallback
+  }}
+/>
 
-              {/* Second Image - fades in as you scroll - LOWERED */}
-              <motion.img
-                src="/lovable-uploads/marketing-image-2.jpg"
-                alt="Just describe your dream home"
-                  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-110 contrast-110"
-                style={{ 
-                  opacity: opacity2,
-                  zIndex: 1
-                }}
-              />
+             {/* Second Image - MUCH BRIGHTER */}
+<motion.img
+  src="/lovable-uploads/marketing-image-2.jpg"
+  alt="Just describe your dream home"
+  className="absolute top-40 left-0 right-0 bottom-0 w-full h-auto object-contain brightness-150 contrast-125 saturate-110"
+  style={{ 
+    opacity: opacity2,
+    zIndex: 1,
+    filter: 'brightness(1.5) contrast(1.25) saturate(1.1)' // CSS fallback
+  }}
+/>
 
             </div>
           </div>
