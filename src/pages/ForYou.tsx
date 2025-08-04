@@ -1169,7 +1169,7 @@ const ForYou = () => {
         className="w-full max-w-6xl mx-auto px-6"
       >
         <img 
-          src="/lovable-uploads/your-actual-image-1.jpg" 
+          src="/lovable-uploads/marketing-image-1.jpg" 
           alt="The best deals in the city" 
           className="w-full h-auto object-contain max-h-[80vh]"
         />
@@ -1189,7 +1189,7 @@ const ForYou = () => {
         className="w-full max-w-6xl mx-auto px-6"
       >
         <img 
-          src="/lovable-uploads/your-actual-image-2.jpg" 
+          src="/lovable-uploads/marketing-image-2.jpg" 
           alt="Just describe your dream home" 
           className="w-full h-auto object-contain max-h-[80vh]"
         />
