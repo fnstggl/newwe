@@ -1029,10 +1029,11 @@ const ForYou = () => {
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="absolute inset-0 rounded-3xl backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden"
+    className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden"
     style={{
       backdropFilter: 'blur(8px) saturate(180%)',
       WebkitBackdropFilter: 'blur(8px) saturate(180%)',
+      borderRadius: 'inherit',
     }}
   >
                       <div className="text-center space-y-4 px-8">
@@ -1101,30 +1102,30 @@ const ForYou = () => {
           </motion.button>
         </motion.div>
 
-        <div className="relative">
-          <div className={showPaywall ? 'pointer-events-none opacity-50' : ''}>
-            <AISearch 
-              onResults={(results, interpretation) => {
-                if (!showPaywall) {
-                  if (results.length > 0) {
-                    setProperties(results);
-                    setCurrentIndex(0);
-                    setIsRevealing(true);
-                    toast({
-                      title: "🎯 AI Search Complete",
-                      description: `Found ${results.length} matches!`,
-                    });
-                  } else {
-                    toast({
-                      title: "No matches found",
-                      description: interpretation,
-                      variant: "destructive",
-                    });
-                  }
-                }
-              }}
-            />
-          </div>
+ <div className="relative">
+  <div className={showPaywall ? 'pointer-events-none' : ''}>
+    <AISearch 
+      onResults={(results, interpretation) => {
+        if (!showPaywall) {
+          if (results.length > 0) {
+            setProperties(results);
+            setCurrentIndex(0);
+            setIsRevealing(true);
+            toast({
+              title: "🎯 AI Search Complete",
+              description: `Found ${results.length} matches!`,
+            });
+          } else {
+            toast({
+              title: "No matches found",
+              description: interpretation,
+              variant: "destructive",
+            });
+          }
+        }
+      }}
+    />
+  </div>
           
           <div className={`absolute top-1/2 -translate-y-1/2 right-2 group ${showPaywall ? 'opacity-50' : ''}`}>
             <div className="w-8 h-8 rounded-full bg-gray-700/80 flex items-center justify-center cursor-help border border-gray-600/50 hover:bg-gray-600/80 transition-colors">
