@@ -1103,7 +1103,11 @@ const ForYou = () => {
         </motion.div>
 
  <div className="relative">
-  <div className={showPaywall ? 'pointer-events-none' : ''}>
+  <div 
+    className={showPaywall ? 'relative' : ''}
+    onClick={showPaywall ? (e) => e.stopPropagation() : undefined}
+    onKeyDown={showPaywall ? (e) => e.preventDefault() : undefined}
+  >
     <AISearch 
       onResults={(results, interpretation) => {
         if (!showPaywall) {
@@ -1125,6 +1129,13 @@ const ForYou = () => {
         }
       }}
     />
+    {showPaywall && (
+      <div 
+        className="absolute inset-0 cursor-not-allowed" 
+        onClick={(e) => e.stopPropagation()}
+        onFocus={(e) => e.preventDefault()}
+      />
+    )}
   </div>
           
           <div className={`absolute top-1/2 -translate-y-1/2 right-2 group ${showPaywall ? 'opacity-50' : ''}`}>
