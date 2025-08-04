@@ -312,10 +312,16 @@ const ForYou = () => {
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-    // ADD THE SCROLL HOOKS HERE:
-  const { scrollY, scrollYProgress } = useScroll();
-  const scrollYTransform = useTransform(scrollY, [0, 1000], [0, -200]);
-  const scrollProgressValue = scrollYProgress.get();
+ // REPLACE YOUR CURRENT SCROLL HOOKS WITH THIS:
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const opacity1 = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const opacity2 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
 
   const personalizedHeaders = [
     `We found one you're going to love, ${userProfile?.name?.split(' ')[0] || 'there'}.`,
@@ -1155,41 +1161,38 @@ const ForYou = () => {
         </div>
       </div>
 
-{/* Scroll-jacking marketing images - only for paywall users */}
+{/* Scroll-jacking paywall section */}
 {showPaywall && (
-  <div className="relative h-[300vh] w-full">
-    {/* Sticky container that stays in place */}
+  <div ref={containerRef} className="relative h-[400vh] w-full">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center bg-black overflow-hidden">
-      <div className="relative w-full max-w-6xl mx-auto px-6">
-        {/* First Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 1 }}
-        >
-          <img 
-            src="/lovable-uploads/marketing-image-1.jpg" 
-            alt="The best deals in the city" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
+      <div className="relative w-full max-w-6xl mx-auto px-6 h-full flex items-center justify-center">
 
-        {/* Second Image */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ amount: 0.1, margin: "-99% 0px -99% 0px" }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        >
-          <img 
-            src="/lovable-uploads/marketing-image-2.jpg" 
-            alt="Just describe your dream home" 
-            className="w-full h-auto object-contain max-h-[80vh]"
-          />
-        </motion.div>
+        {/* First Image - fades out as you scroll */}
+        <motion.img
+          src="/lovable-uploads/marketing-image-1.jpg"
+          alt="The best deals in the city"
+          className="absolute inset-0 w-full h-full object-contain"
+          style={{ 
+            opacity: opacity1,
+            zIndex: 2
+          }}
+        />
+
+        {/* Second Image - fades in as you scroll */}
+        <motion.img
+          src="/lovable-uploads/marketing-image-2.jpg"
+          alt="Just describe your dream home"
+          className="absolute inset-0 w-full h-full object-contain"
+          style={{ 
+            opacity: opacity2,
+            zIndex: 1
+          }}
+        />
+
       </div>
     </div>
+  </div>
+)}
 
     {/* Invisible trigger at the very bottom */}
     <div className="absolute bottom-0 w-full h-10" />
