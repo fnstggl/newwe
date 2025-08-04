@@ -336,84 +336,112 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     return 0;
   };
 
-  useEffect(() => {
-    if (currentStep === 7) {
-      const interval = setInterval(() => {
-        setScanningProgress(prev => {
-          const newProgress = prev + 1;
-          if (newProgress <= 20) setScanningStage(0);
-          else if (newProgress <= 40) setScanningStage(1);
-          else if (newProgress <= 60) setScanningStage(2);
-          else if (newProgress <= 80) setScanningStage(3);
-          else if (newProgress <= 100) {
-            setScanningStage(4);
-            getLiveCount(onboardingData, true).then(result => {
-              if (result.direct > 0) {
-                setMatchedListings(result.direct);
-                setFinalFiltersToSave(onboardingData);
-              } else if (result.similar > 0) {
-                setMatchedListings(result.similar);
-                setUsedSimilarFilters(result.adjustedFilters || null);
-                setFinalFiltersToSave(result.adjustedFilters || null);
-              } else {
-                setMatchedListings(0);
-                setFinalFiltersToSave(onboardingData);
-              }
-            });
-          }
-          
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => setCurrentStep(8), 1500);
-          }
-          return Math.min(newProgress, 100);
-        });
-      }, 80);
-      
-      return () => clearInterval(interval);
-    }
-  }, [currentStep, onboardingData]);
-
-  const updateData = (key: keyof OnboardingData, value: any) => {
-    const newData = { ...onboardingData, [key]: value };
+ // NEW useEffect for step 6 initialization - ADD THIS ONE
+useEffect(() => {
+  // Initialize live count for step 6 (below-market slider) when it loads
+  if (currentStep === 6 && !onboardingData.discount_threshold) {
+    // Set default discount threshold and get live count
+    const defaultThreshold = 20;
+    const newData = { ...onboardingData, discount_threshold: defaultThreshold };
     setOnboardingData(newData);
-    setLastUpdatedFilter(key);
+    setLastUpdatedFilter('discount_threshold');
     
-    // Update live count when relevant filters change
-    if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
-      setIsCheckingSimilar(false);
-      setSimilarListingsFound(0);
-      setUsedSimilarFilters(null);
-      
-      getLiveCount(newData, false).then(result => {
-        setCurrentLiveCount(result.direct);
-        if (result.direct === 0) {
-          setIsCheckingSimilar(true);
-          getLiveCount(newData, true).then(similarResult => {
-            setIsCheckingSimilar(false);
-            setSimilarListingsFound(similarResult.similar);
-            if (similarResult.adjustedFilters) {
-              setUsedSimilarFilters(similarResult.adjustedFilters);
+    getLiveCount(newData, false).then(result => {
+      setCurrentLiveCount(result.direct);
+      if (result.direct === 0) {
+        setIsCheckingSimilar(true);
+        getLiveCount(newData, true).then(similarResult => {
+          setIsCheckingSimilar(false);
+          setSimilarListingsFound(similarResult.similar);
+          if (similarResult.adjustedFilters) {
+            setUsedSimilarFilters(similarResult.adjustedFilters);
+          }
+        });
+      }
+    });
+  }
+}, [currentStep]);
+
+// EXISTING useEffect for step 7 scanning - KEEP AS IS
+useEffect(() => {
+  if (currentStep === 7) {
+    const interval = setInterval(() => {
+      setScanningProgress(prev => {
+        const newProgress = prev + 1;
+        if (newProgress <= 20) setScanningStage(0);
+        else if (newProgress <= 40) setScanningStage(1);
+        else if (newProgress <= 60) setScanningStage(2);
+        else if (newProgress <= 80) setScanningStage(3);
+        else if (newProgress <= 100) {
+          setScanningStage(4);
+          getLiveCount(onboardingData, true).then(result => {
+            if (result.direct > 0) {
+              setMatchedListings(result.direct);
+              setFinalFiltersToSave(onboardingData);
+            } else if (result.similar > 0) {
+              setMatchedListings(result.similar);
+              setUsedSimilarFilters(result.adjustedFilters || null);
+              setFinalFiltersToSave(result.adjustedFilters || null);
+            } else {
+              setMatchedListings(0);
+              setFinalFiltersToSave(onboardingData);
             }
           });
         }
+        
+        if (newProgress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setCurrentStep(8), 1500);
+        }
+        return Math.min(newProgress, 100);
       });
-    }
-  };
+    }, 80);
+    
+    return () => clearInterval(interval);
+  }
+}, [currentStep, onboardingData]);
 
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      onComplete(onboardingData, finalFiltersToSave);
-    }
-  };
+// YOUR EXISTING updateData, nextStep, prevStep functions stay exactly the same
+const updateData = (key: keyof OnboardingData, value: any) => {
+  const newData = { ...onboardingData, [key]: value };
+  setOnboardingData(newData);
+  setLastUpdatedFilter(key);
+  
+  // Update live count when relevant filters change
+  if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
+    setIsCheckingSimilar(false);
+    setSimilarListingsFound(0);
+    setUsedSimilarFilters(null);
+    
+    getLiveCount(newData, false).then(result => {
+      setCurrentLiveCount(result.direct);
+      if (result.direct === 0) {
+        setIsCheckingSimilar(true);
+        getLiveCount(newData, true).then(similarResult => {
+          setIsCheckingSimilar(false);
+          setSimilarListingsFound(similarResult.similar);
+          if (similarResult.adjustedFilters) {
+            setUsedSimilarFilters(similarResult.adjustedFilters);
+          }
+        });
+      }
+    });
+  }
+};
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+const nextStep = () => {
+  if (currentStep < totalSteps) {
+    setCurrentStep(currentStep + 1);
+  } else {
+    onComplete(onboardingData, finalFiltersToSave);
+  }
+};
+
+const prevStep = () => {
+  if (currentStep > 1) {
+    setCurrentStep(currentStep - 1);
+  }
+};
 
   const handleArrayToggle = (key: keyof OnboardingData, value: string) => {
     const currentArray = (onboardingData[key] as string[]) || [];
@@ -464,40 +492,40 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     );
   };
 
-  const TagButton = ({ 
-    children, 
-    selected, 
-    onClick, 
-    delay = 0,
-    noAnimation = false
-  }: { 
-    children: React.ReactNode; 
-    selected?: boolean; 
-    onClick: () => void;
-    delay?: number;
-    noAnimation?: boolean;
-  }) => {
-    const stepAnimated = hasInitiallyAnimated[currentStep];
-    
-    return (
-      <button
-        onClick={onClick}
-        className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
-          (stepAnimated || noAnimation) ? 'opacity-100' : 'opacity-0 animate-slide-up'
-        } ${
-          selected
-            ? 'border-white bg-white text-black'
-            : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
-        }`}
-        style={(!stepAnimated && !noAnimation) ? { 
-          animationDelay: `${delay}ms`,
-          animationFillMode: 'forwards'
-        } : {}}
-      >
-        {children}
-      </button>
-    );
-  };
+ const TagButton = ({ 
+  children, 
+  selected, 
+  onClick, 
+  delay = 0,
+  noAnimation = false
+}: { 
+  children: React.ReactNode; 
+  selected?: boolean; 
+  onClick: () => void;
+  delay?: number;
+  noAnimation?: boolean;
+}) => {
+  const stepAnimated = hasInitiallyAnimated[currentStep];
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-full border transition-transform duration-200 ease-out hover:scale-105 ${
+        (stepAnimated || noAnimation) ? 'opacity-100' : 'opacity-0 animate-slide-up'
+      } ${
+        selected
+          ? 'border-white bg-white text-black'
+          : 'border-gray-600 bg-transparent text-white hover:border-gray-400'
+      }`}
+      style={(!stepAnimated && !noAnimation) ? { 
+        animationDelay: `${delay}ms`,
+        animationFillMode: 'forwards'
+      } : {}}
+    >
+      {children}
+    </button>
+  );
+};
 
   const saveOnboardingData = async (userId: string) => {
     try {
@@ -869,18 +897,18 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                       Neighborhoods {getLiveCountDisplay('preferred_neighborhoods')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {neighborhoods.map((neighborhood, index) => (
-                        <TagButton
-                          key={`${currentStep}-${neighborhood}`}
-                          selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
-                          onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
-                          delay={index * 20}
-                          noAnimation={lastUpdatedFilter === 'preferred_neighborhoods'}
-                        >
-                          {neighborhood}
-                        </TagButton>
-                      ))}
-                    </div>
+  {neighborhoods.map((neighborhood, index) => (
+    <TagButton
+      key={`${currentStep}-${neighborhood}`}
+      selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
+      onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
+      delay={index * 20}
+      noAnimation={lastUpdatedFilter === 'preferred_neighborhoods' || lastUpdatedFilter === 'max_budget'}
+    >
+      {neighborhood}
+    </TagButton>
+  ))}
+</div>
                   </div>
 
                   <div className="space-y-4">
@@ -888,18 +916,18 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                       Must-haves {getLiveCountDisplay('must_haves')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
-                        <TagButton
-                          key={`${currentStep}-${option}`}
-                          selected={onboardingData.must_haves?.includes(option)}
-                          onClick={() => handleArrayToggle('must_haves', option)}
-                          delay={index * 50}
-                          noAnimation={lastUpdatedFilter === 'must_haves'}
-                        >
-                          {option}
-                        </TagButton>
-                      ))}
-                    </div>
+  {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
+    <TagButton
+      key={`${currentStep}-${option}`}
+      selected={onboardingData.must_haves?.includes(option)}
+      onClick={() => handleArrayToggle('must_haves', option)}
+      delay={index * 50}
+      noAnimation={lastUpdatedFilter === 'must_haves' || lastUpdatedFilter === 'max_budget'}
+    >
+      {option}
+    </TagButton>
+  ))}
+</div>
                   </div>
 
                   <button
@@ -939,10 +967,10 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
                   <span>30%</span>
                   <span>40%+</span>
                 </div>
-                <p className="text-center text-xl font-semibold">
-                  {onboardingData.discount_threshold || 20}% below market
-                  {getLiveCountDisplay('discount_threshold')}
-                </p>
+               <p className="text-center text-xl font-semibold">
+  {onboardingData.discount_threshold || 20}% below market
+  {getLiveCountDisplay('discount_threshold')}
+</p>
               </div>
 
               <button
