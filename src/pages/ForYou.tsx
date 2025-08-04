@@ -8,7 +8,7 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyDetail from '@/components/PropertyDetail';
 import UpdateFiltersModal from '@/components/UpdateFiltersModal';
 import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import AISearch from '@/components/AISearch';
 
 interface Property {
@@ -1159,13 +1159,18 @@ const ForYou = () => {
 {showPaywall && (
   <div className="relative h-screen w-full overflow-hidden">
     <div className="sticky top-0 h-screen w-full flex items-center justify-center">
-      <motion.div className="relative w-full max-w-6xl mx-auto px-6">
+      <motion.div
+        className="relative w-full max-w-6xl mx-auto px-6"
+        style={{ y: scrollYTransform }}
+      >
         {/* First Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: useTransform(scrollYProgress, [0, 0.5], [1, 0])
+          initial={{ opacity: 1 }}
+          animate={{ 
+            opacity: scrollProgressValue > 0.5 ? 0 : 1 
           }}
+          transition={{ duration: 0.5 }}
         >
           <img 
             src="/lovable-uploads/marketing-image-1.jpg" 
@@ -1177,9 +1182,11 @@ const ForYou = () => {
         {/* Second Image */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: useTransform(scrollYProgress, [0.5, 1], [0, 1])
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: scrollProgressValue > 0.5 ? 1 : 0 
           }}
+          transition={{ duration: 0.5 }}
         >
           <img 
             src="/lovable-uploads/marketing-image-2.jpg" 
