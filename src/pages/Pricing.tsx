@@ -145,7 +145,7 @@ const Pricing = () => {
               <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  9 deals per day
+                  24 deals per day
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
