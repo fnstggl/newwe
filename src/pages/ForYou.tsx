@@ -1029,11 +1029,10 @@ const ForYou = () => {
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden"
+    className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center z-30 border border-white/20 overflow-hidden rounded-3xl"
     style={{
       backdropFilter: 'blur(8px) saturate(180%)',
       WebkitBackdropFilter: 'blur(8px) saturate(180%)',
-      borderRadius: 'inherit',
     }}
   >
                       <div className="text-center space-y-4 px-8">
