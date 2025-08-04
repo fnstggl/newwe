@@ -145,7 +145,7 @@ const Navbar = () => {
               Upgrade
             </Link>
             <Link 
-              to="/manifesto" 
+              to="/mission" 
               className={`px-3 py-2 rounded-md transition-all hover:text-white text-xs tracking-tight ${
                 location.pathname === '/manifesto' ? 'text-white' : 'text-gray-300'
               }`}
