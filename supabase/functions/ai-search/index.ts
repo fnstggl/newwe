@@ -77,6 +77,14 @@ WHEN USER SAYS:
 - "safe area" → Upper East Side, Brooklyn Heights, Park Slope
 - "good schools" → Park Slope, Brooklyn Heights, Upper West Side, Forest Hills, Upper East Side
 - "by the water" → DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook
+- "young professionals" → Williamsburg, Park Slope, LIC, Hell's Kitchen, Upper East Side
+- "up-and-coming" → Bushwick, Crown Heights, LIC, Sunset Park, Gowanus
+- "family-friendly" → Park Slope, Brooklyn Heights, Upper West Side, Astoria, Forest Hills
+- "dog-friendly" → Park Slope, Prospect Heights, LIC, Williamsburg
+- "walkable" → Greenwich Village, SoHo, Park Slope, Astoria
+- "good for students" → East Village, LES, Astoria, Crown Heights
+- "close to work" → Financial District, Midtown, LIC, DUMBO
+- "good coffee shops" → Williamsburg, East Village, Park Slope, Astoria
 
 RESPOND ONLY WITH VALID JSON - NO EXPLANATIONS OR EXTRA TEXT:
 {"property_type": "rent|buy", "max_budget": number, "bedrooms": number, "neighborhoods": ["..."], "boroughs": ["..."], "must_haves": ["..."], "interpretation": "..."}
