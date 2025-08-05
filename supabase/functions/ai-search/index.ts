@@ -68,11 +68,6 @@ CRITICAL RULES - FOLLOW THESE EXACTLY:
 - If budget/price stated is under $100,000 → set property_type to "rent" (likely monthly rent)
 - If budget/price stated is over $100,000 → set property_type to "buy" (likely purchase price)
 
-SEARCH STRATEGY:
-- When expanding vague terms like "good schools", include MORE neighborhoods rather than fewer
-- If a query combines multiple criteria (location + budget + amenities), prioritize showing SOME results rather than NO results
-- Better to show nearby or similar options than nothing at all
-
 NYC NEIGHBORHOOD CONTEXT:
 
 SHOPPING AREAS:
@@ -155,13 +150,9 @@ Example of CORRECT response format:
 
 Example of INCORRECT response format:
 ```json
-{"property_type": "rent", "interpretation": "example"}
-```
+{"property_type": "rent"}
 
-Example of CORRECT response format (pure JSON):
-{"property_type": "rent", "interpretation": "example"}
-
-NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
+NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES::
 "2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals up to $4,000/month in Brooklyn"}
 
 "3 bedroom for 5M" → {"property_type": "buy", "max_budget": 5000000, "bedrooms": 3, "interpretation": "Looking for 3-bedroom properties up to $5M"}
@@ -172,9 +163,10 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
 
 "Rent stabilized apartments" → {"must_haves": ["rent_stabilized"], "interpretation": "Looking specifically for rent-stabilized apartments"}
 
-"studio near good schools, under $10k" → {"property_type": "rent", "bedrooms": 0, "max_budget": 10000, "neighborhoods": ["Park Slope", "Brooklyn Heights", "Upper West Side", "Forest Hills", "Upper East Side", "Astoria"], "interpretation": "Looking for studio rentals under $10,000 in school-friendly neighborhoods"}
+"Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}
+    
+    FINAL REMINDER: Return ONLY the JSON object. No explanations, no markdown, no extra text. Start with { and end with }. Nothing else.`
 
-"Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}`
 
     // Call Claude API
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -215,25 +207,27 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
     // Clean the response to ensure it's valid JSON
     const cleanedResponse = aiResponse.replace(/```json\n?/, '').replace(/```\n?$/, '').trim()
     
-    let parsedFilters
-    try {
-      parsedFilters = JSON.parse(cleanedResponse)
-    } catch (parseError) {
-      console.error('Failed to parse Claude response:', cleanedResponse)
-      return new Response(
-        JSON.stringify({ 
-          error: 'Failed to parse AI response',
-          fallback: {
-            interpretation: "I couldn't understand your request. Please try rephrasing it.",
-            property_type: "rent",
-            neighborhoods: [],
-            boroughs: [],
-            must_haves: [],
-            max_budget: null,
-            bedrooms: null,
-            discount_threshold: null
-          }
-        }),
+  let parsedFilters
+try {
+  parsedFilters = JSON.parse(cleanedResponse)
+} catch (parseError) {
+  console.error('Failed to parse Claude response:', cleanedResponse)
+  console.error('Original AI response:', aiResponse) // Add this line
+  return new Response(
+    JSON.stringify({ 
+      error: 'Failed to parse AI response',
+      rawResponse: aiResponse, // Add this line for debugging
+      fallback: {
+        interpretation: "Try a more specific prompt or adjust your criteria. Examples: \"2BR under $4k in Brooklyn\" or \"pet-friendly studio with gym\".",
+        property_type: "rent",
+        neighborhoods: [],
+        boroughs: [],
+        must_haves: [],
+        max_budget: null,
+        bedrooms: null,
+        discount_threshold: null
+      }
+    }),
         { 
           status: 200, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
