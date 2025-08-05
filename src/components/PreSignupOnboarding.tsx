@@ -24,10 +24,11 @@ interface OnboardingData {
 
 interface PreSignupOnboardingProps {
   onComplete: (data: OnboardingData, adjustedFilters?: OnboardingData | null) => void;
+  skipAuth?: boolean; // New prop to skip auth for already signed in users
 }
 
-const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete }) => {
-  const [currentStep, setCurrentStep] = useState(1);
+const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete, skipAuth = false }) => {
+  const [currentStep, setCurrentStep] = useState(0); // Start at step 0 for intro
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
   const [scanningProgress, setScanningProgress] = useState(0);
   const [scanningStage, setScanningStage] = useState(0);
@@ -51,7 +52,7 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
   const { toast } = useToast();
   
 
-  const totalSteps = 8;
+  const totalSteps = skipAuth ? 8 : 9; // Adjust total steps based on skipAuth
 
   const scanningStages = [
     "Analyzing market trends...",
@@ -61,42 +62,42 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     "✅ Found matching listings"
   ];
 
- const neighborhoods = [
-  "Manhattan", "Brooklyn", "Queens", "Bronx", "Carroll Gardens", "Bed-Stuy", "Williamsburg", "Astoria", 
-  "Long Island City", "Park Slope", "Greenpoint", "Bushwick",
-  "Crown Heights", "Sunset Park", "Red Hook", "Dumbo",
-  "Fort Greene", "Prospect Heights", "Chelsea", "SoHo",
-  "East Village", "West Village", "Lower East Side", "Tribeca",
-  "Financial District", "Midtown", "Upper East Side", "Upper West Side",
-  "Harlem", "Washington Heights", "Inwood", "Jackson Heights",
-  "Elmhurst", "Forest Hills", "Flushing",
-  
-  // NEW NEIGHBORHOODS ADDED FROM LIST 2:
-  // Manhattan
-  "Kips Bay", "Midtown East", "Midtown West", "Hell's Kitchen",
-  "Morningside Heights", "Hamilton Heights", "Greenwich Village",
-  "NoHo", "Civic Center", "Hudson Square", "Roosevelt Island",
-  "Hudson Yards", "NoMad", "Manhattan Valley", "Central Harlem",
-  "Little Italy", "NoLita", "Two Bridges", "Murray Hill",
-  "Battery Park City",
-  
-  // Brooklyn
-  "Prospect Lefferts Gardens", "Vinegar Hill", "Windsor Terrace",
-  "Cobble Hill", "Boerum Hill", "Gowanus", "Clinton Hill",
-  "Downtown Brooklyn", "Columbia St Waterfront District",
-  "Brooklyn Heights", "Ditmas Park",
-  
-  // Queens
-  "Corona", "Ridgewood", "Maspeth", "Rego Park", "Bayside",
-  "Ditmars Steinway", "Sunnyside", "Woodside", "Briarwood",
-  "Fresh Meadows",
-  
-  // Bronx
-  "Kingsbridge", "Norwood", "Mott Haven", "Melrose", "South Bronx",
-  "Concourse",
-  
-  "Anywhere with a train"
-];
+  const neighborhoods = [
+    "Manhattan", "Brooklyn", "Queens", "Bronx", "Carroll Gardens", "Bed-Stuy", "Williamsburg", "Astoria", 
+    "Long Island City", "Park Slope", "Greenpoint", "Bushwick",
+    "Crown Heights", "Sunset Park", "Red Hook", "Dumbo",
+    "Fort Greene", "Prospect Heights", "Chelsea", "SoHo",
+    "East Village", "West Village", "Lower East Side", "Tribeca",
+    "Financial District", "Midtown", "Upper East Side", "Upper West Side",
+    "Harlem", "Washington Heights", "Inwood", "Jackson Heights",
+    "Elmhurst", "Forest Hills", "Flushing",
+    
+    // NEW NEIGHBORHOODS ADDED FROM LIST 2:
+    // Manhattan
+    "Kips Bay", "Midtown East", "Midtown West", "Hell's Kitchen",
+    "Morningside Heights", "Hamilton Heights", "Greenwich Village",
+    "NoHo", "Civic Center", "Hudson Square", "Roosevelt Island",
+    "Hudson Yards", "NoMad", "Manhattan Valley", "Central Harlem",
+    "Little Italy", "NoLita", "Two Bridges", "Murray Hill",
+    "Battery Park City",
+    
+    // Brooklyn
+    "Prospect Lefferts Gardens", "Vinegar Hill", "Windsor Terrace",
+    "Cobble Hill", "Boerum Hill", "Gowanus", "Clinton Hill",
+    "Downtown Brooklyn", "Columbia St Waterfront District",
+    "Brooklyn Heights", "Ditmas Park",
+    
+    // Queens
+    "Corona", "Ridgewood", "Maspeth", "Rego Park", "Bayside",
+    "Ditmars Steinway", "Sunnyside", "Woodside", "Briarwood",
+    "Fresh Meadows",
+    
+    // Bronx
+    "Kingsbridge", "Norwood", "Mott Haven", "Melrose", "South Bronx",
+    "Concourse",
+    
+    "Anywhere with a train"
+  ];
 
   const rentalMustHaveOptions = [
     "Rent-stabilized", "No broker fee", "Pet-friendly", "Outdoor space",
@@ -336,112 +337,114 @@ const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete })
     return 0;
   };
 
- // NEW useEffect for step 6 initialization - ADD THIS ONE
-useEffect(() => {
-  // Initialize live count for step 6 (below-market slider) when it loads
-  if (currentStep === 6 && !onboardingData.discount_threshold) {
-    // Set default discount threshold and get live count
-    const defaultThreshold = 20;
-    const newData = { ...onboardingData, discount_threshold: defaultThreshold };
-    setOnboardingData(newData);
-    setLastUpdatedFilter('discount_threshold');
-    
-    getLiveCount(newData, false).then(result => {
-      setCurrentLiveCount(result.direct);
-      if (result.direct === 0) {
-        setIsCheckingSimilar(true);
-        getLiveCount(newData, true).then(similarResult => {
-          setIsCheckingSimilar(false);
-          setSimilarListingsFound(similarResult.similar);
-          if (similarResult.adjustedFilters) {
-            setUsedSimilarFilters(similarResult.adjustedFilters);
-          }
-        });
-      }
-    });
-  }
-}, [currentStep]);
-
-// EXISTING useEffect for step 7 scanning - KEEP AS IS
-useEffect(() => {
-  if (currentStep === 7) {
-    const interval = setInterval(() => {
-      setScanningProgress(prev => {
-        const newProgress = prev + 1;
-        if (newProgress <= 20) setScanningStage(0);
-        else if (newProgress <= 40) setScanningStage(1);
-        else if (newProgress <= 60) setScanningStage(2);
-        else if (newProgress <= 80) setScanningStage(3);
-        else if (newProgress <= 100) {
-          setScanningStage(4);
-          getLiveCount(onboardingData, true).then(result => {
-            if (result.direct > 0) {
-              setMatchedListings(result.direct);
-              setFinalFiltersToSave(onboardingData);
-            } else if (result.similar > 0) {
-              setMatchedListings(result.similar);
-              setUsedSimilarFilters(result.adjustedFilters || null);
-              setFinalFiltersToSave(result.adjustedFilters || null);
-            } else {
-              setMatchedListings(0);
-              setFinalFiltersToSave(onboardingData);
+  useEffect(() => {
+    if (currentStep === 7 && !onboardingData.discount_threshold) {
+      const defaultThreshold = 20;
+      const newData = { ...onboardingData, discount_threshold: defaultThreshold };
+      setOnboardingData(newData);
+      setLastUpdatedFilter('discount_threshold');
+      
+      getLiveCount(newData, false).then(result => {
+        setCurrentLiveCount(result.direct);
+        if (result.direct === 0) {
+          setIsCheckingSimilar(true);
+          getLiveCount(newData, true).then(similarResult => {
+            setIsCheckingSimilar(false);
+            setSimilarListingsFound(similarResult.similar);
+            if (similarResult.adjustedFilters) {
+              setUsedSimilarFilters(similarResult.adjustedFilters);
             }
           });
         }
-        
-        if (newProgress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => setCurrentStep(8), 1500);
-        }
-        return Math.min(newProgress, 100);
       });
-    }, 80);
-    
-    return () => clearInterval(interval);
-  }
-}, [currentStep, onboardingData]);
+    }
+  }, [currentStep]);
 
-// YOUR EXISTING updateData, nextStep, prevStep functions stay exactly the same
-const updateData = (key: keyof OnboardingData, value: any) => {
-  const newData = { ...onboardingData, [key]: value };
-  setOnboardingData(newData);
-  setLastUpdatedFilter(key);
-  
-  // Update live count when relevant filters change
-  if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
-    setIsCheckingSimilar(false);
-    setSimilarListingsFound(0);
-    setUsedSimilarFilters(null);
-    
-    getLiveCount(newData, false).then(result => {
-      setCurrentLiveCount(result.direct);
-      if (result.direct === 0) {
-        setIsCheckingSimilar(true);
-        getLiveCount(newData, true).then(similarResult => {
-          setIsCheckingSimilar(false);
-          setSimilarListingsFound(similarResult.similar);
-          if (similarResult.adjustedFilters) {
-            setUsedSimilarFilters(similarResult.adjustedFilters);
+  useEffect(() => {
+    const finalStep = skipAuth ? 8 : 8; // Scanning step
+    if (currentStep === finalStep) {
+      const interval = setInterval(() => {
+        setScanningProgress(prev => {
+          const newProgress = prev + 1;
+          if (newProgress <= 20) setScanningStage(0);
+          else if (newProgress <= 40) setScanningStage(1);
+          else if (newProgress <= 60) setScanningStage(2);
+          else if (newProgress <= 80) setScanningStage(3);
+          else if (newProgress <= 100) {
+            setScanningStage(4);
+            getLiveCount(onboardingData, true).then(result => {
+              if (result.direct > 0) {
+                setMatchedListings(result.direct);
+                setFinalFiltersToSave(onboardingData);
+              } else if (result.similar > 0) {
+                setMatchedListings(result.similar);
+                setUsedSimilarFilters(result.adjustedFilters || null);
+                setFinalFiltersToSave(result.adjustedFilters || null);
+              } else {
+                setMatchedListings(0);
+                setFinalFiltersToSave(onboardingData);
+              }
+            });
           }
+          
+          if (newProgress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              if (skipAuth) {
+                // For signed-in users, complete onboarding directly
+                onComplete(onboardingData, finalFiltersToSave);
+              } else {
+                setCurrentStep(9); // Go to auth step
+              }
+            }, 1500);
+          }
+          return Math.min(newProgress, 100);
         });
-      }
-    });
-  }
-};
+      }, 80);
+      
+      return () => clearInterval(interval);
+    }
+  }, [currentStep, onboardingData, skipAuth, finalFiltersToSave]);
 
-const nextStep = () => {
-  if (currentStep < totalSteps) {
-    setCurrentStep(currentStep + 1);
-  } else {
-    onComplete(onboardingData, finalFiltersToSave);
-  }
-};
+  const updateData = (key: keyof OnboardingData, value: any) => {
+    const newData = { ...onboardingData, [key]: value };
+    setOnboardingData(newData);
+    setLastUpdatedFilter(key);
+    
+    if (['bedrooms', 'max_budget', 'preferred_neighborhoods', 'discount_threshold', 'must_haves'].includes(key)) {
+      setIsCheckingSimilar(false);
+      setSimilarListingsFound(0);
+      setUsedSimilarFilters(null);
+      
+      getLiveCount(newData, false).then(result => {
+        setCurrentLiveCount(result.direct);
+        if (result.direct === 0) {
+          setIsCheckingSimilar(true);
+          getLiveCount(newData, true).then(similarResult => {
+            setIsCheckingSimilar(false);
+            setSimilarListingsFound(similarResult.similar);
+            if (similarResult.adjustedFilters) {
+              setUsedSimilarFilters(similarResult.adjustedFilters);
+            }
+          });
+        }
+      });
+    }
+  };
 
-const prevStep = () => {
-  if (currentStep > 1) {
-    setCurrentStep(currentStep - 1);
-  }
-};
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      onComplete(onboardingData, finalFiltersToSave);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
   const handleArrayToggle = (key: keyof OnboardingData, value: string) => {
     const currentArray = (onboardingData[key] as string[]) || [];
@@ -492,7 +495,7 @@ const prevStep = () => {
     );
   };
 
- const TagButton = ({ 
+  const TagButton = ({ 
   children, 
   selected, 
   onClick, 
@@ -583,7 +586,6 @@ const prevStep = () => {
             await saveOnboardingData(user.id);
           }
           
-          // Use window.location.href to force a full page navigation
           window.location.href = '/foryou';
         }
       } else {
@@ -606,7 +608,6 @@ const prevStep = () => {
             await saveOnboardingData(user.id);
           }
           
-          // Use window.location.href to force a full page navigation
           window.location.href = '/foryou';
         }
       }
@@ -638,7 +639,6 @@ const prevStep = () => {
         if (user) {
           await saveOnboardingData(user.id);
         }
-        // Use window.location.href to force a full page navigation
         window.location.href = '/foryou';
       }
     } catch (error) {
@@ -653,7 +653,6 @@ const prevStep = () => {
     }
   };
 
-  // Helper function to get the live count display text
   const getLiveCountDisplay = (filterKey: string) => {
     if (lastUpdatedFilter !== filterKey) return '';
     
@@ -672,86 +671,118 @@ const prevStep = () => {
 
   const renderStep = () => {
     switch (currentStep) {
+      case 0:
+        return (
+          <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
+            <div className="fixed top-8 left-8 z-50">
+              <button
+                onClick={() => navigate('/')}
+                className="p-3 rounded-full bg-transparent hover:bg-gray-800/50 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            
+            <div className="max-w-lg w-full text-center space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                  Let's tailor this to you.
+                </h1>
+                <p className="text-gray-400 text-lg tracking-tight">
+                  Describe your budget, favorite neighborhoods, wishlist.<br />
+                  We'll handpick listings in 15 seconds.
+                </p>
+              </div>
+
+              <HoverButton
+                onClick={() => setCurrentStep(1)}
+                className="w-full py-4 text-lg font-semibold tracking-tight bg-white text-black hover:bg-gray-100 rounded-full"
+              >
+                Start Now
+              </HoverButton>
+            </div>
+          </div>
+        );
+
       case 1:
-  return (
-    <>
-      {/* Back arrow for first step */}
-      <div className="fixed top-8 left-8 z-50">
-        <button
-          onClick={() => window.history.back()}
-          className="p-3 rounded-full bg-transparent hover:bg-gray-800/50 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-400" />
-        </button>
-      </div>
-      
-      <OnboardingStep
-         key={`step-${currentStep}`}
-        step={currentStep}
-        totalSteps={totalSteps}
-        title="How long have you been searching?"
-      >
+        return (
+          <>
+            <div className="fixed top-8 left-8 z-50">
+              <button
+                onClick={prevStep}
+                className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            
+            <OnboardingStep
+              key={`step-${currentStep}`}
+              step={currentStep}
+              totalSteps={skipAuth ? 8 : 9}
+              title="How long have you been searching?"
+            >
+              <div className="space-y-4">
+                {['Just started', '1–3 months', '3–6 months', 'Over 6 months'].map((option, index) => (
+                  <ChoiceButton
+                    key={`${currentStep}-${option}`} 
+                    selected={onboardingData.search_duration === option}
+                    onClick={() => {
+                      updateData('search_duration', option);
+                      setTimeout(nextStep, 100);
+                    }}
+                    delay={index * 100}
+                  >
+                    {option}
+                  </ChoiceButton>
+                ))}
+              </div>
+            </OnboardingStep>
+          </>
+        );
+
+      case 2:
+        return (
+          <OnboardingStep
+            key={`step-${currentStep}`}
+            step={currentStep}
+            totalSteps={skipAuth ? 8 : 9}
+            title="What's been the most frustrating part?"
+            subtitle="Select all that apply"
+          >
             <div className="space-y-4">
-              {['Just started', '1–3 months', '3–6 months', 'Over 6 months'].map((option, index) => (
+              {[
+                'Every good listing is gone in 24 hours',
+                'I can\'t find anything nice I can actually afford',
+                'Broker\'s fees are way too high',
+                'Rent keeps climbing year after year'
+              ].map((option, index) => (
                 <ChoiceButton
-                  key={`${currentStep}-${option}`} 
-                  selected={onboardingData.search_duration === option}
-                  onClick={() => {
-                    updateData('search_duration', option);
-                    setTimeout(nextStep, 100); // ← Add this back!
-                  }}
+                  key={`${currentStep}-${option}`}
+                  selected={onboardingData.frustrations?.includes(option)}
+                  onClick={() => handleArrayToggle('frustrations', option)}
                   delay={index * 100}
                 >
                   {option}
                 </ChoiceButton>
               ))}
             </div>
+            <button
+              onClick={nextStep}
+              disabled={!onboardingData.frustrations?.length}
+              className="mt-8 w-full p-4 bg-white text-black rounded-full font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
+            >
+              Next
+            </button>
           </OnboardingStep>
-        </>
         );
-
-      case 2:
-  return (
-    <OnboardingStep
-       key={`step-${currentStep}`}
-      step={currentStep}
-      totalSteps={totalSteps}
-      title="What's been the most frustrating part?"
-      subtitle="Select all that apply"
-    >
-      <div className="space-y-4">
-        {[
-          'Every good listing is gone in 24 hours',
-          'I can\'t find anything nice I can actually afford',
-          'Broker\'s fees are way too high',
-          'Rent keeps climbing year after year'
-        ].map((option, index) => (
-          <ChoiceButton
-            key={`${currentStep}-${option}`}
-            selected={onboardingData.frustrations?.includes(option)}
-            onClick={() => handleArrayToggle('frustrations', option)}
-            delay={index * 100}
-          >
-            {option}
-          </ChoiceButton>
-        ))}
-      </div>
-      <button
-        onClick={nextStep}
-        disabled={!onboardingData.frustrations?.length}
-        className="mt-8 w-full p-4 bg-white text-black rounded-full font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all duration-300"
-      >
-        Next
-      </button>
-    </OnboardingStep>
-  );
 
       case 3:
         return (
           <OnboardingStep
-             key={`step-${currentStep}`}
+            key={`step-${currentStep}`}
             step={currentStep}
-            totalSteps={totalSteps}
+            totalSteps={skipAuth ? 8 : 9}
             title="Who are you searching for?"
           >
             <div className="space-y-4">
@@ -775,9 +806,9 @@ const prevStep = () => {
       case 4:
         return (
           <OnboardingStep
-             key={`step-${currentStep}`}
+            key={`step-${currentStep}`}
             step={currentStep}
-            totalSteps={totalSteps}
+            totalSteps={skipAuth ? 8 : 9}
             title="Are you looking to buy or rent?"
           >
             <div className="flex gap-4">
@@ -819,7 +850,7 @@ const prevStep = () => {
             <div className="fixed top-8 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gray-800 rounded-full overflow-hidden z-40">
               <div 
                 className="h-full bg-white rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                style={{ width: `${(currentStep / (skipAuth ? 8 : 9)) * 100}%` }}
               />
             </div>
 
@@ -858,14 +889,14 @@ const prevStep = () => {
                       Max Budget {getLiveCountDisplay('max_budget')}
                     </h3>
                     <div className="space-y-6">
-                     <Slider
-  value={[onboardingData.max_budget || defaultBudget]}
-  onValueChange={(value) => updateData('max_budget', value[0])}
-  max={maxBudget}
-  min={minBudget}
-  step={step}
-  className="w-full onboarding-slider"
-/>
+                      <Slider
+                        value={[onboardingData.max_budget || defaultBudget]}
+                        onValueChange={(value) => updateData('max_budget', value[0])}
+                        max={maxBudget}
+                        min={minBudget}
+                        step={step}
+                        className="w-full onboarding-slider"
+                      />
                       <div className="flex justify-between text-sm text-gray-400">
                         {isRental ? (
                           <>
@@ -897,18 +928,18 @@ const prevStep = () => {
                       Neighborhoods {getLiveCountDisplay('preferred_neighborhoods')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
-  {neighborhoods.map((neighborhood, index) => (
-    <TagButton
-      key={`${currentStep}-${neighborhood}`}
-      selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
-      onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
-      delay={index * 20}
-      noAnimation={lastUpdatedFilter === 'preferred_neighborhoods' || lastUpdatedFilter === 'max_budget'}
-    >
-      {neighborhood}
-    </TagButton>
-  ))}
-</div>
+                      {neighborhoods.map((neighborhood, index) => (
+                        <TagButton
+                          key={`${currentStep}-${neighborhood}`}
+                          selected={onboardingData.preferred_neighborhoods?.includes(neighborhood)}
+                          onClick={() => handleArrayToggle('preferred_neighborhoods', neighborhood)}
+                          delay={index * 20}
+                          noAnimation={lastUpdatedFilter === 'preferred_neighborhoods' || lastUpdatedFilter === 'max_budget'}
+                        >
+                          {neighborhood}
+                        </TagButton>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-4">
@@ -916,18 +947,18 @@ const prevStep = () => {
                       Must-haves {getLiveCountDisplay('must_haves')}
                     </h3>
                     <div className="flex flex-wrap gap-2 justify-center">
-  {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
-    <TagButton
-      key={`${currentStep}-${option}`}
-      selected={onboardingData.must_haves?.includes(option)}
-      onClick={() => handleArrayToggle('must_haves', option)}
-      delay={index * 50}
-      noAnimation={lastUpdatedFilter === 'must_haves' || lastUpdatedFilter === 'max_budget'}
-    >
-      {option}
-    </TagButton>
-  ))}
-</div>
+                      {(isRental ? rentalMustHaveOptions : salesMustHaveOptions).map((option, index) => (
+                        <TagButton
+                          key={`${currentStep}-${option}`}
+                          selected={onboardingData.must_haves?.includes(option)}
+                          onClick={() => handleArrayToggle('must_haves', option)}
+                          delay={index * 50}
+                          noAnimation={lastUpdatedFilter === 'must_haves' || lastUpdatedFilter === 'max_budget'}
+                        >
+                          {option}
+                        </TagButton>
+                      ))}
+                    </div>
                   </div>
 
                   <button
@@ -945,32 +976,32 @@ const prevStep = () => {
       case 6:
         return (
           <OnboardingStep
-             key={`step-${currentStep}`}
+            key={`step-${currentStep}`}
             step={currentStep}
-            totalSteps={totalSteps}
+            totalSteps={skipAuth ? 8 : 9}
             title="How good of a deal do you want?"
             subtitle="How far below market do you want to go?"
           >
             <div className="space-y-8">
               <div className="space-y-6">
                 <Slider
-  value={[onboardingData.discount_threshold || 20]}
-  onValueChange={(value) => updateData('discount_threshold', value[0])}
-  max={50}
-  min={10}
-  step={5}
-  className="w-full animate-slide-in-left onboarding-slider"
-/>
+                  value={[onboardingData.discount_threshold || 20]}
+                  onValueChange={(value) => updateData('discount_threshold', value[0])}
+                  max={50}
+                  min={10}
+                  step={5}
+                  className="w-full animate-slide-in-left onboarding-slider"
+                />
                 <div className="flex justify-between text-sm text-gray-400">
                   <span>10%</span>
                   <span>20%</span>
                   <span>30%</span>
                   <span>40%+</span>
                 </div>
-               <p className="text-center text-xl font-semibold">
-  {onboardingData.discount_threshold || 20}% below market
-  {getLiveCountDisplay('discount_threshold')}
-</p>
+                <p className="text-center text-xl font-semibold">
+                  {onboardingData.discount_threshold || 20}% below market
+                  {getLiveCountDisplay('discount_threshold')}
+                </p>
               </div>
 
               <button
@@ -983,44 +1014,43 @@ const prevStep = () => {
           </OnboardingStep>
         );
 
-     case 7:
-  return (
-    <OnboardingStep
-       key={`step-${currentStep}`}
-      step={currentStep}
-      totalSteps={totalSteps}
-      title="Scanning NYC listings..."
-    >
-      <div className="space-y-8">
-        {/* Custom Progress Bar */}
-        <div className="w-full h-2 bg-black rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-white rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${scanningProgress}%` }}
-          />
-        </div>
-        
-        <div className="space-y-4">
-          {scanningStages.map((stage, index) => (
-            <div
-              key={stage}
-              className={`text-left transition-all duration-500 font-inter font-semibold tracking-tighter ${
-                index <= scanningStage 
-                  ? index === scanningStage 
-                    ? 'text-white opacity-100' 
-                    : 'text-green-400 opacity-100'
-                  : 'text-gray-600 opacity-50'
-              }`}
-            >
-              {index === 4 && scanningStage >= 4 
-                ? `✅ Found ${matchedListings} matching listings` 
-                : stage}
+      case 7:
+        return (
+          <OnboardingStep
+            key={`step-${currentStep}`}
+            step={currentStep}
+            totalSteps={skipAuth ? 8 : 9}
+            title="Scanning NYC listings..."
+          >
+            <div className="space-y-8">
+              <div className="w-full h-2 bg-black rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-white rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${scanningProgress}%` }}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                {scanningStages.map((stage, index) => (
+                  <div
+                    key={stage}
+                    className={`text-left transition-all duration-500 font-inter font-semibold tracking-tighter ${
+                      index <= scanningStage 
+                        ? index === scanningStage 
+                          ? 'text-white opacity-100' 
+                          : 'text-green-400 opacity-100'
+                        : 'text-gray-600 opacity-50'
+                    }`}
+                  >
+                    {index === 4 && scanningStage >= 4 
+                      ? `✅ Found ${matchedListings} matching listings` 
+                      : stage}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </OnboardingStep>
-  );
+          </OnboardingStep>
+        );
 
       case 8:
         const finalListingCount = matchedListings;
@@ -1149,7 +1179,7 @@ const prevStep = () => {
 
   return (
     <div className="fixed inset-0 z-50">
-      {currentStep !== 5 && currentStep > 1 && currentStep < 8 && (
+      {currentStep > 0 && currentStep < (skipAuth ? 8 : 8) && currentStep !== 5 && (
         <div className="fixed top-8 left-8 z-50">
           <button
             onClick={prevStep}
