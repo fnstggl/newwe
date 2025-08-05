@@ -1187,9 +1187,6 @@ const ForYou = () => {
                             Cancel anytime • $1.50/month
                           </p>
                           
-                          <p className="text-xs text-white/30 pt-4">
-    Prefer to search manually? <a href="/buy" className="underline">Buy</a> or <a href="/rent" className="underline">Rent</a>
-  </p>
                         </div>
                       </div>
                     </motion.div>
@@ -1197,6 +1194,15 @@ const ForYou = () => {
                 </div>
               </motion.div>
             )}
+
+              {showPaywall && (
+    <div className="text-center pt-6">
+      <p className="text-xs text-white/30">
+        Prefer to search manually? <a href="/buy" className="underline">Buy</a> or <a href="/rent" className="underline">Rent</a>
+      </p>
+    </div>
+  )}
+            
           </AnimatePresence>
         </div>
 
