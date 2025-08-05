@@ -1251,7 +1251,7 @@ const additionalNeighborhoods = [
                           Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
-                          You're only seeing 9 of 2,193 deals.
+                          You're only seeing 9 of 4,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/pricing')}

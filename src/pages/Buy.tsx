@@ -982,7 +982,7 @@ const additionalNeighborhoods = [
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          This is only 3 of 2,193 deals.
+                          This is only 3 of 4,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
