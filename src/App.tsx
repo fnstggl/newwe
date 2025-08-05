@@ -27,7 +27,7 @@ import OnboardingPopup from "./components/OnboardingPopup";
 import { useState } from "react";
 import Checkout from "./pages/Checkout";
 import ForYou from "./pages/ForYou";
-import Join from "./pages/Join";
+import NewJoin from "./pages/NewJoin";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +51,7 @@ const AppContent = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/cancel-subscription" element={<CancelSubscription />} />
         <Route path="/manage-subscription" element={<ManageSubscription />} />
-        <Route path="/join" element={<Join />} />
+        <Route path="/join" element={<NewJoin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />
