@@ -42,7 +42,7 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle } = await req.json();
-    // Force annual billing at $24/year regardless of what's passed
+    // Force annual billing at $18/year regardless of what's passed
     const forcedBillingCycle = 'annual';
     logStep("Forced billing cycle to annual", { original: billing_cycle, forced: forcedBillingCycle });
 
@@ -57,8 +57,8 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Always use $24/year pricing
-    const priceAmount = 2400; // $24.00
+    // Always use $18/year pricing
+    const priceAmount = 1800; // $18.00
     const interval = 'year';
 
     const session = await stripe.checkout.sessions.create({

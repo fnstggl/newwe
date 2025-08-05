@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -18,9 +19,9 @@ const Checkout = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Always use annual pricing at $24/year
-  const price = '$24/year';
-  const amount = 24;
+  // Always use annual pricing at $18/year
+  const price = '$18/year';
+  const amount = 18;
 
   useEffect(() => {
     if (!user) {
@@ -33,15 +34,15 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for annual subscription at $24/year using Supabase edge function
+    // Create payment intent for annual subscription at $18/year using Supabase edge function
     const createPaymentIntent = async () => {
       try {
-        console.log('Creating payment intent for annual $24/year plan');
+        console.log('Creating payment intent for annual $18/year plan');
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
             billing_cycle: 'annual',
-            amount: 2400, // $24.00 in cents
+            amount: 1800, // $18.00 in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,

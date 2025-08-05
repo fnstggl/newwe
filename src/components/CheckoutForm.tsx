@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -243,7 +244,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
             Processing...
           </>
         ) : (
-          `Subscribe for $24/year`
+          `Subscribe for $18/year`
         )}
       </button>
 
