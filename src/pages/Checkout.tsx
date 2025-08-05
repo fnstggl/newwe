@@ -141,7 +141,7 @@ const Checkout = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-semibold mb-4 tracking-tighter">
-                Find the best deal in the city. For $28/yr.
+                Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
                 Your apartment's out there. Be the one that gets it.
@@ -168,15 +168,15 @@ const Checkout = () => {
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  Email alerts for new deals
+                  Your dream home, found for you
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  Select areas to be notified in
+                  Instant alerts for new deals
                 </li>
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
-                  Advanced deal analysis
+                  Be first to the best deals
                 </li>
               </ul>
               

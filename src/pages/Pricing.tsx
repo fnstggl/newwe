@@ -189,7 +189,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Your dream home, found instantly—and thousands below market.
+                      Your dream home, found for you.
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
