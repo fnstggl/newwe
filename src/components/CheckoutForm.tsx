@@ -243,7 +243,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
             Processing...
           </>
         ) : (
-          `Subscribe for $28/year`
+          `Subscribe for $24/year`
         )}
       </button>
 
