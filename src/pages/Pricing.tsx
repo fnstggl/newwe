@@ -1,13 +1,10 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
-import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
-  const [isAnnual, setIsAnnual] = useState(true);
   const navigate = useNavigate();
   const { user, userProfile } = useAuth();
   const { toast } = useToast();
@@ -64,13 +61,13 @@ const Pricing = () => {
     }
   }, [toast]);
 
-  const handleSubscribe = (billingCycle: 'monthly' | 'annual') => {
+  const handleSubscribe = () => {
     if (!user) {
       navigate('/login');
       return;
     }
 
-    navigate(`/checkout?billing=${billingCycle}`);
+    navigate(`/checkout?billing=annual`);
   };
 
   const handleManageSubscription = () => {
@@ -97,8 +94,6 @@ const Pricing = () => {
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
-      <GooeyFilter />
-
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
@@ -118,23 +113,6 @@ const Pricing = () => {
   </div>
 </div>
             </div>
-
-          <div className="text-center mb-16">
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <span className={`text-lg ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Annual
-              </span>
-              <Toggle
-                checked={!isAnnual}
-                onCheckedChange={(checked) => setIsAnnual(!checked)}
-                variant="default"
-              />
-              <span className={`text-lg ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Monthly
-              </span>
-            </div>
-          </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Free Plan */}
@@ -188,27 +166,21 @@ const Pricing = () => {
                     <h3 className="text-2xl font-semibold tracking-tight">Unlimited</h3>
                   </div>
                  <div className="mb-6 flex items-center justify-between">
-    {isAnnual ? (
-  <div>
-    <p className="text-4xl font-semibold tracking-tight">
-      $1.50<span className="text-lg text-gray-400">/mo</span>
-    </p>
-    <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-      50% off—billed $18/year
-    </p>
-    <p className="text-xs text-gray-500 mt-1 tracking-tight">
-      (normally $36/year)
-    </p>
-  </div>
-) : (
-  <p className="text-4xl font-semibold tracking-tight">
-    $3<span className="text-lg text-gray-400">/mo</span>
-  </p>
-)}
-  <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
-    Compared to ~$3,600 broker avg
-  </span>
-</div>
+                    <div>
+                      <p className="text-4xl font-semibold tracking-tight">
+                        $2.50<span className="text-lg text-gray-400">/mo</span>
+                      </p>
+                      <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                        50% off—billed $30/year
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                        (normally $60/year)
+                      </p>
+                    </div>
+                    <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
+                      Compared to ~$3,600 broker avg
+                    </span>
+                  </div>
                   <p className="text-gray-400 mb-4 tracking-tight">  </p>
                   <ul className="space-y-3 mb-24 text-gray-300 flex-grow">
                     <li className="flex items-center tracking-tight">
@@ -238,10 +210,10 @@ const Pricing = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
+                      onClick={handleSubscribe}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      {`Subscribe ${isAnnual ? 'Annually' : 'Monthly'}`}
+                      Subscribe Annually
                     </button>
                   )}
                 </div>
@@ -262,7 +234,7 @@ const Pricing = () => {
                   {isCanceled ? (
                     `Losing early access ${userProfile?.subscription_end ? formatSubscriptionEndDate(userProfile.subscription_end) : ''}`
                   ) : (
-                    `Active ${userProfile?.subscription_plan === 'unlimited' ? 'Unlimited' : userProfile?.subscription_plan} Subscription (${userProfile?.subscription_renewal || 'monthly'})`
+                    `Active ${userProfile?.subscription_plan === 'unlimited' ? 'Unlimited' : userProfile?.subscription_plan} Subscription (${userProfile?.subscription_renewal || 'annual'})`
                   )}
                 </span>
               </div>
@@ -299,7 +271,7 @@ const Pricing = () => {
             </Link>
           ) : !isOnUnlimitedPlan ? (
             <button
-              onClick={() => handleSubscribe('monthly')}
+              onClick={handleSubscribe}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
               Join 6000+ New Yorkers

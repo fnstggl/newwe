@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
@@ -14,15 +13,14 @@ const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6py
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { user, session } = useAuth();
   const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const billingCycle = searchParams.get('billing') as 'monthly' | 'annual' || 'annual';
-  const price = billingCycle === 'annual' ? '$18/year' : '$3/month';
-  const amount = billingCycle === 'annual' ? 18 : 3;
+  // Always use annual pricing at $30/year
+  const price = '$30/year';
+  const amount = 30;
 
   useEffect(() => {
     if (!user) {
@@ -35,15 +33,15 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for recurring subscription using Supabase edge function
+    // Create payment intent for annual subscription at $30/year using Supabase edge function
     const createPaymentIntent = async () => {
       try {
-        console.log('Creating payment intent with billing cycle:', billingCycle);
+        console.log('Creating payment intent for annual $30/year plan');
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
-            billing_cycle: billingCycle,
-            amount: billingCycle === 'annual' ? 1800 : 300, // in cents
+            billing_cycle: 'annual',
+            amount: 3000, // $30.00 in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -77,7 +75,7 @@ const Checkout = () => {
     if (session) {
       createPaymentIntent();
     }
-  }, [user, session, billingCycle, navigate, toast]);
+  }, [user, session, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
@@ -143,7 +141,7 @@ const Checkout = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-semibold mb-4 tracking-tighter">
-                Find the best deal in the city. For $18/yr.
+                Find the best deal in the city. For $30/yr.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
                 Your apartment's out there. Be the one that gets it.
@@ -184,7 +182,7 @@ const Checkout = () => {
               
               {/* Recurring subscription text at bottom of plan box */}
               <p className="text-xs text-gray-500 tracking-tight">
-                {billingCycle === 'annual' ? 'Annual recurring subscription, cancel any time.' : 'Monthly recurring subscription, cancel any time.'}
+                Annual recurring subscription, cancel any time.
               </p>
             </div>
           </div>
@@ -200,7 +198,7 @@ const Checkout = () => {
 
             {clientSecret && (
               <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm billingCycle={billingCycle} amount={amount} />
+                <CheckoutForm billingCycle="annual" amount={amount} />
               </Elements>
             )}
           </div>

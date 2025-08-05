@@ -42,10 +42,9 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle } = await req.json();
-    if (!billing_cycle || !['monthly', 'annual'].includes(billing_cycle)) {
-      throw new Error("Invalid billing cycle. Must be 'monthly' or 'annual'");
-    }
-    logStep("Billing cycle validated", { billing_cycle });
+    // Force annual billing at $30/year regardless of what's passed
+    const forcedBillingCycle = 'annual';
+    logStep("Forced billing cycle to annual", { original: billing_cycle, forced: forcedBillingCycle });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -58,8 +57,9 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    const priceAmount = billing_cycle === 'annual' ? 1800 : 300; // $18.00 or $3.00
-    const interval = billing_cycle === 'annual' ? 'year' : 'month';
+    // Always use $30/year pricing
+    const priceAmount = 3000; // $30.00
+    const interval = 'year';
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -70,7 +70,7 @@ serve(async (req) => {
             currency: "usd",
             product_data: { 
               name: "Unlimited Plan",
-              description: `${billing_cycle === 'annual' ? 'Annual' : 'Monthly'} subscription to access all deals`
+              description: "Annual subscription to access all deals"
             },
             unit_amount: priceAmount,
             recurring: { interval },
