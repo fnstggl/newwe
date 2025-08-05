@@ -1247,8 +1247,8 @@ if (showOnboarding) {
                           </motion.button>
                           
                           <p className="text-sm text-gray-400 tracking-tight">
-                            $24/year — billed annually<br />
-                            Cancel anytime • $2/month
+                            $18/year — billed annually<br />
+                            Cancel anytime • $1.50/month
                           </p>
                           
                         </div>
