@@ -67,6 +67,8 @@ CRITICAL RULES - FOLLOW THESE EXACTLY:
 - NEVER assume or set default budgets unless explicitly stated
 - If budget/price stated is under $100,000 → set property_type to "rent" (likely monthly rent)
 - If budget/price stated is over $100,000 → set property_type to "buy" (likely purchase price)
+- If exact criteria would yield no results, broaden the search to show similar alternatives
+- Always prioritize showing SOME relevant properties over NO results
 
 NYC NEIGHBORHOOD CONTEXT:
 
@@ -213,11 +215,14 @@ try {
   parsedFilters = JSON.parse(cleanedResponse)
 } catch (parseError) {
   console.error('Failed to parse Claude response:', cleanedResponse)
-  console.error('Original AI response:', aiResponse) // Add this line
+  console.error('Original AI response:', aiResponse)
+  console.error('Parse error:', parseError.message)
+  
   return new Response(
     JSON.stringify({ 
       error: 'Failed to parse AI response',
-      rawResponse: aiResponse, // Add this line for debugging
+      rawResponse: aiResponse,
+      cleanedResponse: cleanedResponse,
       fallback: {
         interpretation: "Try a more specific prompt or adjust your criteria. Examples: \"2BR under $4k in Brooklyn\" or \"pet-friendly studio with gym\".",
         property_type: "rent",
@@ -229,12 +234,12 @@ try {
         discount_threshold: null
       }
     }),
-        { 
-          status: 200, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
+    { 
+      status: 200, 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     }
+  )
+}
 
     // Return the parsed filters
     return new Response(
