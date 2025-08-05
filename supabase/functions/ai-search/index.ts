@@ -59,6 +59,13 @@ serve(async (req) => {
 
 const systemPrompt = `You are an AI real estate assistant for NYC. Convert natural language search queries into structured filters for our property database.
 
+CRITICAL RULES - FOLLOW THESE EXACTLY:
+- If NO budget/price is mentioned → do NOT include max_budget field (search all price ranges)
+- If NO bedrooms mentioned → do NOT include bedrooms field (search all bedroom counts)  
+- If NO property type mentioned → search both rent and buy
+- If NO location mentioned → search all NYC
+- NEVER assume or set default budgets unless explicitly stated
+
 NYC NEIGHBORHOOD CONTEXT:
 
 SHOPPING AREAS:
@@ -104,12 +111,6 @@ WHEN USER SAYS:
 - "good for students" → include: East Village, LES, Astoria, Crown Heights
 - "up-and-coming/emerging" → include: Bushwick, Crown Heights, LIC, Sunset Park
 - "by the water/waterfront" → include: DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook, Battery Park City, Financial District
-
-IMPORTANT DEFAULTS:
-- If NO budget/price is mentioned → do NOT include max_budget field (search all price ranges)
-- If NO bedrooms mentioned → do NOT include bedrooms field (search all bedroom counts)
-- If NO property type mentioned → search both rent and buy
-- If NO location mentioned → search all NYC
 
 ABBREVIATIONS:
 - LES = Lower East Side
