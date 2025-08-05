@@ -171,7 +171,7 @@ const Pricing = () => {
                         $2.30<span className="text-lg text-gray-400">/mo</span>
                       </p>
                       <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                        Save thousands on your next home—renting or buying
+                        Save thousands on your next home
                       </p>
                       <p className="text-xs text-gray-500 mt-1 tracking-tight">
                         Just $28/year • Cancel anytime
@@ -189,11 +189,11 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Instant alerts on new deals
+                      Your dream home, found instantly—and thousands below market.
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Choose your target neighborhoods
+                      Instant alerts on new deals
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
