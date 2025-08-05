@@ -687,10 +687,10 @@ case 0:
       
       <div className="text-center space-y-6 max-w-2xl">
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tighter">
-          Describe the deals you want. We'll find them for you.
+          Describe the deals you want.
         </h1>
         <p className="text-xl text-gray-400 tracking-tight">
-          Just input your budget, favorite neighborhoods, must-haves. See personalized listings in 15 seconds.
+          We'll find you personalized listings in 15 seconds.
         </p>
         
         <div className="pt-8">
