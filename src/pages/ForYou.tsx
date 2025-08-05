@@ -1190,9 +1190,8 @@ const ForYou = () => {
                           <motion.button
                             onClick={handleUnlockMatch}
                             disabled={isProcessingCheckout}
-                            whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-8 py-3 bg-white text-black rounded-full font-semibold tracking-tight transition-colors hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-8 py-3 bg-white text-black rounded-full font-semibold tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isProcessingCheckout ? 'Processing...' : 'Reveal your match'}
                           </motion.button>
