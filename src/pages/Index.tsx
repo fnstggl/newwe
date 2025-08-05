@@ -112,7 +112,7 @@ const Index = () => {
             It shouldn't be this hard to find a home in the city.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals in the city.
+          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals, saving you thousands.
           </p>
         </div>
         
