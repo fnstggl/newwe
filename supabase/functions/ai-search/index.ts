@@ -57,121 +57,31 @@ serve(async (req) => {
 
     const boroughs = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island']
 
-const systemPrompt = `You are an AI real estate assistant for NYC. Convert natural language search queries into structured filters for our property database.
+const systemPrompt = `You are an AI real estate assistant for NYC. Convert natural language search queries into structured filters.
 
-CRITICAL RULES - FOLLOW THESE EXACTLY:
-- If NO budget/price is mentioned → do NOT include max_budget field (search all price ranges)
-- If NO bedrooms mentioned → do NOT include bedrooms field (search all bedroom counts)  
+CRITICAL RULES:
+- If NO budget/price mentioned → do NOT include max_budget field
+- If NO bedrooms mentioned → do NOT include bedrooms field  
 - If NO property type mentioned → search both rent and buy
-- If NO location mentioned → search all NYC
-- NEVER assume or set default budgets unless explicitly stated
-- If budget/price stated is under $100,000 → set property_type to "rent" (likely monthly rent)
-- If budget/price stated is over $100,000 → set property_type to "buy" (likely purchase price)
-- If exact criteria would yield no results, broaden the search to show similar alternatives
-- Always prioritize showing SOME relevant properties over NO results
-
-NYC NEIGHBORHOOD CONTEXT:
-
-SHOPPING AREAS:
-- Premium shopping: SoHo, NoHo, Midtown, Upper East Side, Meatpacking District
-- Trendy/boutique shopping: Williamsburg, Park Slope, Astoria, LES, East Village
-- Major shopping centers: Union Square, Herald Square, Atlantic Terminal
-
-RESTAURANT/FOOD SCENES:
-- Fine dining: Tribeca, Greenwich Village, Upper East Side, DUMBO
-- Diverse food scenes: East Village, LES, Astoria, Jackson Heights, Flushing
-- Hip food spots: Williamsburg, Park Slope, Bushwick, LIC
-
-TRANSPORTATION HUBS:
-- Multiple subway lines: Union Square, Times Square, Atlantic Terminal, Jackson Heights
-- Express trains: Upper West Side (4/5/6), Park Slope (D/N/R), Astoria (N/W)
-- Easy commute to Manhattan: LIC, DUMBO, Brooklyn Heights, Williamsburg
-
-NIGHTLIFE:
-- Party areas: East Village, LES, Williamsburg, Bushwick
-- Upscale nightlife: Meatpacking, SoHo, Midtown
-- Chill bars: Park Slope, Astoria, Greenwich Village
-
-YOUNG PROFESSIONALS:
-- Popular areas: Williamsburg, Park Slope, LIC, Upper East Side, Hell's Kitchen
-- Emerging areas: Bushwick, Crown Heights, Astoria
-
-FAMILIES:
-- Family-friendly: Park Slope, Brooklyn Heights, Upper West Side, Astoria
-- Good schools: Upper East Side, Brooklyn Heights, Forest Hills
+- If budget under $100,000 → set property_type to "rent"
+- If budget over $100,000 → set property_type to "buy"
+- Always prioritize showing SOME results over NO results
 
 WHEN USER SAYS:
-- "good shopping" → include neighborhoods: SoHo, NoHo, Williamsburg, Upper East Side
-- "great restaurants" → include: East Village, Astoria, Park Slope, Tribeca  
-- "good transportation" → include: LIC, Union Square area, Park Slope, Astoria
-- "young professional area" → include: Williamsburg, Park Slope, LIC, Hell's Kitchen
-- "trendy/hip" → include: Williamsburg, Bushwick, East Village, LES
-- "good nightlife" → include: East Village, LES, Williamsburg, Bushwick
-- "quiet/peaceful" → include: Brooklyn Heights, Upper West Side, Forest Hills
-- "safe area" → include: Upper East Side, Brooklyn Heights, Park Slope
-- "dog-friendly" → include: Park Slope, Prospect Heights, LIC, Williamsburg
-- "walkable" → include: Greenwich Village, SoHo, Park Slope, Astoria
-- "close to finance jobs" → include: Brooklyn Heights, DUMBO, Financial District
-- "good for students" → include: East Village, LES, Astoria, Crown Heights
-- "up-and-coming/emerging" → include: Bushwick, Crown Heights, LIC, Sunset Park
-- "by the water/waterfront" → include: DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook, Battery Park City, Financial District
-- "good schools/school district" → include: Park Slope, Brooklyn Heights, Upper West Side, Forest Hills, Upper East Side
+- "good shopping" → SoHo, NoHo, Williamsburg, Upper East Side
+- "great restaurants" → East Village, Astoria, Park Slope, Tribeca  
+- "good transportation" → LIC, Union Square, Park Slope, Astoria
+- "trendy/hip" → Williamsburg, Bushwick, East Village, LES
+- "good nightlife" → East Village, LES, Williamsburg, Bushwick
+- "quiet/peaceful" → Brooklyn Heights, Upper West Side, Forest Hills
+- "safe area" → Upper East Side, Brooklyn Heights, Park Slope
+- "good schools" → Park Slope, Brooklyn Heights, Upper West Side, Forest Hills, Upper East Side
+- "by the water" → DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook
 
-ABBREVIATIONS:
-- LES = Lower East Side
-- LIC = Long Island City
-- UES = Upper East Side  
-- UWS = Upper West Side
+RESPOND ONLY WITH VALID JSON - NO EXPLANATIONS OR EXTRA TEXT:
+{"property_type": "rent|buy", "max_budget": number, "bedrooms": number, "neighborhoods": ["..."], "boroughs": ["..."], "must_haves": ["..."], "interpretation": "..."}
 
-ALWAYS expand vague requests into multiple relevant neighborhoods while keeping the user's specific requirements.
-
-AVAILABLE TABLES & COLUMNS:
-1. undervalued_sales: price, bedrooms, bathrooms, sqft, neighborhood, borough, discount_percent, no_fee, pet_friendly, doorman_building, elevator_building, laundry_available, gym_available, rooftop_access
-2. undervalued_rentals: monthly_rent, bedrooms, bathrooms, sqft, neighborhood, borough, discount_percent, no_fee, pet_friendly, doorman_building, elevator_building, laundry_available, gym_available, rooftop_access  
-3. undervalued_rent_stabilized: monthly_rent, bedrooms, bathrooms, sqft, neighborhood, borough, undervaluation_percent, rent_stabilized_confidence
-
-NYC NEIGHBORHOODS: ${neighborhoods.join(', ')}
-NYC BOROUGHS: ${boroughs.join(', ')}
-
-RESPOND ONLY WITH VALID JSON (no markdown formatting):
-{
-  "property_type": "rent|buy",
-  "max_budget": number,
-  "bedrooms": number,
-  "neighborhoods": ["neighborhood1", "neighborhood2"],
-  "boroughs": ["borough1"],
-  "must_haves": ["feature1", "feature2"],
-  "discount_threshold": number,
-  "interpretation": "Clear explanation of what you understood from the user's request"
-}
-
-CRITICAL: Your response must be ONLY valid JSON with no markdown formatting, no ```json blocks, no explanations, and no extra text. Just the raw JSON object starting with { and ending with }.
-
-Example of CORRECT response format:
-{"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "interpretation": "Looking for 2-bedroom rentals"}
-
-Example of INCORRECT response format:
-```json
-{"property_type": "rent"}
-```
-
-NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
-"2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals up to $4,000/month in Brooklyn"}
-
-"3 bedroom for 5M" → {"property_type": "buy", "max_budget": 5000000, "bedrooms": 3, "interpretation": "Looking for 3-bedroom properties up to $5M"}
-
-"Safe family neighborhood with good schools" → {"neighborhoods": ["Park Slope", "Carroll Gardens", "Brooklyn Heights"], "interpretation": "Looking for family-friendly neighborhoods known for safety and good schools"}
-
-"Pet-friendly with gym and doorman" → {"must_haves": ["pet_friendly", "gym_available", "doorman_building"], "interpretation": "Looking for pet-friendly properties with gym and doorman"}
-
-"Rent stabilized apartments" → {"must_haves": ["rent_stabilized"], "interpretation": "Looking specifically for rent-stabilized apartments"}
-
-"Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}
-    
-    FINAL REMINDER: Return ONLY the JSON object. No explanations, no markdown, no extra text. Start with { and end with }. Nothing else.
-      
-      CRITICAL: Your response must end immediately after the closing } bracket. Do not add explanations, reasoning, examples, or any text after the JSON object. Any additional text will cause system errors.`
-
+CRITICAL: Response must end immediately after closing }. Any additional text causes system errors.`
 
     // Call Claude API
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -212,13 +122,11 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
 // Clean the response to ensure it's valid JSON
 const cleanedResponse = aiResponse.replace(/```json\n?/, '').replace(/```\n?$/, '').trim()
 
-// More aggressive JSON extraction
+// Extract just the JSON object, ignoring any explanatory text
 let jsonString = cleanedResponse;
-const firstBrace = cleanedResponse.indexOf('{');
-const lastBrace = cleanedResponse.lastIndexOf('}');
-
-if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-  jsonString = cleanedResponse.substring(firstBrace, lastBrace + 1);
+const jsonMatch = cleanedResponse.match(/\{[\s\S]*?\}/);
+if (jsonMatch) {
+  jsonString = jsonMatch[0];
 }
 
 let parsedFilters
