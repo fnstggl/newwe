@@ -65,6 +65,8 @@ CRITICAL RULES - FOLLOW THESE EXACTLY:
 - If NO property type mentioned → search both rent and buy
 - If NO location mentioned → search all NYC
 - NEVER assume or set default budgets unless explicitly stated
+- If budget/price stated is under $100,000 → set property_type to "rent" (likely monthly rent)
+- If budget/price stated is over $100,000 → set property_type to "buy" (likely purchase price)
 
 NYC NEIGHBORHOOD CONTEXT:
 
