@@ -152,7 +152,7 @@ Example of INCORRECT response format:
 ```json
 {"property_type": "rent"}
 
-EXAMPLES:
+NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES::
 "2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals up to $4,000/month in Brooklyn"}
 
 "3 bedroom for 5M" → {"property_type": "buy", "max_budget": 5000000, "bedrooms": 3, "interpretation": "Looking for 3-bedroom properties up to $5M"}
