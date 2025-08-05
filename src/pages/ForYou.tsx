@@ -736,34 +736,7 @@ const ForYou = () => {
   const handleUnlockMatch = async () => {
     if (!user) return;
     
-    setIsProcessingCheckout(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { billing_cycle: 'annual' }
-      });
-      
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to create checkout session. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessingCheckout(false);
-    }
+    navigate('/checkout');
   };
 
   const handleSave = async (property: Property) => {
@@ -1065,7 +1038,7 @@ const ForYou = () => {
     );
   }
 
-    return (
+  return (
     <>
       <div className="min-h-screen bg-black text-white font-inter flex flex-col relative overflow-hidden">
         <motion.div
@@ -1368,6 +1341,6 @@ const ForYou = () => {
       )}
     </>
   );
-  };
+};
 
 export default ForYou;
