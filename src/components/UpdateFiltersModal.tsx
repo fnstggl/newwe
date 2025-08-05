@@ -316,34 +316,35 @@ useEffect(() => {
 
 return (
   <AnimatePresence>
+    {/* BACKDROP - you're missing this! */}
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ 
-        duration: 0.2, 
-        ease: "easeOut" 
-      }}
+      transition={{ duration: 0.15 }}
       className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
+      {/* MODAL CONTENT */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        transition={{ 
-          type: "spring", 
-          damping: 25, 
-          stiffness: 300,
-          duration: 0.3
-        }}
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.15 }}
         onClick={(e) => e.stopPropagation()}
         className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-white/5"
       >
-              <X className="w-6 h-6 text-gray-400" />
-            </button>
-          </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-white">Update Personalized Search Filters</h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            <X className="w-6 h-6 text-gray-400" />
+          </button>
+        </div>
 
+        
           <div className="space-y-6">
             {/* What are you searching for? */}
             <div>
