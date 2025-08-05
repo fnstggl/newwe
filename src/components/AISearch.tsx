@@ -306,7 +306,8 @@ const AISearch = ({ onResults }: AISearchProps) => {
 
   const handleSearch = async () => {
     if (!query.trim()) return;
-    
+
+ setLastInterpretation(''); // Add this line to clear previous interpretation 
     setIsLoading(true);
     try {
       console.log('Starting AI search for:', query);
