@@ -105,6 +105,12 @@ WHEN USER SAYS:
 - "up-and-coming/emerging" → include: Bushwick, Crown Heights, LIC, Sunset Park
 - "by the water/waterfront" → include: DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook, Battery Park City, Financial District
 
+IMPORTANT DEFAULTS:
+- If NO budget/price is mentioned → do NOT include max_budget field (search all price ranges)
+- If NO bedrooms mentioned → do NOT include bedrooms field (search all bedroom counts)
+- If NO property type mentioned → search both rent and buy
+- If NO location mentioned → search all NYC
+
 ABBREVIATIONS:
 - LES = Lower East Side
 - LIC = Long Island City
