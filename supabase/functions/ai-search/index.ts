@@ -207,12 +207,19 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
     const claudeData = await claudeResponse.json()
     const aiResponse = claudeData.content[0].text
 
-    // Clean the response to ensure it's valid JSON
-    const cleanedResponse = aiResponse.replace(/```json\n?/, '').replace(/```\n?$/, '').trim()
-    
-  let parsedFilters
+// Clean the response to ensure it's valid JSON
+const cleanedResponse = aiResponse.replace(/```json\n?/, '').replace(/```\n?$/, '').trim()
+
+// Extract just the JSON object, ignoring any explanatory text
+let jsonString = cleanedResponse;
+const jsonMatch = cleanedResponse.match(/\{[\s\S]*?\}/);
+if (jsonMatch) {
+  jsonString = jsonMatch[0];
+}
+
+let parsedFilters
 try {
-  parsedFilters = JSON.parse(cleanedResponse)
+  parsedFilters = JSON.parse(jsonString)
 } catch (parseError) {
   console.error('Failed to parse Claude response:', cleanedResponse)
   console.error('Original AI response:', aiResponse)
