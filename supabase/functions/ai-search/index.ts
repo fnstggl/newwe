@@ -68,6 +68,11 @@ CRITICAL RULES - FOLLOW THESE EXACTLY:
 - If budget/price stated is under $100,000 → set property_type to "rent" (likely monthly rent)
 - If budget/price stated is over $100,000 → set property_type to "buy" (likely purchase price)
 
+SEARCH STRATEGY:
+- When expanding vague terms like "good schools", include MORE neighborhoods rather than fewer
+- If a query combines multiple criteria (location + budget + amenities), prioritize showing SOME results rather than NO results
+- Better to show nearby or similar options than nothing at all
+
 NYC NEIGHBORHOOD CONTEXT:
 
 SHOPPING AREAS:
@@ -150,9 +155,13 @@ Example of CORRECT response format:
 
 Example of INCORRECT response format:
 ```json
-{"property_type": "rent"}
+{"property_type": "rent", "interpretation": "example"}
+```
 
-NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES::
+Example of CORRECT response format (pure JSON):
+{"property_type": "rent", "interpretation": "example"}
+
+NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
 "2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals up to $4,000/month in Brooklyn"}
 
 "3 bedroom for 5M" → {"property_type": "buy", "max_budget": 5000000, "bedrooms": 3, "interpretation": "Looking for 3-bedroom properties up to $5M"}
@@ -162,6 +171,8 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES::
 "Pet-friendly with gym and doorman" → {"must_haves": ["pet_friendly", "gym_available", "doorman_building"], "interpretation": "Looking for pet-friendly properties with gym and doorman"}
 
 "Rent stabilized apartments" → {"must_haves": ["rent_stabilized"], "interpretation": "Looking specifically for rent-stabilized apartments"}
+
+"studio near good schools, under $10k" → {"property_type": "rent", "bedrooms": 0, "max_budget": 10000, "neighborhoods": ["Park Slope", "Brooklyn Heights", "Upper West Side", "Forest Hills", "Upper East Side", "Astoria"], "interpretation": "Looking for studio rentals under $10,000 in school-friendly neighborhoods"}
 
 "Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}`
 
