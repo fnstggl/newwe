@@ -674,7 +674,7 @@ const prevStep = () => {
     switch (currentStep) {
 case 0:
   return (
-    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center px-6 py-8">
+    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center px-6 py-8 overflow-hidden">
       {/* Back arrow */}
       <div className="fixed top-8 left-8 z-50">
         <button
@@ -685,23 +685,23 @@ case 0:
         </button>
       </div>
       
-      {/* Product mockup image - top half */}
-      <div className="flex-1 flex items-center justify-center pt-16 pb-8">
-        <img 
-          src="/lovable-uploads/marketing-image-3.png" 
-          alt="Found your match interface showing property details and search" 
-          className="max-w-2xl w-full h-auto rounded-2xl shadow-2xl max-h-[50vh] object-contain md:max-h-none opacity-0 animate-fade-in"
-          style={{
-            animationDelay: '0.3s',
-            animationDuration: '1.2s',
-            animationFillMode: 'forwards'
-          }}
-        />
-      </div>
-      
-      {/* Text content - bottom half */}
-      <div className="flex-1 flex items-start justify-center">
-        <div className="text-center space-y-4 md:space-y-6 max-w-2xl pt-4 md:pt-8">
+      <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8 max-w-4xl w-full pt-16">
+        {/* Product mockup image - compact size */}
+        <div className="w-full flex justify-center">
+          <img 
+            src="/lovable-uploads/marketing-image-3.jpg" 
+            alt="Found your match interface showing property details and search" 
+            className="max-w-xl md:max-w-2xl w-full h-auto rounded-2xl shadow-2xl opacity-0 animate-fade-in"
+            style={{
+              animationDelay: '0.3s',
+              animationDuration: '1.2s',
+              animationFillMode: 'forwards'
+            }}
+          />
+        </div>
+        
+        {/* Text content - compact spacing */}
+        <div className="text-center space-y-3 md:space-y-4 max-w-2xl">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tighter">
             Describe the deals you want.
           </h1>
@@ -709,7 +709,7 @@ case 0:
             We'll find you personalized listings in 15 seconds.
           </p>
           
-          <div className="pt-6 md:pt-8">
+          <div className="pt-4 md:pt-6">
             <button
               onClick={() => setCurrentStep(1)}
               className="bg-white text-black px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-lg md:text-xl tracking-tighter hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
