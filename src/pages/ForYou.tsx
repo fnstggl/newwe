@@ -1180,7 +1180,7 @@ const ForYou = () => {
                     >
                       <div className="text-center space-y-4 px-8">
                         <h2 className="text-2xl font-semibold tracking-tighter text-white">
-                          You're one click away from finding your dream home
+                          You're one click away from your dream home
                         </h2>
                         <p className="text-lg font-medium tracking-tighter text-white">
                           And it's {getSavingsText(property)} below-market
