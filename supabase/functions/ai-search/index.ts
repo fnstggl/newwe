@@ -212,11 +212,13 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
 // Clean the response to ensure it's valid JSON
 const cleanedResponse = aiResponse.replace(/```json\n?/, '').replace(/```\n?$/, '').trim()
 
-// Extract just the JSON object, ignoring any explanatory text
+// More aggressive JSON extraction
 let jsonString = cleanedResponse;
-const jsonMatch = cleanedResponse.match(/\{[\s\S]*?\}/);
-if (jsonMatch) {
-  jsonString = jsonMatch[0];
+const firstBrace = cleanedResponse.indexOf('{');
+const lastBrace = cleanedResponse.lastIndexOf('}');
+
+if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+  jsonString = cleanedResponse.substring(firstBrace, lastBrace + 1);
 }
 
 let parsedFilters
