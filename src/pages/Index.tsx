@@ -4,8 +4,11 @@ import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useEffect } from "react";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+
   useEffect(() => {
     // Update meta tags for SEO - Home page
     document.title = "Realer Estate - Your Unfair Advantage in NYC Real Estate | Find Undervalued Properties";
@@ -68,8 +71,8 @@ const Index = () => {
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 The best deals in the city—found for you.
               </p>
-              <Link to="/join" className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
-                Start Saving
+              <Link to={user ? "/rent" : "/join"} className="inline-block bg-white font-inter text-black px-6 py-3 rounded-full font-semibold tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300">
+                {user ? "Find Deals" : "Start Saving"}
               </Link>
             </div>
           </div>
