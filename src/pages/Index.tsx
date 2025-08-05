@@ -71,7 +71,7 @@ const Index = () => {
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 The best deals in the city—found for you.
               </p>
-              <Link to={user ? "/rent" : "/join"} className="inline-block bg-white font-inter text-black px-12 py-5 rounded-full font-bold text-xl tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:scale-105 transition-all duration-300 shadow-lg">
+                            <Link to={user ? "/rent" : "/join"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-lg tracking-tighter hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
                 {user ? "Find Deals" : "Start Saving"}
               </Link>
             </div>
