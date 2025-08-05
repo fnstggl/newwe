@@ -8,6 +8,7 @@ import PropertyCard from '@/components/PropertyCard';
 import PropertyDetail from '@/components/PropertyDetail';
 import UpdateFiltersModal from '@/components/UpdateFiltersModal';
 import EndOfMatchesScreen from '@/components/EndOfMatchesScreen';
+import PreSignupOnboarding from '@/components/PreSignupOnboarding';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import AISearch from '@/components/AISearch';
 
@@ -298,10 +299,11 @@ const LoadingSequence = ({ isLoggedOut = false }: { isLoggedOut?: boolean }) => 
 };
 
 const ForYou = () => {
-  const { user, userProfile, forceRefreshProfile } = useAuth();
+ const { user, userProfile, forceRefreshProfile } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
@@ -334,6 +336,33 @@ const ForYou = () => {
 
   const [currentHeaderIndex, setCurrentHeaderIndex] = useState(0);
 
+// Check if user needs onboarding
+useEffect(() => {
+  if (!user) {
+    // User not logged in - show onboarding
+    setShowOnboarding(true);
+    return;
+  }
+  
+  if (userProfile) {
+    // User is logged in - check if they have filters set
+    const hasFilters = userProfile.property_type || 
+                      userProfile.bedrooms !== undefined || 
+                      userProfile.max_budget || 
+                      (userProfile.preferred_neighborhoods && userProfile.preferred_neighborhoods.length > 0) ||
+                      userProfile.discount_threshold ||
+                      (userProfile.must_haves && userProfile.must_haves.length > 0);
+    
+    if (!hasFilters) {
+      // Logged in user without filters - show onboarding
+      setShowOnboarding(true);
+    } else {
+      // User has filters - proceed normally
+      setShowOnboarding(false);
+    }
+  }
+}, [user, userProfile]);
+  
   useEffect(() => {
     if (user && userProfile) {
       fetchPersonalizedProperties();
@@ -881,6 +910,27 @@ const ForYou = () => {
     setTimeout(() => setIsRevealing(true), 100);
   };
 
+// Handle onboarding completion
+const handleOnboardingComplete = async (data: any) => {
+  if (user) {
+    // User is logged in, just refresh profile and continue
+    await forceRefreshProfile();
+    setShowOnboarding(false);
+  } else {
+    // User is not logged in, they'll be redirected after signup
+    // This is handled by the existing onboarding flow
+  }
+};
+
+// Show onboarding if needed
+if (showOnboarding) {
+  return (
+    <PreSignupOnboarding
+      onComplete={handleOnboardingComplete}
+    />
+  );
+}
+  
   if (isLoading) {
     return <LoadingSequence isLoggedOut={!user} />;
   }

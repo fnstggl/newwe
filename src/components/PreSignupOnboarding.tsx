@@ -27,7 +27,7 @@ interface PreSignupOnboardingProps {
 }
 
 const PreSignupOnboarding: React.FC<PreSignupOnboardingProps> = ({ onComplete }) => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({});
   const [scanningProgress, setScanningProgress] = useState(0);
   const [scanningStage, setScanningStage] = useState(0);
@@ -672,7 +672,40 @@ const prevStep = () => {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1:
+case 0:
+  return (
+    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center space-y-8 px-6">
+      {/* Back arrow */}
+      <div className="fixed top-8 left-8 z-50">
+        <button
+          onClick={() => window.history.back()}
+          className="p-3 rounded-full bg-transparent hover:bg-gray-800/50 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-400" />
+        </button>
+      </div>
+      
+      <div className="text-center space-y-6 max-w-2xl">
+        <h1 className="text-4xl md:text-5xl font-semibold tracking-tighter">
+          Describe the deals you want. We'll find them for you.
+        </h1>
+        <p className="text-xl text-gray-400 tracking-tight">
+          Just input your budget, favorite neighborhoods, must-haves. See personalized listings in 15 seconds.
+        </p>
+        
+        <div className="pt-8">
+          <button
+            onClick={() => setCurrentStep(1)}
+            className="bg-white text-black px-12 py-5 rounded-full font-bold text-xl tracking-tighter hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
+          >
+            Start Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+case 1:
   return (
     <>
       {/* Back arrow for first step */}
