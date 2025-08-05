@@ -51,7 +51,7 @@ const AppContent = () => {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/cancel-subscription" element={<CancelSubscription />} />
         <Route path="/manage-subscription" element={<ManageSubscription />} />
-        <Route path="/join" element={<NewJoin />} />
+        <Route path="/join" element={<Join />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />
