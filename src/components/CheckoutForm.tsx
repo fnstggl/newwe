@@ -66,6 +66,12 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
       } else if (paymentIntent) {
         // Handle different payment intent statuses
         if (paymentIntent.status === 'succeeded') {
+           // ✅ Google Ads Conversion Tracking
+  window.gtag?.('event', 'conversion', {
+    send_to: 'AW-17439586946/XXXXXXXXXXX', // ← Replace with your actual conversion label
+    value: amount,
+    currency: 'USD',
+  });
           // Immediate success - activate subscription
           await activateSubscription(paymentIntent.id);
         } else if (paymentIntent.status === 'processing') {
