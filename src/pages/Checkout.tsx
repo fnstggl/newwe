@@ -146,7 +146,7 @@ const Checkout = () => {
                 Find the best deal in the city. For $18/yr..
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Your apartment's out there. Be the one to get it.
+                Your apartment's out there. Be the one that gets it.
               </p>
             </div>
 
