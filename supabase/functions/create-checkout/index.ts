@@ -1,4 +1,5 @@
 
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -42,7 +43,7 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle } = await req.json();
-    // Force annual billing at $30/year regardless of what's passed
+    // Force annual billing at $28/year regardless of what's passed
     const forcedBillingCycle = 'annual';
     logStep("Forced billing cycle to annual", { original: billing_cycle, forced: forcedBillingCycle });
 
@@ -57,8 +58,8 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Always use $30/year pricing
-    const priceAmount = 3000; // $30.00
+    // Always use $28/year pricing
+    const priceAmount = 2800; // $28.00
     const interval = 'year';
 
     const session = await stripe.checkout.sessions.create({
@@ -97,3 +98,4 @@ serve(async (req) => {
     });
   }
 });
+

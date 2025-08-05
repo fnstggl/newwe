@@ -168,10 +168,10 @@ const Pricing = () => {
                  <div className="mb-6 flex items-center justify-between">
                     <div>
                       <p className="text-4xl font-semibold tracking-tight">
-                        $2.50<span className="text-lg text-gray-400">/mo</span>
+                        $2.30<span className="text-lg text-gray-400">/mo</span>
                       </p>
                       <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                        50% off—billed $30/year
+                        50% off—billed $28/year
                       </p>
                       <p className="text-xs text-gray-500 mt-1 tracking-tight">
                         (normally $60/year)
