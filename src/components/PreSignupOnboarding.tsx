@@ -674,7 +674,7 @@ const prevStep = () => {
     switch (currentStep) {
 case 0:
   return (
-    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center px-6 py-8 overflow-hidden">
+    <div className="min-h-screen bg-black text-white font-inter flex flex-col items-center justify-center px-6 py-4 overflow-hidden">
       {/* Back arrow */}
       <div className="fixed top-8 left-8 z-50">
         <button
@@ -685,11 +685,11 @@ case 0:
         </button>
       </div>
       
-      <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8 max-w-4xl w-full pt-16">
+      <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8 max-w-4xl w-full pt-8">
         {/* Product mockup image - compact size */}
         <div className="w-full flex justify-center">
           <img 
-            src="/lovable-uploads/marketing-image-3.png" 
+            src="/lovable-uploads/marketing-image-3.jpg" 
             alt="Found your match interface showing property details and search" 
             className="max-w-xl md:max-w-2xl w-full h-auto rounded-2xl shadow-2xl opacity-0 animate-fade-in"
             style={{
