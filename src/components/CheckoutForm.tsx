@@ -68,8 +68,8 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         if (paymentIntent.status === 'succeeded') {
            // ✅ Google Ads Conversion Tracking
   window.gtag?.('event', 'conversion', {
-    send_to: 'AW-17439586946/XXXXXXXXXXX', // ← Replace with your actual conversion label
-    value: amount,
+    send_to: 'AW-17439586946/XQoxCP-nnIAbEIL16_tA', // ← Replace with your actual conversion label
+    value: 18.00,
     currency: 'USD',
   });
           // Immediate success - activate subscription
