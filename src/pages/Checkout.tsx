@@ -143,7 +143,7 @@ const Checkout = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl font-semibold mb-4 tracking-tighter">
-                Find the best deal in the city. For $18/yr..
+                Find the best deal in the city. For $18/yr.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
                 Your apartment's out there. Be the one that gets it.
