@@ -723,15 +723,30 @@ const ForYou = () => {
     return [];
   };
 
-  const getSavingsText = (property: Property) => {
-    if (property.property_type === 'buy' && property.potential_savings) {
+ const getSavingsText = (property: Property) => {
+  if (property.property_type === 'buy') {
+    // Try multiple potential savings fields for sales
+    if (property.potential_savings) {
       return `$${Math.round(property.potential_savings).toLocaleString()}`;
-    } else if (property.property_type === 'rent' && property.potential_annual_savings) {
+    } else if (property.annual_savings) {
+      return `$${Math.round(property.annual_savings).toLocaleString()}`;
+    }
+  } else if (property.property_type === 'rent') {
+    // Try multiple potential savings fields for rentals
+    if (property.potential_monthly_savings) {
+      return `$${Math.round(property.potential_monthly_savings)}/mo`;
+    } else if (property.potential_annual_savings) {
       const monthlySavings = Math.round(property.potential_annual_savings / 12);
       return `$${monthlySavings}/mo`;
+    } else if (property.annual_savings) {
+      const monthlySavings = Math.round(property.annual_savings / 12);
+      return `$${monthlySavings}/mo`;
     }
-    return `${Math.round(property.discount_percent)}%`;
-  };
+  }
+  
+  // Only fall back to percentage if no savings data is available
+  return `${Math.round(property.discount_percent)}%`;
+};
 
   const handleUnlockMatch = async () => {
     if (!user) return;
