@@ -64,14 +64,14 @@ const Index = () => {
           
           {/* Hero Content - Always Visible */}
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
-            <div className="text-center px-4 py-20 max-w-5xl">
-              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
+            <div className="text-center px-4 py-20 max-w-6xl">
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-inter font-semibold mb-6 tracking-[-0.075em] text-white">
                 Your unfair advantage in NYC.
               </h1>
-              <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
+              <p className="text-xl md:text-2xl mb-20 text-white opacity-80 font-inter font-medium tracking-[-0.075em]">
                 The best deals in the city—found for you.
               </p>
-              <Link to={user ? "/rent" : "/join"} className="inline-block bg-white font-inter text-black px-12 py-5 rounded-full font-bold text-xl tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:scale-105 transition-all duration-300 shadow-lg">
+              <Link to={user ? "/rent" : "/join"} className="inline-block bg-white font-inter text-black px-12 py-5 rounded-full font-bold text-xl tracking-tighter hover:shadow-[0_0_20px_rgba(255,255,255,0.8)] hover:scale-105 transition-all duration-300 shadow-lg">
                 {user ? "Find Deals" : "Start Saving"}
               </Link>
             </div>
