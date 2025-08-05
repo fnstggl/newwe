@@ -269,7 +269,7 @@ const LoadingSequence = ({ isLoggedOut = false }: { isLoggedOut?: boolean }) => 
               className="space-y-3"
             >
               <h2 className="text-3xl font-semibold tracking-tighter text-white">
-                Your dream homes await
+                We found the perfect deals for you
               </h2>
               <p className="text-lg font-medium tracking-tight text-gray-300">
                 {isLoggedOut 
@@ -1180,7 +1180,7 @@ const ForYou = () => {
                     >
                       <div className="text-center space-y-4 px-8">
                         <h2 className="text-2xl font-semibold tracking-tighter text-white">
-                          Ready to see your dream home?
+                          You're one click away from finding your dream home
                         </h2>
                         <p className="text-lg font-medium tracking-tighter text-white">
                           And it's {getSavingsText(property)} below-market
