@@ -168,7 +168,9 @@ NOW FOLLOW THESE CORRECT EXAMPLES FOR YOUR RESPONSES:
 
 "Great deal at least 20% below market" → {"discount_threshold": 20, "interpretation": "Looking for properties with at least 20% discount from market value"}
     
-    FINAL REMINDER: Return ONLY the JSON object. No explanations, no markdown, no extra text. Start with { and end with }. Nothing else.`
+    FINAL REMINDER: Return ONLY the JSON object. No explanations, no markdown, no extra text. Start with { and end with }. Nothing else.
+      
+      CRITICAL: Your response must end immediately after the closing } bracket. Do not add explanations, reasoning, examples, or any text after the JSON object. Any additional text will cause system errors.`
 
 
     // Call Claude API
