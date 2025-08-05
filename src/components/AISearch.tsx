@@ -324,7 +324,7 @@ const AISearch = ({ onResults }: AISearchProps) => {
       onResults(results, filters.interpretation || '');
     } catch (error) {
       console.error('AI Search error:', error);
-      onResults([], 'Sorry, I couldn\'t process your request. Please try a different search.');
+      onResults([], 'Try a more specific prompt or adjust your criteria.');
     } finally {
       setIsLoading(false);
     }
