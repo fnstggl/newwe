@@ -1165,7 +1165,7 @@ const ForYou = () => {
                     >
                       <div className="text-center space-y-4 px-8">
                         <h2 className="text-2xl font-semibold tracking-tighter text-white">
-                          We found your dream home
+                          Ready to see your dream home?
                         </h2>
                         <p className="text-lg font-medium tracking-tighter text-white">
                           And it's {getSavingsText(property)} below-market
@@ -1183,8 +1183,8 @@ const ForYou = () => {
                           </motion.button>
                           
                           <p className="text-sm text-gray-400 tracking-tight">
-                            $28/year — billed annually<br />
-                            Cancel anytime • $2.30/month
+                            $24/year — billed annually<br />
+                            Cancel anytime • $2/month
                           </p>
                           
                         </div>

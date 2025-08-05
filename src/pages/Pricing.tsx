@@ -172,10 +172,10 @@ const Pricing = () => {
                         $2<span className="text-lg text-gray-400">/mo</span>
                       </p>
                       <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                        Save thousands on your next home
+                        Save thousands on your home
                       </p>
                       <p className="text-xs text-gray-500 mt-1 tracking-tight">
-                        Just $24/year • Cancel anytime
+                        $24/year • Cancel anytime
                       </p>
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
