@@ -175,7 +175,7 @@ const Pricing = () => {
                         Save thousands.
                       </p>
                       <p className="text-xs text-gray-500 mt-1 tracking-tight">
-                        $24/year • Cancel anytime
+                        $24/yr • billed annually
                       </p>
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
