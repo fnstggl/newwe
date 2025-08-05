@@ -688,7 +688,7 @@ case 0:
       {/* Product mockup image - top half */}
       <div className="flex-1 flex items-center justify-center pt-16 pb-8">
         <img 
-          src="/lovable-uploads/marketing-image-3.jpg" 
+          src="/lovable-uploads/marketing-image-3.png" 
           alt="Found your match interface showing property details and search" 
           className="max-w-2xl w-full h-auto rounded-2xl shadow-2xl max-h-[50vh] object-contain md:max-h-none opacity-0 animate-fade-in"
           style={{
