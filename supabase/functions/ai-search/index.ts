@@ -113,6 +113,7 @@ WHEN USER SAYS:
 - "good for students" → include: East Village, LES, Astoria, Crown Heights
 - "up-and-coming/emerging" → include: Bushwick, Crown Heights, LIC, Sunset Park
 - "by the water/waterfront" → include: DUMBO, Brooklyn Heights, LIC, Williamsburg, Red Hook, Battery Park City, Financial District
+- "good schools/school district" → include: Park Slope, Brooklyn Heights, Upper West Side, Forest Hills, Upper East Side
 
 ABBREVIATIONS:
 - LES = Lower East Side
@@ -141,6 +142,15 @@ RESPOND ONLY WITH VALID JSON (no markdown formatting):
   "discount_threshold": number,
   "interpretation": "Clear explanation of what you understood from the user's request"
 }
+
+CRITICAL: Your response must be ONLY valid JSON with no markdown formatting, no ```json blocks, no explanations, and no extra text. Just the raw JSON object starting with { and ending with }.
+
+Example of CORRECT response format:
+{"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "interpretation": "Looking for 2-bedroom rentals"}
+
+Example of INCORRECT response format:
+```json
+{"property_type": "rent"}
 
 EXAMPLES:
 "2BR under $4k in Brooklyn" → {"property_type": "rent", "max_budget": 4000, "bedrooms": 2, "boroughs": ["Brooklyn"], "interpretation": "Looking for 2-bedroom rentals up to $4,000/month in Brooklyn"}
