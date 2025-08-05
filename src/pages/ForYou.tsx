@@ -1183,8 +1183,8 @@ const ForYou = () => {
                           </motion.button>
                           
                           <p className="text-sm text-gray-400 tracking-tight">
-                            $18/year — billed annually<br />
-                            Cancel anytime • $1.50/month
+                            $28/year — billed annually<br />
+                            Cancel anytime • $2.30/month
                           </p>
                           
                         </div>

@@ -1261,10 +1261,10 @@ const additionalNeighborhoods = [
                           <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
                             🔥
                           </span>
-                          Unlock the rest for just $3
+                          Unlock the rest for $2.30/mo
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
-                          Save thousands on rent every month
+                          Save thousands on rent every month • Just $28/year
                         </p>
                       </div>
                     </div>
