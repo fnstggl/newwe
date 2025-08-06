@@ -83,7 +83,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 
+
 <section className="pt-4 pb-0 px-4 max-w-6xl mx-auto">
   <div className="text-center">
     <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
@@ -95,7 +95,6 @@ const Index = () => {
     </Link>
   </div>
 </section>
-*/}
 
   {/* Product Mockup Section */}
       <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
