@@ -274,7 +274,7 @@ const SavedProperties = () => {
 
         {savedProperties.length === 0 ? (
           <div className="text-center py-16">
-            <Home className="h-16 w-16 mx-auto mb-6 text-gray-600" />
+             {/* <Home className="h-16 w-16 mx-auto mb-6 text-gray-600" /> */}
             <h2 className="text-2xl font-bold mb-4 tracking-tight">Nothing saved... yet</h2>
             <p className="text-gray-400 mb-8 tracking-tight">
                 Click the <Bookmark size={16} className="inline-block -mt-1" /> to save listings you love.
