@@ -20,7 +20,7 @@ const MobileNavigation = () => {
       icon: Bookmark,
     },
     {
-      name: "Pricing",
+      name: "Upgrade",
       url: "/pricing",
       icon: DollarSign,
     },
