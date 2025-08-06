@@ -81,7 +81,7 @@ const Manifesto = () => {
             <p className="text-lg text-gray-300 leading-relaxed tracking-tight">
               Realer Estate runs advanced models on real listings to find what's undervalued, 
               overlooked, or underpriced. We analyze price per square foot, days on market, 
-              comparable sales, and dozens of other data points that brokers don't want you to see.
+              comparable sales, and dozens of other data points to find you the best deal in the city—statistically.
             </p>
           </div>
 
