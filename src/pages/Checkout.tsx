@@ -1,27 +1,20 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import CheckoutForm from '@/components/CheckoutForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-
-// Use your live Stripe publishable key
-const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6pyWWeH61H5VPMRW9d37HVi2F1VIzRuUElclZVkRlHJh9O8iHhaGgr00D1tOSeNi');
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { toast } = useToast();
-  const [clientSecret, setClientSecret] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Always use annual pricing at $18/year
-  const price = '$18/year';
-  const amount = 18;
+  // Always use annual pricing at $18/year with 3-day free trial
+  const price = 'Try Free for 3 Days';
+  const subtitle = 'Then $18/year';
 
   useEffect(() => {
     if (!user) {
@@ -33,92 +26,62 @@ const Checkout = () => {
       navigate('/pricing');
       return;
     }
+  }, [user, navigate, toast]);
 
-    // Create payment intent for annual subscription at $18/year using Supabase edge function
-    const createPaymentIntent = async () => {
-      try {
-        console.log('Creating payment intent for annual $18/year plan');
-        
-        const { data, error } = await supabase.functions.invoke('create-payment-intent', {
-          body: {
-            billing_cycle: 'annual',
-            amount: 1800, // $18.00 in cents
-          },
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        });
-
-        if (error) {
-          console.error('Supabase function error:', error);
-          throw error;
-        }
-
-        console.log('Payment intent response:', data);
-        
-        if (data?.client_secret) {
-          setClientSecret(data.client_secret);
-        } else {
-          throw new Error('No client secret returned from payment intent');
-        }
-      } catch (error) {
-        console.error('Error creating payment intent:', error);
-        toast({
-          title: "Error",
-          description: "Failed to initialize checkout. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (session) {
-      createPaymentIntent();
+  const handleSubscribe = async () => {
+    if (!user) {
+      toast({
+        title: "Please log in",
+        description: "You need to be logged in to subscribe.",
+        variant: "destructive",
+      });
+      navigate('/pricing');
+      return;
     }
-  }, [user, session, navigate, toast]);
 
-  const appearance = {
-    theme: 'night' as const,
-    variables: {
-      colorPrimary: '#3b82f6',
-      colorBackground: '#000000',
-      colorText: '#ffffff',
-      colorDanger: '#ef4444',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      spacingUnit: '4px',
-      borderRadius: '8px',
-    },
-    rules: {
-      '.Input': {
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '12px',
-        fontSize: '16px',
-        letterSpacing: '-0.025em',
-      },
-      '.Input:focus': {
-        border: '1px solid #3b82f6',
-        boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.1)',
-      },
-      '.Label': {
-        color: '#ffffff',
-        fontSize: '14px',
-        fontWeight: '500',
-        letterSpacing: '-0.025em',
-      },
-    },
-  };
+    setLoading(true);
 
-  const options = {
-    clientSecret,
-    appearance,
+    try {
+      console.log('Creating checkout session for annual $18/year plan with 3-day trial');
+      
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          billing_cycle: 'annual'
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      console.log('Checkout session response:', data);
+      
+      if (data?.url) {
+        // Redirect to Stripe hosted checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned from payment intent');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
-        <div className="text-xl tracking-tight">Loading checkout...</div>
+        <div className="text-xl tracking-tight">Redirecting to checkout...</div>
       </div>
     );
   }
@@ -145,7 +108,7 @@ const Checkout = () => {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Thousands of New Yorkers already saving. For $1.50/mo
+                Start your free trial today. No commitment for 3 days.
               </p>
             </div>
 
@@ -161,7 +124,8 @@ const Checkout = () => {
             {/* Plan details */}
             <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800">
               <h3 className="text-xl font-semibold mb-3 tracking-tight">Unlimited Plan</h3>
-              <div className="text-3xl font-semibold mb-4 tracking-tight">{price}</div>
+              <div className="text-3xl font-semibold mb-2 tracking-tight">{price}</div>
+              <div className="text-lg text-gray-400 mb-4 tracking-tight">{subtitle}</div>
               <ul className="space-y-2 text-gray-300 mb-4">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -181,27 +145,41 @@ const Checkout = () => {
                 </li>
               </ul>
               
-              {/* Recurring subscription text at bottom of plan box */}
+              {/* Free trial info */}
               <p className="text-xs text-gray-500 tracking-tight">
-                Annual recurring subscription, cancel any time.
+                3-day free trial, then $18/year • Cancel anytime during trial
               </p>
             </div>
           </div>
 
-          {/* Right side - Checkout form */}
+          {/* Right side - Subscribe button */}
           <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete your subscription</h2>
+              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Start Your Free Trial</h2>
               <p className="text-gray-400 tracking-tight">
-                Secure payment powered by Stripe
+                3 days free, no commitment. Cancel anytime.
               </p>
             </div>
 
-            {clientSecret && (
-              <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm billingCycle="annual" amount={amount} />
-              </Elements>
-            )}
+            <button
+              onClick={handleSubscribe}
+              disabled={loading}
+              className="w-full bg-white text-black py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                  Starting Trial...
+                </>
+              ) : (
+                'Try for Free'
+              )}
+            </button>
+
+            {/* Security notice */}
+            <p className="text-xs text-gray-500 text-center mt-4 tracking-tight">
+              Secure payment powered by Stripe. No charge for 3 days.
+            </p>
           </div>
         </div>
       </div>

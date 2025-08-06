@@ -1,13 +1,13 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Pricing = () => {
   const navigate = useNavigate();
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, session } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,13 +62,46 @@ const Pricing = () => {
     }
   }, [toast]);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!user) {
       navigate('/login');
       return;
     }
 
-    navigate(`/checkout?billing=annual`);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          billing_cycle: 'annual'
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Checkout error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data?.url) {
+        // Open Stripe hosted checkout in same tab
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start subscription. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleManageSubscription = () => {
@@ -214,7 +247,7 @@ const Pricing = () => {
                       onClick={handleSubscribe}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Subscribe Annually
+                      Try for Free
                     </button>
                   )}
                 </div>
@@ -223,7 +256,7 @@ const Pricing = () => {
           </div>
 
 <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-  Cancel anytime. No risk, just better rent.
+  3-day free trial • Cancel anytime
 </p>
           
           {/* Subscription status display */}
@@ -275,7 +308,7 @@ const Pricing = () => {
               onClick={handleSubscribe}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Join 6000+ New Yorkers
+              Try for Free
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">

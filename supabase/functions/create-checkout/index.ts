@@ -57,7 +57,7 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Always use $18/year pricing
+    // Always use $18/year pricing with 3-day free trial
     const priceAmount = 1800; // $18.00
     const interval = 'year';
 
@@ -79,10 +79,13 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
+      subscription_data: {
+        trial_period_days: 3,
+      },
       success_url: `${req.headers.get("origin")}/pricing?success=true`,
       cancel_url: `${req.headers.get("origin")}/pricing?canceled=true`,
     });
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    logStep("Checkout session created with 3-day trial", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
