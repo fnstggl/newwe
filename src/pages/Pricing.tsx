@@ -169,7 +169,7 @@ const Pricing = () => {
                  <div className="mb-6 flex items-center justify-between">
                     <div>
                       <p className="text-4xl font-semibold tracking-tight">
-                        $18<span className="text-lg text-gray-400">/yr</span>
+                        $18<span className="text-lg text-gray-400">/year</span>
                       </p>
                       <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
                         Save thousands.
