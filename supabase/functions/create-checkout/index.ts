@@ -70,7 +70,7 @@ serve(async (req) => {
             currency: "usd",
             product_data: { 
               name: "Unlimited Plan",
-              description: "Annual subscription to access all deals"
+              description: "Unlock the best deals in NYC. Save thousands. Cancel anytime."
             },
             unit_amount: priceAmount,
             recurring: { interval },
