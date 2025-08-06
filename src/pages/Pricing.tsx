@@ -223,7 +223,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      We'll find you the best deal in NYC
+                      The best deal in NYC—tailored to your preferences
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
@@ -231,7 +231,7 @@ const Pricing = () => {
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-3">•</span>
-                      Get in before brokers + investors do
+                      Thousands of New Yorkers already saving
                     </li>
                   </ul>
                   
