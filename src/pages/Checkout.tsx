@@ -145,7 +145,7 @@ const Checkout = () => {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Your apartment's out there. Be the one that gets it.
+                Thousands of New Yorkers already saving. For $1.50/mo
               </p>
             </div>
 

@@ -169,13 +169,13 @@ const Pricing = () => {
                  <div className="mb-6 flex items-center justify-between">
                     <div>
                       <p className="text-4xl font-semibold tracking-tight">
-                        $1.50<span className="text-lg text-gray-400">/mo</span>
+                        $18<span className="text-lg text-gray-400">/yr</span>
                       </p>
                       <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
                         Save thousands.
                       </p>
                       <p className="text-xs text-gray-500 mt-1 tracking-tight">
-                        $18/yr • billed annually
+                        $1.50/mo • billed annually
                       </p>
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
