@@ -69,8 +69,8 @@ serve(async (req) => {
           price_data: {
             currency: "usd",
             product_data: { 
-              name: "Unlimited Plan",
-              description: "Annual subscription to access all deals"
+              name: "3 Days Free",
+              description: "Unlock the best deals in NYC. Save thousands. Cancel anytime."
             },
             unit_amount: priceAmount,
             recurring: { interval },

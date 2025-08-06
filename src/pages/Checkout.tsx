@@ -172,7 +172,7 @@ const Checkout = () => {
                   Starting Trial...
                 </>
               ) : (
-                'Try for Free'
+                'Start Free Trial'
               )}
             </button>
 
