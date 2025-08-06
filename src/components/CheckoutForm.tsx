@@ -67,7 +67,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         // Handle different payment intent statuses
         if (paymentIntent.status === 'succeeded') {
            // ✅ Google Ads Conversion Tracking
-  window.gtag?.('event', 'conversion', {
+  (window as any).gtag?.('event', 'conversion', {
     send_to: 'AW-17439586946/XQoxCP-nnIAbEIL16_tA', // ← Replace with your actual conversion label
     value: 18.00,
     currency: 'USD',
@@ -250,7 +250,10 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
             Processing...
           </>
         ) : (
-          `Subscribe for $18/year`
+          <div className="text-center">
+            <div>Try it for Free</div>
+            <div className="text-xs text-gray-600">3 days free, $18 billed annually</div>
+          </div>
         )}
       </button>
 
