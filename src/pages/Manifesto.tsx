@@ -63,14 +63,14 @@ const Manifesto = () => {
           <div className="mb-12">
             <p className="text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
               New York real estate is broken. Listing prices are inflated. Neighborhood data is hidden. 
-              And too many tools were built for brokers—not buyers.
+              And too many tools aren't built with renters & buyers in mind.
             </p>
             
             <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
             
             <p className="text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
               Rent is up. Inventory is down. And the platforms built to help you? 
-              Weren't built for renters or buyers. They were built for agents who want to extract maximum commission from every deal.
+              Weren't built for you to actually save money.
             </p>
           </div>
 
@@ -87,7 +87,7 @@ const Manifesto = () => {
 
           <blockquote className="border-l-4 border-blue-500 pl-8 py-4 mb-12 bg-blue-500/5 rounded-r-xl">
             <p className="text-2xl font-semibold text-blue-400 mb-2 tracking-tight">
-              "Finally, a platform that works for buyers, not agents."
+              "Finally, a platform that works for real New Yorkers."
             </p>
             <p className="text-gray-400 tracking-tight">
               This isn't guesswork. It's your unfair advantage.
@@ -98,7 +98,7 @@ const Manifesto = () => {
             <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-800">
               <h3 className="text-xl font-bold mb-3 tracking-tight">The Problem</h3>
               <ul className="space-y-2 text-gray-300">
-                <li className="tracking-tight">• Brokers hide the best deals</li>
+                <li className="tracking-tight">• Rent-stabilized deals are hidden</li>
                 <li className="tracking-tight">• Platforms favor sellers over buyers</li>
                 <li className="tracking-tight">• Market data is fragmented and biased</li>
                 <li className="tracking-tight">• You overpay because you don't know better</li>
@@ -110,7 +110,7 @@ const Manifesto = () => {
                 <li className="tracking-tight">• Real-time market analysis</li>
                 <li className="tracking-tight">• Algorithmic deal scoring</li>
                 <li className="tracking-tight">• Transparent pricing data</li>
-                <li className="tracking-tight">• Built for buyers, not brokers</li>
+                <li className="tracking-tight">• Built for buyers and renters</li>
               </ul>
             </div>
           </div>
