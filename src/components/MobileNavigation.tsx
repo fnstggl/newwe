@@ -25,8 +25,8 @@ const MobileNavigation = () => {
       icon: DollarSign,
     },
     {
-      name: "About",
-      url: "/manifesto",
+      name: "Mission",
+      url: "/mission",
       icon: FileText,
     },
   ];
