@@ -247,7 +247,7 @@ const Pricing = () => {
                       onClick={handleSubscribe}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Start Free Trial
+                      Try for Free
                     </button>
                   )}
                 </div>
@@ -308,7 +308,7 @@ const Pricing = () => {
               onClick={handleSubscribe}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Start Free Trial
+              Try for Free
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">
