@@ -80,7 +80,7 @@ serve(async (req) => {
     });
     logStep("Price created", { priceId: price.id });
 
-    // Create subscription with 3-day free trial
+    // Create subscription without payment method restrictions
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [
@@ -92,7 +92,6 @@ serve(async (req) => {
       payment_settings: { 
         save_default_payment_method: 'on_subscription',
       },
-      trial_period_days: 3, // Add 3-day free trial
       expand: ['latest_invoice.payment_intent'],
       metadata: {
         user_id: user.id,
@@ -100,7 +99,7 @@ serve(async (req) => {
       },
     });
 
-    logStep("Subscription created with 3-day trial", { subscriptionId: subscription.id });
+    logStep("Subscription created", { subscriptionId: subscription.id });
 
     // Update profiles table with stripe_customer_id
     const { error: profileError } = await supabaseClient
