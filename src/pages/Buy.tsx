@@ -117,20 +117,19 @@ const getVisibilityLimit = () => {
   return 9; // Free plan users see 9
 };
 
-// REPLACE your current animation useEffect with:
+// CHANGE this useEffect (around line 118):
 useEffect(() => {
   if (properties.length > 0) {
     setAnimationKey(prev => prev + 1);
-    setAnimationDisabled(false); // Reset on filter changes
+    setAnimationDisabled(false);
     setIsAnimating(true);
     
     setTimeout(() => {
       setIsAnimating(false);
-      // Only disable animations after this specific cascade
       setTimeout(() => setAnimationDisabled(true), 100);
     }, 2500);
   }
-}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]); // Remove properties.length
   
   // Load property from URL parameter if present
   useEffect(() => {
@@ -557,7 +556,19 @@ const additionalNeighborhoods = [
     setProperties([]);
   } finally {
     setLoading(false);
-  }
+
+     // ADD these lines:
+    if (reset && resultData && resultData.length > 0) {
+      setAnimationKey(prev => prev + 1);
+      setAnimationDisabled(false);
+      setIsAnimating(true);
+      
+      setTimeout(() => {
+        setIsAnimating(false);
+        setTimeout(() => setAnimationDisabled(true), 100);
+      }, 2500);
+    }
+  } // ← You were missing this closing brace for the if statement
 };
 
   const loadMore = () => {
