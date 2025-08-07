@@ -295,7 +295,7 @@ const Pricing = () => {
          <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
   {isAnnual 
     ? "3-day free trial • Cancel anytime"
-    : "Save thousands on your home before anyone else finds it • Cancel anytime"
+    : "Find the best deal in the city • Cancel anytime"
   }
 </p>
           
