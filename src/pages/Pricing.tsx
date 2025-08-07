@@ -287,11 +287,12 @@ const Pricing = () => {
             </div>
           </div>
 
-          {isAnnual && (
-            <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-              3-day free trial • Cancel anytime
-            </p>
-          )}
+          <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+  {isAnnual 
+    ? "3-day free trial • Cancel anytime"
+    : "Save thousands on your home • Cancel anytime"
+  }
+</p>
           
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
