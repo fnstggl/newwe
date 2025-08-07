@@ -229,7 +229,7 @@ const Pricing = () => {
       $1.50<span className="text-lg text-gray-400">/mo</span>
     </p>
     <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-      Save 83% vs monthly.
+      Save 83% vs monthly
     </p>
     <p className="text-xs text-gray-500 mt-1 tracking-tight">
       $18/yr • billed annually
