@@ -150,29 +150,24 @@ const Pricing = () => {
 </div>
 
             {/* Billing Toggle */}
-            <div className="mt-12 flex justify-center">
-              <div className="flex items-center gap-4 bg-gray-900/50 rounded-full p-2 border border-gray-700">
-                <span className={`px-4 py-2 text-sm font-medium tracking-tight transition-colors ${
-                  !isAnnual ? 'text-white' : 'text-gray-400'
-                }`}>
-                  Monthly
-                </span>
-                <Toggle 
-                  checked={isAnnual} 
-                  onCheckedChange={setIsAnnual}
-                />
-                <span className={`px-4 py-2 text-sm font-medium tracking-tight transition-colors ${
-                  isAnnual ? 'text-white' : 'text-gray-400'
-                }`}>
-                  Annual
-                </span>
-                {isAnnual && (
-                  <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
-                    Save 83%
-                  </span>
-                )}
-              </div>
-            </div>
+<div className="mt-12 flex justify-center">
+  <div className="flex items-center gap-4">
+    <span className={`text-sm font-medium tracking-tight transition-colors ${
+      isAnnual ? 'text-white' : 'text-gray-400'
+    }`}>
+      Annual
+    </span>
+    <Toggle 
+      checked={!isAnnual} 
+      onCheckedChange={(checked) => setIsAnnual(!checked)}
+    />
+    <span className={`text-sm font-medium tracking-tight transition-colors ${
+      !isAnnual ? 'text-white' : 'text-gray-400'
+    }`}>
+      Monthly
+    </span>
+  </div>
+</div>
             </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
