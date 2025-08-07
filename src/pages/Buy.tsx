@@ -18,6 +18,30 @@ const Buy = () => {
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
+
+  // Add CSS for property card animations
+  const animationStyles = `
+    .property-card-animate {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInFade 0.6s ease-out forwards;
+    }
+    
+    @keyframes slideInFade {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `;
+
+  // Insert the styles into the document head
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = animationStyles;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -928,16 +952,25 @@ const additionalNeighborhoods = [
 
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade);
-              const isBlurred = index >= visibilityLimit;
-              
-              return (
-                <div
-                  key={`${property.id}-${index}`}
-                  className="relative"
-                >
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+  {properties.map((property, index) => {
+    const gradeColors = getGradeColors(property.grade);
+    const isBlurred = index >= visibilityLimit;
+    
+    // Calculate stagger delay for diagonal cascade effect
+    const row = Math.floor(index / 3); // 3 columns
+    const col = index % 3;
+    const diagonalIndex = row + col; // Creates diagonal cascade
+    const animationDelay = diagonalIndex * 75; // 75ms stagger
+    
+    return (
+      <div
+        key={`${property.id}-${index}`}
+        className="relative property-card-animate"
+        style={{
+          animationDelay: `${animationDelay}ms`
+        }}
+      >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
