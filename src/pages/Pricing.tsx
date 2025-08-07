@@ -1,5 +1,7 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
+import { LiquidToggle } from "@/components/ui/liquid-toggle";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +11,7 @@ const Pricing = () => {
   const navigate = useNavigate();
   const { user, userProfile, session } = useAuth();
   const { toast } = useToast();
+  const [isAnnual, setIsAnnual] = useState(true); // Default to annual
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -71,7 +74,7 @@ const Pricing = () => {
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          billing_cycle: 'annual'
+          billing_cycle: isAnnual ? 'annual' : 'monthly'
         },
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -89,7 +92,6 @@ const Pricing = () => {
       }
 
       if (data?.url) {
-        // Open Stripe hosted checkout in same tab
         window.location.href = data.url;
       } else {
         throw new Error('No checkout URL returned');
@@ -146,6 +148,31 @@ const Pricing = () => {
     <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
   </div>
 </div>
+
+            {/* Billing Toggle */}
+            <div className="mt-12 flex justify-center">
+              <div className="flex items-center gap-4 bg-gray-900/50 rounded-full p-2 border border-gray-700">
+                <span className={`px-4 py-2 text-sm font-medium tracking-tight transition-colors ${
+                  !isAnnual ? 'text-white' : 'text-gray-400'
+                }`}>
+                  Monthly
+                </span>
+                <LiquidToggle 
+                  checked={isAnnual} 
+                  onCheckedChange={setIsAnnual}
+                />
+                <span className={`px-4 py-2 text-sm font-medium tracking-tight transition-colors ${
+                  isAnnual ? 'text-white' : 'text-gray-400'
+                }`}>
+                  Annual
+                </span>
+                {isAnnual && (
+                  <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                    Save 83%
+                  </span>
+                )}
+              </div>
+            </div>
             </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -201,15 +228,31 @@ const Pricing = () => {
                   </div>
                  <div className="mb-6 flex items-center justify-between">
                     <div>
-                      <p className="text-4xl font-semibold tracking-tight">
-                        $1.50<span className="text-lg text-gray-400">/mo</span>
-                      </p>
-                      <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                        Save thousands.
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1 tracking-tight">
-                        $18/yr • billed annually
-                      </p>
+                      {isAnnual ? (
+                        <>
+                          <p className="text-4xl font-semibold tracking-tight">
+                            $1.50<span className="text-lg text-gray-400">/mo</span>
+                          </p>
+                          <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                            Save thousands.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                            $18/yr • billed annually
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-4xl font-semibold tracking-tight">
+                            $9<span className="text-lg text-gray-400">/mo</span>
+                          </p>
+                          <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                            Save thousands.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                            billed monthly
+                          </p>
+                        </>
+                      )}
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
                       Compared to ~$3,600 broker avg
@@ -247,7 +290,7 @@ const Pricing = () => {
                       onClick={handleSubscribe}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Try for Free
+                      {isAnnual ? 'Try for Free' : 'Start Now'}
                     </button>
                   )}
                 </div>
@@ -255,9 +298,11 @@ const Pricing = () => {
             </div>
           </div>
 
-<p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-  3-day free trial • Cancel anytime
-</p>
+          {isAnnual && (
+            <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+              3-day free trial • Cancel anytime
+            </p>
+          )}
           
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
@@ -308,7 +353,7 @@ const Pricing = () => {
               onClick={handleSubscribe}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Try for Free
+              {isAnnual ? 'Try for Free' : 'Start Now'}
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">
