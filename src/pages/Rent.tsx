@@ -14,6 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 type SupabaseUndervaluedRentStabilized = Tables<'undervalued_rent_stabilized'>;
 
+// ADD this before "const Rent = () => {":
 const animationStyles = `
   .property-card-animate {
     opacity: 0;
@@ -41,13 +42,12 @@ const Rent = () => {
   const { listingId } = useParams();
   const isMobile = useIsMobile();
 
- // First useEffect - adds CSS styles (only runs once)
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = animationStyles;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
+useEffect(() => {
+  const style = document.createElement('style');
+  style.textContent = animationStyles;
+  document.head.appendChild(style);
+  return () => document.head.removeChild(style);
+}, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -115,19 +115,19 @@ const Rent = () => {
     return 9; // Free plan users see 9
   };
 
- useEffect(() => {
-    if (properties.length > 0) {
-      setAnimationKey(prev => prev + 1);
-      setAnimatedCards(new Set());
-      setAnimationComplete(false);
-      
-      // Mark animation as complete after expected duration
-      const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
-      setTimeout(() => {
-        setAnimationComplete(true);
-      }, maxDelay);
-    }
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
+useEffect(() => {
+  if (properties.length > 0) {
+    setAnimationKey(prev => prev + 1);
+    setAnimatedCards(new Set());
+    setAnimationComplete(false);
+    
+    // Mark animation as complete after expected duration
+    const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
+    setTimeout(() => {
+      setAnimationComplete(true);
+    }, maxDelay);
+  }
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
   
   useEffect(() => {
     if (listingId && properties.length > 0) {
@@ -1220,28 +1220,28 @@ const additionalNeighborhoods = [
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {properties.map((property, index) => {
-              const gradeColors = getGradeColors(property.grade);
-              const isBlurred = index >= visibilityLimit;
-              
-              // Calculate stagger delay for diagonal cascade effect
-              const row = Math.floor(index / 3); // 3 columns
-              const col = index % 3;
-              const diagonalIndex = row + col; // Creates diagonal cascade
-              const animationDelay = diagonalIndex * 75; // 75ms stagger
+         {properties.map((property, index) => {
+  const gradeColors = getGradeColors(property.grade);
+  const isBlurred = index >= visibilityLimit;
+  
+  // Calculate stagger delay for diagonal cascade effect
+  const row = Math.floor(index / 3); // 3 columns
+  const col = index % 3;
+  const diagonalIndex = row + col; // Creates diagonal cascade
+  const animationDelay = diagonalIndex * 75; // 75ms stagger
 
-              const cardKey = `${property.id}-${index}-${animationKey}`;
-              const shouldAnimate = !animationComplete;
+  const cardKey = `${property.id}-${index}-${animationKey}`;
+  const shouldAnimate = !animationComplete;
 
-              return (
-                <div
-                  key={cardKey}
-                  className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
-                  style={{
-                    animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
-                    transform: shouldAnimate ? undefined : 'translateY(0px)'
-                  }}
-                >
+  return (
+    <div
+      key={cardKey}
+      className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
+      style={{
+        animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
+        transform: shouldAnimate ? undefined : 'translateY(0px)'
+      }}
+    >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
