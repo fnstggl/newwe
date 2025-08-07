@@ -143,23 +143,6 @@ const Pricing = () => {
               These deals don't wait. People grab them before you even know they exist.
             </p>
             
-            {/* Billing Toggle */}
-            <div className="mt-10 flex items-center justify-center gap-4 mb-8">
-              <span className={`text-sm font-medium transition-colors ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Monthly
-              </span>
-              <Toggle 
-                checked={isAnnual} 
-                onCheckedChange={setIsAnnual}
-                variant="default"
-              />
-              <span className={`text-sm font-medium transition-colors ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                Annual
-                <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">
-                  Save 83%
-                </span>
-              </span>
-            </div>
             
         <div className="mt-10 flex justify-center">
   <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
@@ -168,6 +151,21 @@ const Pricing = () => {
     </p>
     <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
   </div>
+</div>
+
+            {/* Billing Toggle */}
+<div className="mt-10 flex items-center justify-center gap-4">
+  <span className={`text-sm font-medium transition-colors ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+    Annual
+  </span>
+  <Toggle 
+    checked={!isAnnual} 
+    onCheckedChange={(checked) => setIsAnnual(!checked)}
+    variant="default"
+  />
+  <span className={`text-sm font-medium transition-colors ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
+    Monthly
+  </span>
 </div>
             </div>
           
@@ -294,11 +292,12 @@ const Pricing = () => {
             </div>
           </div>
 
-          {isAnnual && (
-            <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-              3-day free trial • Cancel anytime
-            </p>
-          )}
+         <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+  {isAnnual 
+    ? "3-day free trial • Cancel anytime"
+    : "Finally find your dream home • Cancel anytime"
+  }
+</p>
           
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
