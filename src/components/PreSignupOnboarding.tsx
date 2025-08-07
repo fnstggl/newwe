@@ -689,7 +689,7 @@ case 0:
         {/* Product mockup image - compact size */}
         <div className="w-full flex justify-center">
           <img 
-            src="/lovable-uploads/marketing-image-3.jpg" 
+            src="/lovable-uploads/marketing-image-3.png" 
             alt="Found your match interface showing property details and search" 
             className="max-w-xl md:max-w-2xl w-full h-auto rounded-2xl shadow-2xl opacity-0 animate-fade-in"
             style={{
