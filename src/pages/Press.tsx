@@ -103,7 +103,7 @@ const Press = () => {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">Young founders</div>
+            <div className="text-2xl font-bold mb-2">2 founders</div>
             <div className="text-gray-400 text-sm">Redefining the NYC real estate market</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
