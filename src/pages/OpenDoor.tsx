@@ -256,7 +256,7 @@ const OpenDoor = () => {
         <div className="text-center mb-16">
           <div className="max-w-3xl mx-auto p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-sm">
             <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              Realer Estate is usually $3/month to help us stay independent—but we created the Housing Access Plan to make sure that all New Yorkers have access to affordable homes.
+              Realer Estate usually only offers 9 free listings per day to help us stay independent—but we created the Housing Access Plan to make sure that all New Yorkers have unrestricted access to affordable homes.
             </p>
             
             <p className="text-white text-lg font-medium">
