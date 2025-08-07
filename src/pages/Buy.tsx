@@ -1018,7 +1018,7 @@ const additionalNeighborhoods = [
   Try Unlimited Access for Free
 </button>
                           <p className="text-xs text-gray-400 mt-3">
-  Homes 100k+ under market • Just $1.50/mo • Billed annually
+  Save an avg of $236,000 on your next home • Just $1.50/mo • Billed annually
 </p>
                       </div>
                     </div>

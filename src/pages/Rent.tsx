@@ -1264,7 +1264,7 @@ const additionalNeighborhoods = [
                           Try Unlimited Access for Freee
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
-                          Save thousands on rent every month • Just $1.50/mo • Billed annually
+                          Save an avg of $925 every month • Just $1.50/mo • Billed annually
                         </p>
                       </div>
                     </div>
