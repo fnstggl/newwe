@@ -19,15 +19,16 @@ const Buy = () => {
   const { listingId } = useParams();
   const isMobile = useIsMobile();
 
- // REPLACE your animationStyles with:
+ // AFTER:
 const animationStyles = `
-  [data-animate="true"] {
+  .property-card-animate {
     opacity: 0;
     transform: translateY(20px);
     animation: slideInFade 0.6s ease-out forwards;
   }
   
-  [data-animate="false"] {
+  .property-card-animate.completed {
+    animation: none;
     opacity: 1;
     transform: translateY(0);
   }
@@ -75,9 +76,8 @@ useEffect(() => {
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
-const [isAnimating, setIsAnimating] = useState(false);
-const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [animationDisabled, setAnimationDisabled] = useState(false);
+  const [animatedCards, setAnimatedCards] = useState(new Set());
+  const [animationComplete, setAnimationComplete] = useState(false);
 
 
 
@@ -117,17 +117,17 @@ const getVisibilityLimit = () => {
   return 9; // Free plan users see 9
 };
 
-// CHANGE this useEffect (around line 118):
 useEffect(() => {
   if (properties.length > 0) {
     setAnimationKey(prev => prev + 1);
-    setAnimationDisabled(false);
-    setIsAnimating(true);
+    setAnimatedCards(new Set());
+    setAnimationComplete(false);
     
+    // Mark animation as complete after expected duration
+    const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
     setTimeout(() => {
-      setIsAnimating(false);
-      setTimeout(() => setAnimationDisabled(true), 100);
-    }, 2500);
+      setAnimationComplete(true);
+    }, maxDelay);
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]); // Remove properties.length
   
@@ -556,19 +556,7 @@ const additionalNeighborhoods = [
     setProperties([]);
   } finally {
     setLoading(false);
-
-     // ADD these lines:
-    if (reset && resultData && resultData.length > 0) {
-      setAnimationKey(prev => prev + 1);
-      setAnimationDisabled(false);
-      setIsAnimating(true);
-      
-      setTimeout(() => {
-        setIsAnimating(false);
-        setTimeout(() => setAnimationDisabled(true), 100);
-      }, 2500);
-    }
-  } // ← You were missing this closing brace for the if statement
+  }
 };
 
   const loadMore = () => {
@@ -991,34 +979,36 @@ const additionalNeighborhoods = [
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {console.log('Debug:', { isAnimating, animationDisabled, propertiesLength: properties.length })}
-{properties.map((property, index) => {
-  const gradeColors = getGradeColors(property.grade);
-  const isBlurred = index >= visibilityLimit;
-  
-  // Calculate stagger delay for diagonal cascade effect
-  const row = Math.floor(index / 3);
-  const col = index % 3;
-  const diagonalIndex = row + col;
-  const animationDelay = diagonalIndex * 75;
-  
-  return (
-    <div
-  key={`${property.id}-${animationKey}`}
-  data-animate={!animationDisabled && isAnimating}
+  {properties.map((property, index) => {
+    const gradeColors = getGradeColors(property.grade);
+    const isBlurred = index >= visibilityLimit;
+    
+    // Calculate stagger delay for diagonal cascade effect
+    const row = Math.floor(index / 3); // 3 columns
+    const col = index % 3;
+    const diagonalIndex = row + col; // Creates diagonal cascade
+const animationDelay = diagonalIndex * 75; // 75ms stagger
+
+const cardKey = `${property.id}-${index}-${animationKey}`;
+const shouldAnimate = !animationComplete;
+
+return (
+<div
+  key={cardKey}
+  className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
   style={{
-    animationDelay: (!animationDisabled && isAnimating) ? `${animationDelay}ms` : '0ms'
+    animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
+    transform: shouldAnimate ? undefined : 'translateY(0px)'
   }}
-  className="relative"
 >
-      <div className={isBlurred ? 'filter blur-sm' : ''}>
-        <PropertyCard
-          property={property}
-          isRental={false}
-          onClick={() => handlePropertyClick(property, index)}
-          gradeColors={gradeColors}
-        />
-      </div>
+                  <div className={isBlurred ? 'filter blur-sm' : ''}>
+                    <PropertyCard
+                      property={property}
+                      isRental={false}
+                      onClick={() => handlePropertyClick(property, index)}
+                      gradeColors={gradeColors}
+                    />
+                  </div>
 
                   {/* Make blurred listings clickable for logged out users */}
                   {!user && isBlurred && (
