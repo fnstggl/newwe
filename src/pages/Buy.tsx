@@ -77,6 +77,7 @@ useEffect(() => {
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [animatedCards, setAnimatedCards] = useState(new Set());
+  const [animationComplete, setAnimationComplete] = useState(false);
 
 
 
@@ -119,9 +120,16 @@ const getVisibilityLimit = () => {
 useEffect(() => {
   if (properties.length > 0) {
     setAnimationKey(prev => prev + 1);
-    setAnimatedCards(new Set()); // Add this line
+    setAnimatedCards(new Set());
+    setAnimationComplete(false);
+    
+    // Mark animation as complete after expected duration
+    const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
+    setTimeout(() => {
+      setAnimationComplete(true);
+    }, maxDelay);
   }
-}, [properties.length, searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]); // Remove properties.length
   
   // Load property from URL parameter if present
   useEffect(() => {
@@ -982,17 +990,15 @@ const additionalNeighborhoods = [
 const animationDelay = diagonalIndex * 75; // 75ms stagger
 
 const cardKey = `${property.id}-${index}-${animationKey}`;
-const isAnimated = animatedCards.has(cardKey);
+const shouldAnimate = !animationComplete;
 
 return (
 <div
   key={cardKey}
-  className={`relative ${isAnimated ? 'property-card-animate completed' : 'property-card-animate'}`}
+  className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
   style={{
-    animationDelay: isAnimated ? '0ms' : `${animationDelay}ms`
-  }}
-  onAnimationEnd={() => {
-    setAnimatedCards(prev => new Set([...prev, cardKey]));
+    animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
+    transform: shouldAnimate ? undefined : 'translateY(0px)'
   }}
 >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
