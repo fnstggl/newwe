@@ -228,7 +228,7 @@ const Pricing = () => {
                             $1.50<span className="text-lg text-gray-400">/mo</span>
                           </p>
                           <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                            Save thousands.
+                            Save 83% vs monthly
                           </p>
                           <p className="text-xs text-gray-500 mt-1 tracking-tight">
                             $18/yr • billed annually
@@ -295,7 +295,7 @@ const Pricing = () => {
          <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
   {isAnnual 
     ? "3-day free trial • Cancel anytime"
-    : "Finally find your dream home • Cancel anytime"
+    : "Save thousands on your home • Cancel anytime"
   }
 </p>
           
