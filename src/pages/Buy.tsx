@@ -19,21 +19,27 @@ const Buy = () => {
   const { listingId } = useParams();
   const isMobile = useIsMobile();
 
-  // Add CSS for property card animations
-  const animationStyles = `
-    .property-card-animate {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: slideInFade 0.6s ease-out forwards;
+ // AFTER:
+const animationStyles = `
+  .property-card-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInFade 0.6s ease-out forwards;
+  }
+  
+  .property-card-animate.completed {
+    animation: none;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  @keyframes slideInFade {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-    
-    @keyframes slideInFade {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  `;
+  }
+`;
 
 // First useEffect - adds CSS styles (only runs once)
 useEffect(() => {
@@ -70,6 +76,8 @@ useEffect(() => {
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const [animatedCards, setAnimatedCards] = useState(new Set());
+
 
 
   // Mobile filters state
@@ -108,10 +116,10 @@ const getVisibilityLimit = () => {
   return 9; // Free plan users see 9
 };
 
-// Second useEffect - triggers animation on property changes
 useEffect(() => {
   if (properties.length > 0) {
     setAnimationKey(prev => prev + 1);
+    setAnimatedCards(new Set()); // Add this line
   }
 }, [properties.length, searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
   
@@ -974,11 +982,18 @@ const additionalNeighborhoods = [
     const animationDelay = diagonalIndex * 75; // 75ms stagger
     
     return (
+const cardKey = `${property.id}-${index}-${animationKey}`;
+const isAnimated = animatedCards.has(cardKey);
+
+return (
 <div
-  key={`${property.id}-${index}-${animationKey}`}
-  className="relative property-card-animate"
+  key={cardKey}
+  className={`relative ${isAnimated ? 'property-card-animate completed' : 'property-card-animate'}`}
   style={{
-    animationDelay: `${animationDelay}ms`
+    animationDelay: isAnimated ? '0ms' : `${animationDelay}ms`
+  }}
+  onAnimationEnd={() => {
+    setAnimatedCards(prev => new Set([...prev, cardKey]));
   }}
 >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
