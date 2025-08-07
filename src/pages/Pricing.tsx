@@ -157,7 +157,7 @@ const Pricing = () => {
                 }`}>
                   Monthly
                 </span>
-                <LiquidToggle 
+                <Toggle 
                   checked={isAnnual} 
                   onCheckedChange={setIsAnnual}
                 />
