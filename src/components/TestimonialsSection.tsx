@@ -63,8 +63,8 @@ const TestimonialsSection = () => {
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-tl from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
       
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        <h2 className="text-4xl md:text-5xl font-semibold mb-16 tracking-tighter text-white">
-          6,000+ New Yorkers saving thousands.
+        <h2 className="text-3xl md:text-4xl font-semibold mb-16 tracking-tighter text-white">
+          6,000+ New Yorkers already saving thousands.
         </h2>
         
         <div className="relative min-h-[300px] flex items-center justify-center">
