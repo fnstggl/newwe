@@ -35,20 +35,13 @@ const Buy = () => {
     }
   `;
 
-// Update the useEffect that adds CSS (remove the timer logic)
+// First useEffect - adds CSS styles (only runs once)
 useEffect(() => {
   const style = document.createElement('style');
   style.textContent = animationStyles;
   document.head.appendChild(style);
   return () => document.head.removeChild(style);
 }, []);
-
-// Add this new useEffect to trigger animation on property changes
-useEffect(() => {
-  if (properties.length > 0) {
-    setAnimationKey(prev => prev + 1);
-  }
-}, [properties.length, searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -115,6 +108,13 @@ const getVisibilityLimit = () => {
   return 9; // Free plan users see 9
 };
 
+// Second useEffect - triggers animation on property changes
+useEffect(() => {
+  if (properties.length > 0) {
+    setAnimationKey(prev => prev + 1);
+  }
+}, [properties.length, searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+  
   // Load property from URL parameter if present
   useEffect(() => {
     if (listingId && properties.length > 0) {
