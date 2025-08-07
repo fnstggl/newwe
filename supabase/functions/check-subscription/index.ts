@@ -66,7 +66,7 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    // Check for both active and trialing subscriptions
+    // Check for both active and canceled subscriptions
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "all",
@@ -79,10 +79,9 @@ serve(async (req) => {
     let hasActiveSub = false;
     let isCanceled = false;
 
-    // Find active or trialing subscriptions
+    // Find the most recent subscription (active or canceled)
     const validSubscriptions = subscriptions.data.filter(sub => 
       sub.status === 'active' || 
-      sub.status === 'trialing' ||
       (sub.status === 'canceled' && sub.current_period_end * 1000 > Date.now())
     );
 
@@ -108,8 +107,7 @@ serve(async (req) => {
           endDate: subscriptionEnd,
           interval: interval,
           isStillValid,
-          isCanceled,
-          isTrialing: subscription.status === 'trialing'
+          isCanceled
         });
       } else {
         logStep("Subscription expired, reverting to free", { 

@@ -1,7 +1,5 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
-import { Toggle } from '@/components/ui/liquid-toggle';
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +9,6 @@ const Pricing = () => {
   const navigate = useNavigate();
   const { user, userProfile, session } = useAuth();
   const { toast } = useToast();
-  const [isAnnual, setIsAnnual] = useState(true); // Default to annual
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -74,7 +71,7 @@ const Pricing = () => {
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          billing_cycle: isAnnual ? 'annual' : 'monthly'
+          billing_cycle: 'annual'
         },
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -92,6 +89,7 @@ const Pricing = () => {
       }
 
       if (data?.url) {
+        // Open Stripe hosted checkout in same tab
         window.location.href = data.url;
       } else {
         throw new Error('No checkout URL returned');
@@ -146,26 +144,6 @@ const Pricing = () => {
       "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
     </p>
     <p className="mt-3 text-sm text-blue-400 font-medium">– Sasha, Brooklyn renter</p>
-  </div>
-</div>
-
-            {/* Billing Toggle */}
-<div className="mt-12 flex justify-center">
-  <div className="flex items-center gap-4">
-    <span className={`text-sm font-medium tracking-tight transition-colors ${
-      isAnnual ? 'text-white' : 'text-gray-400'
-    }`}>
-      Annual
-    </span>
-    <Toggle 
-      checked={!isAnnual} 
-      onCheckedChange={(checked) => setIsAnnual(!checked)}
-    />
-    <span className={`text-sm font-medium tracking-tight transition-colors ${
-      !isAnnual ? 'text-white' : 'text-gray-400'
-    }`}>
-      Monthly
-    </span>
   </div>
 </div>
             </div>
@@ -223,25 +201,15 @@ const Pricing = () => {
                   </div>
                  <div className="mb-6 flex items-center justify-between">
                     <div>
-                      {isAnnual ? (
-  <>
-    <p className="text-4xl font-semibold tracking-tight">
-      $1.50<span className="text-lg text-gray-400">/mo</span>
-    </p>
-    <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-      Save 83% vs monthly
-    </p>
-    <p className="text-xs text-gray-500 mt-1 tracking-tight">
-      $18/yr • billed annually
-    </p>
-  </>
-) : (
-  <>
-    <p className="text-4xl font-semibold tracking-tight">
-      $9<span className="text-lg text-gray-400">/mo</span>
-    </p>
-  </>
-)}
+                      <p className="text-4xl font-semibold tracking-tight">
+                        $1.50<span className="text-lg text-gray-400">/mo</span>
+                      </p>
+                      <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                        Save thousands.
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                        $18/yr • billed annually
+                      </p>
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
                       Compared to ~$3,600 broker avg
@@ -279,7 +247,7 @@ const Pricing = () => {
                       onClick={handleSubscribe}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      {isAnnual ? 'Try for Free' : 'Start Now'}
+                      Try for Free
                     </button>
                   )}
                 </div>
@@ -287,11 +255,8 @@ const Pricing = () => {
             </div>
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-  {isAnnual 
-    ? "3-day free trial • Cancel anytime"
-    : "Save thousands on your home • Cancel anytime"
-  }
+<p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+  3-day free trial • Cancel anytime
 </p>
           
           {/* Subscription status display */}
@@ -343,7 +308,7 @@ const Pricing = () => {
               onClick={handleSubscribe}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              {isAnnual ? 'Try for Free' : 'Start Now'}
+              Try for Free
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">

@@ -100,7 +100,14 @@ export function Toggle({
             transform: `translateX(${isChecked ? '0px' : '-12px'}) scale(${isChecked ? '1' : '0'})`,
           }}
         />
-  
+        {isChecked && (
+          <circle
+            className={styles.dropCircle}
+            cx="35"
+            cy="-1"
+            r="2.5"
+          />
+        )}
       </svg>
     </label>
   );
