@@ -1,7 +1,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
-import { LiquidToggle } from "@/components/ui/liquid-toggle";
+import { Toggle } from '@/components/ui/liquid-toggle';
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
