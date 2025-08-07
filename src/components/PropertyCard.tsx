@@ -73,23 +73,55 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
   };
 
   const getDiscountPercentage = () => {
-    // For rent-stabilized properties, handle above/below market differently
-    if (property.isRentStabilized && property.discount_percent !== undefined) {
-      const percent = Math.abs(property.discount_percent);
-      // All rent-stabilized should be "below market"
-      return `${Math.round(percent)}% below market`;
-    }
+  let percentText = '';
+  let savingsText = '';
+  
+  // For rent-stabilized properties, handle above/below market differently
+  if (property.isRentStabilized && property.discount_percent !== undefined) {
+    const percent = Math.abs(property.discount_percent);
+    percentText = `${Math.round(percent)}% below market`;
     
-    // First try to get from discount_percent field
-    if (property.discount_percent && property.discount_percent > 0) {
-      return `${Math.round(property.discount_percent)}% below market`;
+    // Calculate monthly savings for rent-stabilized
+    if (property.potential_annual_savings) {
+      const monthlySavings = Math.round(property.potential_annual_savings / 12);
+      savingsText = `Save $${monthlySavings}/mo`;
+    } else if (property.annual_savings) {
+      const monthlySavings = Math.round(property.annual_savings / 12);
+      savingsText = `Save $${monthlySavings}/mo`;
     }
+  } else if (property.discount_percent && property.discount_percent > 0) {
+    percentText = `${Math.round(property.discount_percent)}% below market`;
     
+    // Add savings calculation based on property type
+    if (isRental) {
+      // For rentals, show monthly savings
+      if (property.potential_monthly_savings) {
+        savingsText = `Save $${Math.round(property.potential_monthly_savings)}/mo`;
+      } else if (property.potential_annual_savings) {
+        const monthlySavings = Math.round(property.potential_annual_savings / 12);
+        savingsText = `Save $${monthlySavings}/mo`;
+      } else if (property.annual_savings) {
+        const monthlySavings = Math.round(property.annual_savings / 12);
+        savingsText = `Save $${monthlySavings}/mo`;
+      }
+    } else {
+      // For sales, show total savings
+      if (property.potential_savings) {
+        savingsText = `Save $${Math.round(property.potential_savings).toLocaleString()}`;
+      } else if (property.annual_savings) {
+        savingsText = `Save $${Math.round(property.annual_savings).toLocaleString()}`;
+      }
+    }
+  } else {
     // Fallback to parsing from reasoning
     const reasoningText = property.reasoning || '';
     const discountMatch = reasoningText.match(/(\d+)%\s*below/i);
-    return discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
-  };
+    percentText = discountMatch ? `${discountMatch[1]}% below market` : 'Below market';
+  }
+  
+  // Return both percentage and savings if available
+  return savingsText ? `${percentText}\n${savingsText}` : percentText;
+};
 
   const price = isRental 
     ? property.monthly_rent 
@@ -211,9 +243,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-300 italic">
-            {getDiscountPercentage()}
-          </span>
+         <div className="text-sm text-gray-300 italic whitespace-pre-line">
+  {getDiscountPercentage()}
+</div>
           <div className="flex gap-2">
             {property.isRentStabilized && (
               <Badge variant="outline" className="text-xs border-green-600 text-green-400">
