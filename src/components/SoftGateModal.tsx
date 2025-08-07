@@ -74,7 +74,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
   const freePlanContent = {
     header: "You've found a deal",
     description: "See why this listing is undervalued, full details, and more",
-    buttonText: "Unlock for $3/month"
+    buttonText: "Try Unlimited Access For Free"
   };
 
   const content = isLoggedOut ? loggedOutContent : freePlanContent;
