@@ -42,9 +42,7 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle } = await req.json();
-    // Force annual billing at $18/year regardless of what's passed
-    const forcedBillingCycle = 'annual';
-    logStep("Forced billing cycle to annual", { original: billing_cycle, forced: forcedBillingCycle });
+    logStep("Billing cycle received", { billing_cycle });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -57,11 +55,22 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    // Always use $18/year pricing with 3-day free trial
-    const priceAmount = 1800; // $18.00
-    const interval = 'year';
+    let priceAmount, interval, trialPeriodDays = undefined;
 
-    const session = await stripe.checkout.sessions.create({
+    if (billing_cycle === 'monthly') {
+      priceAmount = 900; // $9.00
+      interval = 'month';
+      // No trial for monthly
+    } else {
+      // Default to annual with 3-day free trial
+      priceAmount = 1800; // $18.00
+      interval = 'year';
+      trialPeriodDays = 3;
+    }
+
+    logStep("Pricing configured", { priceAmount, interval, trialPeriodDays });
+
+    const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
@@ -79,13 +88,25 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      subscription_data: {
-        trial_period_days: 3,
-      },
       success_url: `${req.headers.get("origin")}/pricing?success=true`,
       cancel_url: `${req.headers.get("origin")}/pricing?canceled=true`,
+    };
+
+    // Add trial only for annual plans
+    if (trialPeriodDays) {
+      sessionConfig.subscription_data = {
+        trial_period_days: trialPeriodDays,
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
+    
+    logStep("Checkout session created", { 
+      sessionId: session.id, 
+      url: session.url, 
+      billingCycle: billing_cycle,
+      trialDays: trialPeriodDays 
     });
-    logStep("Checkout session created with 3-day trial", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

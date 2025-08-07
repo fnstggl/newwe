@@ -92,7 +92,7 @@ serve(async (req) => {
           return new Response("User not found", { status: 404 });
         }
 
-        // Update user profile with subscription details
+        // Update user profile with subscription details - Both monthly and annual get unlimited
         const { error: updateError } = await supabaseClient
           .from('profiles')
           .update({ 
@@ -124,6 +124,61 @@ serve(async (req) => {
           logStep("Subscriber update error", { error: subscriberError });
         } else {
           logStep("Subscriber record updated successfully");
+        }
+      }
+    }
+
+    // Handle subscription creation (for trials)
+    if (event.type === "customer.subscription.created") {
+      const subscription = event.data.object;
+      logStep("Subscription created", { subscriptionId: subscription.id, status: subscription.status });
+
+      // For trialing subscriptions, immediately upgrade user to unlimited
+      if (subscription.status === 'trialing') {
+        const interval = subscription.items.data[0]?.price?.recurring?.interval;
+        const billingCycle = interval === 'year' ? 'annual' : 'monthly';
+
+        // Find user by customer ID
+        const { data: profileData, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', subscription.customer)
+          .single();
+
+        if (profileData && !profileError) {
+          // Update user profile for trial users
+          const { error: updateError } = await supabaseClient
+            .from('profiles')
+            .update({ 
+              subscription_plan: 'unlimited',
+              subscription_renewal: billingCycle
+            })
+            .eq('id', profileData.id);
+
+          if (updateError) {
+            logStep("Trial profile update error", { error: updateError });
+          } else {
+            logStep("Trial profile updated successfully", { userId: profileData.id, billingCycle });
+          }
+
+          // Update subscribers table for trial
+          const subscriptionEndDate = new Date(subscription.current_period_end * 1000);
+          const { error: subscriberError } = await supabaseClient
+            .from('subscribers')
+            .upsert({
+              user_id: profileData.id,
+              stripe_customer_id: subscription.customer as string,
+              subscribed: true,
+              subscription_tier: 'unlimited',
+              subscription_end: subscriptionEndDate.toISOString(),
+              updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id' });
+
+          if (subscriberError) {
+            logStep("Trial subscriber update error", { error: subscriberError });
+          } else {
+            logStep("Trial subscriber record updated successfully");
+          }
         }
       }
     }

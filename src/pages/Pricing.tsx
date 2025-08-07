@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 
 const Pricing = () => {
   const navigate = useNavigate();
   const { user, userProfile, session } = useAuth();
   const { toast } = useToast();
+  const [isAnnual, setIsAnnual] = useState(true);
 
   useEffect(() => {
     // Update meta tags for SEO
@@ -62,7 +64,7 @@ const Pricing = () => {
     }
   }, [toast]);
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (billingCycle: 'annual' | 'monthly' = 'annual') => {
     if (!user) {
       navigate('/login');
       return;
@@ -71,7 +73,7 @@ const Pricing = () => {
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          billing_cycle: 'annual'
+          billing_cycle: billingCycle
         },
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -128,6 +130,8 @@ const Pricing = () => {
 
   return (
     <div className="font-inter min-h-screen bg-black text-white">
+      <GooeyFilter />
+      
       {/* Pricing Section */}
       <section className="py-20 px-4 bg-gray-900/30">
         <div className="max-w-6xl mx-auto">
@@ -138,6 +142,25 @@ const Pricing = () => {
             <p className="text-xl text-gray-400 tracking-tight">
               These deals don't wait. People grab them before you even know they exist.
             </p>
+            
+            {/* Billing Toggle */}
+            <div className="mt-10 flex items-center justify-center gap-4 mb-8">
+              <span className={`text-sm font-medium transition-colors ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                Monthly
+              </span>
+              <Toggle 
+                checked={isAnnual} 
+                onCheckedChange={setIsAnnual}
+                variant="default"
+              />
+              <span className={`text-sm font-medium transition-colors ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                Annual
+                <span className="ml-2 text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">
+                  Save 83%
+                </span>
+              </span>
+            </div>
+            
         <div className="mt-10 flex justify-center">
   <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl px-6 py-5 max-w-xl shadow-xl">
     <p className="text-gray-100 text-sm md:text-base leading-snug tracking-tight">
@@ -201,15 +224,31 @@ const Pricing = () => {
                   </div>
                  <div className="mb-6 flex items-center justify-between">
                     <div>
-                      <p className="text-4xl font-semibold tracking-tight">
-                        $1.50<span className="text-lg text-gray-400">/mo</span>
-                      </p>
-                      <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
-                        Save thousands.
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1 tracking-tight">
-                        $18/yr • billed annually
-                      </p>
+                      {isAnnual ? (
+                        <>
+                          <p className="text-4xl font-semibold tracking-tight">
+                            $1.50<span className="text-lg text-gray-400">/mo</span>
+                          </p>
+                          <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                            Save thousands.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                            $18/yr • billed annually
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-4xl font-semibold tracking-tight">
+                            $9<span className="text-lg text-gray-400">/mo</span>
+                          </p>
+                          <p className="text-xs text-[#7D66EE] font-medium mt-1 tracking-tight">
+                            Save thousands.
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1 tracking-tight">
+                            billed monthly
+                          </p>
+                        </>
+                      )}
                     </div>
                     <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
                       Compared to ~$3,600 broker avg
@@ -244,10 +283,10 @@ const Pricing = () => {
                     </button>
                   ) : (
                     <button
-                      onClick={handleSubscribe}
+                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
                       className="w-full bg-white text-black py-3 rounded-full font-medium tracking-tight transition-all hover:bg-gray-200"
                     >
-                      Try for Free
+                      {isAnnual ? 'Try for Free' : 'Subscribe Now'}
                     </button>
                   )}
                 </div>
@@ -255,9 +294,11 @@ const Pricing = () => {
             </div>
           </div>
 
-<p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
-  3-day free trial • Cancel anytime
-</p>
+          {isAnnual && (
+            <p className="text-center text-sm text-gray-500 mt-4 tracking-tight">
+              3-day free trial • Cancel anytime
+            </p>
+          )}
           
           {/* Subscription status display */}
           {isOnUnlimitedPlan && (
@@ -305,10 +346,10 @@ const Pricing = () => {
             </Link>
           ) : !isOnUnlimitedPlan ? (
             <button
-              onClick={handleSubscribe}
+              onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
               className="bg-white text-black px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200"
             >
-              Try for Free
+              {isAnnual ? 'Try for Free' : 'Subscribe Now'}
             </button>
           ) : (
             <div className="text-blue-400 font-semibold text-lg">
