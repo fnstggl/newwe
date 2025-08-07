@@ -980,6 +980,7 @@ const additionalNeighborhoods = [
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {console.log('Debug:', { isAnimating, animationDisabled, propertiesLength: properties.length })}
 {properties.map((property, index) => {
   const gradeColors = getGradeColors(property.grade);
   const isBlurred = index >= visibilityLimit;
