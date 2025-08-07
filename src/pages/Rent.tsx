@@ -784,8 +784,22 @@ const additionalNeighborhoods = [
     setProperties([]);
   } finally {
     setLoading(false);
+
+       // Trigger animation after properties are set
+  if (reset && properties.length > 0) {
+    setTimeout(() => {
+      setAnimationKey(prev => prev + 1);
+      setAnimationComplete(false);
+      
+      const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
+      setTimeout(() => {
+        setAnimationComplete(true);
+      }, maxDelay);
+    }, 50);
   }
-};
+}
+}; // ← Only ONE closing brace for the fetchProperties function
+
 
   const loadMore = () => {
     if (!loading && hasMore) {
