@@ -35,20 +35,20 @@ const Buy = () => {
     }
   `;
 
-// Update the useEffect that adds CSS to also set animation state
+// Update the useEffect that adds CSS (remove the timer logic)
 useEffect(() => {
   const style = document.createElement('style');
   style.textContent = animationStyles;
   document.head.appendChild(style);
-  
-  // Mark as animated after a brief delay to ensure CSS is applied
-  const timer = setTimeout(() => setHasAnimated(true), 50);
-  
-  return () => {
-    document.head.removeChild(style);
-    clearTimeout(timer);
-  };
+  return () => document.head.removeChild(style);
 }, []);
+
+// Add this new useEffect to trigger animation on property changes
+useEffect(() => {
+  if (properties.length > 0) {
+    setAnimationKey(prev => prev + 1);
+  }
+}, [properties.length, searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -76,6 +76,7 @@ useEffect(() => {
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
 
   // Mobile filters state
@@ -974,11 +975,11 @@ const additionalNeighborhoods = [
     
     return (
 <div
-  key={`${property.id}-${index}`}
-  className={`relative ${!hasAnimated ? 'property-card-animate' : ''}`}
-  style={!hasAnimated ? {
+  key={`${property.id}-${index}-${animationKey}`}
+  className="relative property-card-animate"
+  style={{
     animationDelay: `${animationDelay}ms`
-  } : {}}
+  }}
 >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
