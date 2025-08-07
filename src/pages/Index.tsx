@@ -69,7 +69,7 @@ const Index = () => {
                 The best deals in NYC. Found for you.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
-                Your unfair advantage to find below-market & rent-stabilized homes.
+                Your unfair advantage in finding below-market & rent-stabilized homes.
               </p>
               <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[130px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
                 {user ? "See Deals" : "See Deals"}
