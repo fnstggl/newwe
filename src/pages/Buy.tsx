@@ -1015,10 +1015,10 @@ const additionalNeighborhoods = [
   <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
     🔥
   </span>
-  Unlock the rest for $1.50/mo
+  Try Unlimited Access for Free
 </button>
                           <p className="text-xs text-gray-400 mt-3">
-  Homes 100k+ under market • Just $18/year
+  Homes 100k+ under market • Just $1.50/mo • Billed annually
 </p>
                       </div>
                     </div>
