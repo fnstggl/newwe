@@ -137,7 +137,7 @@ const Index = () => {
               <p className="text-gray-400 tracking-tight">We only show you the best below-market & rent-stabilized listings, so you never overpay again.</p>
             </div>
             <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Save avg of $925/mo on rent, and $74k when buying</h3>
+              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Avg savings of $925/mo on rent, and $74k when buying</h3>
               <p className="text-gray-400 tracking-tight">Using data to help 6000+ New Yorkers save thousands of dollars on their homes.</p>
             </div>
           </div>
