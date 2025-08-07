@@ -35,13 +35,20 @@ const Buy = () => {
     }
   `;
 
-  // Insert the styles into the document head
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = animationStyles;
-    document.head.appendChild(style);
-    return () => document.head.removeChild(style);
-  }, []);
+// Update the useEffect that adds CSS to also set animation state
+useEffect(() => {
+  const style = document.createElement('style');
+  style.textContent = animationStyles;
+  document.head.appendChild(style);
+  
+  // Mark as animated after a brief delay to ensure CSS is applied
+  const timer = setTimeout(() => setHasAnimated(true), 50);
+  
+  return () => {
+    document.head.removeChild(style);
+    clearTimeout(timer);
+  };
+}, []);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -68,6 +75,8 @@ const Buy = () => {
   const [sortBy, setSortBy] = useState("Featured");
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -964,13 +973,13 @@ const additionalNeighborhoods = [
     const animationDelay = diagonalIndex * 75; // 75ms stagger
     
     return (
-      <div
-        key={`${property.id}-${index}`}
-        className="relative property-card-animate"
-        style={{
-          animationDelay: `${animationDelay}ms`
-        }}
-      >
+<div
+  key={`${property.id}-${index}`}
+  className={`relative ${!hasAnimated ? 'property-card-animate' : ''}`}
+  style={!hasAnimated ? {
+    animationDelay: `${animationDelay}ms`
+  } : {}}
+>
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
