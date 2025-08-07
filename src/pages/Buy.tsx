@@ -249,6 +249,7 @@ const additionalNeighborhoods = [
   'greenwich-village',
   'noho',
   'civic-center',
+  'financial-district',
   'hudson-square',
   'roosevelt-island',
   'hudson-yards',
