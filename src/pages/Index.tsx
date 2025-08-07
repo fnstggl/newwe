@@ -111,10 +111,10 @@ const Index = () => {
       <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            It shouldn't be this hard to find a home in the city.
+            Finding an affordable home in the city shouldn't feel impossible.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals, saving you thousands.
+          We use AI trained on real market data to uncover rent-stabilized and underpriced listings that most renters miss—saving you thousands, instantly.
           </p>
         </div>
         
