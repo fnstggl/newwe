@@ -979,9 +979,8 @@ const additionalNeighborhoods = [
     const row = Math.floor(index / 3); // 3 columns
     const col = index % 3;
     const diagonalIndex = row + col; // Creates diagonal cascade
-    const animationDelay = diagonalIndex * 75; // 75ms stagger
-    
-    return (
+const animationDelay = diagonalIndex * 75; // 75ms stagger
+
 const cardKey = `${property.id}-${index}-${animationKey}`;
 const isAnimated = animatedCards.has(cardKey);
 
