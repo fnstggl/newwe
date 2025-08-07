@@ -243,8 +243,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
         </div>
 
         <div className="flex justify-between items-center">
-         <div className="text-sm text-gray-300 italic whitespace-pre-line">
-  {getDiscountPercentage()}
+        <div className="text-sm text-gray-300 whitespace-pre-line space-y-1">
+  <div className="font-medium">{getDiscountPercentage().split('\n')[0]}</div>
+  {getDiscountPercentage().includes('\n') && (
+    <div className="text-xs text-gray-400">{getDiscountPercentage().split('\n')[1]}</div>
+  )}
 </div>
           <div className="flex gap-2">
             {property.isRentStabilized && (
