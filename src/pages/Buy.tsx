@@ -77,6 +77,8 @@ useEffect(() => {
   const [animationKey, setAnimationKey] = useState(0);
 const [isAnimating, setIsAnimating] = useState(false);
 const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [animationDisabled, setAnimationDisabled] = useState(false);
+
 
 
   // Mobile filters state
@@ -119,24 +121,15 @@ const getVisibilityLimit = () => {
 useEffect(() => {
   if (properties.length > 0) {
     setAnimationKey(prev => prev + 1);
+    setAnimationDisabled(false); // Reset on filter changes
     setIsAnimating(true);
     
-    // Clear any existing timeout
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-    }
-    
-    // Stop animating after reasonable time
-    animationTimeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       setIsAnimating(false);
-    }, 2500); // Generous time for all animations to complete
+      // Only disable animations after this specific cascade
+      setTimeout(() => setAnimationDisabled(true), 100);
+    }, 2500);
   }
-  
-  return () => {
-    if (animationTimeoutRef.current) {
-      clearTimeout(animationTimeoutRef.current);
-    }
-  };
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
   
   // Load property from URL parameter if present
@@ -999,13 +992,13 @@ const additionalNeighborhoods = [
   
   return (
     <div
-      key={`${property.id}-${animationKey}`}
-      data-animate={isAnimating}
-      style={{
-        animationDelay: isAnimating ? `${animationDelay}ms` : '0ms'
-      }}
-      className="relative"
-    >
+  key={`${property.id}-${animationKey}`}
+  data-animate={!animationDisabled && isAnimating}
+  style={{
+    animationDelay: (!animationDisabled && isAnimating) ? `${animationDelay}ms` : '0ms'
+  }}
+  className="relative"
+>
       <div className={isBlurred ? 'filter blur-sm' : ''}>
         <PropertyCard
           property={property}
