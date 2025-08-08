@@ -78,6 +78,7 @@ useEffect(() => {
   const [animationKey, setAnimationKey] = useState(0);
   const [animatedCards, setAnimatedCards] = useState(new Set());
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -108,11 +109,14 @@ useEffect(() => {
     'Newest Listed'
   ];
 
-  // Determine visibility limits based on user status
   const getVisibilityLimit = () => {
-    if (!user) return 3; // Signed out users see 3
-    if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') return Infinity; // Unlimited and open_door_plan users see all
-    return 9; // Free plan users see 9
+    if (!user) {
+      return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 3
+    }
+    if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
+      return Infinity; // Unlimited users see all
+    }
+    return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 9
   };
 
 useEffect(() => {
@@ -128,6 +132,23 @@ useEffect(() => {
     }, maxDelay);
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
+
+  // Track if any filters are active
+  useEffect(() => {
+    const filtersActive = searchTerm.trim() || 
+                         zipCode.trim() || 
+                         maxPrice !== "3500" || 
+                         bedrooms.trim() || 
+                         minGrade.trim() || 
+                         selectedNeighborhoods.length > 0 || 
+                         selectedBoroughs.length > 0 || 
+                         minSqft.trim() || 
+                         addressSearch.trim() || 
+                         minDiscount.trim() || 
+                         sortBy !== "Featured" || 
+                         rentStabilizedOnly;
+    setHasActiveFilters(filtersActive);
+  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
   
   useEffect(() => {
     if (listingId && properties.length > 0) {
@@ -880,7 +901,7 @@ const additionalNeighborhoods = [
     }
 
     // For logged out users clicking on blurred listings, show soft-gate modal
-    if (!user && index >= 3) {
+    if (!user && index >= 12) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -890,7 +911,7 @@ const additionalNeighborhoods = [
     }
 
     // For free plan users clicking on blurred listings, show soft-gate modal
-    if (isFreeUser && index >= 9) {
+    if (isFreeUser && index >= 24) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -1294,14 +1315,14 @@ const additionalNeighborhoods = [
                   )}
 
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
-                  {!user && index === 4 && properties.length > 4 && (
+                  {!user && index === 13 && properties.length > 13 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                       <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          This is only 3 of 4,193 deals.
+                          This is only 12 of 4,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
@@ -1317,14 +1338,14 @@ const additionalNeighborhoods = [
                   )}
 
                   {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
-                  {isFreeUser && index === 10 && properties.length > 10 && (
+                  {isFreeUser && index === 25 && properties.length > 25 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                       <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
-                          You're only seeing 9 of 4,193 deals.
+                          You're only seeing 24 of 4,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/pricing')}
@@ -1336,8 +1357,48 @@ const additionalNeighborhoods = [
                           </span>
                           Try Unlimited Access for Free
                         </button>
-                        <p className="text-xs text-gray-400 mt-3">
+                              <p className="text-xs text-gray-400 mt-3">
                           Save an avg of $925 every month • Just $1.50/mo • Billed annually
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NEW: Filter-based CTA for signed out users - positioned over the 2nd property (index 1) */}
+                  {!user && hasActiveFilters && index === 1 && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto">
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                          Want to search for more of the best deals in NYC?
+                        </h3>
+                        <button
+                          onClick={() => navigate('/join')}
+                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-3"
+                        >
+                          Create free account to continue
+                        </button>
+                        <p className="text-xs text-gray-400">
+                          6,000+ New Yorkers already beating the market
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NEW: Filter-based CTA for free plan users - positioned over the 2nd property (index 1) */}
+                  {isFreeUser && hasActiveFilters && index === 1 && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto">
+                        <h3 className="text-2xl font-bold text-white mb-4">
+                          Get unlimited access to the best deals in NYC
+                        </h3>
+                        <button
+                          onClick={() => navigate('/pricing')}
+                          className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-3"
+                        >
+                          Try Unlimited Access for Free
+                        </button>
+                        <p className="text-xs text-gray-400">
+                          6,000+ New Yorkers already beating the market
                         </p>
                       </div>
                     </div>
