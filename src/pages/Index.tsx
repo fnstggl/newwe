@@ -66,7 +66,7 @@ const Index = () => {
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
             <div className="text-center px-4 py-20 max-w-5xl">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[150px] text-white">
-                Find your dream home. And afford it.
+                Find your dream home. And actually afford it.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[150px] tracking-[-0.075em]">
                 Your unfair advantage in finding below-market & rent-stabilized homes.
