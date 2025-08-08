@@ -350,7 +350,7 @@ const Profile = () => {
           ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
           : profileData.subscription_plan === 'open_door_plan'
           ? 'Free unlimited access'
-          : 'Limited to 9 deals per day'
+          : 'Limited to 24 deals per day'
         }
       </p>
     </div>
