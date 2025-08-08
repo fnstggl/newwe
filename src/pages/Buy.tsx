@@ -115,12 +115,12 @@ useEffect(() => {
   // Determine visibility limits based on user status
 const getVisibilityLimit = () => {
   if (!user) {
-    return hasActiveFilters ? 0 : 3; // Blur all when filters active, otherwise show 3
+    return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 3
   }
   if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
     return Infinity; // Unlimited users see all
   }
-  return hasActiveFilters ? 0 : 9; // Free plan: blur all when filters active, otherwise show 9
+  return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 9
 };
 
 useEffect(() => {
@@ -660,7 +660,7 @@ const additionalNeighborhoods = [
     }
 
     // For logged out users clicking on blurred listings, show soft-gate modal
-    if (!user && index >= 3) {
+    if (!user && index >= 12) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -670,7 +670,7 @@ const additionalNeighborhoods = [
     }
 
     // For free plan users clicking on blurred listings, show soft-gate modal
-    if (isFreeUser && index >= 9) {
+    if (isFreeUser && index >= 24) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -1061,14 +1061,14 @@ return (
                   )}
 
                   {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
-                  {!user && index === 4 && properties.length > 4 && (
+                  {!user && index === 13 && properties.length > 13 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                         <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
                           Want to see more of the best deals in NYC?
                         </h3>
                         <p className="text-white mb-4">
-                          This is only 3 of 4,193 deals.
+                          This is only 12 of 4,193 deals.
                         </p>
                         <button
                           onClick={() => navigate('/join')}
@@ -1084,14 +1084,14 @@ return (
                   )}
 
 {/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
-                  {isFreeUser && index === 10 && properties.length > 10 && (
+                  {isFreeUser && index === 25 && properties.length > 25 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                         <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-2">
                           Your next home could be just past this point.
                         </h3>
                         <p className="text-white font-bold mb-4">
-                          You're only seeing 9 of 4,193 deals.
+                          You're only seeing 24 of 4,193 deals.
                         </p>
                      <button
   onClick={() => navigate('/pricing')}
