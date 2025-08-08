@@ -172,7 +172,7 @@ const Index = () => {
       <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center">
           <img 
-            src="/lovable-uploads/desk2.png" 
+            src="/lovable-uploads/desk3.png" 
             alt="Realer Estate desktop platform showing NYC property scan" 
             className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
           />
