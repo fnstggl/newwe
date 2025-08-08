@@ -6,25 +6,14 @@ interface PropertyImageProps {
   images: any;
   address: string;
   className?: string;
-  preloadImages?: string[];
-  shouldLoad?: boolean;
-  onImageLoaded?: () => void;
-  isLoaded?: boolean;
+  preloadImages?: string[]; // Add prop to preload additional images
 }
 
-const PropertyImage: React.FC<PropertyImageProps> = ({ 
-  images, 
-  address, 
-  className, 
-  preloadImages = [],
-  shouldLoad = true,
-  onImageLoaded,
-  isLoaded = false
-}) => {
+const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [imageLoadingStates, setImageLoadingStates] = useState<{[key: number]: 'loading' | 'thumbnail' | 'medium' | 'high'}>({});
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageLoadingStates, setImageLoadingStates] = useState<{[key: number]: 'thumbnail' | 'medium' | 'high'}>({});
+  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
 
   // Process images - use original URLs directly
   const processedImages = React.useMemo(() => {
@@ -32,6 +21,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
 
     const processImageUrl = (url: string) => {
       if (typeof url !== 'string') return '';
+      // Return the original URL without any proxy processing
       return url;
     };
 
@@ -42,7 +32,7 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
           return processImageUrl(img.url || img.image_url || '');
         }
         return '';
-      }).filter(Boolean);
+      }).filter(Boolean); // Remove empty strings
     }
 
     if (typeof images === 'string') {
@@ -58,50 +48,84 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
   const getImageVariants = useCallback((originalUrl: string) => {
     if (!originalUrl) return { thumbnail: '', medium: '', high: '' };
     
-    const thumbnail = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=100&q=40`;
-    const medium = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=400&q=75`;
-    const high = originalUrl;
+    // For now, we'll use the same URL but with different query parameters
+    // In a real implementation, you might use a CDN that supports dynamic resizing
+    const thumbnail = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=50&q=30`; // Very small, low quality
+    const medium = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=400&q=70`;   // Medium size, good quality
+    const high = originalUrl; // Original high quality
     
     return { thumbnail, medium, high };
   }, []);
 
-  // Load image progressively only when shouldLoad is true
+  // Progressive image loading function
   const loadImageProgressively = useCallback((imageUrl: string, index: number) => {
-    if (!imageUrl || !shouldLoad) return;
+    if (!imageUrl) return;
 
     const variants = getImageVariants(imageUrl);
     
-    setImageLoadingStates(prev => ({ ...prev, [index]: 'loading' }));
+    // Set initial state to thumbnail
+    setImageLoadingStates(prev => ({ ...prev, [index]: 'thumbnail' }));
 
-    // Load thumbnail first
+    // Load thumbnail first (should be very fast)
     const thumbnailImg = new Image();
     thumbnailImg.onload = () => {
-      setImageLoadingStates(prev => ({ ...prev, [index]: 'thumbnail' }));
-      setImageLoaded(true);
-      
-      // Notify parent that this image has loaded
-      if (onImageLoaded) {
-        onImageLoaded();
-      }
-      
-      // After thumbnail loads, load medium quality
-      setTimeout(() => {
-        const mediumImg = new Image();
-        mediumImg.onload = () => {
-          setImageLoadingStates(prev => ({ ...prev, [index]: 'medium' }));
-        };
-        mediumImg.src = variants.medium;
-      }, 100);
+      // Immediately start loading medium quality
+      const mediumImg = new Image();
+      mediumImg.onload = () => {
+        setImageLoadingStates(prev => ({ ...prev, [index]: 'medium' }));
+        
+        // Start preloading high quality in background
+        if (!preloadedImages.has(variants.high)) {
+          const highImg = new Image();
+          highImg.onload = () => {
+            setPreloadedImages(prev => new Set(prev).add(variants.high));
+            setImageLoadingStates(prev => ({ ...prev, [index]: 'high' }));
+          };
+          highImg.src = variants.high;
+        }
+      };
+      mediumImg.src = variants.medium;
     };
     thumbnailImg.src = variants.thumbnail;
-  }, [getImageVariants, shouldLoad, onImageLoaded]);
+  }, [getImageVariants, preloadedImages]);
 
-  // Only start loading when shouldLoad becomes true
+  // Load current image and preload next few images
   useEffect(() => {
-    if (shouldLoad && processedImages.length > 0 && !imageLoaded) {
-      loadImageProgressively(processedImages[currentImageIndex], currentImageIndex);
-    }
-  }, [shouldLoad, currentImageIndex, processedImages, loadImageProgressively, imageLoaded]);
+    if (processedImages.length === 0) return;
+
+    // Load current image progressively
+    loadImageProgressively(processedImages[currentImageIndex], currentImageIndex);
+
+    // Preload next 2 images for faster navigation
+    const preloadIndices = [
+      (currentImageIndex + 1) % processedImages.length,
+      (currentImageIndex + 2) % processedImages.length
+    ];
+
+    preloadIndices.forEach(index => {
+      if (index !== currentImageIndex && processedImages[index]) {
+        setTimeout(() => {
+          loadImageProgressively(processedImages[index], index);
+        }, 100); // Small delay to prioritize current image
+      }
+    });
+  }, [currentImageIndex, processedImages, loadImageProgressively]);
+
+  // Preload additional images from props
+  useEffect(() => {
+    const allImagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
+    
+    allImagesToPreload.forEach((imageUrl, index) => {
+      if (imageUrl && index >= processedImages.length) {
+        // Only preload additional images after a delay
+        setTimeout(() => {
+          const variants = getImageVariants(imageUrl);
+          const img = new Image();
+          img.src = variants.medium;
+        }, 500);
+      }
+    });
+  }, [processedImages, preloadImages, getImageVariants]);
 
   // Navigation functions
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -110,13 +134,8 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
     if (hasMultipleImages) {
       const nextIndex = (currentImageIndex + 1) % processedImages.length;
       setCurrentImageIndex(nextIndex);
-      
-      // Load the next image if it hasn't been loaded yet
-      if (imageLoadingStates[nextIndex] === undefined) {
-        loadImageProgressively(processedImages[nextIndex], nextIndex);
-      }
     }
-  }, [processedImages.length, hasMultipleImages, currentImageIndex, imageLoadingStates, loadImageProgressively]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
   const prevImage = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -124,33 +143,26 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
     if (hasMultipleImages) {
       const prevIndex = (currentImageIndex - 1 + processedImages.length) % processedImages.length;
       setCurrentImageIndex(prevIndex);
-      
-      // Load the previous image if it hasn't been loaded yet
-      if (imageLoadingStates[prevIndex] === undefined) {
-        loadImageProgressively(processedImages[prevIndex], prevIndex);
-      }
     }
-  }, [processedImages.length, hasMultipleImages, currentImageIndex, imageLoadingStates, loadImageProgressively]);
+  }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
   // Get the appropriate image URL based on loading state
   const getCurrentImageUrl = useCallback(() => {
     const originalUrl = processedImages[currentImageIndex] || '';
-    if (!originalUrl || !shouldLoad) return '';
+    if (!originalUrl) return '';
 
     const variants = getImageVariants(originalUrl);
-    const loadingState = imageLoadingStates[currentImageIndex];
+    const loadingState = imageLoadingStates[currentImageIndex] || 'thumbnail';
     
     switch (loadingState) {
       case 'high':
-        return variants.high;
+        return preloadedImages.has(variants.high) ? variants.high : variants.medium;
       case 'medium':
         return variants.medium;
-      case 'thumbnail':
-        return variants.thumbnail;
       default:
-        return '';
+        return variants.thumbnail;
     }
-  }, [processedImages, currentImageIndex, imageLoadingStates, getImageVariants, shouldLoad]);
+  }, [processedImages, currentImageIndex, imageLoadingStates, getImageVariants, preloadedImages]);
 
   const currentImageUrl = getCurrentImageUrl();
 
@@ -158,18 +170,20 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
     
-    if (shouldLoad && imageLoaded) {
-      const originalUrl = processedImages[currentImageIndex];
-      if (originalUrl && imageLoadingStates[currentImageIndex] !== 'high') {
-        const variants = getImageVariants(originalUrl);
+    // Force load high-res version on hover if not already loaded
+    const originalUrl = processedImages[currentImageIndex];
+    if (originalUrl && imageLoadingStates[currentImageIndex] !== 'high') {
+      const variants = getImageVariants(originalUrl);
+      if (!preloadedImages.has(variants.high)) {
         const highImg = new Image();
         highImg.onload = () => {
+          setPreloadedImages(prev => new Set(prev).add(variants.high));
           setImageLoadingStates(prev => ({ ...prev, [currentImageIndex]: 'high' }));
         };
         highImg.src = variants.high;
       }
     }
-  }, [shouldLoad, imageLoaded, processedImages, currentImageIndex, imageLoadingStates, getImageVariants]);
+  }, [processedImages, currentImageIndex, imageLoadingStates, getImageVariants, preloadedImages]);
 
   return (
     <div 
@@ -177,30 +191,21 @@ const PropertyImage: React.FC<PropertyImageProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image display with cascading loading effect */}
-      {currentImageUrl && imageLoaded ? (
+      {/* Image display with progressive loading */}
+      {currentImageUrl ? (
         <img
           src={currentImageUrl}
           alt={address}
-          className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
+          className="w-full h-full object-cover transition-opacity duration-200"
           loading="eager"
           decoding="async"
-          style={{
-            opacity: isLoaded ? 1 : 0,
-            transform: isLoaded ? 'scale(1)' : 'scale(0.95)',
-            transition: 'opacity 0.4s ease-out, transform 0.4s ease-out'
-          }}
         />
       ) : (
-        <div className="w-full h-full bg-gray-900 flex items-center justify-center">
-          {shouldLoad && (
-            <div className="animate-pulse bg-gray-800 w-full h-full"></div>
-          )}
-        </div>
+        <div className="w-full h-full bg-gray-700" />
       )}
       
       {/* Navigation arrows - only show on hover and if multiple images */}
-      {hasMultipleImages && isHovered && imageLoaded && (
+      {hasMultipleImages && isHovered && (
         <>
           <button
             onClick={prevImage}
