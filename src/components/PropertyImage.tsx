@@ -12,6 +12,8 @@ interface PropertyImageProps {
 const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, className, preloadImages = [] }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoadingStates, setImageLoadingStates] = useState<{[key: number]: 'thumbnail' | 'medium' | 'high'}>({});
+  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
 
   // Process images - use original URLs directly
   const processedImages = React.useMemo(() => {
@@ -42,17 +44,88 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
 
   const hasMultipleImages = processedImages.length > 1;
 
-  // Preload images for better performance
-  useEffect(() => {
-    const imagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
+  // Generate different quality versions of image URLs
+  const getImageVariants = useCallback((originalUrl: string) => {
+    if (!originalUrl) return { thumbnail: '', medium: '', high: '' };
     
-    imagesToPreload.forEach((imageUrl) => {
-      if (imageUrl) {
-        const img = new Image();
-        img.src = imageUrl;
+    // For now, we'll use the same URL but with different query parameters
+    // In a real implementation, you might use a CDN that supports dynamic resizing
+    const thumbnail = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=50&q=30`; // Very small, low quality
+    const medium = `${originalUrl}${originalUrl.includes('?') ? '&' : '?'}w=400&q=70`;   // Medium size, good quality
+    const high = originalUrl; // Original high quality
+    
+    return { thumbnail, medium, high };
+  }, []);
+
+  // Progressive image loading function
+  const loadImageProgressively = useCallback((imageUrl: string, index: number) => {
+    if (!imageUrl) return;
+
+    const variants = getImageVariants(imageUrl);
+    
+    // Set initial state to thumbnail
+    setImageLoadingStates(prev => ({ ...prev, [index]: 'thumbnail' }));
+
+    // Load thumbnail first (should be very fast)
+    const thumbnailImg = new Image();
+    thumbnailImg.onload = () => {
+      // Immediately start loading medium quality
+      const mediumImg = new Image();
+      mediumImg.onload = () => {
+        setImageLoadingStates(prev => ({ ...prev, [index]: 'medium' }));
+        
+        // Start preloading high quality in background
+        if (!preloadedImages.has(variants.high)) {
+          const highImg = new Image();
+          highImg.onload = () => {
+            setPreloadedImages(prev => new Set(prev).add(variants.high));
+            setImageLoadingStates(prev => ({ ...prev, [index]: 'high' }));
+          };
+          highImg.src = variants.high;
+        }
+      };
+      mediumImg.src = variants.medium;
+    };
+    thumbnailImg.src = variants.thumbnail;
+  }, [getImageVariants, preloadedImages]);
+
+  // Load current image and preload next few images
+  useEffect(() => {
+    if (processedImages.length === 0) return;
+
+    // Load current image progressively
+    loadImageProgressively(processedImages[currentImageIndex], currentImageIndex);
+
+    // Preload next 2 images for faster navigation
+    const preloadIndices = [
+      (currentImageIndex + 1) % processedImages.length,
+      (currentImageIndex + 2) % processedImages.length
+    ];
+
+    preloadIndices.forEach(index => {
+      if (index !== currentImageIndex && processedImages[index]) {
+        setTimeout(() => {
+          loadImageProgressively(processedImages[index], index);
+        }, 100); // Small delay to prioritize current image
       }
     });
-  }, [processedImages, preloadImages]);
+  }, [currentImageIndex, processedImages, loadImageProgressively]);
+
+  // Preload additional images from props
+  useEffect(() => {
+    const allImagesToPreload = [...processedImages, ...preloadImages].filter(Boolean);
+    
+    allImagesToPreload.forEach((imageUrl, index) => {
+      if (imageUrl && index >= processedImages.length) {
+        // Only preload additional images after a delay
+        setTimeout(() => {
+          const variants = getImageVariants(imageUrl);
+          const img = new Image();
+          img.src = variants.medium;
+        }, 500);
+      }
+    });
+  }, [processedImages, preloadImages, getImageVariants]);
 
   // Navigation functions
   const nextImage = useCallback((e: React.MouseEvent) => {
@@ -73,20 +146,57 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
     }
   }, [processedImages.length, hasMultipleImages, currentImageIndex]);
 
-  const currentImageUrl = processedImages[currentImageIndex] || '';
+  // Get the appropriate image URL based on loading state
+  const getCurrentImageUrl = useCallback(() => {
+    const originalUrl = processedImages[currentImageIndex] || '';
+    if (!originalUrl) return '';
+
+    const variants = getImageVariants(originalUrl);
+    const loadingState = imageLoadingStates[currentImageIndex] || 'thumbnail';
+    
+    switch (loadingState) {
+      case 'high':
+        return preloadedImages.has(variants.high) ? variants.high : variants.medium;
+      case 'medium':
+        return variants.medium;
+      default:
+        return variants.thumbnail;
+    }
+  }, [processedImages, currentImageIndex, imageLoadingStates, getImageVariants, preloadedImages]);
+
+  const currentImageUrl = getCurrentImageUrl();
+
+  // Handle hover for high-res loading
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    
+    // Force load high-res version on hover if not already loaded
+    const originalUrl = processedImages[currentImageIndex];
+    if (originalUrl && imageLoadingStates[currentImageIndex] !== 'high') {
+      const variants = getImageVariants(originalUrl);
+      if (!preloadedImages.has(variants.high)) {
+        const highImg = new Image();
+        highImg.onload = () => {
+          setPreloadedImages(prev => new Set(prev).add(variants.high));
+          setImageLoadingStates(prev => ({ ...prev, [currentImageIndex]: 'high' }));
+        };
+        highImg.src = variants.high;
+      }
+    }
+  }, [processedImages, currentImageIndex, imageLoadingStates, getImageVariants, preloadedImages]);
 
   return (
     <div 
       className={`relative overflow-hidden group ${className || ''}`}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image display */}
+      {/* Image display with progressive loading */}
       {currentImageUrl ? (
         <img
           src={currentImageUrl}
           alt={address}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-200"
           loading="eager"
           decoding="async"
         />
