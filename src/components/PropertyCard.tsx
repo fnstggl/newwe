@@ -37,9 +37,20 @@ interface PropertyCardProps {
   isRental?: boolean;
   onClick: () => void;
   gradeColors?: GradeColors;
+  shouldLoadImage?: boolean;
+  onImageLoaded?: () => void;
+  isImageLoaded?: boolean;
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false, onClick, gradeColors }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({ 
+  property, 
+  isRental = false, 
+  onClick, 
+  gradeColors,
+  shouldLoadImage = true,
+  onImageLoaded,
+  isImageLoaded = false
+}) => {
   // EXTENSIVE DEBUG: Log the EXACT property data
   console.log(`🏠 PROPERTY CARD [${property.address}]:`, {
     fullProperty: property,
@@ -197,6 +208,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           images={property.images}
           address={property.address}
           className="h-56"
+          shouldLoad={shouldLoadImage}
+          onImageLoaded={onImageLoaded}
+          isLoaded={isImageLoaded}
         />
         
         {/* Grade badge - positioned absolutely over the image, top left */}

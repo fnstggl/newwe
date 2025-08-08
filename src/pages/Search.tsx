@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
@@ -22,6 +23,8 @@ const Search = () => {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
+  const [loadingImageIndex, setLoadingImageIndex] = useState<number | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
   const ITEMS_PER_PAGE = 50;
 
@@ -36,6 +39,36 @@ const Search = () => {
 
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, zipCode, maxPrice, bedrooms]);
+
+  // Start cascading image loading when properties change
+  useEffect(() => {
+    if (properties.length > 0) {
+      setLoadedImages(new Set());
+      setLoadingImageIndex(null);
+      // Start loading the first image after a small delay
+      setTimeout(() => {
+        startCascadingLoad();
+      }, 100);
+    }
+  }, [properties]);
+
+  const startCascadingLoad = () => {
+    setLoadingImageIndex(0);
+  };
+
+  const handleImageLoaded = (index: number) => {
+    setLoadedImages(prev => new Set(prev).add(index));
+    
+    // After a brief delay, start loading the next image
+    setTimeout(() => {
+      const nextIndex = index + 1;
+      if (nextIndex < properties.length) {
+        setLoadingImageIndex(nextIndex);
+      } else {
+        setLoadingImageIndex(null);
+      }
+    }, 150); // 150ms delay between each image for smooth cascading effect
+  };
 
   const fetchProperties = async (reset = false) => {
     setLoading(true);
@@ -234,6 +267,9 @@ const Search = () => {
               property={property}
               isRental={isRent}
               onClick={() => setSelectedProperty(property)}
+              shouldLoadImage={loadingImageIndex !== null && index <= loadingImageIndex}
+              onImageLoaded={() => handleImageLoaded(index)}
+              isImageLoaded={loadedImages.has(index)}
             />
           ))}
         </div>
