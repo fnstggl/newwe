@@ -15,7 +15,7 @@ const Checkout = () => {
   // Always use annual pricing at $18/year with 3-day free trial
   const price = 'Try Free for 3 Days';
   const subtitle = 'Then $18/year';
-
+  
   useEffect(() => {
     if (!user) {
       toast({
@@ -60,12 +60,22 @@ const Checkout = () => {
 
       console.log('Checkout session response:', data);
       
-      if (data?.url) {
-        // Redirect to Stripe hosted checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned from payment intent');
-      }
+if (data?.url) {
+  // Test version - track conversion but don't change redirect behavior
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'conversion', {
+      'send_to': 'AW-17439586946/XQoxCP-nnIAbEIL16_tA',
+      'value': 1.0,
+      'currency': 'USD',
+      'transaction_id': ''
+      // No callback - let normal redirect handle it
+    });
+  }
+  // Keep your existing redirect
+  window.location.href = data.url;
+} else {
+  throw new Error('No checkout URL returned from payment intent');
+}
     } catch (error) {
       console.error('Error creating checkout session:', error);
       toast({
