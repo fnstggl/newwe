@@ -168,6 +168,17 @@ const Index = () => {
         </div>
       </section>
 
+  {/* Desktop Product Mockup Section */}
+      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
+        <div className="text-center">
+          <img 
+            src="/lovable-uploads/desktop-product-mockup.png" 
+            alt="Realer Estate desktop platform showing NYC property scan" 
+            className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
+          />
+        </div>
+      </section>
+    
       {/* Testimonials Section */}
       <TestimonialsSection />
 
