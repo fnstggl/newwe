@@ -64,7 +64,7 @@ const Index = () => {
           
           {/* Hero Content - Always Visible */}
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
-            <div className="text-center px-4 py-20 max-w-5xl">
+            <div className="text-center px-4 py-20 max-w-none">
               <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
                 Find your dream home. And actually afford it.
               </h1>
