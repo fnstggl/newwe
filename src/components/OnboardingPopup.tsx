@@ -270,7 +270,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                   to="/pricing"
                   className="inline-block w-full py-4 px-6 bg-white text-black rounded-full font-semibold tracking-tighter hover:bg-gray-100 transition-colors"
                 >
-                  🔓 Unlock alerts for $3/month
+                  🔓 Unlock instant alerts. Try it for free.
                 </Link>
                 
                 <div className="space-y-2">
