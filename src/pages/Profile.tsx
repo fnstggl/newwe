@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +17,10 @@ const Profile = () => {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [isSavingPreferences, setIsSavingPreferences] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
+  
+  // NEW: Modal state for upgrade prompt
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [selectedNeighborhoodForUpgrade, setSelectedNeighborhoodForUpgrade] = useState("");
 
   // Redirect if not logged in
   useEffect(() => {
@@ -134,7 +137,22 @@ const Profile = () => {
     navigate('/');
   };
 
+  // MODIFIED: Check if user is on free plan before allowing neighborhood selection
   const toggleNeighborhood = async (neighborhood: string) => {
+    // Check if user is on free plan
+    const isFreePlan = !profileData?.subscription_plan || 
+                      profileData.subscription_plan === 'free' || 
+                      (profileData.subscription_plan !== 'unlimited' && 
+                       profileData.subscription_plan !== 'open_door_plan');
+
+    if (isFreePlan) {
+      // Show upgrade modal instead of toggling
+      setSelectedNeighborhoodForUpgrade(neighborhood);
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    // Original logic for paid users
     const newSelectedNeighborhoods = selectedNeighborhoods.includes(neighborhood) 
       ? selectedNeighborhoods.filter(n => n !== neighborhood)
       : [...selectedNeighborhoods, neighborhood];
@@ -216,9 +234,26 @@ const Profile = () => {
     }
   };
 
+  // NEW: Handle upgrade modal actions
+  const handleUpgradeClick = () => {
+    setShowUpgradeModal(false);
+    navigate('/checkout');
+  };
+
+  const handleCloseModal = () => {
+    setShowUpgradeModal(false);
+    setSelectedNeighborhoodForUpgrade("");
+  };
+
   const filteredNeighborhoods = neighborhoods.filter(neighborhood =>
     neighborhood.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // NEW: Check if user is on free plan
+  const isFreePlan = !profileData?.subscription_plan || 
+                    profileData.subscription_plan === 'free' || 
+                    (profileData.subscription_plan !== 'unlimited' && 
+                     profileData.subscription_plan !== 'open_door_plan');
 
   if (!user || !userProfile || !profileData) {
     return null;
@@ -313,8 +348,10 @@ const Profile = () => {
                     onClick={() => toggleNeighborhood(neighborhood)}
                     disabled={isSavingPreferences}
                     className={`px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
-                      selectedNeighborhoods.includes(neighborhood)
+                      selectedNeighborhoods.includes(neighborhood) && !isFreePlan
                         ? 'bg-blue-500 text-white'
+                        : isFreePlan
+                        ? 'bg-gray-800 text-gray-300 hover:bg-gray-700 cursor-pointer'
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     } ${isSavingPreferences ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
@@ -324,7 +361,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {selectedNeighborhoods.length > 0 && (
+            {selectedNeighborhoods.length > 0 && !isFreePlan && (
               <div className="mt-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
                 <p className="text-sm text-blue-400 tracking-tight">
                   You'll receive email notifications for deals in {selectedNeighborhoods.length} neighborhood{selectedNeighborhoods.length !== 1 ? 's' : ''}.
@@ -334,27 +371,27 @@ const Profile = () => {
           </div>
 
           {/* Subscription Plan */}
-<div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
-  <h2 className="text-2xl font-semibold mb-6 tracking-tight">Subscription Plan</h2>
-  
-  <div className="flex items-center justify-between">
-    <div>
-      <p className="text-lg font-medium tracking-tight capitalize">
-        {profileData.subscription_plan === 'open_door_plan' 
-          ? 'Open Door Plan' 
-          : (profileData.subscription_plan || 'Free') + ' Plan'
-        }
-      </p>
-      <p className="text-gray-400 text-sm tracking-tight">
-        {profileData.subscription_plan === 'unlimited' 
-          ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
-          : profileData.subscription_plan === 'open_door_plan'
-          ? 'Free unlimited access'
-          : 'Limited to 24 deals per day'
-        }
-      </p>
-    </div>
-              
+          <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
+            <h2 className="text-2xl font-semibold mb-6 tracking-tight">Subscription Plan</h2>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-lg font-medium tracking-tight capitalize">
+                  {profileData.subscription_plan === 'open_door_plan' 
+                    ? 'Open Door Plan' 
+                    : (profileData.subscription_plan || 'Free') + ' Plan'
+                  }
+                </p>
+                <p className="text-gray-400 text-sm tracking-tight">
+                  {profileData.subscription_plan === 'unlimited' 
+                    ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
+                    : profileData.subscription_plan === 'open_door_plan'
+                    ? 'Free unlimited access'
+                    : 'Limited to 24 deals per day'
+                  }
+                </p>
+              </div>
+                        
               <HoverButton 
                 className="text-white font-semibold tracking-tight"
                 onClick={handleManageSubscription}
@@ -375,6 +412,46 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* NEW: Glassmorphic Upgrade Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={handleCloseModal}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl">
+            {/* Close button */}
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Content */}
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
+                Upgrade to unlimited to be notified for new deals in {selectedNeighborhoodForUpgrade}
+              </h3>
+              
+              <p className="text-gray-300 mb-8 text-lg tracking-tight">
+                The best deals in NYC are gone before most people ever see them. You won't be most people.
+              </p>
+              
+              <button
+                onClick={handleUpgradeClick}
+                className="w-full bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all transform hover:scale-105"
+              >
+                Try Unlimited For Free
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
