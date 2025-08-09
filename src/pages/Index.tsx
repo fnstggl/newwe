@@ -15,9 +15,9 @@ const ScrollJackedSection = () => {
   });
 
   // Create scroll-controlled opacity values that fade through black
-  const text1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.3, 0.4], [1, 1, 0, 0]);
-  const text2Opacity = useTransform(scrollYProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
-  const text3Opacity = useTransform(scrollYProgress, [0.6, 0.7, 1], [0, 1, 1]);
+  const text1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.25, 0.35], [1, 1, 0, 0]);
+  const text2Opacity = useTransform(scrollYProgress, [0.3, 0.35, 0.55, 0.65], [0, 1, 1, 0]);
+  const text3Opacity = useTransform(scrollYProgress, [0.6, 0.65, 1], [0, 1, 1]);
 
   const textContent = [
     {
@@ -49,7 +49,7 @@ const ScrollJackedSection = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex items-center px-2">
+        <div className="flex-1 flex items-center px-8">
           <div className="w-full max-w-none mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center h-full">
               
@@ -58,7 +58,7 @@ const ScrollJackedSection = () => {
                 <img 
                   src="/lovable-uploads/desk3.png" 
                   alt="Realer Estate desktop platform showing NYC property scan" 
-                  className="w-full shadow-2xl"
+                  className="w-full rounded-2xl shadow-2xl"
                 />
               </div>
 
