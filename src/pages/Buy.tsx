@@ -79,6 +79,8 @@ useEffect(() => {
   const [animatedCards, setAnimatedCards] = useState(new Set());
   const [animationComplete, setAnimationComplete] = useState(false);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [hasEverAnimated, setHasEverAnimated] = useState(false);
+
 
 
 
@@ -124,18 +126,18 @@ const getVisibilityLimit = () => {
 };
 
 useEffect(() => {
-  if (properties.length > 0) {
+  if (properties.length > 0 && !hasEverAnimated) { // ❌ Only animate if never animated before
     setAnimationKey(prev => prev + 1);
     setAnimatedCards(new Set());
     setAnimationComplete(false);
+    setHasEverAnimated(true); // ✅ Lock it forever
     
-    // Mark animation as complete after expected duration
     const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
     setTimeout(() => {
       setAnimationComplete(true);
     }, maxDelay);
   }
-}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]); // Remove properties.length
+}, [properties.length, hasEverAnimated]); // ✅ Remove all filter dependencies
 
   // Track if any filters are active
   useEffect(() => {
@@ -1012,17 +1014,17 @@ const additionalNeighborhoods = [
 const animationDelay = diagonalIndex * 75; // 75ms stagger
 
 const cardKey = `${property.id}-${index}-${animationKey}`;
-const shouldAnimate = !animationComplete;
+const shouldAnimate = !animationComplete && !hasEverAnimated; // ✅ Only animate if never animated
 
 return (
-<div
-  key={cardKey}
-  className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
-  style={{
-    animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
-    transform: shouldAnimate ? undefined : 'translateY(0px)'
-  }}
->
+  <div
+    key={cardKey}
+    className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
+    style={{
+      animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
+      transform: shouldAnimate ? undefined : 'translateY(0px)'
+    }}
+  >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
