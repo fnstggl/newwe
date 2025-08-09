@@ -30,12 +30,33 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
   const { toast } = useToast();
 
   const neighborhoodList = [
-    "Upper East Side", "Upper West Side", "Midtown", "Chelsea", "Greenwich Village",
-    "SoHo", "Tribeca", "Lower East Side", "East Village", "NoLita",
-    "Williamsburg", "DUMBO", "Brooklyn Heights", "Park Slope", "Prospect Heights",
-    "Crown Heights", "Bushwick", "Red Hook", "Long Island City", "Astoria",
-    "Sunnyside", "Jackson Heights", "Flushing", "Forest Hills", "Ridgewood"
-  ];
+  // Manhattan
+  "Upper East Side", "Upper West Side", "Midtown", "Midtown East", "Midtown West", 
+  "Chelsea", "Greenwich Village", "West Village", "SoHo", "Tribeca", 
+  "Lower East Side", "East Village", "NoLita", "NoHo", "Little Italy",
+  "Financial District", "Battery Park City", "Civic Center", "Hudson Square",
+  "Two Bridges", "Chinatown", "Harlem", "Central Harlem", "Washington Heights", 
+  "Inwood", "Morningside Heights", "Hamilton Heights", "Manhattan Valley",
+  "Hell's Kitchen", "Hudson Yards", "NoMad", "Kips Bay", "Murray Hill",
+  "Gramercy Park", "Roosevelt Island",
+
+  // Brooklyn
+  "Williamsburg", "DUMBO", "Brooklyn Heights", "Park Slope", "Prospect Heights",
+  "Crown Heights", "Bed-Stuy", "Bedford-Stuyvesant", "Bushwick", "Red Hook", 
+  "Carroll Gardens", "Cobble Hill", "Boerum Hill", "Gowanus", "Fort Greene",
+  "Clinton Hill", "Downtown Brooklyn", "Columbia St Waterfront District",
+  "Greenpoint", "Sunset Park", "Prospect Lefferts Gardens", "Vinegar Hill",
+  "Windsor Terrace", "Ditmas Park",
+
+  // Queens
+  "Long Island City", "LIC", "Astoria", "Sunnyside", "Jackson Heights",
+  "Flushing", "Forest Hills", "Ridgewood", "Corona", "Maspeth", "Rego Park",
+  "Bayside", "Ditmars Steinway", "Woodside", "Briarwood", "Fresh Meadows",
+  "Elmhurst",
+
+  // Bronx
+  "Kingsbridge", "Norwood", "Melrose", "Mott Haven", "South Bronx", "Concourse"
+];
 
   const handleNeighborhoodToggle = (neighborhood: string) => {
     setNeighborhoods(prev => 
