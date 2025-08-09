@@ -484,22 +484,27 @@ const [hasAnimated, setHasAnimated] = useState(false);
                       </CardHeader>
                       <CardContent className="space-y-4">
                         {(property as any).rent_stabilization_analysis?.explanation && (
-                          <div className="text-sm text-gray-300 leading-relaxed">
-                            <strong>Analysis:</strong> {(property as any).rent_stabilization_analysis.explanation}
-                          </div>
-                        )}
+  <div className="text-sm text-gray-300 leading-relaxed">
+    <strong>Analysis:</strong> {
+      (property as any).rent_stabilization_analysis.explanation
+        .replace(/(\d+\.\d{2,})%/g, (match, number) => `${Math.round(parseFloat(number))}%`)
+    }
+  </div>
+)}
                         
-                        {(property as any).rent_stabilization_analysis?.key_factors && 
-                         (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
-                            <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                              {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
-                                <li key={index}>{factor}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                       {(property as any).rent_stabilization_analysis?.key_factors && 
+ (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
+  <div>
+    <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
+    <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+      {(property as any).rent_stabilization_analysis.key_factors.map((factor: string, index: number) => (
+        <li key={index}>
+          {factor.replace(/(\d+\.\d{2,})%/g, (match, number) => `${Math.round(parseFloat(number))}%`)}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
                         
                         {(property as any).rent_stabilized_confidence && (
                           <div className="flex justify-between text-sm">
