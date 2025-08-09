@@ -2,9 +2,96 @@ import { Link } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react"; // You might already have some of these
 import TestimonialsSection from "@/components/TestimonialsSection";
 import { useAuth } from "@/contexts/AuthContext";
+import { useScroll, useTransform, motion } from 'framer-motion';
+
+const ScrollJackedSection = () => {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Transform scroll progress to determine which text to show
+  const textIndex = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], [0, 1, 2, 2]);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = textIndex.onChange((latest) => {
+      setCurrentTextIndex(Math.round(latest));
+    });
+    return unsubscribe;
+  }, [textIndex]);
+
+  const textContent = [
+    {
+      title: "We scan 30,000+ listings a week",
+      subtitle: "Real-time analysis of thousands of data points to identify true value of each listing."
+    },
+    {
+      title: "We flag listings up to 60% below-market", 
+      subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again."
+    },
+    {
+      title: "Save $925/mo on rent, $74k when buying (avg)",
+      subtitle: "Using data to help 6000+ New Yorkers save thousands of dollars on their homes."
+    }
+  ];
+
+  return (
+    <section ref={containerRef} className="relative h-[400vh] bg-black">
+      <div className="sticky top-0 h-screen flex items-center">
+        <div className="max-w-7xl mx-auto px-4 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            
+            {/* Left Side - Fixed Image */}
+            <div className="relative order-2 lg:order-1">
+              <img 
+                src="/lovable-uploads/desk3.png" 
+                alt="Realer Estate desktop platform showing NYC property scan" 
+                className="w-full rounded-2xl shadow-2xl"
+              />
+            </div>
+
+            {/* Right Side - Scroll-Jacked Text */}
+            <div className="space-y-8 order-1 lg:order-2">
+              <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white mb-12">
+                The real estate market is rigged. Now you can win.
+              </h2>
+              
+              <div className="relative min-h-[300px]">
+                {textContent.map((content, index) => (
+                  <motion.div
+                    key={index}
+                    className="absolute inset-0"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{
+                      opacity: currentTextIndex === index ? 1 : 0,
+                      y: currentTextIndex === index ? 0 : 20
+                    }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  >
+                    <div className="space-y-6">
+                      <h3 className="text-3xl md:text-4xl font-inter font-semibold tracking-tighter text-white">
+                        {content.title}
+                      </h3>
+                      <p className="text-xl text-gray-300 font-inter tracking-tight leading-relaxed">
+                        {content.subtitle}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const Index = () => {
   const { user } = useAuth();
@@ -121,28 +208,8 @@ const Index = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
-            The real estate market is rigged. Now you can win. 
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We scan 30,000+ listings a week</h3>
-              <p className="text-gray-400 tracking-tight">Real-time analysis of thousands of data points to identify true value of each listing.</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We flag listings up to 60% below-market</h3>
-              <p className="text-gray-400 tracking-tight">We only show you the best below-market & rent-stabilized listings, so you never overpay again.</p>
-            </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-transparent hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:ring-2 hover:ring-blue-500/30">
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">Save $925/mo on rent, $74k when buying (avg)</h3>
-              <p className="text-gray-400 tracking-tight">Using data to help 6000+ New Yorkers save thousands of dollars on their homes.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+     {/* How It Works - Scroll Jacked Version */}
+<ScrollJackedSection />
 
       {/* Featured Neighborhoods */}
       <section className="py-20 px-4 max-w-6xl mx-auto">
@@ -165,17 +232,6 @@ const Index = () => {
               Explore Homes
             </HoverButton>
           </Link>
-        </div>
-      </section>
-
-  {/* Desktop Product Mockup Section */}
-      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center">
-          <img 
-            src="/lovable-uploads/desk3.png" 
-            alt="Realer Estate desktop platform showing NYC property scan" 
-            className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
-          />
         </div>
       </section>
     
