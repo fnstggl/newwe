@@ -14,10 +14,10 @@ const ScrollJackedSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Create scroll-controlled Y positions (upward movement) - more evenly spaced
-  const text1Y = useTransform(scrollYProgress, [0, 0.33], [0, -200]);
-  const text2Y = useTransform(scrollYProgress, [0, 0.33, 0.66], [200, 0, -200]);
-  const text3Y = useTransform(scrollYProgress, [0.33, 0.66, 1], [400, 200, 0]);
+  // Create scroll-controlled Y positions (upward movement) - evenly spaced and closer together
+  const text1Y = useTransform(scrollYProgress, [0, 0.33], [0, -100]);
+  const text2Y = useTransform(scrollYProgress, [0, 0.33, 0.66], [100, 0, -100]);
+  const text3Y = useTransform(scrollYProgress, [0.33, 0.66, 1], [200, 100, 0]);
 
   // Create scroll-controlled opacity fades (fade as they approach top)
   const text1Opacity = useTransform(scrollYProgress, [0, 0.25, 0.33], [1, 1, 0]);
@@ -100,7 +100,6 @@ const ScrollJackedSection = () => {
     </section>
   );
 };
-
 
 const Index = () => {
   const { user } = useAuth();
