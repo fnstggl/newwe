@@ -163,6 +163,43 @@ useEffect(() => {
     }
   }, [listingId, properties]);
 
+ // ADD THIS NEW useEffect HERE
+  useEffect(() => {
+    const fetchSpecificListing = async () => {
+      if (!listingId) return;
+      
+      // Don't fetch if we already have the property in our current properties
+      const existingProperty = properties.find(p => p.listing_id === listingId);
+      if (existingProperty) {
+        setSelectedProperty(existingProperty);
+        return;
+      }
+      
+      try {
+        // Try to find the listing in the undervalued_sales table
+        const { data: salesData, error: salesError } = await supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('listing_id', listingId)
+          .eq('status', 'active')
+          .single();
+
+        if (salesData && !salesError) {
+          setSelectedProperty(salesData);
+          return;
+        }
+
+        // If listing not found, you might want to show an error
+        console.log('Listing not found:', listingId);
+        
+      } catch (error) {
+        console.error('Error fetching specific listing:', error);
+      }
+    };
+
+    fetchSpecificListing();
+  }, [listingId, properties]);
+  
   useEffect(() => {
     fetchNeighborhoods();
     fetchProperties(true);
