@@ -14,64 +14,61 @@ const ScrollJackedSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Transform scroll progress to determine which text to show
-  const textIndex = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], [0, 1, 2, 2]);
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-
-  useEffect(() => {
-    const unsubscribe = textIndex.onChange((latest) => {
-      setCurrentTextIndex(Math.round(latest));
-    });
-    return unsubscribe;
-  }, [textIndex]);
+  // Create scroll-controlled opacity values that fade through black
+  const text1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.3, 0.4], [1, 1, 0, 0]);
+  const text2Opacity = useTransform(scrollYProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
+  const text3Opacity = useTransform(scrollYProgress, [0.6, 0.7, 1], [0, 1, 1]);
 
   const textContent = [
     {
       title: "We scan 30,000+ listings a week",
-      subtitle: "Real-time analysis of thousands of data points to identify true value of each listing."
+      subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
+      opacity: text1Opacity
     },
     {
       title: "We flag listings up to 60% below-market", 
-      subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again."
+      subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
+      opacity: text2Opacity
     },
     {
       title: "Save $925/mo on rent, $74k when buying (avg)",
-      subtitle: "Using data to help 6000+ New Yorkers save thousands of dollars on their homes."
+      subtitle: "Using data to help 6000+ New Yorkers save thousands of dollars on their homes.",
+      opacity: text3Opacity
     }
   ];
 
   return (
     <section ref={containerRef} className="relative h-[400vh] bg-black">
-      <div className="sticky top-0 h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            
-            {/* Left Side - Fixed Image */}
-            <div className="relative order-2 lg:order-1">
-              <img 
-                src="/lovable-uploads/desk3.png" 
-                alt="Realer Estate desktop platform showing NYC property scan" 
-                className="w-full rounded-2xl shadow-2xl"
-              />
-            </div>
+      <div className="sticky top-0 h-screen flex flex-col">
+        
+        {/* Header - Above everything, centered */}
+        <div className="w-full text-center py-8 px-4">
+          <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white">
+            The real estate market is rigged. Now you can win.
+          </h2>
+        </div>
 
-            {/* Right Side - Scroll-Jacked Text */}
-            <div className="space-y-8 order-1 lg:order-2">
-              <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white mb-12">
-                The real estate market is rigged. Now you can win.
-              </h2>
+        {/* Main Content Area */}
+        <div className="flex-1 flex items-center px-2">
+          <div className="w-full max-w-none mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center h-full">
               
-              <div className="relative min-h-[300px]">
+              {/* Left Side - Fixed Image */}
+              <div className="relative order-2 lg:order-1">
+                <img 
+                  src="/lovable-uploads/desk3.png" 
+                  alt="Realer Estate desktop platform showing NYC property scan" 
+                  className="w-full shadow-2xl"
+                />
+              </div>
+
+              {/* Right Side - Scroll-Controlled Text */}
+              <div className="order-1 lg:order-2 relative min-h-[300px]">
                 {textContent.map((content, index) => (
                   <motion.div
                     key={index}
-                    className="absolute inset-0"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                      opacity: currentTextIndex === index ? 1 : 0,
-                      y: currentTextIndex === index ? 0 : 20
-                    }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute inset-0 flex flex-col justify-center"
+                    style={{ opacity: content.opacity }}
                   >
                     <div className="space-y-6">
                       <h3 className="text-3xl md:text-4xl font-inter font-semibold tracking-tighter text-white">
@@ -84,8 +81,8 @@ const ScrollJackedSection = () => {
                   </motion.div>
                 ))}
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </div>
