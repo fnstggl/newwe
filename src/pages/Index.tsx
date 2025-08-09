@@ -64,7 +64,7 @@ const ScrollJackedSection = () => {
               {/* Left Side - Fixed Image */}
               <div className="relative order-2 lg:order-1">
                 <img 
-                  src="/lovable-uploads/desk3.png" 
+                  src="/lovable-uploads/desk4.png" 
                   alt="Realer Estate desktop platform showing NYC property scan" 
                   className="w-full rounded-2xl shadow-2xl"
                 />
