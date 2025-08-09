@@ -275,13 +275,13 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                 
                 <div className="space-y-2">
                   <p className="text-gray-500 text-xs tracking-tighter">
-                    Cancel anytime · Helping 6,000+ New Yorkers · As seen on CBS & AP News
+                    Cancel anytime · Helping 6,000+ New Yorkers · As seen on CBS & ABC News
                   </p>
                   <button
                     onClick={handleNext}
-                    className="text-blue-400 hover:text-blue-300 text-sm tracking-tighter underline transition-colors"
+                    className="text-blue-400 hover:text-blue-300 text-sm tracking-tight underline transition-colors"
                   >
-                    No thanks — continue for free
+                    No thanks—continue without alerts
                   </button>
                 </div>
               </div>
@@ -322,7 +322,7 @@ const OnboardingPopup = ({ isOpen, onClose, onComplete }: OnboardingPopupProps) 
                   🔍 Start Browsing Listings
                 </button>
                 <p className="text-gray-500 text-sm tracking-tighter">
-                  You'll start with 9 free listings. Upgrade anytime for unlimited access.
+                  You'll start with 24 free listings per day. Upgrade anytime for unlimited access.
                 </p>
               </div>
             </div>
