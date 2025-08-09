@@ -14,26 +14,34 @@ const ScrollJackedSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Create scroll-controlled opacity values that fade through black
-  const text1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.25, 0.35], [1, 1, 0, 0]);
-  const text2Opacity = useTransform(scrollYProgress, [0.3, 0.35, 0.55, 0.6], [0, 1, 1, 0]);
-  const text3Opacity = useTransform(scrollYProgress, [0.65, 0.7, 1], [0, 1, 1]);
+  // Create scroll-controlled Y positions (upward movement)
+  const text1Y = useTransform(scrollYProgress, [0, 0.33], [0, -150]);
+  const text2Y = useTransform(scrollYProgress, [0, 0.33, 0.66], [150, 0, -150]);
+  const text3Y = useTransform(scrollYProgress, [0.33, 0.66, 1], [300, 150, 0]);
+
+  // Create scroll-controlled opacity fades (fade as they approach top)
+  const text1Opacity = useTransform(scrollYProgress, [0, 0.25, 0.33], [1, 1, 0]);
+  const text2Opacity = useTransform(scrollYProgress, [0.25, 0.58, 0.66], [0, 1, 0]);
+  const text3Opacity = useTransform(scrollYProgress, [0.58, 0.75, 1], [0, 1, 1]);
 
   const textContent = [
     {
       title: "We scan 30,000+ listings a week",
       subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
-      opacity: text1Opacity
+      opacity: text1Opacity,
+      y: text1Y
     },
     {
       title: "We flag listings up to 60% below-market", 
       subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
-      opacity: text2Opacity
+      opacity: text2Opacity,
+      y: text2Y
     },
     {
-      title: "Save $925/mo on rent, $103k when buying",
+      title: "Save $925/mo on rent, $101k when buying",
       subtitle: "Based on average savings data. Join 6000+ New Yorkers finding the best deals in the city.",
-      opacity: text3Opacity
+      opacity: text3Opacity,
+      y: text3Y
     }
   ];
 
@@ -63,12 +71,15 @@ const ScrollJackedSection = () => {
               </div>
 
               {/* Right Side - Scroll-Controlled Text */}
-              <div className="order-1 lg:order-2 relative min-h-[300px]">
+              <div className="order-1 lg:order-2 relative min-h-[300px] overflow-hidden">
                 {textContent.map((content, index) => (
                   <motion.div
                     key={index}
                     className="absolute inset-0 flex flex-col justify-center"
-                    style={{ opacity: content.opacity }}
+                    style={{ 
+                      opacity: content.opacity,
+                      y: content.y
+                    }}
                   >
                     <div className="space-y-6">
                       <h3 className="text-3xl md:text-4xl font-inter font-semibold tracking-tighter text-white">
