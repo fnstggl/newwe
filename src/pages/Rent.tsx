@@ -159,6 +159,65 @@ useEffect(() => {
     }
   }, [listingId, properties]);
 
+// ADD THIS NEW useEffect HERE
+  useEffect(() => {
+    const fetchSpecificListing = async () => {
+      if (!listingId) return;
+      
+      // Don't fetch if we already have the property in our current properties
+      const existingProperty = properties.find(p => p.listing_id === listingId);
+      if (existingProperty) {
+        setSelectedProperty(existingProperty);
+        return;
+      }
+      
+      try {
+        // Try to find the listing in the undervalued_rentals table
+        const { data: rentalData, error: rentalError } = await supabase
+          .from('undervalued_rentals')
+          .select('*')
+          .eq('listing_id', listingId)
+          .eq('status', 'active')
+          .single();
+
+        if (rentalData && !rentalError) {
+          setSelectedProperty({ ...rentalData, isRentStabilized: false });
+          return;
+        }
+
+        // If not found in regular rentals, try rent-stabilized table
+        const { data: stabilizedData, error: stabilizedError } = await supabase
+          .from('undervalued_rent_stabilized')
+          .select('*')
+          .eq('listing_id', listingId)
+          .eq('display_status', 'active')
+          .single();
+
+        if (stabilizedData && !stabilizedError) {
+          // Add the isRentStabilized flag for the PropertyDetail component
+          setSelectedProperty({ 
+            ...stabilizedData, 
+            isRentStabilized: true,
+            grade: 'A+',
+            score: stabilizedData.deal_quality_score || 95,
+            discount_percent: stabilizedData.undervaluation_percent,
+            images: stabilizedData.images || [],
+            zipcode: stabilizedData.zip_code
+          });
+          return;
+        }
+
+        // If listing not found in either table, you might want to show an error
+        console.log('Listing not found:', listingId);
+        
+      } catch (error) {
+        console.error('Error fetching specific listing:', error);
+      }
+    };
+
+    fetchSpecificListing();
+  }, [listingId, properties]);
+  
   useEffect(() => {
     fetchNeighborhoods();
     fetchProperties(true);
@@ -892,7 +951,7 @@ const additionalNeighborhoods = [
     }
   };
 
-  const handlePropertyClick = (property: any, index: number) => {
+ const handlePropertyClick = (property: any, index: number) => {
     const visibilityLimit = getVisibilityLimit();
     
     // Only allow clicks on visible properties
@@ -920,7 +979,7 @@ const additionalNeighborhoods = [
       return;
     }
     
-    // Update URL with listing ID
+    // Update URL with listing ID - MAKE SURE THIS LINE EXISTS
     navigate(`/rent/${property.listing_id}`, { replace: true });
     setSelectedProperty(property);
   };
