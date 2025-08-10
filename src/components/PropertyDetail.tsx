@@ -264,8 +264,8 @@ const [hasAnimated, setHasAnimated] = useState(false);
 
             <div className="p-6">
               {hasImages && (
-                <div className="relative mb-8">
-                  <div className="aspect-video rounded-2xl overflow-hidden bg-gray-800">
+  <div className="relative mb-8">
+    <div className="aspect-video rounded-2xl lg:rounded-2xl sm:rounded-xl overflow-hidden bg-gray-800">
                     <img
                       src={currentImageUrl}
                       alt={property.address}
@@ -274,6 +274,27 @@ const [hasAnimated, setHasAnimated] = useState(false);
                         e.currentTarget.src = '/placeholder.svg';
                       }}
                     />
+      {/* Add touch support for mobile swiping */}
+<div 
+  className="absolute inset-0 lg:hidden"
+  onTouchStart={(e) => {
+    const touch = e.touches[0];
+    e.currentTarget.setAttribute('data-start-x', touch.clientX.toString());
+  }}
+  onTouchEnd={(e) => {
+    const startX = parseFloat(e.currentTarget.getAttribute('data-start-x') || '0');
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > 50) { // Minimum swipe distance
+      if (diff > 0) {
+        nextImage(); // Swipe left = next image
+      } else {
+        prevImage(); // Swipe right = previous image
+      }
+    }
+  }}
+/>
                   </div>
                   
                   {/* Bookmark button in top right of image */}
@@ -285,31 +306,34 @@ const [hasAnimated, setHasAnimated] = useState(false);
                   </div>
                   
                   {images.length > 1 && (
-                    <>
-                      <Button
-  variant="ghost"
-  size="icon"
-  className="absolute left-4 top-1/2 transform -translate-y-1/2
-             bg-white/20 text-white rounded-full
-             border border-white/20 shadow-xl backdrop-blur-md
-             transition duration-200 ease-in-out hover:bg-white/30
-             hover:scale-105 hover:shadow-2xl"
-  onClick={prevImage}
->
-  <ChevronLeft className="w-5 h-5 stroke-white" />
-</Button>
-                      <Button
-  variant="ghost"
-  size="icon"
-  className="absolute right-4 top-1/2 transform -translate-y-1/2
-             bg-white/20 text-white rounded-full
-             border border-white/20 shadow-xl backdrop-blur-md
-             transition duration-200 ease-in-out hover:bg-white/30
-             hover:scale-105 hover:shadow-2xl"
-  onClick={nextImage}
->
-  <ChevronRight className="w-5 h-5 stroke-white" />
-</Button>
+  <>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="absolute left-2 lg:left-4 top-1/2 transform -translate-y-1/2
+                 bg-white/20 text-white rounded-full
+                 border border-white/20 shadow-xl backdrop-blur-md
+                 transition duration-200 ease-in-out hover:bg-white/30
+                 hover:scale-105 hover:shadow-2xl
+                 w-8 h-8 lg:w-10 lg:h-10"
+      onClick={prevImage}
+    >
+      <ChevronLeft className="w-3 h-3 lg:w-5 lg:h-5 stroke-white" />
+    </Button>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="absolute right-2 lg:right-4 top-1/2 transform -translate-y-1/2
+                 bg-white/20 text-white rounded-full
+                 border border-white/20 shadow-xl backdrop-blur-md
+                 transition duration-200 ease-in-out hover:bg-white/30
+                 hover:scale-105 hover:shadow-2xl
+                 w-8 h-8 lg:w-10 lg:h-10"
+      onClick={nextImage}
+    >
+      <ChevronRight className="w-3 h-3 lg:w-5 lg:h-5 stroke-white" />
+    </Button>
+
                       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
                         {currentImageIndex + 1} / {images.length}
                       </div>
@@ -321,26 +345,38 @@ const [hasAnimated, setHasAnimated] = useState(false);
               <div className="grid lg:grid-cols-3 gap-8">
                 {/* Main Info */}
                 <div className="lg:col-span-2 space-y-6">
-                  {/* Address and Price */}
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
-                      <div className="flex items-center text-gray-400 mb-4">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
-                        {capitalizeNeighborhood(property.borough)}
-                      </div>
-                      {/* Price */}
-                      <div className="text-3xl font-bold text-white mb-2">
-                        {formatPrice(price)}{isRental ? '/mo' : ''}
-                      </div>
-                      {pricePerSqft && (
-                        <div className="text-gray-300 mb-4">
-                          {formatPrice(pricePerSqft)}/sqft
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                 {/* Address and Price */}
+<div className="flex justify-between items-start">
+  <div className="flex-1">
+    <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center text-gray-400">
+        <MapPin className="h-4 w-4 mr-2" />
+        {property.neighborhood && `${capitalizeNeighborhood(property.neighborhood)}, `}
+        {capitalizeNeighborhood(property.borough)}
+      </div>
+      {/* Grade and Score on mobile - hidden on desktop */}
+      <div className="flex lg:hidden items-center space-x-2">
+        <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-3 py-1 text-sm font-bold">
+          {displayGrade}
+        </Badge>
+        <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-2 py-1 flex items-center space-x-1`}>
+          <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Score:</span>
+          <span className={`text-xs font-bold ${gradeTheme.textColor}`}>{property.score}</span>
+        </div>
+      </div>
+    </div>
+    {/* Price */}
+    <div className="text-3xl font-bold text-white mb-2">
+      {formatPrice(price)}{isRental ? '/mo' : ''}
+    </div>
+    {pricePerSqft && (
+      <div className="text-gray-300 mb-4">
+        {formatPrice(pricePerSqft)}/sqft
+      </div>
+    )}
+  </div>
+</div>
 
                   {/* Property Details - Updated to show "Studio" for 0 bedrooms and change null value color */}
                   <Card className="bg-black border-gray-700">
@@ -576,16 +612,16 @@ const [hasAnimated, setHasAnimated] = useState(false);
 
                 {/* Sidebar - Grade/Deal Score + About the Neighborhood + Stats */}
                 <div className="space-y-6 mt-9">
-                  {/* Grade and Deal Score moved to top of sidebar */}
-                  <div className="flex flex-col items-end space-y-3">
-                    <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
-                      {displayGrade}
-                    </Badge>
-                    <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
-                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
-                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
-                    </div>
-                  </div>
+                  {/* Grade and Deal Score moved to top of sidebar - hidden on mobile */}
+<div className="hidden lg:flex flex-col items-end space-y-3">
+  <Badge className="bg-white/20 border-white text-white shadow-[0_0_20px_rgba(255,255,255,0.3)] border-2 px-4 py-2 text-lg font-bold">
+    {displayGrade}
+  </Badge>
+  <div className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}>
+    <span className={`text-xs ${gradeTheme.textColor} font-medium`}>Deal Score:</span>
+    <span className={`text-sm font-bold ${gradeTheme.textColor}`}>{property.score}</span>
+  </div>
+</div>
 
                   {/* About the Neighborhood - now aligned with property details */}
                   {neighborhoodInfo && (
