@@ -502,18 +502,17 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   };
 
   const handleNext = async () => {
-    if (successStep === 4) {
-      await savePreferences();
-      setShowSuccessPopup(false);
-      // Redirect to For You page
-      window.location.href = '/foryou';
-    } else if (successStep === 2 && selectedNeighborhoods.length > 0) {
-      await savePreferences();
-      setSuccessStep(successStep + 1);
-    } else {
-      setSuccessStep(successStep + 1);
-    }
-  };
+  if (successStep === 4) {
+    await savePreferences();
+    setShowSuccessPopup(false);
+    // Keep users on the pricing page instead of redirecting
+  } else if (successStep === 2 && selectedNeighborhoods.length > 0) {
+    await savePreferences();
+    setSuccessStep(successStep + 1);
+  } else {
+    setSuccessStep(successStep + 1);
+  }
+};
 
   const handleClose = () => {
     setShowSuccessPopup(false);
@@ -526,32 +525,21 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      {/* Confetti Animation */}
-      {confettiVisible && (
-        <div className="fixed inset-0 pointer-events-none z-40">
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-blue-400 rounded-full animate-bounce"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random() * 2}s`
-              }}
-            />
-          ))}
-        </div>
-      )}
+      {/* Static Confetti Emoji */}
+{confettiVisible && successStep === 1 && (
+  <div className="absolute -top-4 -right-4 text-4xl animate-pulse">
+    🎉
+  </div>
+)}
 
-      <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+     <div className="bg-black/95 backdrop-blur-2xl border border-white/10 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <div className="p-8">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-3">
               {successStep === 1 && (
-                <div className="bg-green-500/20 p-2 rounded-full">
-                  <Unlock className="w-6 h-6 text-green-400" />
+                <div className="bg-blue-500/20 p-2 rounded-full">
+                  <Unlock className="w-6 h-6 text-blue-400" />
                 </div>
               )}
               <h2 className="text-2xl font-bold text-white tracking-tighter">
@@ -573,26 +561,27 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
           {successStep === 1 && (
             <div className="space-y-8 text-center">
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-6 rounded-2xl">
-                  <h3 className="text-xl font-bold text-white tracking-tighter leading-tight">
-                    🎉 You now have unlimited access to the best deals in NYC
-                  </h3>
-                </div>
+                <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl relative overflow-hidden">
+  <div className="absolute top-2 right-2 text-2xl">🎉</div>
+  <h3 className="text-xl font-bold text-white tracking-tighter leading-tight">
+    You now have unlimited access to the best deals in NYC
+  </h3>
+</div>
                 <div className="space-y-3 text-left">
                   <div className="flex items-center gap-3 text-white/80">
-                    <Check className="w-5 h-5 text-green-400" />
-                    <span>See ALL undervalued listings, not just 9/day</span>
+                    <Check className="w-5 h-5 text-blue-400" />
+                    <span>See ALL undervalued listings, not just 24/day</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80">
-                    <Check className="w-5 h-5 text-green-400" />
+                    <Check className="w-5 h-5 text-blue-400" />
                     <span>Get instant alerts for new deals</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80">
-                    <Check className="w-5 h-5 text-green-400" />
+                    <Check className="w-5 h-5 text-blue-400" />
                     <span>Personalized deal recommendations</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80">
-                    <Check className="w-5 h-5 text-green-400" />
+                    <Check className="w-5 h-5 text-blue-400" />
                     <span>Advanced filtering and search</span>
                   </div>
                 </div>
@@ -710,8 +699,8 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                 </p>
                 <div className="bg-white/5 p-4 rounded-xl text-left">
                   <div className="flex items-center gap-3 text-white/80 mb-2">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                    <span>AI-powered matching to your preferences</span>
+                    <Star className="w-5 h-5 text-blue-400" />
+                    <span>Advanced matching to your preferences</span>
                   </div>
                   <div className="flex items-center gap-3 text-white/80">
                     <Home className="w-5 h-5 text-blue-400" />
@@ -722,24 +711,41 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
             </div>
           )}
 
-          {/* Step 4: Final */}
-          {successStep === 4 && (
-            <div className="space-y-8 text-center">
-              <div className="space-y-4">
-                <h3 className="text-3xl font-bold text-white tracking-tighter">
-                  Now let's find your dream home in NYC! 🏠
-                </h3>
-                <p className="text-white/70 text-lg">
-                  We want to make the process of finding an affordable apartment in the city as easy as possible
-                </p>
-                <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl">
-                  <p className="text-green-400 font-medium">
-                    ✅ Your unlimited access is now active
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+         {/* Step 4: Final */}
+{successStep === 4 && (
+  <div className="space-y-8 text-center">
+    <div className="space-y-6">
+      {/* Lock Unlocking Animation */}
+      <div className="flex justify-center">
+        <div className="relative">
+          <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center animate-pulse">
+            <Unlock className="w-8 h-8 text-blue-400 animate-bounce" />
+          </div>
+          <div className="absolute -inset-2 bg-blue-500/10 rounded-full animate-ping"></div>
+        </div>
+      </div>
+      
+      <h3 className="text-3xl font-bold text-white tracking-tighter">
+        You're all set! 
+      </h3>
+      <p className="text-white/70 text-lg tracking-tight">
+        Welcome to unlimited access to NYC's best deals
+      </p>
+      
+      <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl">
+        <div className="space-y-3">
+          <div className="w-3 h-3 bg-blue-400 rounded-full mx-auto animate-pulse"></div>
+          <p className="text-blue-400 font-medium text-lg">
+            Unlimited access activated
+          </p>
+          <p className="text-white/60 text-sm">
+            Start browsing thousands of undervalued properties
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
           {/* Next Button */}
           <div className="mt-8">
@@ -771,7 +777,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                   step === successStep 
                     ? "w-6 bg-white" 
                     : step < successStep
-                    ? "w-2 bg-green-400"
+                    ? "w-2 bg-blue-400"
                     : "w-2 bg-gray-600"
                 }`}
               />
