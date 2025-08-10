@@ -375,7 +375,6 @@ if (urlParams.get('success') === 'true') {
   );
 };
 
-import React, { useState, useEffect } from 'react';
 import { X, Check, Star, Unlock, Home } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
