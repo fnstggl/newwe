@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
+import { X, Check, Star, Unlock, Home } from 'lucide-react';
+import { Slider } from "@/components/ui/slider";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -374,12 +376,6 @@ if (urlParams.get('success') === 'true') {
     </div>
   );
 };
-
-import { X, Check, Star, Unlock, Home } from 'lucide-react';
-import { Slider } from "@/components/ui/slider";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
 
 interface SuccessPopupProps {
   showSuccessPopup: boolean;
