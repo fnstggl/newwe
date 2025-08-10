@@ -607,11 +607,11 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                     <button
                       key={neighborhood}
                       onClick={() => handleNeighborhoodToggle(neighborhood)}
-                      className={`p-3 rounded-xl border transition-all text-sm tracking-tight ${
-                        selectedNeighborhoods.includes(neighborhood)
-                          ? "border-white bg-white text-black"
-                          : "border-white/30 text-white hover:border-white/60"
-                      }`}
+                     className={`p-3 rounded-full border transition-all text-sm tracking-tight ${
+  selectedNeighborhoods.includes(neighborhood)
+    ? "border-white bg-white text-black"
+    : "border-white/30 text-white hover:border-white/60"
+}`}
                     >
                       {neighborhood}
                     </button>
@@ -622,7 +622,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                   <div className="space-y-3">
                     <button
                       onClick={() => setShowRefineFilters(!showRefineFilters)}
-                      className="w-full p-3 border border-white/30 text-white rounded-xl hover:border-white/60 transition-all"
+                      className="w-full p-3 border border-white/30 text-white rounded-full hover:border-white/60 transition-all"
                     >
                       {showRefineFilters ? 'Hide' : 'Refine'} Email Filters (Optional)
                     </button>
@@ -636,7 +636,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
                               <button
                                 key={bed}
                                 onClick={() => setRefinedBedrooms(bed === '5+' ? 5 : bed as number)}
-                                className={`px-3 py-2 rounded-lg border text-sm ${
+                                className={`px-3 py-2 rounded-full border text-sm ${
                                   refinedBedrooms === (bed === '5+' ? 5 : bed)
                                     ? 'border-white bg-white text-black'
                                     : 'border-white/30 text-white'
