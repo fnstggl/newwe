@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +22,9 @@ import NotFound from "./pages/NotFound";
 import CancelSubscription from "./pages/CancelSubscription";
 import ManageSubscription from "./pages/ManageSubscription";
 import OpenDoor from "./pages/OpenDoor";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import BlogAdmin from "./pages/BlogAdmin";
 import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
 import OnboardingPopup from "./components/OnboardingPopup";
@@ -57,6 +61,9 @@ const AppContent = () => {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/press" element={<Press />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/blog/admin" element={<BlogAdmin />} />
         <Route path="/housingaccess" element={<OpenDoor />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
