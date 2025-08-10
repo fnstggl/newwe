@@ -242,20 +242,20 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, isRental = false,
           )}
         </div>
 
-        <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-300 whitespace-pre-line space-y-1">
+    <div className="flex justify-between items-center">
+<div className="text-sm text-gray-300 whitespace-pre-line space-y-1">
   <div className="font-medium">{getDiscountPercentage().split('\n')[0]}</div>
   {getDiscountPercentage().includes('\n') && (
     <div className="text-xs text-gray-400">{getDiscountPercentage().split('\n')[1]}</div>
   )}
 </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2 flex-shrink-0">
             {property.isRentStabilized && (
-              <Badge variant="outline" className="text-xs border-green-600 text-green-400">
+              <Badge variant="outline" className="text-xs border-green-600 text-green-400 whitespace-nowrap">
                 Rent-stabilized
               </Badge>
             )}
-            <Badge variant="outline" className={`text-xs ${colors.scoreBorder} ${colors.scoreText}`}>
+            <Badge variant="outline" className={`text-xs ${colors.scoreBorder} ${colors.scoreText} whitespace-nowrap`}>
               Score: {String(property.score)}
             </Badge>
           </div>
