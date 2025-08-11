@@ -179,25 +179,23 @@ const Index = () => {
       </section>
 
 
-{/* 
 <section className="pt-4 pb-0 px-4 max-w-6xl mx-auto">
   <div className="text-center">
     <Link to="/press" className="inline-block hover:opacity-80 transition-opacity duration-300">
       <img 
         src="/lovable-uploads/covered-by.png" 
-        alt="Covered by CBS, ABC News" 
+        alt="Coverd by CBS, ABC News" 
         className="h-10 mx-auto"
       />
     </Link>
   </div>
 </section>
-*/}
 
   {/* Product Mockup Section */}
       <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center">
           <img 
-            src="/lovable-uploads/rainbow-glow-mockup3.png" 
+            src="/lovable-uploads/rainbow-glow-mockup.png" 
             alt="Realer Estate platform showing rental listings" 
             className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
           />
