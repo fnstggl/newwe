@@ -373,9 +373,9 @@ const getGradeColors = (grade) => {
       {/* Header with AI Search */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800/50">
         <div className="px-4 py-4">
-        {/* AI Search Bar with Toggle */}
+{/* AI Search Bar with Toggle */}
 <div className="flex items-center gap-3 mb-4">
-  <div className="flex-1">
+  <div className="flex-1 relative">
     <AISearch 
       onResults={(results, interpretation) => {
         if (results.length > 0) {
@@ -393,9 +393,21 @@ const getGradeColors = (grade) => {
         }
       }}
       placeholder="Describe your dream home. We'll find it for you"
-      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-20 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
       showSuggestions={false}
+      hideInterpretation={true}
     />
+    
+    {/* Refresh/Clear Button */}
+    <button
+      onClick={() => {
+        fetchProperties(true);
+      }}
+      className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-700/60 hover:bg-gray-600/80 text-white p-2 rounded-full transition-colors"
+      title="Clear search and refresh"
+    >
+      <ArrowUp className="w-4 h-4 rotate-45" />
+    </button>
   </div>
   
   {/* Buy/Rent Toggle */}
@@ -568,11 +580,15 @@ const getGradeColors = (grade) => {
                         {property.neighborhood}
                       </div>
                       
-                      {/* Discount Badge */}
+                    {/* Discount Badge */}
 {(property.discount_percent || property.undervaluation_percent) && (
   <div className="mt-2">
     <span className={`${gradeColors.discountBg} px-2 py-1 rounded-full text-xs font-semibold`}>
-      {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+      {Math.round(Math.max(
+        property.discount_percent || 0, 
+        property.undervaluation_percent || 0,
+        property.grade === 'A+' ? 15 : 0  // Ensure A+ properties show at least 15%
+      ))}% below market
     </span>
   </div>
 )}
