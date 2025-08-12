@@ -189,40 +189,36 @@ const MobileLanding = () => {
           }
         }
 
-        // Order both queries
-        regularQuery = regularQuery.order('score', { ascending: false });
-        stabilizedQuery = stabilizedQuery.order('deal_quality_score', { ascending: false });
+ // Order both queries - mix of grades instead of just top scores
+regularQuery = regularQuery.order('created_at', { ascending: false });
+stabilizedQuery = stabilizedQuery.order('created_at', { ascending: false });
 
-        // Fetch both
-        const [regularResult, stabilizedResult] = await Promise.all([
-          regularQuery.range(0, 50),
-          stabilizedQuery.range(0, 50)
-        ]);
+// Fetch both with larger ranges to get variety
+const [regularResult, stabilizedResult] = await Promise.all([
+  regularQuery.range(0, 100),
+  stabilizedQuery.range(0, 50)
+]);
 
-        // Combine results
-        const regularProperties = (regularResult.data || []).map(property => ({
-          ...property,
-          isRentStabilized: false
-        }));
+// Combine results
+const regularProperties = (regularResult.data || []).map(property => ({
+  ...property,
+  isRentStabilized: false
+}));
 
-        const rentStabilizedProperties = (stabilizedResult.data || []).map(property => ({
-          ...property,
-          isRentStabilized: true,
-          grade: 'A+',
-          score: property.deal_quality_score || 95,
-          discount_percent: property.undervaluation_percent,
-          images: property.images || [],
-          zipcode: property.zip_code
-        }));
+const rentStabilizedProperties = (stabilizedResult.data || []).map(property => ({
+  ...property,
+  isRentStabilized: true,
+  grade: 'A+',
+  score: property.deal_quality_score || 95,
+  discount_percent: property.undervaluation_percent,
+  images: property.images || [],
+  zipcode: property.zip_code
+}));
 
-        allProperties = [...regularProperties, ...rentStabilizedProperties];
-        
-        // Sort by score/discount
-        allProperties.sort((a, b) => {
-          const aScore = a.score || a.deal_quality_score || 0;
-          const bScore = b.score || b.deal_quality_score || 0;
-          return bScore - aScore;
-        });
+allProperties = [...regularProperties, ...rentStabilizedProperties];
+
+// Shuffle to mix grades instead of sorting by score
+allProperties.sort(() => Math.random() - 0.5);
 
       } else {
         // Buy mode - fetch from sales table
@@ -342,28 +338,28 @@ const MobileLanding = () => {
     setSelectedProperty(property);
   };
 
-  const getGradeColors = (grade) => {
+const getGradeColors = (grade) => {
   if (grade === 'A+') {
     return {
-      badge: 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white border border-yellow-500/30',
+      badge: 'bg-white/20 backdrop-blur-md border-white/30 text-black',
       discountBg: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
       hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:border-yellow-400/40'
     };
   } else if (grade === 'A' || grade === 'A-') {
     return {
-      badge: 'bg-gradient-to-r from-purple-500 to-purple-700 text-white border border-purple-500/30',
+      badge: 'bg-white/20 backdrop-blur-md border-white/30 text-black',
       discountBg: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
       hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:border-purple-400/40'
     };
   } else if (grade?.startsWith('B')) {
     return {
-      badge: 'bg-gradient-to-r from-blue-500 to-blue-700 text-white border border-blue-500/30',
+      badge: 'bg-white/20 backdrop-blur-md border-white/30 text-black',
       discountBg: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
       hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:border-blue-400/40'
     };
   } else {
     return {
-      badge: 'bg-gradient-to-r from-gray-500 to-gray-700 text-white border border-gray-500/30',
+      badge: 'bg-white/20 backdrop-blur-md border-white/30 text-black',
       discountBg: 'bg-gray-500/20 text-gray-400 border border-gray-500/30',
       hover: 'hover:shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:border-gray-400/40'
     };
@@ -377,7 +373,7 @@ const MobileLanding = () => {
       {/* Header with AI Search */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800/50">
         <div className="px-4 py-4">
-         {/* AI Search Bar with Toggle */}
+        {/* AI Search Bar with Toggle */}
 <div className="flex items-center gap-3 mb-4">
   <div className="flex-1">
     <AISearch 
@@ -398,6 +394,7 @@ const MobileLanding = () => {
       }}
       placeholder="Describe your dream home. We'll find it for you"
       className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+      showSuggestions={false}
     />
   </div>
   
