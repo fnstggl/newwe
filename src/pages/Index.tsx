@@ -542,9 +542,9 @@ const MobileLanding = () => {
                       
                       {/* Grade Badge */}
 <div className="absolute top-2 left-2">
-  <div className={`w-8 h-8 rounded-full ${gradeColors.badge} flex items-center justify-center text-xs font-bold shadow-lg`}>
+  <span className={`px-2 py-1 rounded-full text-xs font-bold ${gradeColors.badge}`}>
     {property.grade}
-  </div>
+  </span>
 </div>
                       
                       {/* Heart Icon */}
