@@ -5,6 +5,10 @@ import { GlowEffect } from '@/components/ui/glow-effect';
 
 interface AISearchProps {
   onResults: (results: any[], interpretation: string) => void;
+  showSuggestions?: boolean;
+  hideInterpretation?: boolean;
+  placeholder?: string;
+  className?: string;
 }
 
 interface AIFilters {
@@ -18,7 +22,13 @@ interface AIFilters {
   interpretation?: string;
 }
 
-const AISearch = ({ onResults }: AISearchProps) => {
+const AISearch = ({ 
+  onResults, 
+  showSuggestions = true, 
+  hideInterpretation = false,
+  placeholder = "Describe your dream home... we'll find it for you",
+  className = ""
+}: AISearchProps) => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [lastInterpretation, setLastInterpretation] = useState('');
@@ -365,15 +375,15 @@ const AISearch = ({ onResults }: AISearchProps) => {
   onMouseEnter={() => setIsHovered(true)}
   onMouseLeave={() => setIsHovered(false)}
 >
-          <input
+         <input
             type="text"
-            placeholder="Describe your dream home... we'll find it for you"
+            placeholder={placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyPress={handleKeyPress}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className="flex-1 px-6 py-3 bg-transparent border-none text-white placeholder:text-gray-400 focus:outline-none text-base font-medium tracking-tight"
+            className={`flex-1 px-6 py-3 bg-transparent border-none text-white placeholder:text-gray-400 focus:outline-none text-base font-medium tracking-tight ${className}`}
           />
           
           <button 
@@ -396,10 +406,43 @@ const AISearch = ({ onResults }: AISearchProps) => {
         </div>
       </div>
       
-      {/* Last interpretation display */}
-      {lastInterpretation && (
-        <div className="mt-3 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-center">
-          <p className="text-blue-300 text-sm">🎯 {lastInterpretation}</p>
+          {/* Last interpretation display - Apple Intelligence Style */}
+      {lastInterpretation && !hideInterpretation && (
+        <div className="mt-4 flex justify-center">
+          <div className="relative">
+            {/* Animated gradient border */}
+            <div className="absolute -inset-[1px] rounded-full bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 opacity-75 animate-pulse"></div>
+            
+            {/* Main content */}
+            <div className="relative bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center space-x-3">
+              {/* Animated dots */}
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-cyan-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+              </div>
+              
+              {/* Interpretation text */}
+              <p className="text-white text-sm font-medium tracking-tight">
+                {lastInterpretation}
+              </p>
+              
+              {/* Siri-like waveform animation */}
+              <div className="flex items-center space-x-0.5">
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-0.5 bg-gradient-to-t from-blue-400 to-purple-400 rounded-full animate-pulse"
+                    style={{
+                      height: `${Math.random() * 12 + 4}px`,
+                      animationDelay: `${i * 0.1}s`,
+                      animationDuration: '1s'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

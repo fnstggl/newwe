@@ -164,3 +164,12 @@
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
 }
+
+@keyframes siri-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.5); }
+}
+
+.siri-bar {
+  animation: siri-pulse 1.5s ease-in-out infinite;
+}
