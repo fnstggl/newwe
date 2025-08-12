@@ -403,18 +403,20 @@ const AISearch = ({ onResults }: AISearchProps) => {
         </div>
       )}
 
-      {/* Search suggestions chips */}
-      <div className="flex justify-center space-x-3 mt-4">
-        {['2BR under $4k in Brooklyn', 'Pet-friendly with gym', 'Rent stabilized deals'].map((example) => (
-          <button
-            key={example}
-            onClick={() => setQuery(example)}
-            className="px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full text-sm text-gray-300 hover:text-white hover:border-gray-500/70 transition-all duration-200"
-          >
-            {example}
-          </button>
-        ))}
-      </div>
+     {/* Search suggestions chips - Only show if showSuggestions is not false */}
+      {showSuggestions !== false && (
+        <div className="flex justify-center space-x-3 mt-4">
+          {['2BR under $4k in Brooklyn', 'Pet-friendly with gym', 'Rent stabilized deals'].map((example) => (
+            <button
+              key={example}
+              onClick={() => setQuery(example)}
+              className="px-4 py-2 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 rounded-full text-sm text-gray-300 hover:text-white hover:border-gray-500/70 transition-all duration-200"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

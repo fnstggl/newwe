@@ -375,7 +375,7 @@ const getGradeColors = (grade) => {
         <div className="px-4 py-4">
 {/* AI Search Bar with Toggle */}
 <div className="flex items-center gap-3 mb-4">
-  <div className="flex-1 relative">
+  <div className="flex-1">
     <AISearch 
       onResults={(results, interpretation) => {
         if (results.length > 0) {
@@ -393,22 +393,34 @@ const getGradeColors = (grade) => {
         }
       }}
       placeholder="Describe your dream home. We'll find it for you"
-      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-20 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
       showSuggestions={false}
       hideInterpretation={true}
     />
-    
-    {/* Refresh/Clear Button */}
-    <button
-      onClick={() => {
-        fetchProperties(true);
-      }}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-700/60 hover:bg-gray-600/80 text-white p-2 rounded-full transition-colors"
-      title="Clear search and refresh"
-    >
-      <ArrowUp className="w-4 h-4 rotate-45" />
-    </button>
   </div>
+  
+  {/* Refresh/Clear Button - Outside search bar */}
+  <button
+    onClick={() => {
+      fetchProperties(true);
+    }}
+    className="bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
+    title="Clear search and refresh"
+  >
+    <svg 
+      className="w-4 h-4" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        strokeWidth={2} 
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+      />
+    </svg>
+  </button>
   
   {/* Buy/Rent Toggle */}
   <div className="flex items-center gap-2">
