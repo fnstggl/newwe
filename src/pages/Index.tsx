@@ -10,7 +10,7 @@ import { Toggle, GooeyFilter } from "@/components/ui/liquid-toggle";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
-import SoftGateModal from "@/components/SoftGateModal";
+import AISearch from '@/components/AISearch';
 
 const ScrollJackedSection = () => {
   const containerRef = useRef(null);
@@ -288,41 +288,22 @@ const MobileLanding = () => {
     }
   };
 
-  // AI Search with auto-trigger
-  const handleAISearch = async () => {
-    if (!searchQuery.trim()) return;
-    
-    setIsSearchLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('ai-search', {
-        body: { query: searchQuery }
-      });
-
-      if (!error && data?.filters) {
-        if (data.filters.max_budget) setMaxPrice(data.filters.max_budget.toString());
-        if (data.filters.bedrooms !== undefined) setBedrooms(data.filters.bedrooms.toString());
-        if (data.filters.neighborhoods) setSelectedNeighborhoods(data.filters.neighborhoods);
-        if (data.filters.property_type) setIsRentMode(data.filters.property_type === 'rent');
-        
-        await fetchProperties(true);
-      }
-    } catch (error) {
-      console.error('AI Search error:', error);
-    } finally {
-      setIsSearchLoading(false);
+  // Handle AI Search results (use your existing AISearch component)
+  const handleAIResults = (results, interpretation) => {
+    if (results.length > 0) {
+      // Map results to match your property format
+      const mappedResults = results.map(property => ({
+        ...property,
+        property_type: property.property_type || (isRentMode ? 'rent' : 'buy')
+      }));
+      setProperties(mappedResults);
+      setOffset(mappedResults.length);
+      setHasMore(false); // AI results are finite
+    } else {
+      // If no AI results, fall back to regular fetch
+      fetchProperties(true);
     }
   };
-
-  // Auto-trigger search when typing
-  useEffect(() => {
-    if (!searchQuery.trim()) return;
-    
-    const debounceTimer = setTimeout(() => {
-      handleAISearch();
-    }, 800);
-    
-    return () => clearTimeout(debounceTimer);
-  }, [searchQuery]);
 
   // Load initial properties
   useEffect(() => {
@@ -378,18 +359,27 @@ const MobileLanding = () => {
   const getGradeColors = (grade) => {
     if (grade === 'A+') {
       return {
-        badge: 'bg-white text-black',
-        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]'
+        badge: 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-black',
+        discount: 'bg-yellow-500/20 text-yellow-400',
+        hover: 'hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:border-yellow-400/40'
       };
     } else if (grade === 'A' || grade === 'A-') {
       return {
-        badge: 'bg-white text-black',
-        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.3)]'
+        badge: 'bg-gradient-to-r from-purple-400 to-purple-500 text-white',
+        discount: 'bg-purple-500/20 text-purple-400',
+        hover: 'hover:shadow-[0_0_20px_rgba(147,51,234,0.4)] hover:border-purple-400/40'
+      };
+    } else if (grade?.startsWith('B')) {
+      return {
+        badge: 'bg-gradient-to-r from-blue-400 to-blue-500 text-white',
+        discount: 'bg-blue-500/20 text-blue-400',
+        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:border-blue-400/40'
       };
     } else {
       return {
-        badge: 'bg-white text-black',
-        hover: 'hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+        badge: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white',
+        discount: 'bg-gray-500/20 text-gray-400',
+        hover: 'hover:shadow-[0_0_20px_rgba(156,163,175,0.4)] hover:border-gray-400/40'
       };
     }
   };
@@ -403,21 +393,8 @@ const MobileLanding = () => {
         <div className="px-4 py-4">
           {/* AI Search Bar with Toggle */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Describe your dream home. We'll find it for you"
-                className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                {isSearchLoading ? (
-                  <div className="w-4 h-4 border-2 border-gray-400 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <Search size={16} className="text-gray-400" />
-                )}
-              </div>
+            <div className="flex-1">
+              <AISearch onResults={handleAIResults} />
             </div>
             
             {/* Buy/Rent Toggle */}
@@ -559,9 +536,9 @@ const MobileLanding = () => {
                         </div>
                       )}
                       
-                      {/* Grade Badge */}
+                      {/* Grade Badge - CIRCLE */}
                       <div className="absolute top-2 left-2">
-                        <span className={`px-2 py-1 rounded-lg text-xs font-bold ${gradeColors.badge}`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
                           {property.grade}
                         </span>
                       </div>
@@ -590,10 +567,10 @@ const MobileLanding = () => {
                         {property.neighborhood}
                       </div>
                       
-                      {/* Discount Badge */}
+                      {/* Discount Badge - Grade-based colors */}
                       {(property.discount_percent || property.undervaluation_percent) && (
                         <div className="mt-2">
-                          <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-semibold">
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
                             {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
                           </span>
                         </div>
@@ -602,70 +579,44 @@ const MobileLanding = () => {
                   </div>
                 </div>
 
-                {/* Blurred overlay CTAs */}
-                {!user && isBlurred && (
-                  <div 
-                    className="absolute inset-0 cursor-pointer flex items-center justify-center"
-                    onClick={() => setSoftGateModal({
-                      isOpen: true,
-                      property: property,
-                      isLoggedOut: true
-                    })}
-                  >
-                    <div className="bg-black/60 backdrop-blur-sm rounded-xl p-3 text-center">
-                      <div className="text-white text-sm font-semibold mb-1 tracking-tight">Sign up to view</div>
-                      <div className="text-xs text-gray-300">Free account</div>
-                    </div>
-                  </div>
-                )}
-
-                {isFreeUser && isBlurred && (
-                  <div 
-                    className="absolute inset-0 cursor-pointer flex items-center justify-center"
-                    onClick={() => setSoftGateModal({
-                      isOpen: true,
-                      property: property,
-                      isLoggedOut: false
-                    })}
-                  >
-                    <div className="bg-black/60 backdrop-blur-sm rounded-xl p-3 text-center">
-                      <div className="text-white text-sm font-semibold mb-1 tracking-tight">Upgrade to view</div>
-                      <div className="text-xs text-gray-300">Try free</div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Main CTAs at specific positions */}
-                {!user && index === 13 && properties.length > 13 && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none col-span-2">
-                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs pointer-events-auto">
-                      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+                {/* Remove individual blurred CTAs - only keep main CTA */}
+                {/* Main CTA centered between properties */}
+                {!user && index === 11 && properties.length > 12 && (
+                  <div className="col-span-2 flex justify-center my-4">
+                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
                         See all the best deals
                       </h3>
-                      <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
+                      <p className="text-sm text-gray-300 mb-4">Only 12 of 4,193 deals shown</p>
                       <button
                         onClick={() => navigate('/join')}
-                        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
                       >
                         Join Free
                       </button>
+                      <p className="text-xs text-gray-400 mt-2">
+                        6,000+ New Yorkers already beating the market
+                      </p>
                     </div>
                   </div>
                 )}
 
-                {isFreeUser && index === 25 && properties.length > 25 && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none col-span-2">
-                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs pointer-events-auto">
-                      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+                {isFreeUser && index === 23 && properties.length > 24 && (
+                  <div className="col-span-2 flex justify-center my-4">
+                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
                         Unlock all deals
                       </h3>
-                      <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
+                      <p className="text-sm text-gray-300 mb-4">Only 24 of 4,193 deals shown</p>
                       <button
                         onClick={() => navigate('/pricing')}
-                        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
                       >
                         Try Free
                       </button>
+                      <p className="text-xs text-gray-400 mt-2">
+                        Save an avg of $925/mo • Cancel anytime
+                      </p>
                     </div>
                   </div>
                 )}
