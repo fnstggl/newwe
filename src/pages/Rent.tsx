@@ -133,96 +133,97 @@ useEffect(() => {
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
 
-  // Track if any filters are active
-  useEffect(() => {
-    const filtersActive = searchTerm.trim() || 
-                         zipCode.trim() || 
-                         maxPrice !== "3500" || 
-                         bedrooms.trim() || 
-                         minGrade.trim() || 
-                         selectedNeighborhoods.length > 0 || 
-                         selectedBoroughs.length > 0 || 
-                         minSqft.trim() || 
-                         addressSearch.trim() || 
-                         minDiscount.trim() || 
-                         sortBy !== "Featured" || 
-                         rentStabilizedOnly;
-    setHasActiveFilters(filtersActive);
-  }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
-  
-  useEffect(() => {
-    if (listingId && properties.length > 0) {
-      const property = properties.find(p => p.listing_id === listingId);
-      if (property) {
-        setSelectedProperty(property);
-      }
-    }
-  }, [listingId, properties]);
+// Track if any filters are active
+useEffect(() => {
+  const filtersActive = searchTerm.trim() || 
+                       zipCode.trim() || 
+                       maxPrice !== "3500" || 
+                       bedrooms.trim() || 
+                       minGrade.trim() || 
+                       selectedNeighborhoods.length > 0 || 
+                       selectedBoroughs.length > 0 || 
+                       minSqft.trim() || 
+                       addressSearch.trim() || 
+                       minDiscount.trim() || 
+                       sortBy !== "Featured" || 
+                       rentStabilizedOnly;
+  setHasActiveFilters(filtersActive);
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
 
-// ADD THIS NEW useEffect HERE
-  useEffect(() => {
-    const fetchSpecificListing = async () => {
-      if (!listingId) return;
-      
-      // Don't fetch if we already have the property in our current properties
-      const existingProperty = properties.find(p => p.listing_id === listingId);
-      if (existingProperty) {
-        setSelectedProperty(existingProperty);
+useEffect(() => {
+  if (listingId && properties.length > 0) {
+    const property = properties.find(p => p.listing_id === listingId);
+    if (property) {
+      setSelectedProperty(property);
+    }
+  }
+}, [listingId, properties]);
+
+// FIXED fetchSpecificListing useEffect
+useEffect(() => {
+  const fetchSpecificListing = async () => {
+    if (!listingId) return;
+    
+    // Don't fetch if we already have the property in our current properties
+    const existingProperty = properties.find(p => p.listing_id === listingId);
+    if (existingProperty) {
+      setSelectedProperty(existingProperty);
+      return;
+    }
+    
+    try {
+      // Try to find the listing in the undervalued_rentals table FIRST
+      const { data: rentalData, error: rentalError } = await supabase
+        .from('undervalued_rentals')
+        .select('*')
+        .eq('listing_id', listingId)
+        .eq('status', 'active')
+        .eq('likely_rented', false)  // ← ADD THIS LINE
+        .single();
+
+      if (rentalData && !rentalError) {
+        setSelectedProperty({ ...rentalData, isRentStabilized: false });
         return;
       }
-      
-      try {
-        // Try to find the listing in the undervalued_rentals table
-       const { data: stabilizedData, error: stabilizedError } = await supabase
-  .from('undervalued_rent_stabilized')
-  .select('*')
-  .eq('listing_id', listingId)
-  .eq('display_status', 'active')
-  .eq('likely_rented', false)  // ← ADD THIS LINE
-  .single();
 
-        if (rentalData && !rentalError) {
-          setSelectedProperty({ ...rentalData, isRentStabilized: false });
-          return;
-        }
+      // If not found in regular rentals, try rent-stabilized table
+      const { data: stabilizedData, error: stabilizedError } = await supabase
+        .from('undervalued_rent_stabilized')
+        .select('*')
+        .eq('listing_id', listingId)
+        .eq('display_status', 'active')
+        .eq('likely_rented', false)  // ← ADD THIS LINE
+        .single();
 
-        // If not found in regular rentals, try rent-stabilized table
-        const { data: stabilizedData, error: stabilizedError } = await supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('listing_id', listingId)
-          .eq('display_status', 'active')
-          .single();
-
-        if (stabilizedData && !stabilizedError) {
-          // Add the isRentStabilized flag for the PropertyDetail component
-          setSelectedProperty({ 
-            ...stabilizedData, 
-            isRentStabilized: true,
-            grade: 'A+',
-            score: stabilizedData.deal_quality_score || 95,
-            discount_percent: stabilizedData.undervaluation_percent,
-            images: stabilizedData.images || [],
-            zipcode: stabilizedData.zip_code
-          });
-          return;
-        }
-
-        // If listing not found in either table, you might want to show an error
-        console.log('Listing not found:', listingId);
-        
-      } catch (error) {
-        console.error('Error fetching specific listing:', error);
+      if (stabilizedData && !stabilizedError) {
+        // Add the isRentStabilized flag for the PropertyDetail component
+        setSelectedProperty({ 
+          ...stabilizedData, 
+          isRentStabilized: true,
+          grade: 'A+',
+          score: stabilizedData.deal_quality_score || 95,
+          discount_percent: stabilizedData.undervaluation_percent,
+          images: stabilizedData.images || [],
+          zipcode: stabilizedData.zip_code
+        });
+        return;
       }
-    };
 
-    fetchSpecificListing();
-  }, [listingId, properties]);
-  
-  useEffect(() => {
-    fetchNeighborhoods();
-    fetchProperties(true);
-  }, []);
+      // If listing not found in either table, you might want to show an error
+      console.log('Listing not found:', listingId);
+      
+    } catch (error) {
+      console.error('Error fetching specific listing:', error);
+    }
+  };
+
+  fetchSpecificListing();
+}, [listingId, properties]);
+
+useEffect(() => {
+  fetchNeighborhoods();
+  fetchProperties(true);
+}, []);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
