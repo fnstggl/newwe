@@ -418,37 +418,12 @@ const getGradeColors = (grade) => {
     <div className="min-h-screen bg-black text-white font-inter pb-24">
       <GooeyFilter />
       
-      {/* Header with AI Search */}
+{/* Header with AI Search */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800/50">
         <div className="px-4 py-4">
-{/* AI Search Bar - Full Width */}
-          <div className="mb-4">
-            <AISearch 
-              onResults={(results, interpretation) => {
-                if (results.length > 0) {
-                  const mappedResults = results.map(property => ({
-                    ...property,
-                    images: Array.isArray(property.images) ? property.images : 
-                           typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
-                    property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
-                    table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
-                  }));
-                  
-                  setProperties(mappedResults);
-                  setOffset(mappedResults.length);
-                  setHasMore(false);
-                }
-              }}
-              placeholder="Describe your dream home. We'll find it for you"
-              className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
-              showSuggestions={false}
-              hideInterpretation={true}
-            />
-          </div>
 
-{/* Controls Row - Centered Toggle and Right Refresh */}
-<div className="flex items-center justify-center mb-4 relative">
-  {/* Rent/Buy Toggle - Centered with Rent as default */}
+{/* Rent/Buy Toggle - NOW FIRST */}
+<div className="flex items-center justify-center mb-4">
   <div className="flex items-center gap-2">
     <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
       Rent
@@ -462,17 +437,44 @@ const getGradeColors = (grade) => {
       Buy
     </span>
   </div>
+</div>
+
+{/* AI Search Bar with Inline Refresh Button */}
+<div className="flex items-center gap-3 mb-0">
+  <div className="flex-1">
+    <AISearch 
+      onResults={(results, interpretation) => {
+        if (results.length > 0) {
+          const mappedResults = results.map(property => ({
+            ...property,
+            images: Array.isArray(property.images) ? property.images : 
+                   typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
+            property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
+            table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
+          }));
+          
+          setProperties(mappedResults);
+          setOffset(mappedResults.length);
+          setHasMore(false);
+        }
+      }}
+      placeholder="Describe your dream home. We'll find it for you"
+      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+      showSuggestions={false}
+      hideInterpretation={true}
+    />
+  </div>
   
-  {/* Refresh/Clear Button - Positioned absolutely to the right */}
+  {/* Refresh Button - Inline with Search */}
   <button
     onClick={() => {
       fetchProperties(true);
     }}
-    className="absolute right-0 bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
+    className="bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-3 rounded-2xl transition-colors flex-shrink-0"
     title="Clear search and refresh"
   >
     <svg 
-      className="w-4 h-4" 
+      className="w-5 h-5" 
       fill="none" 
       stroke="currentColor" 
       viewBox="0 0 24 24"
@@ -486,6 +488,7 @@ const getGradeColors = (grade) => {
     </svg>
   </button>
 </div>
+
         </div>
       </div>
 
