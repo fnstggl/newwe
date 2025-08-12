@@ -139,9 +139,9 @@ const Index = () => {
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org');
   }, []);
 
-  return <div className="font-inter">
+  return <div className="font-inter max-md:pb-20">
       {/* Hero Section */}
-<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
+<section className="relative min-h-[600px] max-md:min-h-[500px] flex items-center justify-center overflow-hidden px-0 pt-0">        {/* Background Image with Full Width */}
         <div className="absolute inset-0 w-full h-full">
           {/* Background Image with Fade-in Effect */}
           <div 
@@ -160,13 +160,13 @@ const Index = () => {
           {/* Hero Content - Always Visible */}
           <div className="relative z-10 min-h-[600px] flex items-center justify-center">
             <div className="text-center px-4 py-20 max-w-none">
-              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
+              <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] max-md:text-4xl max-md:leading-tight max-md:translate-y-[100px] text-white">
                 Find your dream home. And actually afford it.
               </h1>
               <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
                 Your unfair advantage in finding below-market & rent-stabilized homes.
               </p>
-              <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+              <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl max-md:w-full max-md:max-w-xs max-md:rounded-2xl max-md:text-lg max-md:translate-y-[80px]">
                 {user ? "See Deals" : "See Deals"}
               </Link>
             </div>
@@ -194,7 +194,7 @@ const Index = () => {
 */}
 
   {/* Product Mockup Section */}
-      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
+      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto max-md:pb-12">
         <div className="text-center">
           <img 
             src="/lovable-uploads/rainbow-glow-mockup3.png" 
@@ -205,7 +205,7 @@ const Index = () => {
       </section>
     
       {/* Problem Section */}
-      <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
+      <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto max-md:pt-6 max-md:pb-12">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             It shouldn't be this hard to find a home in the city.
@@ -222,7 +222,7 @@ const Index = () => {
 <ScrollJackedSection />
 
       {/* Featured Neighborhoods */}
-      <section className="py-20 px-4 max-w-6xl mx-auto">
+      <section className="py-20 px-4 max-w-6xl mx-auto max-md:py-12">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Stop overpaying in every neighborhood.
@@ -238,7 +238,7 @@ const Index = () => {
             </div>
           </div>
           <Link to="/rent">
-            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
+            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300 max-md:w-full max-md:max-w-sm max-md:rounded-2xl max-md:py-4">
               Explore Homes
             </HoverButton>
           </Link>
@@ -281,6 +281,36 @@ const Index = () => {
           </div>
         </div>
       </section>
+{/* iOS-Style Bottom Navigation - Mobile Only */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-lg border-t border-gray-800 px-4 py-2 pb-safe z-50 md:hidden">
+        <div className="flex justify-around items-center h-12">
+          <Link to="/rent" className="flex flex-col items-center justify-center min-w-[60px]">
+            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+              <div className="w-4 h-4 bg-white rounded-sm"></div>
+            </div>
+            <span className="text-xs text-white font-medium">Rent</span>
+          </Link>
+          <Link to="/buy" className="flex flex-col items-center justify-center min-w-[60px]">
+            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
+            </div>
+            <span className="text-xs text-gray-400 font-medium">Buy</span>
+          </Link>
+          <Link to="/saved" className="flex flex-col items-center justify-center min-w-[60px]">
+            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
+            </div>
+            <span className="text-xs text-gray-400 font-medium">Saved</span>
+          </Link>
+          <Link to="/profile" className="flex flex-col items-center justify-center min-w-[60px]">
+            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+              <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
+            </div>
+            <span className="text-xs text-gray-400 font-medium">Profile</span>
+          </Link>
+        </div>
+      </div>
+    
     </div>;
 };
 
