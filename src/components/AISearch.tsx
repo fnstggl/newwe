@@ -446,8 +446,8 @@ const AISearch = ({
         </div>
       )}
 
-     {/* Search suggestions chips - Only show if showSuggestions is not false */}
-      {showSuggestions !== false && (
+    {/* Search suggestions chips - Only show if showSuggestions is true */}
+      {showSuggestions && (
         <div className="flex justify-center space-x-3 mt-4">
           {['2BR under $4k in Brooklyn', 'Pet-friendly with gym', 'Rent stabilized deals'].map((example) => (
             <button

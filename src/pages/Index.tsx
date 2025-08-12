@@ -373,70 +373,71 @@ const getGradeColors = (grade) => {
       {/* Header with AI Search */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800/50">
         <div className="px-4 py-4">
-{/* AI Search Bar with Toggle */}
-<div className="flex items-center gap-3 mb-4">
-  <div className="flex-1">
-    <AISearch 
-      onResults={(results, interpretation) => {
-        if (results.length > 0) {
-          const mappedResults = results.map(property => ({
-            ...property,
-            images: Array.isArray(property.images) ? property.images : 
-                   typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
-            property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
-            table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
-          }));
-          
-          setProperties(mappedResults);
-          setOffset(mappedResults.length);
-          setHasMore(false);
-        }
-      }}
-      placeholder="Describe your dream home. We'll find it for you"
-      className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
-      showSuggestions={false}
-      hideInterpretation={true}
-    />
-  </div>
-  
-  {/* Refresh/Clear Button - Outside search bar */}
-  <button
-    onClick={() => {
-      fetchProperties(true);
-    }}
-    className="bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
-    title="Clear search and refresh"
-  >
-    <svg 
-      className="w-4 h-4" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-      />
-    </svg>
-  </button>
-  
-  {/* Buy/Rent Toggle */}
-  <div className="flex items-center gap-2">
-    <span className={`text-sm font-semibold tracking-tight ${!isRentMode ? 'text-white' : 'text-gray-400'}`}>
-      Buy
-    </span>
-    <Toggle 
-      checked={isRentMode} 
-      onCheckedChange={setIsRentMode}
-      className="scale-90"
-    />
-    <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
-      Rent
-    </span>
-  </div>
-</div>
+{/* AI Search Bar - Full Width */}
+          <div className="mb-4">
+            <AISearch 
+              onResults={(results, interpretation) => {
+                if (results.length > 0) {
+                  const mappedResults = results.map(property => ({
+                    ...property,
+                    images: Array.isArray(property.images) ? property.images : 
+                           typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
+                    property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
+                    table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
+                  }));
+                  
+                  setProperties(mappedResults);
+                  setOffset(mappedResults.length);
+                  setHasMore(false);
+                }
+              }}
+              placeholder="Describe your dream home. We'll find it for you"
+              className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+              showSuggestions={false}
+              hideInterpretation={true}
+            />
+          </div>
+
+          {/* Controls Row - Toggle and Refresh */}
+          <div className="flex items-center justify-between mb-4">
+            {/* Buy/Rent Toggle */}
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-semibold tracking-tight ${!isRentMode ? 'text-white' : 'text-gray-400'}`}>
+                Buy
+              </span>
+              <Toggle 
+                checked={isRentMode} 
+                onCheckedChange={setIsRentMode}
+                className="scale-90"
+              />
+              <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
+                Rent
+              </span>
+            </div>
+            
+            {/* Refresh/Clear Button */}
+            <button
+              onClick={() => {
+                fetchProperties(true);
+              }}
+              className="bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
+              title="Clear search and refresh"
+            >
+              <svg 
+                className="w-4 h-4" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
