@@ -144,89 +144,106 @@ const [isImageLoading, setIsImageLoading] = useState(false);
     try {
       let allProperties = [];
 
-      if (isRentMode) {
-        // Fetch from both rental tables
-        let regularQuery = supabase
-          .from('undervalued_rentals')
-          .select('*')
-          .eq('status', 'active');
+if (isRentMode) {
+  // Get a strategic mix of grades
+  // Fetch A+ properties first
+  let highGradeQuery = supabase
+    .from('undervalued_rentals')
+    .select('*')
+    .eq('status', 'active')
+    .in('grade', ['A+', 'A', 'A-'])
+    .order('score', { ascending: false });
 
-        let stabilizedQuery = supabase
-          .from('undervalued_rent_stabilized')
-          .select('*')
-          .eq('display_status', 'active');
+  // Fetch regular mixed properties
+  let mixedQuery = supabase
+    .from('undervalued_rentals')
+    .select('*')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
 
-        // Apply filters to both queries
-        if (maxPrice.trim()) {
-          const priceValue = parseInt(maxPrice.trim());
-          if (!isNaN(priceValue) && priceValue > 0) {
-            regularQuery = regularQuery.lte('monthly_rent', priceValue);
-            stabilizedQuery = stabilizedQuery.lte('monthly_rent', priceValue);
-          }
-        }
+  let stabilizedQuery = supabase
+    .from('undervalued_rent_stabilized')
+    .select('*')
+    .eq('display_status', 'active')
+    .order('created_at', { ascending: false });
 
-        if (bedrooms.trim()) {
-          const bedroomValue = parseInt(bedrooms.trim());
-          if (!isNaN(bedroomValue)) {
-            if (bedroomValue === 0) {
-              regularQuery = regularQuery.eq('bedrooms', 0);
-              stabilizedQuery = stabilizedQuery.eq('bedrooms', 0);
-            } else {
-              regularQuery = regularQuery.gte('bedrooms', bedroomValue);
-              stabilizedQuery = stabilizedQuery.gte('bedrooms', bedroomValue);
-            }
-          }
-        }
-
-        if (selectedNeighborhoods.length > 0) {
-          regularQuery = regularQuery.in('neighborhood', selectedNeighborhoods);
-          stabilizedQuery = stabilizedQuery.in('neighborhood', selectedNeighborhoods);
-        }
-
-        if (minGrade.trim()) {
-          const gradeIndex = gradeOptions.indexOf(minGrade);
-          if (gradeIndex !== -1) {
-            const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-            regularQuery = regularQuery.in('grade', allowedGrades);
-          }
-        }
-
- // Get a strategic mix of grades
-// Fetch A+ properties first
-let highGradeQuery = supabase
-  .from('undervalued_rentals')
-  .select('*')
-  .eq('status', 'active')
-  .in('grade', ['A+', 'A', 'A-'])
-  .order('score', { ascending: false });
-
-// Apply filters to high grade query
-if (maxPrice.trim()) {
-  const priceValue = parseInt(maxPrice.trim());
-  if (!isNaN(priceValue) && priceValue > 0) {
-    highGradeQuery = highGradeQuery.lte('monthly_rent', priceValue);
-  }
-}
-if (bedrooms.trim()) {
-  const bedroomValue = parseInt(bedrooms.trim());
-  if (!isNaN(bedroomValue)) {
-    if (bedroomValue === 0) {
-      highGradeQuery = highGradeQuery.eq('bedrooms', 0);
-    } else {
-      highGradeQuery = highGradeQuery.gte('bedrooms', bedroomValue);
+  // Apply filters to all queries
+  if (maxPrice.trim()) {
+    const priceValue = parseInt(maxPrice.trim());
+    if (!isNaN(priceValue) && priceValue > 0) {
+      highGradeQuery = highGradeQuery.lte('monthly_rent', priceValue);
+      mixedQuery = mixedQuery.lte('monthly_rent', priceValue);
+      stabilizedQuery = stabilizedQuery.lte('monthly_rent', priceValue);
     }
   }
-}
-if (selectedNeighborhoods.length > 0) {
-  highGradeQuery = highGradeQuery.in('neighborhood', selectedNeighborhoods);
-}
 
-// Fetch regular mixed properties
-let regularQuery = supabase
-  .from('undervalued_rentals')
-  .select('*')
-  .eq('status', 'active')
-  .order('created_at', { ascending: false });
+  if (bedrooms.trim()) {
+    const bedroomValue = parseInt(bedrooms.trim());
+    if (!isNaN(bedroomValue)) {
+      if (bedroomValue === 0) {
+        highGradeQuery = highGradeQuery.eq('bedrooms', 0);
+        mixedQuery = mixedQuery.eq('bedrooms', 0);
+        stabilizedQuery = stabilizedQuery.eq('bedrooms', 0);
+      } else {
+        highGradeQuery = highGradeQuery.gte('bedrooms', bedroomValue);
+        mixedQuery = mixedQuery.gte('bedrooms', bedroomValue);
+        stabilizedQuery = stabilizedQuery.gte('bedrooms', bedroomValue);
+      }
+    }
+  }
+
+  if (selectedNeighborhoods.length > 0) {
+    highGradeQuery = highGradeQuery.in('neighborhood', selectedNeighborhoods);
+    mixedQuery = mixedQuery.in('neighborhood', selectedNeighborhoods);
+    stabilizedQuery = stabilizedQuery.in('neighborhood', selectedNeighborhoods);
+  }
+
+  if (minGrade.trim()) {
+    const gradeIndex = gradeOptions.indexOf(minGrade);
+    if (gradeIndex !== -1) {
+      const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
+      highGradeQuery = highGradeQuery.in('grade', allowedGrades);
+      mixedQuery = mixedQuery.in('grade', allowedGrades);
+    }
+  }
+
+  // Fetch with strategic distribution
+  const [highGradeResult, mixedResult, stabilizedResult] = await Promise.all([
+    highGradeQuery.range(0, 40), // Get more A+ and A properties
+    mixedQuery.range(0, 60),     // Get mixed properties
+    stabilizedQuery.range(0, 30) // Get rent-stabilized
+  ]);
+
+  // Combine with priority to A+ properties
+  const highGradeProperties = (highGradeResult.data || []).map(property => ({
+    ...property,
+    isRentStabilized: false
+  }));
+
+  const mixedProperties = (mixedResult.data || []).map(property => ({
+    ...property,
+    isRentStabilized: false
+  }));
+
+  const rentStabilizedProperties = (stabilizedResult.data || []).map(property => ({
+    ...property,
+    isRentStabilized: true,
+    grade: 'A+',
+    score: property.deal_quality_score || 95,
+    discount_percent: property.undervaluation_percent,
+    images: property.images || [],
+    zipcode: property.zip_code
+  }));
+
+  // Mix them strategically - 50% high grade, 30% mixed, 20% stabilized
+  allProperties = [
+    ...highGradeProperties,
+    ...rentStabilizedProperties,
+    ...mixedProperties
+  ];
+
+  // Shuffle for variety but maintain grade distribution
+  allProperties.sort(() => Math.random() - 0.5);
 
 // Apply same filters to regular query
 if (maxPrice.trim()) {
