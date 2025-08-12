@@ -173,12 +173,13 @@ useEffect(() => {
       
       try {
         // Try to find the listing in the undervalued_rentals table
-        const { data: rentalData, error: rentalError } = await supabase
-          .from('undervalued_rentals')
-          .select('*')
-          .eq('listing_id', listingId)
-          .eq('status', 'active')
-          .single();
+       const { data: stabilizedData, error: stabilizedError } = await supabase
+  .from('undervalued_rent_stabilized')
+  .select('*')
+  .eq('listing_id', listingId)
+  .eq('display_status', 'active')
+  .eq('likely_rented', false)  // ← ADD THIS LINE
+  .single();
 
         if (rentalData && !rentalError) {
           setSelectedProperty({ ...rentalData, isRentStabilized: false });
@@ -485,9 +486,10 @@ const additionalNeighborhoods = [
     // If rent-stabilized only is selected, fetch only from rent-stabilized table
     if (rentStabilizedOnly) {
       let query = supabase
-        .from('undervalued_rent_stabilized')
-        .select('*')
-        .eq('display_status', 'active');
+  .from('undervalued_rent_stabilized')
+  .select('*')
+  .eq('display_status', 'active')
+  .eq('likely_rented', false);  // ← ADD THIS LINE
 
       // Apply all your existing filters (same as before)
       if (searchTerm.trim()) {
@@ -600,11 +602,11 @@ const additionalNeighborhoods = [
     } else {
       // Fetch from both tables when not filtering for rent-stabilized only
       
-      // Fetch regular rentals
-      let regularQuery = supabase
-        .from('undervalued_rentals')
-        .select('*')
-        .eq('status', 'active');
+     let regularQuery = supabase
+  .from('undervalued_rentals')
+  .select('*')
+  .eq('status', 'active')
+  .eq('likely_rented', false);  // ← ADD THIS LINE
 
       // Apply all your existing filters for regular rentals
       if (searchTerm.trim()) {
@@ -698,10 +700,11 @@ const additionalNeighborhoods = [
       }
 
       // Fetch rent-stabilized properties
-      let rentStabilizedQuery = supabase
-        .from('undervalued_rent_stabilized')
-        .select('*')
-        .eq('display_status', 'active');
+     let rentStabilizedQuery = supabase
+  .from('undervalued_rent_stabilized')
+  .select('*')
+  .eq('display_status', 'active')
+  .eq('likely_rented', false);  // ← ADD THIS LINE
 
       // Apply same filters to rent-stabilized query
       if (searchTerm.trim()) {

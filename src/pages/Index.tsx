@@ -155,17 +155,19 @@ if (isRentMode) {
     .order('score', { ascending: false });
 
   // Fetch regular mixed properties
-  let mixedQuery = supabase
-    .from('undervalued_rentals')
-    .select('*')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
+let mixedQuery = supabase
+  .from('undervalued_rentals')
+  .select('*')
+  .eq('status', 'active')
+  .eq('likely_rented', false)  // ← ADD THIS LINE
+  .order('created_at', { ascending: false });
 
   let stabilizedQuery = supabase
-    .from('undervalued_rent_stabilized')
-    .select('*')
-    .eq('display_status', 'active')
-    .order('created_at', { ascending: false });
+  .from('undervalued_rent_stabilized')
+  .select('*')
+  .eq('display_status', 'active')
+  .eq('likely_rented', false)  // ← ADD THIS LINE
+  .order('created_at', { ascending: false });
 
   // Apply filters to all queries
   if (maxPrice.trim()) {
@@ -249,11 +251,12 @@ if (isRentMode) {
 
       } else {
         // Buy mode - fetch from sales table
-        let query = supabase
-          .from('undervalued_sales')
-          .select('*')
-          .eq('status', 'active')
-          .order('score', { ascending: false });
+     let query = supabase
+  .from('undervalued_sales')
+  .select('*')
+  .eq('status', 'active')
+  .eq('likely_sold', false)  // ← ADD THIS LINE
+  .order('score', { ascending: false });
 
         // Apply filters
         if (maxPrice.trim()) {

@@ -177,12 +177,13 @@ useEffect(() => {
       
       try {
         // Try to find the listing in the undervalued_sales table
-        const { data: salesData, error: salesError } = await supabase
-          .from('undervalued_sales')
-          .select('*')
-          .eq('listing_id', listingId)
-          .eq('status', 'active')
-          .single();
+       const { data: salesData, error: salesError } = await supabase
+  .from('undervalued_sales')
+  .select('*')
+  .eq('listing_id', listingId)
+  .eq('status', 'active')
+  .eq('likely_sold', false)  // ← ADD THIS LINE
+  .single();
 
         if (salesData && !salesError) {
           setSelectedProperty(salesData);
@@ -415,11 +416,12 @@ const additionalNeighborhoods = [
   const currentOffset = reset ? 0 : offset;
 
   try {
-    let query = supabase
-      .from('undervalued_sales')
-      .select('*')
-      .eq('status', 'active')
-      .or('investor_plan_property.is.null,investor_plan_property.neq.true');
+let query = supabase
+  .from('undervalued_sales')
+  .select('*')
+  .eq('status', 'active')
+  .eq('likely_sold', false)  // ← ADD THIS LINE
+  .or('investor_plan_property.is.null,investor_plan_property.neq.true');
 
     if (searchTerm.trim()) {
       query = query.ilike('address', `%${searchTerm.trim()}%`);
