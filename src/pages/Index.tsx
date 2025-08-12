@@ -123,6 +123,8 @@ const MobileLanding = () => {
     property: null,
     isLoggedOut: false
   });
+  const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
+const [isImageLoading, setIsImageLoading] = useState(false);
 
   const ITEMS_PER_PAGE = 24;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -360,13 +362,15 @@ allProperties.sort(() => Math.random() - 0.5);
       const endIndex = startIndex + ITEMS_PER_PAGE;
       const pageProperties = allProperties.slice(startIndex, endIndex);
       
-      if (reset) {
-        setProperties(pageProperties);
-        setOffset(ITEMS_PER_PAGE);
-      } else {
-        setProperties(prev => [...prev, ...pageProperties]);
-        setOffset(prev => prev + ITEMS_PER_PAGE);
-      }
+ if (reset) {
+  setProperties(pageProperties);
+  setOffset(ITEMS_PER_PAGE);
+  setLoadedImageIndex(-1); // Reset image loading
+} else {
+  setProperties(prev => [...prev, ...pageProperties]);
+  setOffset(prev => prev + ITEMS_PER_PAGE);
+  // Don't reset for load more - continue cascading
+}
       
       setHasMore(endIndex < allProperties.length);
     } catch (error) {
@@ -379,10 +383,26 @@ allProperties.sort(() => Math.random() - 0.5);
 
 
 
-  // Load initial properties
-  useEffect(() => {
-    fetchProperties(true);
-  }, [isRentMode]);
+// Load initial properties
+useEffect(() => {
+  fetchProperties(true);
+}, [isRentMode]);
+
+// Cascading image loader effect
+useEffect(() => {
+  if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
+    const timer = setTimeout(() => {
+      setLoadedImageIndex(prev => prev + 1);
+    }, 150); // 150ms delay between each image load
+    
+    return () => clearTimeout(timer);
+  }
+}, [properties, loadedImageIndex]);
+
+// Reset image loading when properties change
+useEffect(() => {
+  setLoadedImageIndex(-1);
+}, [properties]);
 
   // Refetch when filters change
   useEffect(() => {
@@ -633,26 +653,48 @@ const getGradeColors = (grade) => {
             const gradeColors = getGradeColors(property.grade);
             const isBlurred = index >= visibilityLimit;
             
-            return (
-              <div key={`${property.id}-${index}`} className="relative">
-                <div className={isBlurred ? 'filter blur-sm' : ''}>
-                  <div
-                    onClick={() => handlePropertyClick(property, index)}
-                    className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
-                  >
-                    {/* Property Image */}
-                    <div className="aspect-square bg-gray-800 relative overflow-hidden">
-                      {property.images?.[0] ? (
-                        <img 
-                          src={property.images[0]} 
-                          alt={property.address}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                          <span className="text-gray-400 text-xs">No Image</span>
-                        </div>
-                      )}
+     return (
+  <div 
+    key={`${property.id}-${index}`} 
+    className="relative"
+    style={{
+      opacity: index <= loadedImageIndex ? 1 : 0.3,
+      transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+      transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+    }}
+  >
+    <div className={isBlurred ? 'filter blur-sm' : ''}>
+      <div
+        onClick={() => handlePropertyClick(property, index)}
+        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+      >
+                    {/* Property Image with Cascading Load */}
+<div className="aspect-square bg-gray-800 relative overflow-hidden">
+  {property.images?.[0] && index <= loadedImageIndex ? (
+    <img 
+      src={property.images[0]} 
+      alt={property.address}
+      className="w-full h-full object-cover transition-opacity duration-300"
+      style={{ opacity: index <= loadedImageIndex ? 1 : 0 }}
+    />
+  ) : (
+    <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center relative">
+      {index <= loadedImageIndex ? (
+        <span className="text-gray-400 text-xs">No Image</span>
+      ) : (
+        <>
+          {/* Loading skeleton */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse"></div>
+          {/* Loading dots */}
+          <div className="relative z-10 flex space-x-1">
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+          </div>
+        </>
+      )}
+    </div>
+  )}
                       
                       {/* Grade Badge */}
 <div className="absolute top-2 left-2">
