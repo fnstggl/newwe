@@ -189,17 +189,104 @@ const MobileLanding = () => {
           }
         }
 
- // Order both queries - mix of grades instead of just top scores
-regularQuery = regularQuery.order('created_at', { ascending: false });
-stabilizedQuery = stabilizedQuery.order('created_at', { ascending: false });
+ // Get a strategic mix of grades
+// Fetch A+ properties first
+let highGradeQuery = supabase
+  .from('undervalued_rentals')
+  .select('*')
+  .eq('status', 'active')
+  .in('grade', ['A+', 'A', 'A-'])
+  .order('score', { ascending: false });
 
-// Fetch both with larger ranges to get variety
-const [regularResult, stabilizedResult] = await Promise.all([
-  regularQuery.range(0, 100),
-  stabilizedQuery.range(0, 50)
+// Apply filters to high grade query
+if (maxPrice.trim()) {
+  const priceValue = parseInt(maxPrice.trim());
+  if (!isNaN(priceValue) && priceValue > 0) {
+    highGradeQuery = highGradeQuery.lte('monthly_rent', priceValue);
+  }
+}
+if (bedrooms.trim()) {
+  const bedroomValue = parseInt(bedrooms.trim());
+  if (!isNaN(bedroomValue)) {
+    if (bedroomValue === 0) {
+      highGradeQuery = highGradeQuery.eq('bedrooms', 0);
+    } else {
+      highGradeQuery = highGradeQuery.gte('bedrooms', bedroomValue);
+    }
+  }
+}
+if (selectedNeighborhoods.length > 0) {
+  highGradeQuery = highGradeQuery.in('neighborhood', selectedNeighborhoods);
+}
+
+// Fetch regular mixed properties
+let regularQuery = supabase
+  .from('undervalued_rentals')
+  .select('*')
+  .eq('status', 'active')
+  .order('created_at', { ascending: false });
+
+// Apply same filters to regular query
+if (maxPrice.trim()) {
+  const priceValue = parseInt(maxPrice.trim());
+  if (!isNaN(priceValue) && priceValue > 0) {
+    regularQuery = regularQuery.lte('monthly_rent', priceValue);
+  }
+}
+if (bedrooms.trim()) {
+  const bedroomValue = parseInt(bedrooms.trim());
+  if (!isNaN(bedroomValue)) {
+    if (bedroomValue === 0) {
+      regularQuery = regularQuery.eq('bedrooms', 0);
+    } else {
+      regularQuery = regularQuery.gte('bedrooms', bedroomValue);
+    }
+  }
+}
+if (selectedNeighborhoods.length > 0) {
+  regularQuery = regularQuery.in('neighborhood', selectedNeighborhoods);
+}
+
+let stabilizedQuery = supabase
+  .from('undervalued_rent_stabilized')
+  .select('*')
+  .eq('display_status', 'active')
+  .order('created_at', { ascending: false });
+
+// Apply filters to stabilized query
+if (maxPrice.trim()) {
+  const priceValue = parseInt(maxPrice.trim());
+  if (!isNaN(priceValue) && priceValue > 0) {
+    stabilizedQuery = stabilizedQuery.lte('monthly_rent', priceValue);
+  }
+}
+if (bedrooms.trim()) {
+  const bedroomValue = parseInt(bedrooms.trim());
+  if (!isNaN(bedroomValue)) {
+    if (bedroomValue === 0) {
+      stabilizedQuery = stabilizedQuery.eq('bedrooms', 0);
+    } else {
+      stabilizedQuery = stabilizedQuery.gte('bedrooms', bedroomValue);
+    }
+  }
+}
+if (selectedNeighborhoods.length > 0) {
+  stabilizedQuery = stabilizedQuery.in('neighborhood', selectedNeighborhoods);
+}
+
+// Fetch with strategic distribution
+const [highGradeResult, regularResult, stabilizedResult] = await Promise.all([
+  highGradeQuery.range(0, 40), // Get more A+ and A properties
+  regularQuery.range(0, 60),   // Get mixed properties
+  stabilizedQuery.range(0, 30) // Get rent-stabilized
 ]);
 
-// Combine results
+// Combine with priority to A+ properties
+const highGradeProperties = (highGradeResult.data || []).map(property => ({
+  ...property,
+  isRentStabilized: false
+}));
+
 const regularProperties = (regularResult.data || []).map(property => ({
   ...property,
   isRentStabilized: false
@@ -215,9 +302,14 @@ const rentStabilizedProperties = (stabilizedResult.data || []).map(property => (
   zipcode: property.zip_code
 }));
 
-allProperties = [...regularProperties, ...rentStabilizedProperties];
+// Mix them strategically - 50% high grade, 30% regular, 20% stabilized
+allProperties = [
+  ...highGradeProperties,
+  ...rentStabilizedProperties,
+  ...regularProperties
+];
 
-// Shuffle to mix grades instead of sorting by score
+// Shuffle for variety but maintain grade distribution
 allProperties.sort(() => Math.random() - 0.5);
 
       } else {
@@ -398,46 +490,46 @@ const getGradeColors = (grade) => {
             />
           </div>
 
-          {/* Controls Row - Toggle and Refresh */}
-          <div className="flex items-center justify-between mb-4">
-            {/* Buy/Rent Toggle */}
-            <div className="flex items-center gap-2">
-              <span className={`text-sm font-semibold tracking-tight ${!isRentMode ? 'text-white' : 'text-gray-400'}`}>
-                Buy
-              </span>
-              <Toggle 
-                checked={isRentMode} 
-                onCheckedChange={setIsRentMode}
-                className="scale-90"
-              />
-              <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
-                Rent
-              </span>
-            </div>
-            
-            {/* Refresh/Clear Button */}
-            <button
-              onClick={() => {
-                fetchProperties(true);
-              }}
-              className="bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
-              title="Clear search and refresh"
-            >
-              <svg 
-                className="w-4 h-4" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-                />
-              </svg>
-            </button>
-          </div>
+{/* Controls Row - Centered Toggle and Right Refresh */}
+<div className="flex items-center justify-center mb-4 relative">
+  {/* Rent/Buy Toggle - Centered with Rent as default */}
+  <div className="flex items-center gap-2">
+    <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
+      Rent
+    </span>
+    <Toggle 
+      checked={!isRentMode} 
+      onCheckedChange={(checked) => setIsRentMode(!checked)}
+      className="scale-90"
+    />
+    <span className={`text-sm font-semibold tracking-tight ${!isRentMode ? 'text-white' : 'text-gray-400'}`}>
+      Buy
+    </span>
+  </div>
+  
+  {/* Refresh/Clear Button - Positioned absolutely to the right */}
+  <button
+    onClick={() => {
+      fetchProperties(true);
+    }}
+    className="absolute right-0 bg-gray-700/60 hover:bg-gray-600/80 text-gray-400 hover:text-white p-2 rounded-full transition-colors"
+    title="Clear search and refresh"
+  >
+    <svg 
+      className="w-4 h-4" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        strokeWidth={2} 
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+      />
+    </svg>
+  </button>
+</div>
         </div>
       </div>
 
