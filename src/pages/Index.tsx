@@ -1,4 +1,423 @@
-import { Link, useNavigate } from "react-router-dom";
+{/* Properties Grid - 2 per row */}
+      <div className="px-4">
+        {/* Main CTA for logged out users - appears after 12 properties */}
+        {!user && properties.length > 12 && (
+          <>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {properties.slice(0, 12).map((property, index) => {
+                const gradeColors = getGradeColors(property.grade);
+                const isBlurred = index >= visibilityLimit;
+                
+                return (
+                  <div key={`${property.id}-${index}`} className="relative">
+                    <div className={isBlurred ? 'filter blur-sm' : ''}>
+                      <div
+                        onClick={() => handlePropertyClick(property, index)}
+                        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+                      >
+                        {/* Property Image */}
+                        <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                          {property.images?.[0] ? (
+                            <img 
+                              src={property.images[0]} 
+                              alt={property.address}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">No Image</span>
+                            </div>
+                          )}
+                          
+                          {/* Grade Badge - CIRCLE with grade-based colors */}
+                          <div className="absolute top-2 left-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                              {property.grade}
+                            </div>
+                          </div>
+                          
+                          {/* Heart Icon */}
+                          <div className="absolute top-2 right-2">
+                            <Heart className="h-5 w-5 text-white/80" />
+                          </div>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="p-3">
+                          <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                            ${isRentMode ? 
+                              property.monthly_rent?.toLocaleString() : 
+                              property.price?.toLocaleString()
+                            }
+                            {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                          </div>
+                          
+                          <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                            {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                          </div>
+                          
+                          <div className="text-xs text-gray-400 tracking-tight truncate">
+                            {property.neighborhood}
+                          </div>
+                          
+                          {/* Discount Badge - Grade-based colors */}
+                          {(property.discount_percent || property.undervaluation_percent) && (
+                            <div className="mt-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
+                                {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Centered CTA after first 12 properties */}
+            <div className="flex justify-center mb-6">
+              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                  See all the best deals
+                </h3>
+                <p className="text-sm text-gray-300 mb-4">Only 12 of 4,193 deals shown</p>
+                <button
+                  onClick={() => navigate('/join')}
+                  className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
+                >
+                  Join Free
+                </button>
+                <p className="text-xs text-gray-400 mt-2">
+                  6,000+ New Yorkers already beating the market
+                </p>
+              </div>
+            </div>
+
+            {/* Remaining blurred properties */}
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              {properties.slice(12).map((property, index) => {
+                const actualIndex = index + 12;
+                const gradeColors = getGradeColors(property.grade);
+                
+                return (
+                  <div key={`${property.id}-${actualIndex}`} className="relative">
+                    <div className="filter blur-sm">
+                      <div
+                        onClick={() => handlePropertyClick(property, actualIndex)}
+                        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+                      >
+                        {/* Property Image */}
+                        <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                          {property.images?.[0] ? (
+                            <img 
+                              src={property.images[0]} 
+                              alt={property.address}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">No Image</span>
+                            </div>
+                          )}
+                          
+                          {/* Grade Badge - CIRCLE with grade-based colors */}
+                          <div className="absolute top-2 left-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                              {property.grade}
+                            </div>
+                          </div>
+                          
+                          {/* Heart Icon */}
+                          <div className="absolute top-2 right-2">
+                            <Heart className="h-5 w-5 text-white/80" />
+                          </div>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="p-3">
+                          <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                            ${isRentMode ? 
+                              property.monthly_rent?.toLocaleString() : 
+                              property.price?.toLocaleString()
+                            }
+                            {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                          </div>
+                          
+                          <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                            {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                          </div>
+                          
+                          <div className="text-xs text-gray-400 tracking-tight truncate">
+                            {property.neighborhood}
+                          </div>
+                          
+                          {/* Discount Badge - Grade-based colors */}
+                          {(property.discount_percent || property.undervaluation_percent) && (
+                            <div className="mt-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
+                                {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* For free users - show CTA after 24 properties */}
+        {isFreeUser && properties.length > 24 && (
+          <>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {properties.slice(0, 24).map((property, index) => {
+                const gradeColors = getGradeColors(property.grade);
+                const isBlurred = index >= visibilityLimit;
+                
+                return (
+                  <div key={`${property.id}-${index}`} className="relative">
+                    <div className={isBlurred ? 'filter blur-sm' : ''}>
+                      <div
+                        onClick={() => handlePropertyClick(property, index)}
+                        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+                      >
+                        {/* Property Image */}
+                        <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                          {property.images?.[0] ? (
+                            <img 
+                              src={property.images[0]} 
+                              alt={property.address}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">No Image</span>
+                            </div>
+                          )}
+                          
+                          {/* Grade Badge - CIRCLE with grade-based colors */}
+                          <div className="absolute top-2 left-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                              {property.grade}
+                            </div>
+                          </div>
+                          
+                          {/* Heart Icon */}
+                          <div className="absolute top-2 right-2">
+                            <Heart className="h-5 w-5 text-white/80" />
+                          </div>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="p-3">
+                          <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                            ${isRentMode ? 
+                              property.monthly_rent?.toLocaleString() : 
+                              property.price?.toLocaleString()
+                            }
+                            {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                          </div>
+                          
+                          <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                            {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                          </div>
+                          
+                          <div className="text-xs text-gray-400 tracking-tight truncate">
+                            {property.neighborhood}
+                          </div>
+                          
+                          {/* Discount Badge - Grade-based colors */}
+                          {(property.discount_percent || property.undervaluation_percent) && (
+                            <div className="mt-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
+                                {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Centered CTA after 24 properties */}
+            <div className="flex justify-center mb-6">
+              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                  Unlock all deals
+                </h3>
+                <p className="text-sm text-gray-300 mb-4">Only 24 of 4,193 deals shown</p>
+                <button
+                  onClick={() => navigate('/pricing')}
+                  className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
+                >
+                  Try Free
+                </button>
+                <p className="text-xs text-gray-400 mt-2">
+                  Save an avg of $925/mo • Cancel anytime
+                </p>
+              </div>
+            </div>
+
+            {/* Remaining blurred properties */}
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              {properties.slice(24).map((property, index) => {
+                const actualIndex = index + 24;
+                const gradeColors = getGradeColors(property.grade);
+                
+                return (
+                  <div key={`${property.id}-${actualIndex}`} className="relative">
+                    <div className="filter blur-sm">
+                      <div
+                        onClick={() => handlePropertyClick(property, actualIndex)}
+                        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+                      >
+                        {/* Property Image */}
+                        <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                          {property.images?.[0] ? (
+                            <img 
+                              src={property.images[0]} 
+                              alt={property.address}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">No Image</span>
+                            </div>
+                          )}
+                          
+                          {/* Grade Badge - CIRCLE with grade-based colors */}
+                          <div className="absolute top-2 left-2">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                              {property.grade}
+                            </div>
+                          </div>
+                          
+                          {/* Heart Icon */}
+                          <div className="absolute top-2 right-2">
+                            <Heart className="h-5 w-5 text-white/80" />
+                          </div>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="p-3">
+                          <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                            ${isRentMode ? 
+                              property.monthly_rent?.toLocaleString() : 
+                              property.price?.toLocaleString()
+                            }
+                            {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                          </div>
+                          
+                          <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                            {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                          </div>
+                          
+                          <div className="text-xs text-gray-400 tracking-tight truncate">
+                            {property.neighborhood}
+                          </div>
+                          
+                          {/* Discount Badge - Grade-based colors */}
+                          {(property.discount_percent || property.undervaluation_percent) && (
+                            <div className="mt-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
+                                {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* For users with unlimited access or when no CTA needed */}
+        {(user && (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan')) || (!user && properties.length <= 12) || (isFreeUser && properties.length <= 24) ? (
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            {properties.map((property, index) => {
+              const gradeColors = getGradeColors(property.grade);
+              const isBlurred = index >= visibilityLimit;
+              
+              return (
+                <div key={`${property.id}-${index}`} className="relative">
+                  <div className={isBlurred ? 'filter blur-sm' : ''}>
+                    <div
+                      onClick={() => handlePropertyClick(property, index)}
+                      className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+                    >
+                      {/* Property Image */}
+                      <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                        {property.images?.[0] ? (
+                          <img 
+                            src={property.images[0]} 
+                            alt={property.address}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                            <span className="text-gray-400 text-xs">No Image</span>
+                          </div>
+                        )}
+                        
+                        {/* Grade Badge - CIRCLE with grade-based colors */}
+                        <div className="absolute top-2 left-2">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                            {property.grade}
+                          </div>
+                        </div>
+                        
+                        {/* Heart Icon */}
+                        <div className="absolute top-2 right-2">
+                          <Heart className="h-5 w-5 text-white/80" />
+                        </div>
+                      </div>
+
+                      {/* Property Info */}
+                      <div className="p-3">
+                        <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                          ${isRentMode ? 
+                            property.monthly_rent?.toLocaleString() : 
+                            property.price?.toLocaleString()
+                          }
+                          {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                        </div>
+                        
+                        <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                          {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                        </div>
+                        
+                        <div className="text-xs text-gray-400 tracking-tight truncate">
+                          {property.neighborhood}
+                        </div>
+                        
+                        {/* Discount Badge - Grade-based colors */}
+                        {(property.discount_percent || property.undervaluation_percent) && (
+                          <div className="mt-2">
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${gradeColors.discount}`}>
+                              {Math.round(property.discount_percent || property.undervaluation_percent)}% below market
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>import { Link, useNavigate } from "react-router-dom";
 import { ArrowDown, Search, Filter, ChevronDown, ChevronUp, X, Heart, ArrowUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { HoverButton } from "@/components/ui/hover-button";
@@ -105,8 +524,6 @@ const MobileLanding = () => {
   const navigate = useNavigate();
   
   // State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [isRentMode, setIsRentMode] = useState(true);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -517,6 +934,47 @@ const MobileLanding = () => {
             
             return (
               <div key={`${property.id}-${index}`} className="relative">
+                {/* Main CTA centered between properties - BEFORE the property cards */}
+                {!user && index === 12 && (
+                  <div className="col-span-2 flex justify-center mb-6 -mt-3">
+                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                        See all the best deals
+                      </h3>
+                      <p className="text-sm text-gray-300 mb-4">Only 12 of 4,193 deals shown</p>
+                      <button
+                        onClick={() => navigate('/join')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
+                      >
+                        Join Free
+                      </button>
+                      <p className="text-xs text-gray-400 mt-2">
+                        6,000+ New Yorkers already beating the market
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {isFreeUser && index === 24 && (
+                  <div className="col-span-2 flex justify-center mb-6 -mt-3">
+                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
+                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
+                        Unlock all deals
+                      </h3>
+                      <p className="text-sm text-gray-300 mb-4">Only 24 of 4,193 deals shown</p>
+                      <button
+                        onClick={() => navigate('/pricing')}
+                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
+                      >
+                        Try Free
+                      </button>
+                      <p className="text-xs text-gray-400 mt-2">
+                        Save an avg of $925/mo • Cancel anytime
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className={isBlurred ? 'filter blur-sm' : ''}>
                   <div
                     onClick={() => handlePropertyClick(property, index)}
@@ -536,11 +994,11 @@ const MobileLanding = () => {
                         </div>
                       )}
                       
-                      {/* Grade Badge - CIRCLE */}
+                      {/* Grade Badge - CIRCLE with grade-based colors */}
                       <div className="absolute top-2 left-2">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${gradeColors.badge}`}>
                           {property.grade}
-                        </span>
+                        </div>
                       </div>
                       
                       {/* Heart Icon */}
@@ -578,48 +1036,6 @@ const MobileLanding = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Remove individual blurred CTAs - only keep main CTA */}
-                {/* Main CTA centered between properties */}
-                {!user && index === 11 && properties.length > 12 && (
-                  <div className="col-span-2 flex justify-center my-4">
-                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
-                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
-                        See all the best deals
-                      </h3>
-                      <p className="text-sm text-gray-300 mb-4">Only 12 of 4,193 deals shown</p>
-                      <button
-                        onClick={() => navigate('/join')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
-                      >
-                        Join Free
-                      </button>
-                      <p className="text-xs text-gray-400 mt-2">
-                        6,000+ New Yorkers already beating the market
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {isFreeUser && index === 23 && properties.length > 24 && (
-                  <div className="col-span-2 flex justify-center my-4">
-                    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-6 text-center max-w-sm">
-                      <h3 className="text-xl font-bold text-white mb-2 tracking-tight">
-                        Unlock all deals
-                      </h3>
-                      <p className="text-sm text-gray-300 mb-4">Only 24 of 4,193 deals shown</p>
-                      <button
-                        onClick={() => navigate('/pricing')}
-                        className="bg-white text-black px-8 py-3 rounded-full font-semibold text-base tracking-tight w-full"
-                      >
-                        Try Free
-                      </button>
-                      <p className="text-xs text-gray-400 mt-2">
-                        Save an avg of $925/mo • Cancel anytime
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
