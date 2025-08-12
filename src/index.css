@@ -164,10 +164,3 @@
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
 }
-
-/* Add this to your main CSS file or index.css */
-@supports (padding: max(0px)) {
-  .pb-safe {
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-  }
-}
