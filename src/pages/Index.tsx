@@ -813,93 +813,77 @@ const getGradeColors = (grade) => {
         isLoggedOut={softGateModal.isLoggedOut}
       />
 
-      {/* iOS-Style Sticky Footer Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-t border-gray-800/50">
-        <div className="flex items-center justify-around py-2 px-4">
+{/* Apple-Style Footer - Monetization Focused */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
+        <div className="flex items-center justify-around py-3 px-6">
+          
           <button 
             onClick={() => navigate('/buy')}
-            className="flex flex-col items-center py-2 px-3 min-w-0 flex-1 active:scale-95 transition-all duration-150"
+            className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
           >
-            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+            <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-5 h-5 text-gray-400 transition-all duration-200" 
+                className="w-6 h-6 text-gray-400" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
               </svg>
             </div>
-            <span className="text-[10px] text-gray-400 font-inter font-semibold tracking-tighter">Buy</span>
+            <span className="text-[10px] text-gray-400 font-medium">Buy</span>
           </button>
 
           <button 
             onClick={() => navigate('/rent')}
-            className="flex flex-col items-center py-2 px-3 min-w-0 flex-1 active:scale-95 transition-all duration-150"
+            className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
           >
-            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+            <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-5 h-5 text-white transition-all duration-200" 
-                fill="none" 
-                stroke="currentColor" 
+                className="w-6 h-6 text-white" 
+                fill="currentColor" 
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               </svg>
             </div>
-            <span className="text-[10px] text-white font-inter font-semibold tracking-tighter">Rent</span>
-          </button>
-
-          <button 
-            onClick={() => navigate('/saved')}
-            className="flex flex-col items-center py-2 px-3 min-w-0 flex-1 active:scale-95 transition-all duration-150"
-          >
-            <div className="w-6 h-6 mb-1 flex items-center justify-center">
-              <svg 
-                className="w-5 h-5 text-gray-400 transition-all duration-200" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <span className="text-[10px] text-gray-400 font-inter font-semibold tracking-tighter">Saved</span>
+            <span className="text-[10px] text-white font-medium">Rent</span>
           </button>
 
           <button 
             onClick={() => navigate('/pricing')}
-            className="flex flex-col items-center py-2 px-3 min-w-0 flex-1 active:scale-95 transition-all duration-150"
+            className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
           >
-            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+            <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-5 h-5 text-gray-400 transition-all duration-200" 
+                className="w-6 h-6 text-yellow-400" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className="text-[10px] text-gray-400 font-inter font-semibold tracking-tighter">Upgrade</span>
+            <span className="text-[10px] text-yellow-400 font-medium">Upgrade</span>
           </button>
 
           <button 
             onClick={() => navigate('/mission')}
-            className="flex flex-col items-center py-2 px-3 min-w-0 flex-1 active:scale-95 transition-all duration-150"
+            className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
           >
-            <div className="w-6 h-6 mb-1 flex items-center justify-center">
+            <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-5 h-5 text-gray-400 transition-all duration-200" 
+                className="w-6 h-6 text-gray-400" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-[10px] text-gray-400 font-inter font-semibold tracking-tighter">Mission</span>
+            <span className="text-[10px] text-gray-400 font-medium">About</span>
           </button>
+
         </div>
       </div>
     </div>
