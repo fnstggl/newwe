@@ -818,44 +818,9 @@ const getGradeColors = (grade) => {
             );
           })}
 
-{/* Filter-based CTA for signed out users - centered at top when filters active */}
-{!user && hasActiveFilters && properties.length > 0 && (
-  <div className="col-span-2 flex justify-center my-4">
-    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-        Want to see more of the best deals in NYC?
-      </h3>
-      <button
-        onClick={() => navigate('/join')}
-        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
-      >
-        Create free account to continue
-      </button>
-      <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
-    </div>
-  </div>
-)}
-
-{/* Filter-based CTA for free plan users - centered at top when filters active */}
-{isFreeUser && hasActiveFilters && properties.length > 0 && (
-  <div className="col-span-2 flex justify-center my-4">
-    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-        The only tool that helps you find your dream home. And afford it.
-      </h3>
-      <button
-        onClick={() => navigate('/pricing')}
-        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
-      >
-        Try Unlimited Access for Free
-      </button>
-      <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
-    </div>
-  </div>
-)}
           
-          {/* ADD THESE CENTERED CTAs HERE */}
-          {!user && properties.length > 12 && (
+     {/* ADD THESE CENTERED CTAs HERE - Only show when NO filters active */}
+{!user && !hasActiveFilters && properties.length > 12 && (
             <div className="col-span-2 flex justify-center my-4">
               <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
                 <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
@@ -872,7 +837,7 @@ const getGradeColors = (grade) => {
             </div>
           )}
 
-          {isFreeUser && properties.length > 24 && (
+         {isFreeUser && !hasActiveFilters && properties.length > 24 && (
             <div className="col-span-2 flex justify-center my-4">
               <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
                 <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
