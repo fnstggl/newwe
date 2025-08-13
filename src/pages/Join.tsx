@@ -6,9 +6,12 @@ import { HoverButton } from "../components/ui/hover-button";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import OnboardingPopup from "../components/OnboardingPopup";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 
 const Join = () => {
   const [name, setName] = useState("");
+    const isMobile = useIsMobile();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -129,7 +132,7 @@ const Join = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
+    <div className={`min-h-screen bg-black text-white font-inter flex items-center justify-center ${isMobile ? 'pb-20' : ''}`}>
       <div className="max-w-md w-full mx-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
@@ -173,7 +176,7 @@ const Join = () => {
               onChange={(e) => setName(e.target.value)}
               required
               placeholder="Your full name"
-              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              className="w-full px-4 py-3 md:py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-base md:text-lg"
             />
           </div>
 
