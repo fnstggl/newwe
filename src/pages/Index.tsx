@@ -883,7 +883,7 @@ const getGradeColors = (grade) => {
           >
             <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-6 h-6 text-yellow-400" 
+                className="w-6 h-6 text-blue-400" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -891,7 +891,7 @@ const getGradeColors = (grade) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className="text-[10px] text-yellow-400 font-medium">Upgrade</span>
+            <span className="text-[10px] text-blue-400 font-medium">Upgrade</span>
           </button>
 
           <button 
