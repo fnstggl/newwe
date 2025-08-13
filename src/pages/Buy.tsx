@@ -746,19 +746,20 @@ let query = supabase
   const isUnlimitedUser = userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan';
   const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited' && userProfile?.subscription_plan !== 'open_door_plan';
 
-  return (
-    <div className="min-h-screen bg-black text-white font-inter">
+// REPLACE WITH:
+return (
+  <div className={`min-h-screen bg-black text-white font-inter ${isMobile ? 'pb-20' : ''}`}>
       <GooeyFilter />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Find the best deals to buy. Actually.
-          </h1>
-          <p className="text-xl text-gray-400 tracking-tight">
-            Stop wasting time on overpriced listings.
-          </p>
-        </div>
+       <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
+  <h1 className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'} tracking-tighter`}>
+    Find the best deals to buy. Actually.
+  </h1>
+  <p className={`${isMobile ? 'text-base' : 'text-xl'} text-gray-400 tracking-tight`}>
+    Stop wasting time on overpriced listings.
+  </p>
+</div>
 
         {/* Mobile Filters Button */}
         {isMobile && (
@@ -1039,7 +1040,7 @@ let query = supabase
 
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className={`${isMobile ? 'grid grid-cols-1 gap-4' : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'} mb-8`}>
   {properties.map((property, index) => {
     const gradeColors = getGradeColors(property.grade);
     const isBlurred = index >= visibilityLimit;
@@ -1203,7 +1204,7 @@ return (
 
         {/* Load More Button - show for all users when there are more properties */}
 {!loading && hasMore && properties.length > 0 && (
-  <div className="text-center py-8">
+  <div className={`text-center ${isMobile ? 'py-4 pb-8' : 'py-8'}`}>
     <HoverButton onClick={loadMore} textColor="text-white">
       Load More Properties
     </HoverButton>
@@ -1212,13 +1213,13 @@ return (
 
         {/* Empty State */}
         {!loading && properties.length === 0 && (
-          <div className="text-center py-16">
-            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">
-              No properties found matching your search criteria
-            </h3>
-            <p className="text-gray-400 tracking-tight mb-6">
-              Try adjusting your filters
-            </p>
+       <div className={`text-center ${isMobile ? 'py-8' : 'py-16'}`}>
+  <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-white mb-2 tracking-tight`}>
+    No properties found matching your search criteria
+  </h3>
+  <p className={`${isMobile ? 'text-sm' : 'text-gray-400'} text-gray-400 tracking-tight mb-6`}>
+    Try adjusting your filters
+  </p>
             
             {/* Red glow line */}
             <div className="w-full h-px bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60 mb-12 relative">
@@ -1261,6 +1262,83 @@ return (
         isRental={false}
         isLoggedOut={softGateModal.isLoggedOut}
       />
+
+    {/* iOS-Style Footer - Mobile Only */}
+{isMobile && (
+  <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
+    <div className="flex items-center justify-around py-3 px-6">
+      
+      <button 
+        onClick={() => navigate('/buy')}
+        className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
+      >
+        <div className="w-7 h-7 mb-1 flex items-center justify-center">
+          <svg 
+            className="w-6 h-6 text-white" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+          </svg>
+        </div>
+        <span className="text-[10px] text-white font-medium">Buy</span>
+      </button>
+
+      <button 
+        onClick={() => navigate('/rent')}
+        className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
+      >
+        <div className="w-7 h-7 mb-1 flex items-center justify-center">
+          <svg 
+            className="w-6 h-6 text-gray-400" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+        </div>
+        <span className="text-[10px] text-gray-400 font-medium">Rent</span>
+      </button>
+
+      <button 
+        onClick={() => navigate('/pricing')}
+        className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
+      >
+        <div className="w-7 h-7 mb-1 flex items-center justify-center">
+          <svg 
+            className="w-6 h-6 text-blue-400" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <span className="text-[10px] text-blue-400 font-medium">Upgrade</span>
+      </button>
+
+      <button 
+        onClick={() => navigate('/mission')}
+        className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
+      >
+        <div className="w-7 h-7 mb-1 flex items-center justify-center">
+          <svg 
+            className="w-6 h-6 text-gray-400" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span className="text-[10px] text-gray-400 font-medium">About</span>
+      </button>
+
+    </div>
+  </div>
+)}
     </div>
   );
 };
