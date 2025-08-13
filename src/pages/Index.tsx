@@ -249,20 +249,31 @@ let mixedQuery = supabase
 
 
 
-      } else {
-        // Buy mode - fetch from sales table
-     let query = supabase
-  .from('undervalued_sales')
-  .select('*')
-  .eq('status', 'active')
-  .eq('likely_sold', false)  // ← ADD THIS LINE
-  .order('score', { ascending: false });
+     } else {
+        // Buy mode - fetch from sales table with strategic grade mixing
+        
+        // Get a strategic mix of grades for buy mode too
+        let highGradeSalesQuery = supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('status', 'active')
+          .eq('likely_sold', false)
+          .in('grade', ['A+', 'A', 'A-'])
+          .order('score', { ascending: false });
 
-        // Apply filters
+        let mixedSalesQuery = supabase
+          .from('undervalued_sales')
+          .select('*')
+          .eq('status', 'active')
+          .eq('likely_sold', false)
+          .order('score', { ascending: false });
+
+        // Apply filters to both queries
         if (maxPrice.trim()) {
           const priceValue = parseInt(maxPrice.trim());
           if (!isNaN(priceValue) && priceValue > 0) {
-            query = query.lte('price', priceValue);
+            highGradeSalesQuery = highGradeSalesQuery.lte('price', priceValue);
+            mixedSalesQuery = mixedSalesQuery.lte('price', priceValue);
           }
         }
 
@@ -270,27 +281,47 @@ let mixedQuery = supabase
           const bedroomValue = parseInt(bedrooms.trim());
           if (!isNaN(bedroomValue)) {
             if (bedroomValue === 0) {
-              query = query.eq('bedrooms', 0);
+              highGradeSalesQuery = highGradeSalesQuery.eq('bedrooms', 0);
+              mixedSalesQuery = mixedSalesQuery.eq('bedrooms', 0);
             } else {
-              query = query.gte('bedrooms', bedroomValue);
+              highGradeSalesQuery = highGradeSalesQuery.gte('bedrooms', bedroomValue);
+              mixedSalesQuery = mixedSalesQuery.gte('bedrooms', bedroomValue);
             }
           }
         }
 
         if (selectedNeighborhoods.length > 0) {
-          query = query.in('neighborhood', selectedNeighborhoods);
+          highGradeSalesQuery = highGradeSalesQuery.in('neighborhood', selectedNeighborhoods);
+          mixedSalesQuery = mixedSalesQuery.in('neighborhood', selectedNeighborhoods);
         }
 
         if (minGrade.trim()) {
           const gradeIndex = gradeOptions.indexOf(minGrade);
           if (gradeIndex !== -1) {
             const allowedGrades = gradeOptions.slice(0, gradeIndex + 1);
-            query = query.in('grade', allowedGrades);
+            highGradeSalesQuery = highGradeSalesQuery.in('grade', allowedGrades);
+            mixedSalesQuery = mixedSalesQuery.in('grade', allowedGrades);
           }
         }
 
-        const { data, error } = await query.range(0, 100);
-        allProperties = data || [];
+        // Fetch with strategic distribution for sales
+        const [highGradeSalesResult, mixedSalesResult] = await Promise.all([
+          highGradeSalesQuery.range(0, 50), // Get A+ and A properties
+          mixedSalesQuery.range(0, 70)      // Get mixed grade properties
+        ]);
+
+        // Combine with variety
+        const highGradeSalesProperties = (highGradeSalesResult.data || []);
+        const mixedSalesProperties = (mixedSalesResult.data || []);
+
+        // Mix them strategically - 60% high grade, 40% mixed
+        allProperties = [
+          ...highGradeSalesProperties,
+          ...mixedSalesProperties
+        ];
+
+        // Shuffle for variety but maintain grade distribution
+        allProperties.sort(() => Math.random() - 0.5);
       }
 
       // Take only what we need for this page
