@@ -80,6 +80,11 @@ const Join = () => {
           title: "Welcome!",
           description: "Your account has been created successfully.",
         });
+
+  // Fire Meta Pixel Lead event (safe no-op if fbq isn't loaded yet)
+  if (typeof fbq === "function") {
+    fbq('track', 'Lead');
+  }
         
         // Show onboarding for new users
         if (needsOnboarding) {
