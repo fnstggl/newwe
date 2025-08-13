@@ -3,10 +3,11 @@ import { Home, Search, Heart, User, MessageCircle } from 'lucide-react';
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Manifesto = () => {
+    const isMobile = useIsMobile(); // MOVE THIS HERE
+
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "The Real Estate Game is Rigged - Our Manifesto | Realer Estate";
-    const isMobile = useIsMobile();
 
     
     // Update meta description
