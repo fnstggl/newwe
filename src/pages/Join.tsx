@@ -191,7 +191,7 @@ const Join = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your.email@domain.com"
-              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              className="w-full px-4 py-3 md:py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-base md:text-lg"
             />
           </div>
 
@@ -265,84 +265,6 @@ const Join = () => {
         }}
         onComplete={handleOnboardingComplete}
       />
-{/* iOS-Style Footer - Mobile Only */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
-          <div className="flex items-center justify-around py-3 px-6">
-            
-            <button 
-              onClick={() => navigate('/buy')}
-              className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
-            >
-              <div className="w-7 h-7 mb-1 flex items-center justify-center">
-                <svg 
-                  className="w-6 h-6 text-gray-400" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                </svg>
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">Buy</span>
-            </button>
-
-            <button 
-              onClick={() => navigate('/rent')}
-              className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
-            >
-              <div className="w-7 h-7 mb-1 flex items-center justify-center">
-                <svg 
-                  className="w-6 h-6 text-gray-400" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                </svg>
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">Rent</span>
-            </button>
-
-            <button 
-              onClick={() => navigate('/pricing')}
-              className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
-            >
-              <div className="w-7 h-7 mb-1 flex items-center justify-center">
-                <svg 
-                  className="w-6 h-6 text-blue-400" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <span className="text-[10px] text-blue-400 font-medium">Upgrade</span>
-            </button>
-
-            <button 
-              onClick={() => navigate('/mission')}
-              className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
-            >
-              <div className="w-7 h-7 mb-1 flex items-center justify-center">
-                <svg 
-                  className="w-6 h-6 text-gray-400" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">About</span>
-            </button>
-
-          </div>
-        </div>
-      )}
-    </div>
-      
     </div>
   );
 };
