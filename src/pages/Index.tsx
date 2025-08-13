@@ -130,13 +130,13 @@ const [isImageLoading, setIsImageLoading] = useState(false);
 
   const ITEMS_PER_PAGE = 24;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
-  const neighborhoods = [
-    'Upper East Side', 'Upper West Side', 'Midtown', 'Chelsea', 'Greenwich Village',
-    'SoHo', 'Tribeca', 'Lower East Side', 'East Village', 'Hell\'s Kitchen',
-    'Financial District', 'Harlem', 'Washington Heights', 'Williamsburg', 
-    'DUMBO', 'Brooklyn Heights', 'Park Slope', 'Prospect Heights',
-    'Crown Heights', 'Bed-Stuy', 'Bushwick', 'Long Island City', 'Astoria'
-  ];
+ const neighborhoods = [
+  'upper-east-side', 'upper-west-side', 'midtown', 'chelsea', 'greenwich-village',
+  'soho', 'tribeca', 'lower-east-side', 'east-village', 'hells-kitchen',
+  'financial-district', 'harlem', 'washington-heights', 'williamsburg', 
+  'dumbo', 'brooklyn-heights', 'park-slope', 'prospect-heights',
+  'crown-heights', 'bed-stuy', 'bushwick', 'long-island-city', 'astoria'
+];
 
   // Fetch properties from both rental tables
   const fetchProperties = async (reset = false) => {
@@ -658,9 +658,46 @@ const getGradeColors = (grade) => {
       )}
 
       {/* Properties Grid - 2 per row */}
-      <div className="px-4">
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          {properties.map((property, index) => {
+    {/* Properties Grid - 2 per row */}
+<div className="px-4">
+  {/* Filter-based CTA for signed out users - centered at top when filters active */}
+  {!user && hasActiveFilters && properties.length > 0 && (
+    <div className="flex justify-center mb-4">
+      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+        <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+          Want to see more of the best deals in NYC?
+        </h3>
+        <button
+          onClick={() => navigate('/join')}
+          className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
+        >
+          Create free account to continue
+        </button>
+        <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+      </div>
+    </div>
+  )}
+
+  {/* Filter-based CTA for free plan users - centered at top when filters active */}
+  {isFreeUser && hasActiveFilters && properties.length > 0 && (
+    <div className="flex justify-center mb-4">
+      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+        <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+          The only tool that helps you find your dream home. And afford it.
+        </h3>
+        <button
+          onClick={() => navigate('/pricing')}
+          className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
+        >
+          Try Unlimited Access for Free
+        </button>
+        <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+      </div>
+    </div>
+  )}
+
+  <div className="grid grid-cols-2 gap-3 mb-8">
+    {properties.map((property, index) => {
             const gradeColors = getGradeColors(property.grade);
             const isBlurred = index >= visibilityLimit;
             
