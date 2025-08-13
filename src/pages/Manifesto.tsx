@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Home, Search, Heart, User, MessageCircle } from 'lucide-react';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from 'react-router-dom';
 
 const Manifesto = () => {
     const isMobile = useIsMobile(); // MOVE THIS HERE
@@ -143,13 +144,13 @@ const Manifesto = () => {
           </div>
         </div>
 
-     {/* iOS-Style Footer - Mobile Only */}
+{/* iOS-Style Footer - Mobile Only */}
 {isMobile && (
   <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
     <div className="flex items-center justify-around py-3 px-6">
       
-      <button 
-        onClick={() => navigate('/buy')}
+      <Link 
+        to="/buy"
         className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
       >
         <div className="w-7 h-7 mb-1 flex items-center justify-center">
@@ -163,10 +164,10 @@ const Manifesto = () => {
           </svg>
         </div>
         <span className="text-[10px] text-gray-400 font-medium">Buy</span>
-      </button>
+      </Link>
 
-      <button 
-        onClick={() => navigate('/rent')}
+      <Link 
+        to="/rent"
         className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
       >
         <div className="w-7 h-7 mb-1 flex items-center justify-center">
@@ -180,10 +181,10 @@ const Manifesto = () => {
           </svg>
         </div>
         <span className="text-[10px] text-gray-400 font-medium">Rent</span>
-      </button>
+      </Link>
 
-      <button 
-        onClick={() => navigate('/pricing')}
+      <Link 
+        to="/pricing"
         className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
       >
         <div className="w-7 h-7 mb-1 flex items-center justify-center">
@@ -197,10 +198,10 @@ const Manifesto = () => {
           </svg>
         </div>
         <span className="text-[10px] text-blue-400 font-medium">Upgrade</span>
-      </button>
+      </Link>
 
-      <button 
-        onClick={() => navigate('/mission')}
+      <Link 
+        to="/mission"
         className="flex flex-col items-center py-1 min-w-0 flex-1 active:scale-95 transition-all duration-100"
       >
         <div className="w-7 h-7 mb-1 flex items-center justify-center">
@@ -214,7 +215,7 @@ const Manifesto = () => {
           </svg>
         </div>
         <span className="text-[10px] text-white font-medium">About</span>
-      </button>
+      </Link>
 
     </div>
   </div>
