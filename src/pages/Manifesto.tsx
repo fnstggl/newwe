@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
+import { Home, Search, Heart, User, MessageCircle } from 'lucide-react';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Manifesto = () => {
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "The Real Estate Game is Rigged - Our Manifesto | Realer Estate";
+    const isMobile = useIsMobile();
+
     
     // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -42,18 +46,18 @@ const Manifesto = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white font-inter">
-      <div className="max-w-4xl mx-auto px-4 py-16">
+<div className="min-h-screen bg-black text-white font-inter pb-20 md:pb-0">
+  <div className="max-w-4xl mx-auto px-4 py-8 md:py-16">
         {/* Hero */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 tracking-tighter">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 tracking-tighter">
             Finding a home is rigged.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
               Now you can win.
             </span>
           </h1>
-          <p className="text-xl text-gray-400 tracking-tight">
+          <p className="text-lg md:text-xl text-gray-400 tracking-tight">
             Only see below-market & rent stabilized apartments.
           </p>
         </div>
@@ -61,21 +65,21 @@ const Manifesto = () => {
         {/* Main Content */}
         <div className="prose prose-invert prose-lg max-w-none">
           <div className="mb-12">
-            <p className="text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
+            <p className="text-lg md:text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
               New York real estate is broken. Listing prices are inflated. Neighborhood data is hidden. 
               And too many tools aren't built with renters & buyers in mind.
             </p>
             
             <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
             
-            <p className="text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
+            <p className="text-lg md:text-xl leading-relaxed mb-6 text-gray-300 tracking-tight">
               Rent is up. Inventory is down. And the platforms built to help you? 
               Weren't built for you to actually save money.
             </p>
           </div>
 
           <div className="bg-gray-900/50 rounded-2xl p-8 mb-12 border border-gray-800">
-            <h2 className="text-3xl font-bold mb-6 tracking-tighter">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 tracking-tighter">
               Using advanced algorithms to find you the best deals in the city.
             </h2>
             <p className="text-lg text-gray-300 leading-relaxed tracking-tight">
@@ -105,7 +109,7 @@ const Manifesto = () => {
               </ul>
             </div>
             <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-800">
-              <h3 className="text-xl font-bold mb-3 tracking-tight">Our Solution</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-3 tracking-tight">Our Solution</h3>
               <ul className="space-y-2 text-gray-300">
                 <li className="tracking-tight">• Real-time market analysis</li>
                 <li className="tracking-tight">• Algorithmic deal scoring</li>
@@ -116,15 +120,15 @@ const Manifesto = () => {
           </div>
 
           <div className="text-center bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/20 mb-12">
-            <h2 className="text-3xl font-bold mb-4 tracking-tighter">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tighter">
               It's time buyers had the edge.
             </h2>
-            <p className="text-lg text-gray-300 mb-6 tracking-tight">
+            <p className="text-base md:text-lg text-gray-300 mb-6 tracking-tight">
               Stop playing a rigged game. Start living affordably with data.
             </p>
             <a 
               href="/join"
-              className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all duration-500 ease-out shadow-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.8)]"
+              className="inline-block bg-white text-black px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg tracking-tight transition-all duration-500 ease-out shadow-xl hover:shadow-[0_0_20px_rgba(255,255,255,0.8)]"
             >
               Join the Movement
             </a>
@@ -137,6 +141,32 @@ const Manifesto = () => {
             </p>
           </div>
         </div>
+
+     {/* Mobile Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-gray-800 md:hidden">
+        <div className="flex justify-around items-center py-3 px-4">
+          <a href="/" className="flex flex-col items-center space-y-1 text-gray-400 active:text-white transition-colors">
+            <Home size={22} />
+            <span className="text-xs">Home</span>
+          </a>
+          <a href="/search" className="flex flex-col items-center space-y-1 text-gray-400 active:text-white transition-colors">
+            <Search size={22} />
+            <span className="text-xs">Search</span>
+          </a>
+          <a href="/favorites" className="flex flex-col items-center space-y-1 text-gray-400 active:text-white transition-colors">
+            <Heart size={22} />
+            <span className="text-xs">Saved</span>
+          </a>
+          <a href="/messages" className="flex flex-col items-center space-y-1 text-gray-400 active:text-white transition-colors">
+            <MessageCircle size={22} />
+            <span className="text-xs">Messages</span>
+          </a>
+          <a href="/profile" className="flex flex-col items-center space-y-1 text-gray-400 active:text-white transition-colors">
+            <User size={22} />
+            <span className="text-xs">Profile</span>
+          </a>
+        </div>
+      </div>
       </div>
     </div>
   );
