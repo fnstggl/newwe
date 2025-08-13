@@ -139,7 +139,7 @@ if (urlParams.get('success') === 'true') {
 
 // REPLACE THE RETURN STATEMENT (around line 120) with this mobile-responsive version:
 return (
-  <div className="font-inter min-h-screen bg-black text-white">
+  <div className={`font-inter min-h-screen bg-black text-white ${isMobile ? 'pb-20' : ''}`}>
     <GooeyFilter />
     
     {/* Pricing Section */}
