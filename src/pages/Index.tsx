@@ -418,37 +418,13 @@ const getGradeColors = (grade) => {
     <div className="min-h-screen bg-black text-white font-inter pb-24">
       <GooeyFilter />
       
-      {/* Header with AI Search */}
+    {/* Header with AI Search */}
       <div className="sticky top-0 z-40 bg-black/95 backdrop-blur-xl border-b border-gray-800/50">
         <div className="px-4 py-4">
-{/* AI Search Bar - Full Width */}
-          <div className="mb-4">
-            <AISearch 
-              onResults={(results, interpretation) => {
-                if (results.length > 0) {
-                  const mappedResults = results.map(property => ({
-                    ...property,
-                    images: Array.isArray(property.images) ? property.images : 
-                           typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
-                    property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
-                    table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
-                  }));
-                  
-                  setProperties(mappedResults);
-                  setOffset(mappedResults.length);
-                  setHasMore(false);
-                }
-              }}
-              placeholder="Describe your dream home. We'll find it for you"
-              className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
-              showSuggestions={false}
-              hideInterpretation={true}
-            />
-          </div>
 
-{/* Controls Row - Centered Toggle and Right Refresh */}
-<div className="flex items-center justify-center mb-4 relative">
-  {/* Rent/Buy Toggle - Centered with Rent as default */}
+{/* Rent/Buy Toggle with Refresh Button - Above Search */}
+<div className="flex items-center justify-center mb-3 relative">
+  {/* Rent/Buy Toggle - Centered */}
   <div className="flex items-center gap-2">
     <span className={`text-sm font-semibold tracking-tight ${isRentMode ? 'text-white' : 'text-gray-400'}`}>
       Rent
@@ -463,7 +439,7 @@ const getGradeColors = (grade) => {
     </span>
   </div>
   
-  {/* Refresh/Clear Button - Positioned absolutely to the right */}
+  {/* Refresh Button - Positioned to the right of toggle */}
   <button
     onClick={() => {
       fetchProperties(true);
@@ -486,6 +462,32 @@ const getGradeColors = (grade) => {
     </svg>
   </button>
 </div>
+
+{/* AI Search Bar - Full Width Below Toggle */}
+<div className="mb-0">
+  <AISearch 
+    onResults={(results, interpretation) => {
+      if (results.length > 0) {
+        const mappedResults = results.map(property => ({
+          ...property,
+          images: Array.isArray(property.images) ? property.images : 
+                 typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
+          property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
+          table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
+        }));
+        
+        setProperties(mappedResults);
+        setOffset(mappedResults.length);
+        setHasMore(false);
+      }
+    }}
+    placeholder="Describe your dream home. We'll find it for you"
+    className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+    showSuggestions={false}
+    hideInterpretation={true}
+  />
+</div>
+
         </div>
       </div>
 
