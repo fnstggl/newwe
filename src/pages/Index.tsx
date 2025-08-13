@@ -125,6 +125,8 @@ const MobileLanding = () => {
   });
   const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
 const [isImageLoading, setIsImageLoading] = useState(false);
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
+
 
   const ITEMS_PER_PAGE = 24;
   const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -151,6 +153,7 @@ if (isRentMode) {
     .from('undervalued_rentals')
     .select('*')
     .eq('status', 'active')
+    .eq('likely_rented', false)
     .in('grade', ['A+', 'A', 'A-'])
     .order('score', { ascending: false });
 
@@ -159,14 +162,14 @@ let mixedQuery = supabase
   .from('undervalued_rentals')
   .select('*')
   .eq('status', 'active')
-  .eq('likely_rented', false)  // ← ADD THIS LINE
+  .eq('likely_rented', false)
   .order('created_at', { ascending: false });
 
-  let stabilizedQuery = supabase
+let stabilizedQuery = supabase
   .from('undervalued_rent_stabilized')
   .select('*')
   .eq('display_status', 'active')
-  .eq('likely_rented', false)  // ← ADD THIS LINE
+  .eq('likely_rented', false)
   .order('created_at', { ascending: false });
 
   // Apply filters to all queries
@@ -355,6 +358,15 @@ useEffect(() => {
   fetchProperties(true);
 }, [isRentMode]);
 
+// Track if any filters are active
+useEffect(() => {
+  const filtersActive = maxPrice.trim() || 
+                       bedrooms.trim() || 
+                       selectedNeighborhoods.length > 0 || 
+                       minGrade.trim();
+  setHasActiveFilters(filtersActive);
+}, [maxPrice, bedrooms, selectedNeighborhoods, minGrade]);
+  
 // Cascading image loader effect
 useEffect(() => {
   if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
@@ -380,13 +392,15 @@ useEffect(() => {
   }, [maxPrice, bedrooms, selectedNeighborhoods, minGrade]);
 
   // Visibility limits
-  const getVisibilityLimit = () => {
-    if (!user) return 12;
-    if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
-      return Infinity;
-    }
-    return 24;
-  };
+ const getVisibilityLimit = () => {
+  if (!user) {
+    return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 12
+  }
+  if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
+    return Infinity; // Unlimited users see all
+  }
+  return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 24
+};
 
   const visibilityLimit = getVisibilityLimit();
   const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited' && userProfile?.subscription_plan !== 'open_door_plan';
@@ -524,21 +538,22 @@ const getGradeColors = (grade) => {
 {/* AI Search Bar - Full Width Below Toggle */}
 <div className="mb-0">
   <AISearch 
-    onResults={(results, interpretation) => {
-      if (results.length > 0) {
-        const mappedResults = results.map(property => ({
-          ...property,
-          images: Array.isArray(property.images) ? property.images : 
-                 typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
-          property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
-          table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
-        }));
-        
-        setProperties(mappedResults);
-        setOffset(mappedResults.length);
-        setHasMore(false);
-      }
-    }}
+   onResults={(results, interpretation) => {
+  if (results.length > 0) {
+    const mappedResults = results.map(property => ({
+      ...property,
+      images: Array.isArray(property.images) ? property.images : 
+             typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
+      property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
+      table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
+    }));
+    
+    setProperties(mappedResults);
+    setOffset(mappedResults.length);
+    setHasMore(false);
+    setHasActiveFilters(true); // Mark as filtered search
+  }
+}}
     placeholder="Describe your dream home. We'll find it for you"
     className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
     showSuggestions={false}
@@ -766,6 +781,42 @@ const getGradeColors = (grade) => {
             );
           })}
 
+{/* Filter-based CTA for signed out users - centered at top when filters active */}
+{!user && hasActiveFilters && properties.length > 0 && (
+  <div className="col-span-2 flex justify-center my-4">
+    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+        Want to see more of the best deals in NYC?
+      </h3>
+      <button
+        onClick={() => navigate('/join')}
+        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
+      >
+        Create free account to continue
+      </button>
+      <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+    </div>
+  </div>
+)}
+
+{/* Filter-based CTA for free plan users - centered at top when filters active */}
+{isFreeUser && hasActiveFilters && properties.length > 0 && (
+  <div className="col-span-2 flex justify-center my-4">
+    <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+      <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+        The only tool that helps you find your dream home. And afford it.
+      </h3>
+      <button
+        onClick={() => navigate('/pricing')}
+        className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
+      >
+        Try Unlimited Access for Free
+      </button>
+      <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+    </div>
+  </div>
+)}
+          
           {/* ADD THESE CENTERED CTAs HERE */}
           {!user && properties.length > 12 && (
             <div className="col-span-2 flex justify-center my-4">
