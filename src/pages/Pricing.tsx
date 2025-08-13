@@ -189,7 +189,7 @@ return (
             <ul className={`space-y-2 ${isMobile ? 'mb-8 text-xs' : 'mb-24'} text-gray-300 flex-grow`}>
               <li className="flex items-center tracking-tight">
                 <span className="text-blue-400 mr-2">•</span>
-                {isMobile ? '9 deals/day' : '9 deals per day'}
+                {isMobile ? '24 deals/day' : '24 deals per day'}
               </li>
               <li className="flex items-center tracking-tight">
                 <span className="text-blue-400 mr-2">•</span>
