@@ -191,7 +191,7 @@ const Join = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="your.email@domain.com"
-              className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-lg"
+              className="w-full px-4 py-3 md:py-4 bg-gray-900/50 border-2 border-gray-700 rounded-full text-white placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all tracking-tight text-base md:text-lg"
             />
           </div>
 
