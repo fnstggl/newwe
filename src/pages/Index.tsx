@@ -698,56 +698,19 @@ const getGradeColors = (grade) => {
 
   <div className="grid grid-cols-2 gap-3 mb-8">
     {properties.map((property, index) => {
-  const gradeColors = getGradeColors(property.grade);
-  const isBlurred = index >= visibilityLimit;
-  
-  return (
-    <>
-      {/* Show CTA at index 12 for logged out users (between 13th and 14th listing) */}
-      {!user && !hasActiveFilters && index === 12 && (
-        <div className="col-span-2 flex justify-center my-4">
-          <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-              See all the best deals
-            </h3>
-            <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
-            <button
-              onClick={() => navigate('/join')}
-              className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-            >
-              Join Free
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Show CTA at index 24 for free users (between 25th and 26th listing) */}
-      {isFreeUser && !hasActiveFilters && index === 24 && (
-        <div className="col-span-2 flex justify-center my-4">
-          <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-              Unlock all deals
-            </h3>
-            <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
-            <button
-              onClick={() => navigate('/pricing')}
-              className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-            >
-              Try Free
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div 
-        key={`${property.id}-${index}`} 
-        className="relative"
-        style={{
-          opacity: index <= loadedImageIndex ? 1 : 0.3,
-          transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
-          transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
-        }}
-      >
+            const gradeColors = getGradeColors(property.grade);
+            const isBlurred = index >= visibilityLimit;
+            
+     return (
+  <div 
+    key={`${property.id}-${index}`} 
+    className="relative"
+    style={{
+      opacity: index <= loadedImageIndex ? 1 : 0.3,
+      transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+      transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+    }}
+  >
     <div className={isBlurred ? 'filter blur-sm' : ''}>
       <div
         onClick={() => handlePropertyClick(property, index)}
@@ -856,6 +819,40 @@ const getGradeColors = (grade) => {
           })}
 
           
+     {/* ADD THESE CENTERED CTAs HERE - Only show when NO filters active */}
+{!user && !hasActiveFilters && properties.length > 12 && (
+            <div className="col-span-2 flex justify-center my-4">
+              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+                <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+                  See all the best deals
+                </h3>
+                <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
+                <button
+                  onClick={() => navigate('/join')}
+                  className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+                >
+                  Join Free
+                </button>
+              </div>
+            </div>
+          )}
+
+         {isFreeUser && !hasActiveFilters && properties.length > 24 && (
+            <div className="col-span-2 flex justify-center my-4">
+              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+                <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+                  Unlock all deals
+                </h3>
+                <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
+                <button
+                  onClick={() => navigate('/pricing')}
+                  className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+                >
+                  Try Free
+                </button>
+                </div>
+            </div>
+          )}
         </div>
 
         {/* Load More */}
