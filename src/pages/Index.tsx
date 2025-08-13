@@ -840,7 +840,7 @@ const getGradeColors = (grade) => {
         isLoggedOut={softGateModal.isLoggedOut}
       />
 
-{/* Apple-Style Footer - Monetization Focused */}
+{/* Apple-Style Footer - Landing Page (No Active State) */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
         <div className="flex items-center justify-around py-3 px-6">
           
@@ -867,14 +867,15 @@ const getGradeColors = (grade) => {
           >
             <div className="w-7 h-7 mb-1 flex items-center justify-center">
               <svg 
-                className="w-6 h-6 text-white" 
-                fill="currentColor" 
+                className="w-6 h-6 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
               </svg>
             </div>
-            <span className="text-[10px] text-white font-medium">Rent</span>
+            <span className="text-[10px] text-gray-400 font-medium">Rent</span>
           </button>
 
           <button 
