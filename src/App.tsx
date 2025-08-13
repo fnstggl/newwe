@@ -60,7 +60,6 @@ const AppContent = () => {
         <Route path="/housingaccess" element={<OpenDoor />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <MobileNavigation />
       
       <OnboardingPopup 
         isOpen={showOnboarding}
