@@ -1114,7 +1114,7 @@ const DesktopIndex = () => {
             Let the apartment hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
-            Join the platform that actually works for buyers.
+            Join the platform actually built for renters & buyers.
           </p>
           <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
             Join now.
