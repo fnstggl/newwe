@@ -56,7 +56,7 @@ const ScrollJackedSection = () => {
       <div className="sticky top-0 h-screen flex flex-col">
         <div className="w-full text-center py-8 px-4">
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white">
-            The real estate market in NYC is rigged. Now you can beat it.
+            The housing market in NYC is rigged. Now you can beat it.
           </h2>
         </div>
 
