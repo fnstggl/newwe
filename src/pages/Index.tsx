@@ -1111,10 +1111,10 @@ const DesktopIndex = () => {
         <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Let the house hunt end here.
+            Let the apartment hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
-            Join the platform that actually works for buyers.
+            Join the platform actually built for renters & buyers.
           </p>
           <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
             Join now.
