@@ -256,7 +256,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="text-white hover:bg-gray-800"
+                 className="text-white hover:bg-gray-800 rounded-full"
               >
                 <X className="h-6 w-6" />
               </Button>
