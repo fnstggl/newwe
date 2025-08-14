@@ -556,7 +556,7 @@ const getGradeColors = (grade) => {
   }
 }}
     placeholder="Describe your dream home. We'll find it for you"
-    className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-base tracking-tight"
+    className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-sm tracking-tight"
     showSuggestions={false}
     hideInterpretation={true}
   />
@@ -704,6 +704,25 @@ const getGradeColors = (grade) => {
       
       return (
         <React.Fragment key={`fragment-${index}`}>
+           {/* CTA at first blurred listing for non-filter cases */}
+      {!hasActiveFilters && index === visibilityLimit && (
+        <div className="col-span-2 flex justify-center my-4">
+          <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+              {!user ? "See all the best deals" : "Unlock all deals"}
+            </h3>
+            <p className="text-sm text-gray-300 mb-3">
+              Only {visibilityLimit} of 4,193 deals shown
+            </p>
+            <button
+              onClick={() => navigate(!user ? '/join' : '/pricing')}
+              className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+            >
+              {!user ? "Join Free" : "Try Free"}
+            </button>
+          </div>
+        </div>
+      )}
           {/* Social Proof Card - appears at index 8 */}
           {index === 8 && (
             <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
@@ -831,39 +850,6 @@ const getGradeColors = (grade) => {
       );
     })}
 
-    {!user && !hasActiveFilters && properties.length > 12 && (
-      <div className="col-span-2 flex justify-center my-4">
-        <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-          <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-            See all the best deals
-          </h3>
-          <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
-          <button
-            onClick={() => navigate('/join')}
-            className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-          >
-            Join Free
-          </button>
-        </div>
-      </div>
-    )}
-
-    {isFreeUser && !hasActiveFilters && properties.length > 24 && (
-      <div className="col-span-2 flex justify-center my-4">
-        <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-          <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-            Unlock all deals
-          </h3>
-          <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
-          <button
-            onClick={() => navigate('/pricing')}
-            className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-          >
-            Try Free
-          </button>
-        </div>
-      </div>
-    )}
   </div>
 
         {/* Load More */}
