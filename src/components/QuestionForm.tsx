@@ -194,7 +194,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ propertyId, propertyAddress
 
               {/* Disclaimer */}
               <p className="text-xs text-gray-400 text-center">
-                Your question will be sent to our team for review
+                Your question will be sent to our team for review. Our buyer representation is 100% free-no fees, no cost to you.
               </p>
 
               {/* Submit Button */}

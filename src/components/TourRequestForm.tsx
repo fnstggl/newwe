@@ -278,7 +278,7 @@ const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyA
 
               {/* Disclaimer */}
               <p className="text-xs text-gray-400 text-center">
-                Requesting a tour doesn't guarantee availability
+                Buyer representation is always free-you never pay broker fees when working with a buyer's agent.
               </p>
 
               {/* Submit Button */}
