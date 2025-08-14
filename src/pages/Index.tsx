@@ -559,6 +559,13 @@ const getGradeColors = (grade) => {
     showSuggestions={false}
     hideInterpretation={true}
   />
+    {/* Social Proof - Subtle but visible */}
+  <div className="text-center mt-2 mb-1">
+    <p className="text-xs text-gray-400">
+      <span className="text-blue-400 font-semibold">6,247</span> New Yorkers finding deals daily
+    </p>
+  </div>
+</div>
 </div>
 
         </div>
