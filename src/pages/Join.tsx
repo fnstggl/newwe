@@ -83,7 +83,7 @@ const Join = () => {
 
   // Fire Meta Pixel Lead event (safe no-op if fbq isn't loaded yet)
   if (typeof fbq === "function") {
-    fbq('track', 'Lead');
+   fbq('track', 'CompleteRegistration');
   }
         
         // Show onboarding for new users
