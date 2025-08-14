@@ -697,20 +697,41 @@ const getGradeColors = (grade) => {
   )}
 
   <div className="grid grid-cols-2 gap-3 mb-8">
-    {properties.map((property, index) => {
-            const gradeColors = getGradeColors(property.grade);
-            const isBlurred = index >= visibilityLimit;
-            
-     return (
-  <div 
-    key={`${property.id}-${index}`} 
-    className="relative"
-    style={{
-      opacity: index <= loadedImageIndex ? 1 : 0.3,
-      transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
-      transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
-    }}
-  >
+ {properties.map((property, index) => {
+  const gradeColors = getGradeColors(property.grade);
+  const isBlurred = index >= visibilityLimit;
+  
+  return (
+    <>
+      {/* Social Proof Card - appears every 8-10 listings */}
+      {index === 8 && (
+        <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
+          <div className="text-center">
+            <p className="text-sm text-white font-semibold mb-1">💬 "Found my dream 1BR in Williamsburg"</p>
+            <p className="text-xs text-gray-400">- Sarah K., saved $1,200/mo</p>
+          </div>
+        </div>
+      )}
+
+      {/* Another social proof card at index 16 */}
+      {index === 16 && (
+        <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
+          <div className="text-center">
+            <p className="text-sm text-white font-semibold mb-1">🏠 "Saved $800/mo on a Park Slope studio"</p>
+            <p className="text-xs text-gray-400">- Mike T., moved in last week</p>
+          </div>
+        </div>
+      )}
+
+      <div 
+        key={`${property.id}-${index}`} 
+        className="relative"
+        style={{
+          opacity: index <= loadedImageIndex ? 1 : 0.3,
+          transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+          transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+        }}
+      >
     <div className={isBlurred ? 'filter blur-sm' : ''}>
       <div
         onClick={() => handlePropertyClick(property, index)}
