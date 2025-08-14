@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDown, Search, Filter, ChevronDown, ChevronUp, X, Heart, ArrowUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
