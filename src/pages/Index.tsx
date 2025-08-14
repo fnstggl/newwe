@@ -132,7 +132,7 @@ const Index = () => {
               <span className="text-xl font-bold tracking-tight">Realer Estate</span>
             </div>
             <div className="hidden md:flex items-center space-x-8 text-sm">
-              <Link to="/rent" className="text-gray-300 hover:text-white transition-colors">Infrastructure</Link>
+              <Link to="/rent" className="text-gray-300 hover:text-white transition-colors">Browse Deals</Link>
               <Link to="/press" className="text-gray-300 hover:text-white transition-colors">Testimonials</Link>
               <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">About us</Link>
               <Link to="/terms" className="text-gray-300 hover:text-white transition-colors">FAQ</Link>
@@ -142,7 +142,7 @@ const Index = () => {
               to="/join" 
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
             >
-              Start Trading
+              Start Scanning
             </Link>
           </div>
         </nav>
@@ -154,24 +154,24 @@ const Index = () => {
               Step into the Future
               <br />
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                of Real Estate Trading
+                of NYC Deal Scanning
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-12 tracking-tight max-w-3xl mx-auto">
-              Maximize your potential with a powerful platform built to shape the future of property investment.
+              Advanced algorithms scan thousands of listings daily to find you below-market properties in NYC.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Link 
                 to="/join" 
                 className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:scale-105"
               >
-                Sign Up for Free
+                Start Scanning
               </Link>
               <Link 
                 to="/rent" 
                 className="border border-gray-600 hover:border-blue-500 text-white px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all hover:bg-blue-500/10"
               >
-                Live Demo
+                Browse Deals
               </Link>
             </div>
           </div>
@@ -183,22 +183,6 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-3xl animate-pulse shadow-[0_0_50px_rgba(59,130,246,0.5)]"></div>
               <div className="relative w-full h-full bg-gradient-to-br from-blue-600 to-cyan-500 rounded-3xl flex items-center justify-center">
                 <Home className="w-16 h-16 text-white" />
-              </div>
-            </div>
-            
-            {/* Floating property cards - hidden on mobile */}
-            <div className="hidden lg:block">
-              <div className="absolute left-0 top-0 transform -translate-x-32 -translate-y-16 animate-pulse">
-                <div className="bg-black/50 border border-blue-500/30 rounded-2xl p-4 backdrop-blur-sm">
-                  <div className="text-3xl font-bold text-blue-400">$</div>
-                  <div className="text-sm text-gray-300">NYC Average</div>
-                </div>
-              </div>
-              
-              <div className="absolute right-0 top-0 transform translate-x-32 -translate-y-8 animate-pulse">
-                <div className="bg-black/50 border border-cyan-500/30 rounded-2xl p-4 backdrop-blur-sm">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-xl"></div>
-                </div>
               </div>
             </div>
           </div>
@@ -217,15 +201,16 @@ const Index = () => {
             400 NEIGHBORHOODS
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-12 tracking-tight">
-            Entire NYC Real Estate Universe
+            Entire NYC Housing Market
           </h2>
           
-          {/* Crypto-style icons representing neighborhoods */}
-          <div className="flex justify-center items-center mb-12 flex-wrap gap-6">
+          {/* Neighborhood grid without icons */}
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto mb-12">
             {neighborhoodIcons.map((neighborhood, index) => (
-              <div key={index} className="flex items-center space-x-2 opacity-60 hover:opacity-100 transition-all duration-300">
-                <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center border border-gray-700 text-xs font-bold text-gray-300 hover:bg-gradient-to-br hover:from-blue-500 hover:to-cyan-400 hover:scale-110 transition-all">
-                  {neighborhood.symbol}
+              <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 hover:border-blue-500/50 transition-all duration-300 hover:bg-gray-700/50">
+                <div className="text-center">
+                  <div className="text-sm font-semibold text-white mb-1">{neighborhood.name}</div>
+                  <div className="text-xs text-gray-400">Scanning</div>
                 </div>
               </div>
             ))}
@@ -239,14 +224,14 @@ const Index = () => {
                 <Home className="w-8 h-8 text-white" />
               </div>
               <div className="space-y-2">
-                <div className="text-2xl font-bold text-white">Undervalued Properties</div>
+                <div className="text-2xl font-bold text-white">Below-Market Deals</div>
                 <div className="text-blue-400">Found Daily</div>
               </div>
             </div>
           </div>
 
           <p className="text-xl text-gray-300 mt-12 max-w-3xl mx-auto tracking-tight">
-            Experience a comprehensive selection of properties available on our platform. Manage your investments with confidence and enhance your returns with meticulous precision.
+            We scan every listing across all boroughs to identify properties priced below market value. Get exclusive access to deals before they're discovered by others.
           </p>
         </div>
       </section>
@@ -258,10 +243,10 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
               Setting a New Standard
               <br />
-              <span className="text-blue-400">in Property Investment</span>
+              <span className="text-blue-400">in Deal Discovery</span>
             </h2>
             <p className="text-xl text-gray-300 tracking-tight max-w-3xl mx-auto">
-              Our innovative analysis technology delivers unmatched performance, making property investment more effective.
+              Our advanced scanning technology analyzes thousands of listings daily, identifying below-market opportunities faster than any other platform.
             </p>
           </div>
 
@@ -269,7 +254,7 @@ const Index = () => {
             {/* Live Data Panel */}
             <div className="space-y-6">
               <div className="bg-black/50 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
-                <h3 className="text-xl font-semibold mb-4 text-white">Live Property Prices</h3>
+                <h3 className="text-xl font-semibold mb-4 text-white">Live Market Data</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -308,9 +293,9 @@ const Index = () => {
               <div className="flex space-x-4 text-sm text-gray-400">
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="w-4 h-4" />
-                  <span>Live Data.</span>
+                  <span>Live scanning.</span>
                 </div>
-                <span>Access up-to-date property prices</span>
+                <span>Real-time market analysis</span>
               </div>
             </div>
 
