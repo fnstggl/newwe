@@ -1030,26 +1030,15 @@ const DesktopIndex = () => {
         {/* Hero Content - Always Visible */}
         <div className="relative z-10 min-h-[600px] flex items-center justify-center">
           <div className="text-center px-4 py-20 max-w-none">
-          <h1 className="text-6xl md:text-8xl font-inter font-black mb-4 tracking-[-0.075em] transform translate-y-[110px] text-white">
-  Find your dream home. And actually afford it.
-</h1>
-            <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[110px] tracking-[-0.075em]">
+            <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
+              Find your dream home. And actually afford it.
+            </h1>
+            <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
               Your unfair advantage in finding below-market & rent-stabilized homes.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 transform translate-y-[110px]">
-  <Link 
-    to="/join" 
-    className="bg-white text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
-  >
-    Sign Up for Free
-  </Link>
-  <Link 
-    to="/rent" 
-    className="border-2 border-white text-white px-10 py-4 rounded-full font-bold text-xl tracking-tighter hover:bg-white hover:text-black transition-all duration-300"
-  >
-    See Deals
-  </Link>
-</div>
+            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+              {user ? "See Deals" : "See Deals"}
+            </Link>
           </div>
         </div>
 
