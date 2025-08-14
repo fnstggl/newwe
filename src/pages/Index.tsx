@@ -696,185 +696,174 @@ const getGradeColors = (grade) => {
     </div>
   )}
 
-  <div className="grid grid-cols-2 gap-3 mb-8">
- {properties.map((property, index) => {
-  const gradeColors = getGradeColors(property.grade);
-  const isBlurred = index >= visibilityLimit;
-  
-  return (
-    <>
-      {/* Social Proof Card - appears every 8-10 listings */}
-      {index === 8 && (
-        <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
-          <div className="text-center">
-            <p className="text-sm text-white font-semibold mb-1">💬 "Found my dream 1BR in Williamsburg"</p>
-            <p className="text-xs text-gray-400">- Sarah K., saved $1,200/mo</p>
-          </div>
-        </div>
-      )}
+ <div className="grid grid-cols-2 gap-3 mb-8">
+    {properties.map((property, index) => {
+      const gradeColors = getGradeColors(property.grade);
+      const isBlurred = index >= visibilityLimit;
+      
+      return (
+        <React.Fragment key={`fragment-${index}`}>
+          {/* Social Proof Card - appears at index 8 */}
+          {index === 8 && (
+            <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
+              <div className="text-center">
+                <p className="text-sm text-white font-semibold mb-1">💬 "Found my dream 1BR in Williamsburg"</p>
+                <p className="text-xs text-gray-400">- Sarah K., saved $1,200/mo</p>
+              </div>
+            </div>
+          )}
 
-      {/* Another social proof card at index 16 */}
-      {index === 16 && (
-        <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
-          <div className="text-center">
-            <p className="text-sm text-white font-semibold mb-1">🏠 "Saved $800/mo on a Park Slope studio"</p>
-            <p className="text-xs text-gray-400">- Mike T., moved in last week</p>
-          </div>
-        </div>
-      )}
+          {/* Social Proof Card - appears at index 16 */}
+          {index === 16 && (
+            <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
+              <div className="text-center">
+                <p className="text-sm text-white font-semibold mb-1">🏠 "Saved $800/mo on a Park Slope studio"</p>
+                <p className="text-xs text-gray-400">- Mike T., moved in last week</p>
+              </div>
+            </div>
+          )}
 
-      <div 
-        key={`${property.id}-${index}`} 
-        className="relative"
-        style={{
-          opacity: index <= loadedImageIndex ? 1 : 0.3,
-          transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
-          transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
-        }}
-      >
-    <div className={isBlurred ? 'filter blur-sm' : ''}>
-      <div
-        onClick={() => handlePropertyClick(property, index)}
-        className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
-      >
-                    {/* Property Image with Cascading Load */}
-<div className="aspect-square bg-gray-800 relative overflow-hidden">
-  {property.images?.[0] && index <= loadedImageIndex ? (
-    <img 
-      src={property.images[0]} 
-      alt={property.address}
-      className="w-full h-full object-cover transition-opacity duration-300"
-      style={{ opacity: index <= loadedImageIndex ? 1 : 0 }}
-    />
-  ) : (
-    <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center relative">
-      {index <= loadedImageIndex ? (
-        <span className="text-gray-400 text-xs">No Image</span>
-      ) : (
-        <>
-          {/* Loading skeleton */}
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse"></div>
-          {/* Loading dots */}
-          <div className="relative z-10 flex space-x-1">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-          </div>
-        </>
-      )}
-    </div>
-  )}
-                      
-                      {/* Grade Badge */}
-<div className="absolute top-2 left-2">
-  <span className={`px-2 py-1 rounded-full text-xs font-bold ${gradeColors.badge}`}>
-    {property.grade}
-  </span>
-</div>
-                      
-                      {/* Heart Icon */}
-                      <div className="absolute top-2 right-2">
-                        <Heart className="h-5 w-5 text-white/80" />
-                      </div>
+          <div 
+            key={`${property.id}-${index}`} 
+            className="relative"
+            style={{
+              opacity: index <= loadedImageIndex ? 1 : 0.3,
+              transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+              transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+            }}
+          >
+            <div className={isBlurred ? 'filter blur-sm' : ''}>
+              <div
+                onClick={() => handlePropertyClick(property, index)}
+                className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+              >
+                <div className="aspect-square bg-gray-800 relative overflow-hidden">
+                  {property.images?.[0] && index <= loadedImageIndex ? (
+                    <img 
+                      src={property.images[0]} 
+                      alt={property.address}
+                      className="w-full h-full object-cover transition-opacity duration-300"
+                      style={{ opacity: index <= loadedImageIndex ? 1 : 0 }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center relative">
+                      {index <= loadedImageIndex ? (
+                        <span className="text-gray-400 text-xs">No Image</span>
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse"></div>
+                          <div className="relative z-10 flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          </div>
+                        </>
+                      )}
                     </div>
-
-                    {/* Property Info */}
-                    <div className="p-3">
-                      <div className="text-lg font-bold text-white mb-1 tracking-tight">
-                        ${isRentMode ? 
-                          property.monthly_rent?.toLocaleString() : 
-                          property.price?.toLocaleString()
-                        }
-                        {isRentMode && <span className="text-sm font-normal">/mo</span>}
-                      </div>
-                      
-                      <div className="text-sm text-gray-300 mb-1 tracking-tight">
-                        {property.bedrooms} bed • {property.bathrooms || property.baths} bath
-                      </div>
-                      
-                      <div className="text-xs text-gray-400 tracking-tight truncate">
-                        {property.neighborhood}
-                      </div>
-                      
-                    {/* Discount Badge */}
-{(property.discount_percent || property.undervaluation_percent) && (
-  <div className="mt-2">
-    <span className={`${gradeColors.discountBg} px-2 py-1 rounded-full text-xs font-semibold`}>
-      {Math.round(Math.max(
-        property.discount_percent || 0, 
-        property.undervaluation_percent || 0,
-        property.grade === 'A+' ? 15 : 0  // Ensure A+ properties show at least 15%
-      ))}% below market
-    </span>
-  </div>
-)}
-                    </div>
+                  )}
+                  
+                  <div className="absolute top-2 left-2">
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${gradeColors.badge}`}>
+                      {property.grade}
+                    </span>
+                  </div>
+                  
+                  <div className="absolute top-2 right-2">
+                    <Heart className="h-5 w-5 text-white/80" />
                   </div>
                 </div>
 
-               {/* Simple blur overlay with click handler - NO TEXT */}
-{isBlurred && (
-  <div 
-    className="absolute inset-0 cursor-pointer"
-    onClick={() => {
-      if (!user) {
-        setSoftGateModal({
-          isOpen: true,
-          property: property,
-          isLoggedOut: true
-        });
-      } else if (isFreeUser) {
-        setSoftGateModal({
-          isOpen: true,
-          property: property,
-          isLoggedOut: false
-        });
-      }
-    }}
-  />
-)}
-
-          
-              </div>
-            );
-          })}
-
-          
-     {/* ADD THESE CENTERED CTAs HERE - Only show when NO filters active */}
-{!user && !hasActiveFilters && properties.length > 12 && (
-            <div className="col-span-2 flex justify-center my-4">
-              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-                <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-                  See all the best deals
-                </h3>
-                <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
-                <button
-                  onClick={() => navigate('/join')}
-                  className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-                >
-                  Join Free
-                </button>
-              </div>
-            </div>
-          )}
-
-         {isFreeUser && !hasActiveFilters && properties.length > 24 && (
-            <div className="col-span-2 flex justify-center my-4">
-              <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-                <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-                  Unlock all deals
-                </h3>
-                <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
-                <button
-                  onClick={() => navigate('/pricing')}
-                  className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-                >
-                  Try Free
-                </button>
+                <div className="p-3">
+                  <div className="text-lg font-bold text-white mb-1 tracking-tight">
+                    ${isRentMode ? 
+                      property.monthly_rent?.toLocaleString() : 
+                      property.price?.toLocaleString()
+                    }
+                    {isRentMode && <span className="text-sm font-normal">/mo</span>}
+                  </div>
+                  
+                  <div className="text-sm text-gray-300 mb-1 tracking-tight">
+                    {property.bedrooms} bed • {property.bathrooms || property.baths} bath
+                  </div>
+                  
+                  <div className="text-xs text-gray-400 tracking-tight truncate">
+                    {property.neighborhood}
+                  </div>
+                  
+                  {(property.discount_percent || property.undervaluation_percent) && (
+                    <div className="mt-2">
+                      <span className={`${gradeColors.discountBg} px-2 py-1 rounded-full text-xs font-semibold`}>
+                        {Math.round(Math.max(
+                          property.discount_percent || 0, 
+                          property.undervaluation_percent || 0,
+                          property.grade === 'A+' ? 15 : 0
+                        ))}% below market
+                      </span>
+                    </div>
+                  )}
                 </div>
+              </div>
             </div>
-          )}
+
+            {isBlurred && (
+              <div 
+                className="absolute inset-0 cursor-pointer"
+                onClick={() => {
+                  if (!user) {
+                    setSoftGateModal({
+                      isOpen: true,
+                      property: property,
+                      isLoggedOut: true
+                    });
+                  } else if (isFreeUser) {
+                    setSoftGateModal({
+                      isOpen: true,
+                      property: property,
+                      isLoggedOut: false
+                    });
+                  }
+                }}
+              />
+            )}
+          </div>
+        </React.Fragment>
+      );
+    })}
+
+    {!user && !hasActiveFilters && properties.length > 12 && (
+      <div className="col-span-2 flex justify-center my-4">
+        <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+          <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+            See all the best deals
+          </h3>
+          <p className="text-sm text-gray-300 mb-3">Only 12 of 4,193 deals shown</p>
+          <button
+            onClick={() => navigate('/join')}
+            className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+          >
+            Join Free
+          </button>
         </div>
+      </div>
+    )}
+
+    {isFreeUser && !hasActiveFilters && properties.length > 24 && (
+      <div className="col-span-2 flex justify-center my-4">
+        <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
+          <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+            Unlock all deals
+          </h3>
+          <p className="text-sm text-gray-300 mb-3">Only 24 of 4,193 deals shown</p>
+          <button
+            onClick={() => navigate('/pricing')}
+            className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
+          >
+            Try Free
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
 
         {/* Load More */}
         {!loading && hasMore && properties.length > 0 && (
