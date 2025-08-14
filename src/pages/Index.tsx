@@ -1,23 +1,23 @@
 import { Link } from "react-router-dom";
-import { ArrowDown, TrendingUp, MapPin, DollarSign, Home, ChevronRight } from "lucide-react";
+import { ArrowDown, TrendingUp, MapPin, DollarSign, Home, ChevronRight, Search, Zap, Database, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import TestimonialsSection from "@/components/TestimonialsSection";
 
 const Index = () => {
-  const [currentListingIndex, setCurrentListingIndex] = useState(0);
+  const [scanningCount, setScanningCount] = useState(47832);
+  const [dealsFound, setDealsFound] = useState(127);
   const [isVisible, setIsVisible] = useState(false);
+  const [currentDeal, setCurrentDeal] = useState(0);
 
   useEffect(() => {
-    // Update meta tags for SEO - Home page
+    // Update meta tags for SEO
     document.title = "Realer Estate - Your Unfair Advantage in NYC Real Estate | Find Undervalued Properties";
     
-    // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 'Stop overpaying for NYC real estate. Our advanced algorithms find undervalued properties for sale and rent. Get your unfair advantage in the NYC real estate market.');
     }
 
-    // Update Open Graph tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute('content', 'Realer Estate - Your Unfair Advantage in NYC Real Estate');
     
@@ -27,7 +27,6 @@ const Index = () => {
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org');
 
-    // Update Twitter tags
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitle) twitterTitle.setAttribute('content', 'Realer Estate - Your Unfair Advantage in NYC Real Estate');
     
@@ -36,457 +35,336 @@ const Index = () => {
     
     setIsVisible(true);
     
-    // Rotate listings every 3 seconds
-    const interval = setInterval(() => {
-      setCurrentListingIndex((prevIndex) => (prevIndex + 1) % featuredListings.length);
-    }, 3000);
+    // Animate scanning counter
+    const scanInterval = setInterval(() => {
+      setScanningCount(prev => prev + Math.floor(Math.random() * 3) + 1);
+    }, 2000);
 
-    return () => clearInterval(interval);
+    // Animate deals counter  
+    const dealInterval = setInterval(() => {
+      setDealsFound(prev => prev + Math.floor(Math.random() * 2));
+    }, 4000);
+
+    // Rotate featured deals
+    const dealRotation = setInterval(() => {
+      setCurrentDeal(prev => (prev + 1) % 3);
+    }, 5000);
+
+    return () => {
+      clearInterval(scanInterval);
+      clearInterval(dealInterval);
+      clearInterval(dealRotation);
+    };
   }, []);
 
-  // Featured listings data for rotation
-  const featuredListings = [
+  const featuredDeals = [
     {
-      address: "125 E 23rd St, Gramercy",
-      price: "$3,200",
-      originalPrice: "$4,100",
-      savings: "$900",
-      beds: "1",
-      grade: "A+",
-      neighborhood: "Gramercy"
+      address: "456 E 14th St, East Village",
+      marketPrice: "$4,200",
+      ourPrice: "$3,100",
+      savings: "$1,100",
+      confidence: "96%",
+      type: "1BR"
     },
     {
-      address: "456 W 19th St, Chelsea", 
-      price: "$2,850",
-      originalPrice: "$3,650",
-      savings: "$800",
-      beds: "Studio",
-      grade: "A",
-      neighborhood: "Chelsea"
-    },
-    {
-      address: "789 Kent Ave, Williamsburg",
-      price: "$2,400",
-      originalPrice: "$3,200", 
-      savings: "$800",
-      beds: "1",
-      grade: "A-",
-      neighborhood: "Williamsburg"
-    },
-    {
-      address: "321 E 14th St, East Village",
-      price: "$2,950",
-      originalPrice: "$3,800",
+      address: "89 Mott St, NoLita", 
+      marketPrice: "$3,800",
+      ourPrice: "$2,950",
       savings: "$850",
-      beds: "1",
-      grade: "A+",
-      neighborhood: "East Village"
+      confidence: "94%",
+      type: "Studio"
+    },
+    {
+      address: "234 Grand St, LES",
+      marketPrice: "$4,500", 
+      ourPrice: "$3,400",
+      savings: "$1,100",
+      confidence: "97%",
+      type: "1BR"
     }
   ];
 
-  const neighborhoodIcons = [
-    { symbol: "M", name: "Manhattan" },
-    { symbol: "B", name: "Brooklyn" },
-    { symbol: "Q", name: "Queens" },
-    { symbol: "X", name: "Bronx" },
-    { symbol: "S", name: "Staten Island" },
-    { symbol: "LES", name: "Lower East Side" },
-    { symbol: "W", name: "Williamsburg" },
-    { symbol: "CH", name: "Chelsea" },
-    { symbol: "SO", name: "SoHo" }
-  ];
-
-  const currentListing = featuredListings[currentListingIndex];
-
   return (
-    <div className="bg-black text-white min-h-screen font-inter">
+    <div className="bg-black text-white min-h-screen font-inter relative overflow-hidden">
+      {/* Glassmorphic Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+              <Home className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-xl font-bold tracking-tight">Realer Estate</span>
+          </div>
+          <div className="hidden md:flex items-center space-x-8 text-sm">
+            <Link to="/rent" className="text-gray-300 hover:text-white transition-all hover:scale-105">Browse Deals</Link>
+            <Link to="/press" className="text-gray-300 hover:text-white transition-all hover:scale-105">Success Stories</Link>
+            <Link to="/pricing" className="text-gray-300 hover:text-white transition-all hover:scale-105">Pricing</Link>
+          </div>
+          <Link 
+            to="/join" 
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2 rounded-full font-medium transition-all hover:shadow-lg hover:shadow-blue-500/25 hover:scale-105"
+          >
+            Get Access
+          </Link>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
-        {/* Background with geometric elements and glowing effects */}
+      <section className="relative min-h-screen flex items-center justify-center px-6 pt-20">
+        {/* Advanced Background */}
         <div className="absolute inset-0">
-          {/* Main dark gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
           
-          {/* Blue accent gradients */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 md:w-[800px] md:h-[600px] bg-gradient-to-br from-blue-500/20 via-cyan-400/10 to-blue-600/15 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-64 h-64 md:w-[600px] md:h-[400px] bg-gradient-to-tl from-blue-500/15 via-cyan-400/10 to-blue-600/20 rounded-full blur-2xl"></div>
+          {/* Animated gradient orbs */}
+          <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-500/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-500/20 to-blue-600/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
           
-          {/* Floating geometric elements - hidden on mobile */}
-          <div className="hidden lg:block">
-            <div className="absolute top-20 left-20 w-32 h-32 border border-blue-500/30 rounded-xl transform rotate-12 hover:rotate-45 transition-transform duration-500 animate-pulse"></div>
-            <div className="absolute top-40 right-32 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div>
-            <div className="absolute bottom-32 left-32 w-40 h-40 border border-cyan-400/20 rounded-2xl transform -rotate-12 animate-pulse"></div>
-          </div>
-          
-          {/* Grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+          {/* Data visualization overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(59,130,246,0.05)_50%,transparent_100%)] animate-pulse"></div>
         </div>
 
-        {/* Navigation */}
-        <nav className="absolute top-0 left-0 right-0 z-50 p-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5 text-white" />
+        <div className="relative z-10 text-center max-w-6xl mx-auto">
+          {/* Hero Content */}
+          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="mb-8">
+              <div className="inline-flex items-center space-x-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 mb-8">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>Live scanning {scanningCount.toLocaleString()} listings</span>
               </div>
-              <span className="text-xl font-bold tracking-tight">Realer Estate</span>
             </div>
-            <div className="hidden md:flex items-center space-x-8 text-sm">
-              <Link to="/rent" className="text-gray-300 hover:text-white transition-colors">Browse Deals</Link>
-              <Link to="/press" className="text-gray-300 hover:text-white transition-colors">Testimonials</Link>
-              <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">About us</Link>
-              <Link to="/terms" className="text-gray-300 hover:text-white transition-colors">FAQ</Link>
-              <Link to="/privacy" className="text-gray-300 hover:text-white transition-colors">Contact</Link>
-            </div>
-            <Link 
-              to="/join" 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-            >
-              Start Scanning
-            </Link>
-          </div>
-        </nav>
-
-        {/* Hero Content */}
-        <div className="relative z-10 text-center max-w-5xl mx-auto">
-          <div className={`transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
-            <h1 className="text-4xl md:text-7xl font-bold mb-6 tracking-tight">
-              Step into the Future
+            
+            <h1 className="text-5xl md:text-8xl font-bold mb-8 tracking-tight leading-none">
+              We cracked the
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                of NYC Deal Scanning
+              <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
+                NYC housing code
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 tracking-tight max-w-3xl mx-auto">
-              Advanced algorithms scan thousands of listings daily to find you below-market properties in NYC.
+            
+            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Advanced algorithms analyze thousands of listings every hour to find properties priced <span className="text-blue-400 font-semibold">below market value</span>. Stop overpaying for rent in NYC.
             </p>
+
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Link 
                 to="/join" 
-                className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:scale-105"
+                className="group bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all hover:shadow-2xl hover:shadow-blue-500/25 hover:scale-105 flex items-center space-x-2"
               >
-                Start Scanning
+                <span>Find My Deal</span>
+                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
                 to="/rent" 
-                className="border border-gray-600 hover:border-blue-500 text-white px-8 py-4 rounded-full font-semibold text-lg tracking-tight transition-all hover:bg-blue-500/10"
+                className="group bg-white/5 backdrop-blur-xl border border-white/20 hover:border-white/40 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all hover:bg-white/10 flex items-center space-x-2"
               >
-                Browse Deals
+                <span>See Live Deals</span>
+                <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>
 
-          {/* 3D Property Elements */}
-          <div className="relative">
-            {/* Central glowing property icon */}
-            <div className="relative mx-auto w-32 h-32 mb-8">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-3xl animate-pulse shadow-[0_0_50px_rgba(59,130,246,0.5)]"></div>
-              <div className="relative w-full h-full bg-gradient-to-br from-blue-600 to-cyan-500 rounded-3xl flex items-center justify-center">
-                <Home className="w-16 h-16 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ArrowDown className="w-6 h-6 text-blue-400" />
-        </div>
-      </section>
-
-      {/* Property Universe Section */}
-      <section className="py-20 px-4 relative">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="mb-4 text-blue-400 font-semibold tracking-wide uppercase text-sm">
-            400 NEIGHBORHOODS
-          </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-12 tracking-tight">
-            Entire NYC Housing Market
-          </h2>
-          
-          {/* Neighborhood grid without icons */}
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto mb-12">
-            {neighborhoodIcons.map((neighborhood, index) => (
-              <div key={index} className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 hover:border-blue-500/50 transition-all duration-300 hover:bg-gray-700/50">
-                <div className="text-center">
-                  <div className="text-sm font-semibold text-white mb-1">{neighborhood.name}</div>
-                  <div className="text-xs text-gray-400">Scanning</div>
+          {/* Live Deal Preview */}
+          <div className="relative max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-semibold">Live Deal Found</span>
                 </div>
+                <div className="text-sm text-gray-400">2 minutes ago</div>
               </div>
-            ))}
-          </div>
-          
-          {/* Central highlighted property card */}
-          <div className="relative max-w-md mx-auto">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-400/20 rounded-3xl blur-xl"></div>
-            <div className="relative bg-black/80 border border-blue-500/50 rounded-3xl p-8 backdrop-blur-sm">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.5)] animate-pulse">
-                <Home className="w-8 h-8 text-white" />
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-white">Below-Market Deals</div>
-                <div className="text-blue-400">Found Daily</div>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-xl text-gray-300 mt-12 max-w-3xl mx-auto tracking-tight">
-            We scan every listing across all boroughs to identify properties priced below market value. Get exclusive access to deals before they're discovered by others.
-          </p>
-        </div>
-      </section>
-
-      {/* Rotating Listings Section */}
-      <section className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
-              Setting a New Standard
-              <br />
-              <span className="text-blue-400">in Deal Discovery</span>
-            </h2>
-            <p className="text-xl text-gray-300 tracking-tight max-w-3xl mx-auto">
-              Our advanced scanning technology analyzes thousands of listings daily, identifying below-market opportunities faster than any other platform.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Live Data Panel */}
-            <div className="space-y-6">
-              <div className="bg-black/50 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
-                <h3 className="text-xl font-semibold mb-4 text-white">Live Market Data</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <Home className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-semibold">Manhattan</div>
-                        <div className="text-sm text-gray-400">AVG - $3,200/mo</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold">0.289472</div>
-                      <div className="text-sm text-green-400">+10.55% ↗</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
-                        <Home className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-semibold">Brooklyn</div>
-                        <div className="text-sm text-gray-400">AVG - $2,100/mo</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold">857.56283</div>
-                      <div className="text-sm text-green-400">+8.67% ↗</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-4 text-sm text-gray-400">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Live scanning.</span>
-                </div>
-                <span>Real-time market analysis</span>
-              </div>
-            </div>
-
-            {/* Featured Property Card */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-400/20 rounded-3xl blur-xl"></div>
-              <div className="relative bg-black/80 border border-blue-500/30 rounded-3xl p-8 backdrop-blur-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-white">Featured Property</h3>
-                  <div className="text-sm text-gray-400">Last 28 days ⌄</div>
+              
+              <div className="grid md:grid-cols-3 gap-6 text-left">
+                <div>
+                  <div className="text-2xl font-bold text-white mb-2">{featuredDeals[currentDeal].ourPrice}</div>
+                  <div className="text-sm text-gray-400">{featuredDeals[currentDeal].address}</div>
+                  <div className="text-sm text-blue-400">{featuredDeals[currentDeal].type}</div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="text-4xl font-bold text-blue-400">
-                    {currentListing.price}
-                    <span className="text-lg text-gray-400 ml-2">
-                      /month
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <div className="text-green-400 font-semibold">
-                      ↗ {currentListing.savings} saved 
-                    </div>
-                    <div className="text-sm text-gray-400">
-                      (vs market {currentListing.originalPrice})
-                    </div>
-                  </div>
-                  
-                  <div className="text-gray-300">
-                    {currentListing.address}
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="text-gray-400">
-                      {currentListing.beds} bed • Grade {currentListing.grade}
-                    </div>
-                    <div className="text-blue-400">
-                      {currentListing.neighborhood}
-                    </div>
-                  </div>
-
-                  {/* Mini chart visualization */}
-                  <div className="h-20 bg-gradient-to-r from-blue-500/20 to-cyan-400/20 rounded-xl flex items-end justify-center space-x-1 p-2">
-                    {[...Array(12)].map((_, i) => (
-                      <div 
-                        key={i} 
-                        className="bg-blue-400 w-2 rounded-t transition-all duration-500"
-                        style={{ height: `${Math.random() * 60 + 20}%` }}
-                      ></div>
-                    ))}
+                <div className="text-center">
+                  <div className="text-lg text-gray-300 line-through mb-1">{featuredDeals[currentDeal].marketPrice}</div>
+                  <div className="text-2xl font-bold text-green-400">Save {featuredDeals[currentDeal].savings}</div>
+                  <div className="text-sm text-gray-400">vs market rate</div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-blue-400 mb-1">{featuredDeals[currentDeal].confidence} confidence</div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="bg-gradient-to-r from-blue-500 to-green-400 h-2 rounded-full transition-all duration-1000" style={{width: featuredDeals[currentDeal].confidence}}></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex justify-center space-x-4 text-sm text-gray-400 mt-12">
-            <div className="flex items-center space-x-2">
-              <MapPin className="w-4 h-4" />
-              <span>Advanced Analytics.</span>
-            </div>
-            <span>Leverage our advanced market analysis</span>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+          <div className="animate-bounce">
+            <ArrowDown className="w-6 h-6 text-blue-400" />
           </div>
         </div>
       </section>
 
-      {/* Dashboard Preview */}
-      <section className="py-20 px-4">
+      {/* Data Visualization Section */}
+      <section className="py-32 px-6 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="text-blue-400 font-semibold tracking-wide uppercase text-sm mb-4">
-              DYNAMIC DASHBOARD
-            </div>
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-              Unlock Revolutionary
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+              How we find
               <br />
-              <span className="text-blue-400">Trading Technology</span>
+              <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                hidden deals
+              </span>
             </h2>
-            <p className="text-xl text-gray-300 tracking-tight max-w-3xl mx-auto">
-              Experience seamless property hunting with our advanced dashboard, designed to provide real-time insights and intuitive control over your portfolio.
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Our AI scans every listing, analyzes comparable sales, and identifies pricing anomalies in real-time.
             </p>
           </div>
 
-          {/* Dashboard mockup */}
-          <div className="relative max-w-6xl mx-auto">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-400/10 rounded-3xl blur-2xl"></div>
-            <div className="relative bg-black/80 border border-blue-500/30 rounded-3xl p-8 backdrop-blur-sm">
-              <img 
-                src="/lovable-uploads/0b38338f-4c89-4881-80ff-5d26234b31cc.png" 
-                alt="Realer Estate platform showing rental listings" 
-                className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl opacity-90"
-              />
+          {/* Data Flow Visualization */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-20">
+            {/* Step 1 */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center hover:border-white/20 transition-all hover:scale-105">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                  <Database className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Data Ingestion</h3>
+                <p className="text-gray-300 mb-6">Continuously scan 50+ listing sources across all NYC boroughs</p>
+                <div className="bg-black/30 rounded-xl p-4">
+                  <div className="text-3xl font-bold text-blue-400">{scanningCount.toLocaleString()}</div>
+                  <div className="text-sm text-gray-400">Listings scanned today</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center hover:border-white/20 transition-all hover:scale-105">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-purple-500/25">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">AI Analysis</h3>
+                <p className="text-gray-300 mb-6">Compare against 2M+ historical transactions to identify undervalued properties</p>
+                <div className="bg-black/30 rounded-xl p-4">
+                  <div className="text-3xl font-bold text-purple-400">97.3%</div>
+                  <div className="text-sm text-gray-400">Prediction accuracy</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center hover:border-white/20 transition-all hover:scale-105">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-green-500/25">
+                  <Target className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Deal Discovery</h3>
+                <p className="text-gray-300 mb-6">Surface only properties priced 15%+ below market value</p>
+                <div className="bg-black/30 rounded-xl p-4">
+                  <div className="text-3xl font-bold text-green-400">{dealsFound}</div>
+                  <div className="text-sm text-gray-400">Deals found this week</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Dashboard Preview */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-2xl"></div>
+            <div className="relative bg-black/40 backdrop-blur-2xl border border-white/20 rounded-3xl p-8">
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold mb-4">Live Market Intelligence</h3>
+                <p className="text-gray-300">Real-time view of our scanning engine in action</p>
+              </div>
+              
+              {/* Dashboard mockup */}
+              <div className="bg-black/60 rounded-2xl p-6">
+                <img 
+                  src="/lovable-uploads/0b38338f-4c89-4881-80ff-5d26234b31cc.png" 
+                  alt="Realer Estate dashboard showing live deal scanning" 
+                  className="w-full rounded-xl opacity-90 hover:opacity-100 transition-opacity"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 px-4 bg-gray-900/50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-semibold text-center mb-16 tracking-tighter">
-            The real estate game is rigged. Now you can win.
+      {/* Social Proof Section */}
+      <section className="py-32 px-6 bg-gradient-to-br from-gray-900/50 to-black">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-5xl md:text-6xl font-bold mb-16 tracking-tight">
+            The real estate game is rigged.
+            <br />
+            <span className="text-blue-400">Now you can win.</span>
           </h2>
+          
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all hover:scale-105">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mx-auto mb-6 flex items-center justify-center">
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We analyze the data</h3>
-              <p className="text-gray-400 tracking-tight">Real-time scraping of listings and analysis of comps, market trends to identify true value.</p>
+              <h3 className="text-2xl font-bold mb-4">We analyze the data</h3>
+              <p className="text-gray-300">Real-time scraping of listings and analysis of comps, market trends to identify true value.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-white" />
+            
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all hover:scale-105">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-600 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                <Search className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">We find the hidden gems</h3>
-              <p className="text-gray-400 tracking-tight">Advanced algorithms identify undervalued properties you'd never find.</p>
+              <h3 className="text-2xl font-bold mb-4">We find the hidden gems</h3>
+              <p className="text-gray-300">Advanced algorithms identify undervalued properties you'd never find on your own.</p>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-black/50 hover:bg-black/70 transition-all duration-300 hover:scale-105 border border-gray-800 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+            
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all hover:scale-105">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl mx-auto mb-6 flex items-center justify-center">
                 <DollarSign className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 tracking-tight">You save thousands</h3>
-              <p className="text-gray-400 tracking-tight">Skip overpriced listings and only see the best deals.</p>
+              <h3 className="text-2xl font-bold mb-4">You save thousands</h3>
+              <p className="text-gray-300">Skip overpriced listings and only see the best deals the market has to offer.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Neighborhoods */}
-      <section className="py-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Stop overpaying in every neighborhood.
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
-            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-cyan-600/10 border border-blue-500/30 hover:border-blue-500/50 transition-all">
-              <h3 className="text-xl font-semibold mb-2 tracking-tight">SoHo</h3>
-              <p className="text-gray-400 tracking-tight">Avg $2,100/sqft → Deals from $1,350</p>
-            </div>
-            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-cyan-600/10 border border-blue-500/30 hover:border-blue-500/50 transition-all">
-              <h3 className="text-xl font-semibold mb-2 tracking-tight">Bushwick</h3>
-              <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690</p>
-            </div>
-          </div>
-          <Link 
-            to="/rent"
-            className="inline-flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full font-semibold tracking-tight transition-all hover:shadow-[0_0_25px_rgba(59,130,246,0.6)]"
-          >
-            <span>Explore Homes</span>
-            <ChevronRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
+      {/* Testimonials */}
       <TestimonialsSection />
 
       {/* Final CTA */}
-      <section className="py-20 pb-0 px-4 relative overflow-hidden">
-        {/* Blue Gradient Blob Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-cyan-600/30 to-blue-800/40"></div>
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 md:w-[800px] md:h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-64 h-64 md:w-[600px] md:h-[400px] bg-gradient-to-tl from-cyan-500/30 via-blue-400/20 to-blue-500/40 rounded-full blur-2xl"></div>        
+      <section className="py-32 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 md:w-[800px] md:h-[600px] bg-gradient-to-br from-blue-500/40 via-purple-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-64 h-64 md:w-[600px] md:h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-blue-500/40 rounded-full blur-2xl"></div>
+        
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Let the house hunt end here.
+          <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+            Stop overpaying.
+            <br />
+            <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+              Start saving.
+            </span>
           </h2>
-          <p className="text-xl text-gray-300 mb-12 tracking-tight">
-            Join the platform that actually works for buyers.
+          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+            Join thousands of New Yorkers who found their perfect apartment for less.
           </p>
+          
           <Link 
             to="/join" 
-            className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
+            className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-12 py-5 rounded-2xl font-bold text-xl transition-all hover:shadow-2xl hover:shadow-blue-500/25 hover:scale-105"
           >
-            Join now.
+            <span>Find My Deal Now</span>
+            <ChevronRight className="w-6 h-6" />
           </Link>
           
-          {/* Footer Links */}
-          <div className="mt-16 mb-2">
-            <div className="flex justify-center space-x-8 text-xs text-gray-400">
-              <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-gray-300 transition-colors">
-                Terms of Service
-              </Link>
-              <Link to="/press" className="hover:text-gray-300 transition-colors">
-                Press
-              </Link>
+          <div className="mt-16 mb-8">
+            <div className="flex justify-center space-x-8 text-sm text-gray-400">
+              <Link to="/privacy" className="hover:text-gray-300 transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-gray-300 transition-colors">Terms of Service</Link>
+              <Link to="/press" className="hover:text-gray-300 transition-colors">Press</Link>
             </div>
           </div>
         </div>
