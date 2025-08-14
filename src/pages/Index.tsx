@@ -719,7 +719,7 @@ const getGradeColors = (grade) => {
             <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
               <div className="text-center">
                 <p className="text-sm text-white font-semibold mb-1">🏠 "Saved $800/mo on a Park Slope studio"</p>
-                <p className="text-xs text-gray-400">- Mike T., moved in last week</p>
+                <p className="text-xs text-gray-400">- Mike T., moved in early August</p>
               </div>
             </div>
           )}
