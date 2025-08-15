@@ -179,7 +179,7 @@ return (
           </div>
         </div>
         
-        {/* Pricing Cards - Mobile: side by side, Desktop: unchanged */}
+     {/* Pricing Cards - Mobile: side by side, Desktop: unchanged */}
         <div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'grid md:grid-cols-2 gap-8'} max-w-4xl mx-auto`}>
           {/* Free Plan - Mobile responsive */}
           <div className={`bg-black/50 rounded-2xl ${isMobile ? 'p-4' : 'p-8'} border border-gray-800 flex flex-col h-full`}>
@@ -221,8 +221,7 @@ return (
             )}
           </div>
 
-          
-{/* Unlimited Plan - Mobile responsive */}
+          {/* Unlimited Plan - Mobile responsive */}
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
@@ -297,9 +296,9 @@ return (
                   )}
                 </div>
               </div>
-              </div>
             </div>
           </div>
+        </div>
 
         <p className={`text-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 ${isMobile ? 'mt-2' : 'mt-4'} tracking-tight`}>
           {isAnnual 
