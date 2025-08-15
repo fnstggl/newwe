@@ -225,9 +225,71 @@ return (
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
-                {/* Gemini-style gradient overlay on bottom half */}
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/40 via-purple-500/30 via-pink-500/20 via-blue-400/25 to-transparent rounded-b-2xl blur-sm"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-400/20 via-blue-600/15 to-transparent rounded-b-2xl"></div>
+    {/* Gemini-style gradient overlay - Multiple organic blobs */}
+                
+                {/* Large blue blob - bottom left */}
+                <div 
+                  className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full blur-xl"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(37, 99, 235, 0.25) 40%, transparent 70%)'
+                  }}
+                ></div>
+                
+                {/* Medium blue blob - bottom center */}
+                <div 
+                  className="absolute -bottom-4 left-1/3 w-24 h-24 rounded-full blur-lg"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, rgba(34, 211, 238, 0.2) 50%, transparent 70%)'
+                  }}
+                ></div>
+                
+                {/* Small purple blob - bottom right */}
+                <div 
+                  className="absolute bottom-8 -right-4 w-20 h-20 rounded-full blur-lg"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(196, 181, 253, 0.2) 60%, transparent 80%)'
+                  }}
+                ></div>
+                
+                {/* Pink accent blob - center right */}
+                <div 
+                  className="absolute top-1/2 -right-6 w-16 h-16 rounded-full blur-md"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(244, 114, 182, 0.25) 0%, rgba(249, 168, 212, 0.15) 70%, transparent 90%)'
+                  }}
+                ></div>
+                
+                {/* Large dark blue blob - bottom spanning */}
+                <div 
+                  className="absolute -bottom-12 left-0 right-0 h-24 blur-sm"
+                  style={{
+                    background: 'linear-gradient(to top, rgba(30, 58, 138, 0.3) 0%, rgba(30, 64, 175, 0.2) 50%, transparent 100%)'
+                  }}
+                ></div>
+                
+                {/* Subtle cyan accent - bottom left corner */}
+                <div 
+                  className="absolute -bottom-6 -left-4 w-28 h-28 rounded-full blur-xl"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(34, 211, 238, 0.2) 0%, rgba(59, 130, 246, 0.15) 60%, transparent 80%)'
+                  }}
+                ></div>
+                
+                {/* Soft purple glow - center bottom */}
+                <div 
+                  className="absolute bottom-0 left-1/4 right-1/4 h-20 blur-lg"
+                  style={{
+                    background: 'linear-gradient(to top, rgba(147, 51, 234, 0.25) 0%, rgba(168, 85, 247, 0.15) 70%, transparent 100%)'
+                  }}
+                ></div>
+                
+                {/* Light blue highlight - bottom edge */}
+                <div 
+                  className="absolute -bottom-2 left-1/4 w-32 h-8 blur-sm"
+                  style={{
+                    background: 'linear-gradient(to top, rgba(147, 197, 253, 0.2) 0%, transparent 100%)'
+                  }}
+                ></div>
                 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
