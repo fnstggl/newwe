@@ -225,69 +225,37 @@ return (
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
-    {/* Gemini-style gradient overlay - Multiple organic blobs */}
+{/* Sophisticated Gemini-style gradient - Very subtle and refined */}
                 
-                {/* Large blue blob - bottom left */}
+                {/* Main gradient base - very soft */}
                 <div 
-                  className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full blur-xl"
+                  className="absolute inset-0 rounded-2xl"
                   style={{
-                    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(37, 99, 235, 0.25) 40%, transparent 70%)'
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(147, 51, 234, 0.05) 100%)'
                   }}
                 ></div>
                 
-                {/* Medium blue blob - bottom center */}
+                {/* Bottom gradient glow - extremely subtle */}
                 <div 
-                  className="absolute -bottom-4 left-1/3 w-24 h-24 rounded-full blur-lg"
+                  className="absolute bottom-0 left-0 right-0 h-32 rounded-b-2xl"
                   style={{
-                    background: 'radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, rgba(34, 211, 238, 0.2) 50%, transparent 70%)'
+                    background: 'linear-gradient(to top, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 50%, transparent 100%)'
                   }}
                 ></div>
                 
-                {/* Small purple blob - bottom right */}
+                {/* Right edge accent - barely visible */}
                 <div 
-                  className="absolute bottom-8 -right-4 w-20 h-20 rounded-full blur-lg"
+                  className="absolute top-0 bottom-0 right-0 w-16 rounded-r-2xl"
                   style={{
-                    background: 'radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(196, 181, 253, 0.2) 60%, transparent 80%)'
+                    background: 'linear-gradient(to left, rgba(168, 85, 247, 0.04) 0%, transparent 100%)'
                   }}
                 ></div>
                 
-                {/* Pink accent blob - center right */}
+                {/* Bottom corner highlight - very soft */}
                 <div 
-                  className="absolute top-1/2 -right-6 w-16 h-16 rounded-full blur-md"
+                  className="absolute bottom-0 left-0 w-24 h-24 rounded-bl-2xl"
                   style={{
-                    background: 'radial-gradient(circle, rgba(244, 114, 182, 0.25) 0%, rgba(249, 168, 212, 0.15) 70%, transparent 90%)'
-                  }}
-                ></div>
-                
-                {/* Large dark blue blob - bottom spanning */}
-                <div 
-                  className="absolute -bottom-12 left-0 right-0 h-24 blur-sm"
-                  style={{
-                    background: 'linear-gradient(to top, rgba(30, 58, 138, 0.3) 0%, rgba(30, 64, 175, 0.2) 50%, transparent 100%)'
-                  }}
-                ></div>
-                
-                {/* Subtle cyan accent - bottom left corner */}
-                <div 
-                  className="absolute -bottom-6 -left-4 w-28 h-28 rounded-full blur-xl"
-                  style={{
-                    background: 'radial-gradient(circle, rgba(34, 211, 238, 0.2) 0%, rgba(59, 130, 246, 0.15) 60%, transparent 80%)'
-                  }}
-                ></div>
-                
-                {/* Soft purple glow - center bottom */}
-                <div 
-                  className="absolute bottom-0 left-1/4 right-1/4 h-20 blur-lg"
-                  style={{
-                    background: 'linear-gradient(to top, rgba(147, 51, 234, 0.25) 0%, rgba(168, 85, 247, 0.15) 70%, transparent 100%)'
-                  }}
-                ></div>
-                
-                {/* Light blue highlight - bottom edge */}
-                <div 
-                  className="absolute -bottom-2 left-1/4 w-32 h-8 blur-sm"
-                  style={{
-                    background: 'linear-gradient(to top, rgba(147, 197, 253, 0.2) 0%, transparent 100%)'
+                    background: 'radial-gradient(circle at bottom left, rgba(34, 211, 238, 0.06) 0%, transparent 70%)'
                   }}
                 ></div>
                 
