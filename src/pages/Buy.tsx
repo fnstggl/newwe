@@ -18,36 +18,6 @@ const Buy = () => {
   const navigate = useNavigate();
   const { listingId } = useParams();
   const isMobile = useIsMobile();
-
- // AFTER:
-const animationStyles = `
-  .property-card-animate {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: slideInFade 0.6s ease-out forwards;
-  }
-  
-  .property-card-animate.completed {
-    animation: none;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  @keyframes slideInFade {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-// First useEffect - adds CSS styles (only runs once)
-useEffect(() => {
-  const style = document.createElement('style');
-  style.textContent = animationStyles;
-  document.head.appendChild(style);
-  return () => document.head.removeChild(style);
-}, []);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
@@ -74,12 +44,8 @@ useEffect(() => {
   const [sortBy, setSortBy] = useState("Featured");
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [animationKey, setAnimationKey] = useState(0);
-  const [animatedCards, setAnimatedCards] = useState(new Set());
-  const [animationComplete, setAnimationComplete] = useState(false);
-  const [hasActiveFilters, setHasActiveFilters] = useState(false);
-  const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
+ const [hasActiveFilters, setHasActiveFilters] = useState(false);
+const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
 const [isImageLoading, setIsImageLoading] = useState(false);
 
 
@@ -127,16 +93,7 @@ const getVisibilityLimit = () => {
 
 useEffect(() => {
   if (properties.length > 0) {
-    setAnimationKey(prev => prev + 1);
-    setAnimatedCards(new Set());
-    setAnimationComplete(false);
     setLoadedImageIndex(-1); // Reset image loading
-    
-    // Mark animation as complete after expected duration
-    const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
-    setTimeout(() => {
-      setAnimationComplete(true);
-    }, maxDelay);
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
@@ -1057,28 +1014,15 @@ return (
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
         <div className={`${isMobile ? 'grid grid-cols-1 gap-4' : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'} mb-8`}>
- {properties.map((property, index) => {
+{properties.map((property, index) => {
   const gradeColors = getGradeColors(property.grade);
   const isBlurred = index >= visibilityLimit;
-  
-  // Calculate stagger delay for diagonal cascade effect
-  const row = Math.floor(index / 3); // 3 columns
-    const col = index % 3;
-    const diagonalIndex = row + col; // Creates diagonal cascade
-const animationDelay = diagonalIndex * 75; // 75ms stagger
 
-const cardKey = `${property.id}-${index}-${animationKey}`;
-const shouldAnimate = !animationComplete;
-
-return (
-<div
-  key={cardKey}
-  className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
-  style={{
-    animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
-    transform: shouldAnimate ? undefined : 'translateY(0px)'
-  }}
->
+  return (
+    <div
+      key={`${property.id}-${index}`}
+      className="relative"
+    >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <div
   style={{
