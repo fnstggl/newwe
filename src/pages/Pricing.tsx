@@ -221,82 +221,84 @@ return (
             )}
           </div>
 
-          {/* Unlimited Plan - Mobile responsive */}
+          
+{/* Unlimited Plan - Mobile responsive */}
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
-                 {/* Gemini-style gradient overlay on bottom half */}
-    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/40 via-purple-500/30 via-pink-500/20 via-blue-400/25 to-transparent rounded-b-2xl blur-sm"></div>
-    <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-400/20 via-blue-600/15 to-transparent rounded-b-2xl"></div>
-                 <div className="relative z-10 flex flex-col h-full">
-                <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
-                  <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold tracking-tight`}>Unlimited</h3>
-                </div>
-                <div className={`${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-between`}>
-                  <div>
-                    {isAnnual ? (
-                      <>
+                {/* Gemini-style gradient overlay on bottom half */}
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/40 via-purple-500/30 via-pink-500/20 via-blue-400/25 to-transparent rounded-b-2xl blur-sm"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-400/20 via-blue-600/15 to-transparent rounded-b-2xl"></div>
+                
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
+                    <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold tracking-tight`}>Unlimited</h3>
+                  </div>
+                  <div className={`${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-between`}>
+                    <div>
+                      {isAnnual ? (
+                        <>
+                          <p className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-semibold tracking-tight`}>
+                            $1.50<span className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400`}>/mo</span>
+                          </p>
+                          <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-[#7D66EE] font-medium mt-1 tracking-tight`}>
+                            Save 83% vs monthly
+                          </p>
+                          <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 mt-1 tracking-tight`}>
+                            $18/yr • billed annually
+                          </p>
+                        </>
+                      ) : (
                         <p className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-semibold tracking-tight`}>
-                          $1.50<span className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400`}>/mo</span>
+                          $9<span className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400`}>/mo</span>
                         </p>
-                        <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-[#7D66EE] font-medium mt-1 tracking-tight`}>
-                          Save 83% vs monthly
-                        </p>
-                        <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 mt-1 tracking-tight`}>
-                          $18/yr • billed annually
-                        </p>
-                      </>
-                    ) : (
-                      <p className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-semibold tracking-tight`}>
-                        $9<span className={`${isMobile ? 'text-sm' : 'text-lg'} text-gray-400`}>/mo</span>
-                      </p>
+                      )}
+                    </div>
+                    {!isMobile && (
+                      <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
+                        Compared to ~$3,600 broker avg
+                      </span>
                     )}
                   </div>
-                  {!isMobile && (
-                    <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full border border-blue-500 bg-blue-900/30 text-blue-400 text-xs font-medium tracking-tight">
-                      Compared to ~$3,600 broker avg
-                    </span>
+                  <p className="text-gray-400 mb-4 tracking-tight"> </p>
+                  <ul className={`space-y-2 ${isMobile ? 'mb-8 text-xs' : 'mb-24'} text-gray-300 flex-grow`}>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-2">•</span>
+                      <strong className="text-white">{isMobile ? 'ALL deals' : 'Unlock ALL rental & sale deals'}</strong>
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-2">•</span>
+                      {isMobile ? 'Personal deals' : 'Personalized deals found for you'}
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-2">•</span>
+                      {isMobile ? 'Instant alerts' : 'Instant alerts on new deals'}
+                    </li>
+                    <li className="flex items-center tracking-tight">
+                      <span className="text-blue-400 mr-2">•</span>
+                      {isMobile ? '6000+ users' : 'Thousands of New Yorkers already saving'}
+                    </li>
+                  </ul>
+                  
+                  {isOnUnlimitedPlan ? (
+                    <button
+                      className={`w-full bg-blue-600 text-white ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight cursor-not-allowed`}
+                      disabled
+                    >
+                      Current Plan
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
+                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200`}
+                    >
+                      {isAnnual ? 'Try for Free' : 'Subscribe Now'}
+                    </button>
                   )}
                 </div>
-                <p className="text-gray-400 mb-4 tracking-tight"> </p>
-                <ul className={`space-y-2 ${isMobile ? 'mb-8 text-xs' : 'mb-24'} text-gray-300 flex-grow`}>
-                  <li className="flex items-center tracking-tight">
-                    <span className="text-blue-400 mr-2">•</span>
-                    <strong className="text-white">{isMobile ? 'ALL deals' : 'Unlock ALL rental & sale deals'}</strong>
-                  </li>
-                  <li className="flex items-center tracking-tight">
-                    <span className="text-blue-400 mr-2">•</span>
-                    {isMobile ? 'Personal deals' : 'Personalized deals found for you'}
-                  </li>
-                  <li className="flex items-center tracking-tight">
-                    <span className="text-blue-400 mr-2">•</span>
-                    {isMobile ? 'Instant alerts' : 'Instant alerts on new deals'}
-                  </li>
-                  <li className="flex items-center tracking-tight">
-                    <span className="text-blue-400 mr-2">•</span>
-                    {isMobile ? '6000+ users' : 'Thousands of New Yorkers already saving'}
-                  </li>
-                </ul>
-                
-                {isOnUnlimitedPlan ? (
-                  <button
-                    className={`w-full bg-blue-600 text-white ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight cursor-not-allowed`}
-                    disabled
-                  >
-                    Current Plan
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-                    className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200`}
-                  >
-                    {isAnnual ? 'Try for Free' : 'Subscribe Now'}
-                  </button>
-                )}
               </div>
             </div>
           </div>
-        </div>
 
         <p className={`text-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 ${isMobile ? 'mt-2' : 'mt-4'} tracking-tight`}>
           {isAnnual 
