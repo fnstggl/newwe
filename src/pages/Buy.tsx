@@ -79,6 +79,8 @@ useEffect(() => {
   const [animatedCards, setAnimatedCards] = useState(new Set());
   const [animationComplete, setAnimationComplete] = useState(false);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
+const [isImageLoading, setIsImageLoading] = useState(false);
 
 
 
@@ -128,6 +130,7 @@ useEffect(() => {
     setAnimationKey(prev => prev + 1);
     setAnimatedCards(new Set());
     setAnimationComplete(false);
+    setLoadedImageIndex(-1); // Reset image loading
     
     // Mark animation as complete after expected duration
     const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
@@ -135,7 +138,18 @@ useEffect(() => {
       setAnimationComplete(true);
     }, maxDelay);
   }
-}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]); // Remove properties.length
+}, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
+
+// ADD THIS NEW useEffect FOR CASCADING IMAGE LOADING:
+useEffect(() => {
+  if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
+    const timer = setTimeout(() => {
+      setLoadedImageIndex(prev => prev + 1);
+    }, 150); // 150ms delay between each image load
+    
+    return () => clearTimeout(timer);
+  }
+}, [properties, loadedImageIndex]);
 
   // Track if any filters are active
   useEffect(() => {
@@ -604,13 +618,15 @@ let query = supabase
       setHasMore(data.length === ITEMS_PER_PAGE);
     }
 
-    if (reset) {
-      setProperties(resultData);
-      setOffset(ITEMS_PER_PAGE);
-    } else {
-      setProperties(prev => [...prev, ...resultData]);
-      setOffset(prev => prev + ITEMS_PER_PAGE);
-    }
+   if (reset) {
+  setProperties(resultData);
+  setOffset(ITEMS_PER_PAGE);
+  setLoadedImageIndex(-1); // Reset image loading for new properties
+} else {
+  setProperties(prev => [...prev, ...resultData]);
+  setOffset(prev => prev + ITEMS_PER_PAGE);
+  // Don't reset loadedImageIndex for load more - continue cascading
+}
 
   } catch (error) {
     console.error('💥 CATCH ERROR:', error);
@@ -1041,12 +1057,12 @@ return (
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
         <div className={`${isMobile ? 'grid grid-cols-1 gap-4' : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'} mb-8`}>
-  {properties.map((property, index) => {
-    const gradeColors = getGradeColors(property.grade);
-    const isBlurred = index >= visibilityLimit;
-    
-    // Calculate stagger delay for diagonal cascade effect
-    const row = Math.floor(index / 3); // 3 columns
+ {properties.map((property, index) => {
+  const gradeColors = getGradeColors(property.grade);
+  const isBlurred = index >= visibilityLimit;
+  
+  // Calculate stagger delay for diagonal cascade effect
+  const row = Math.floor(index / 3); // 3 columns
     const col = index % 3;
     const diagonalIndex = row + col; // Creates diagonal cascade
 const animationDelay = diagonalIndex * 75; // 75ms stagger
@@ -1064,12 +1080,20 @@ return (
   }}
 >
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
-                    <PropertyCard
-                      property={property}
-                      isRental={false}
-                      onClick={() => handlePropertyClick(property, index)}
-                      gradeColors={gradeColors}
-                    />
+                    <div
+  style={{
+    opacity: index <= loadedImageIndex ? 1 : 0.3,
+    transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+    transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+  }}
+>
+  <PropertyCard
+    property={property}
+    isRental={false}
+    onClick={() => handlePropertyClick(property, index)}
+    gradeColors={gradeColors}
+  />
+</div>
                   </div>
 
                   {/* Make blurred listings clickable for logged out users */}
