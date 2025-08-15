@@ -224,7 +224,11 @@ return (
           {/* Unlimited Plan - Mobile responsive */}
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
-              <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full`}>
+              <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
+                 {/* Gemini-style gradient overlay on bottom half */}
+    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/40 via-purple-500/30 via-pink-500/20 via-blue-400/25 to-transparent rounded-b-2xl blur-sm"></div>
+    <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-400/20 via-blue-600/15 to-transparent rounded-b-2xl"></div>
+                 <div className="relative z-10 flex flex-col h-full">
                 <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
                   <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold tracking-tight`}>Unlimited</h3>
                 </div>
@@ -291,6 +295,7 @@ return (
                 )}
               </div>
             </div>
+                              </div>
           </div>
         </div>
 
@@ -599,7 +604,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
               {successStep === 1 && (
                 <div className="bg-blue-500/20 p-2 rounded-full">
                   <Unlock className="w-6 h-6 text-blue-400" />
-                </div>
+
               )}
               <h2 className="text-2xl font-bold text-white tracking-tighter">
                 {successStep === 1 && "Welcome to Unlimited!"}
