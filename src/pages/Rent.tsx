@@ -14,41 +14,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type SupabaseUndervaluedRentals = Tables<'undervalued_rentals'>;
 type SupabaseUndervaluedRentStabilized = Tables<'undervalued_rent_stabilized'>;
 
-// ADD this before "const Rent = () => {":
-const animationStyles = `
-  .property-card-animate {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: slideInFade 0.6s ease-out forwards;
-  }
-  
-  .property-card-animate.completed {
-    animation: none;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  @keyframes slideInFade {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const Rent = () => {
-  const { user, userProfile } = useAuth();
-  const navigate = useNavigate();
-  const { listingId } = useParams();
-  const isMobile = useIsMobile();
-
-useEffect(() => {
-  const style = document.createElement('style');
-  style.textContent = animationStyles;
-  document.head.appendChild(style);
-  return () => document.head.removeChild(style);
-}, []);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [maxPrice, setMaxPrice] = useState("3500");
@@ -75,10 +40,9 @@ useEffect(() => {
   const [showBoroughDropdown, setShowBoroughDropdown] = useState(false);
   const [rentStabilizedOnly, setRentStabilizedOnly] = useState(false);
   const boroughDropdownRef = useRef<HTMLDivElement>(null);
-  const [animationKey, setAnimationKey] = useState(0);
-  const [animatedCards, setAnimatedCards] = useState(new Set());
-  const [animationComplete, setAnimationComplete] = useState(false);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
+const [isImageLoading, setIsImageLoading] = useState(false);
 
   // Mobile filters state
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -121,17 +85,20 @@ useEffect(() => {
 
 useEffect(() => {
   if (properties.length > 0) {
-    setAnimationKey(prev => prev + 1);
-    setAnimatedCards(new Set());
-    setAnimationComplete(false);
-    
-    // Mark animation as complete after expected duration
-    const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
-    setTimeout(() => {
-      setAnimationComplete(true);
-    }, maxDelay);
+    setLoadedImageIndex(-1); // Reset image loading
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy, rentStabilizedOnly]);
+
+// ADD THIS NEW useEffect FOR CASCADING IMAGE LOADING:
+useEffect(() => {
+  if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
+    const timer = setTimeout(() => {
+      setLoadedImageIndex(prev => prev + 1);
+    }, 150); // 150ms delay between each image load
+    
+    return () => clearTimeout(timer);
+  }
+}, [properties, loadedImageIndex]);
 
 // Track if any filters are active
 useEffect(() => {
@@ -855,32 +822,22 @@ const additionalNeighborhoods = [
       setHasMore(allProperties.length === ITEMS_PER_PAGE);
     }
 
-    if (reset) {
-      setProperties(resultData);
-      setOffset(ITEMS_PER_PAGE);
-    } else {
-      setProperties(prev => [...prev, ...resultData]);
-      setOffset(prev => prev + ITEMS_PER_PAGE);
-    }
+   if (reset) {
+  setProperties(resultData);
+  setOffset(ITEMS_PER_PAGE);
+  setLoadedImageIndex(-1); // Reset image loading for new properties
+} else {
+  setProperties(prev => [...prev, ...resultData]);
+  setOffset(prev => prev + ITEMS_PER_PAGE);
+  // Don't reset loadedImageIndex for load more - continue cascading
+}
 
-  } catch (error) {
-    console.error('💥 CATCH ERROR:', error);
-    setProperties([]);
-  } finally {
-    setLoading(false);
-
-       // Trigger animation after properties are set
-  if (reset && properties.length > 0) {
-    setTimeout(() => {
-      setAnimationKey(prev => prev + 1);
-      setAnimationComplete(false);
-      
-      const maxDelay = Math.ceil(Math.min(properties.length, 24) / 3) * 75 + 600;
-      setTimeout(() => {
-        setAnimationComplete(true);
-      }, maxDelay);
-    }, 50);
-  }
+} catch (error) {
+  console.error('💥 CATCH ERROR:', error);
+  setProperties([]);
+} finally {
+  setLoading(false);
+}
 }
 }; // ← Only ONE closing brace for the fetchProperties function
 
@@ -1318,28 +1275,31 @@ return (
         {/* Properties Grid with Overlay for CTAs */}
         <div className="relative">
       <div className={`${isMobile ? 'grid grid-cols-1 gap-4' : 'grid md:grid-cols-2 lg:grid-cols-3 gap-6'} mb-8`}>
-         {properties.map((property, index) => {
+{properties.map((property, index) => {
   const gradeColors = getGradeColors(property.grade);
   const isBlurred = index >= visibilityLimit;
-  
-  // Calculate stagger delay for diagonal cascade effect
-  const row = Math.floor(index / 3); // 3 columns
-  const col = index % 3;
-  const diagonalIndex = row + col; // Creates diagonal cascade
-  const animationDelay = diagonalIndex * 75; // 75ms stagger
-
-  const cardKey = `${property.id}-${index}-${animationKey}`;
-  const shouldAnimate = !animationComplete;
 
   return (
     <div
-      key={cardKey}
-      className={`relative ${shouldAnimate ? 'property-card-animate' : 'opacity-100'}`}
-      style={{
-        animationDelay: shouldAnimate ? `${animationDelay}ms` : '0ms',
-        transform: shouldAnimate ? undefined : 'translateY(0px)'
-      }}
+      key={`${property.id}-${index}`}
+      className="relative"
     >
+      <div className={isBlurred ? 'filter blur-sm' : ''}>
+        <div
+          style={{
+            opacity: index <= loadedImageIndex ? 1 : 0.3,
+            transform: index <= loadedImageIndex ? 'scale(1)' : 'scale(0.95)',
+            transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
+          }}
+        >
+          <PropertyCard
+            property={property}
+            isRental={true}
+            onClick={() => handlePropertyClick(property, index)}
+            gradeColors={gradeColors}
+          />
+        </div>
+      </div>
                   <div className={isBlurred ? 'filter blur-sm' : ''}>
                     <PropertyCard
                       property={property}
