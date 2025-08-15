@@ -599,13 +599,13 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
 
      <div className="bg-black/95 backdrop-blur-2xl border border-white/10 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <div className="p-8">
-          {/* Header */}
+       {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-3">
               {successStep === 1 && (
                 <div className="bg-blue-500/20 p-2 rounded-full">
                   <Unlock className="w-6 h-6 text-blue-400" />
-
+                </div>
               )}
               <h2 className="text-2xl font-bold text-white tracking-tighter">
                 {successStep === 1 && "Welcome to Unlimited!"}
