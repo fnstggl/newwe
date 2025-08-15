@@ -225,37 +225,50 @@ return (
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
-{/* Sophisticated Gemini-style gradient - Very subtle and refined */}
+  {/* Exact Gemini gradient recreation */}
                 
-                {/* Main gradient base - very soft */}
+                {/* Main bottom gradient - blue to purple horizontal flow */}
                 <div 
-                  className="absolute inset-0 rounded-2xl"
+                  className="absolute bottom-0 left-0 right-0 h-40 rounded-b-2xl"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(147, 51, 234, 0.05) 100%)'
+                    background: `
+                      linear-gradient(to top, 
+                        rgba(59, 130, 246, 0.25) 0%, 
+                        rgba(99, 102, 241, 0.15) 30%, 
+                        rgba(139, 92, 246, 0.08) 60%, 
+                        transparent 100%
+                      ),
+                      linear-gradient(to right, 
+                        rgba(59, 130, 246, 0.2) 0%, 
+                        rgba(99, 102, 241, 0.15) 40%, 
+                        rgba(168, 85, 247, 0.18) 70%, 
+                        rgba(244, 114, 182, 0.12) 100%
+                      )
+                    `
                   }}
                 ></div>
                 
-                {/* Bottom gradient glow - extremely subtle */}
+                {/* Bottom edge intensifier - bright blue glow */}
                 <div 
-                  className="absolute bottom-0 left-0 right-0 h-32 rounded-b-2xl"
+                  className="absolute bottom-0 left-0 right-0 h-8 rounded-b-2xl"
                   style={{
-                    background: 'linear-gradient(to top, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 50%, transparent 100%)'
+                    background: 'linear-gradient(to right, rgba(59, 130, 246, 0.3) 0%, rgba(139, 92, 246, 0.25) 100%)'
                   }}
                 ></div>
                 
-                {/* Right edge accent - barely visible */}
+                {/* Left edge blue accent */}
                 <div 
-                  className="absolute top-0 bottom-0 right-0 w-16 rounded-r-2xl"
+                  className="absolute bottom-0 left-0 w-24 h-32 rounded-bl-2xl"
                   style={{
-                    background: 'linear-gradient(to left, rgba(168, 85, 247, 0.04) 0%, transparent 100%)'
+                    background: 'radial-gradient(ellipse at bottom left, rgba(59, 130, 246, 0.2) 0%, transparent 70%)'
                   }}
                 ></div>
                 
-                {/* Bottom corner highlight - very soft */}
+                {/* Right edge purple accent */}
                 <div 
-                  className="absolute bottom-0 left-0 w-24 h-24 rounded-bl-2xl"
+                  className="absolute bottom-0 right-0 w-24 h-32 rounded-br-2xl"
                   style={{
-                    background: 'radial-gradient(circle at bottom left, rgba(34, 211, 238, 0.06) 0%, transparent 70%)'
+                    background: 'radial-gradient(ellipse at bottom right, rgba(168, 85, 247, 0.18) 0%, transparent 70%)'
                   }}
                 ></div>
                 
