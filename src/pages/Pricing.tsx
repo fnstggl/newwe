@@ -225,52 +225,9 @@ return (
           <div className="relative flex flex-col h-full">
             <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-[gradient_6s_ease_infinite]">
               <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
-  {/* Exact Gemini gradient recreation */}
-                
-                {/* Main bottom gradient - blue to purple horizontal flow */}
-                <div 
-                  className="absolute bottom-0 left-0 right-0 h-40 rounded-b-2xl"
-                  style={{
-                    background: `
-                      linear-gradient(to top, 
-                        rgba(59, 130, 246, 0.25) 0%, 
-                        rgba(99, 102, 241, 0.15) 30%, 
-                        rgba(139, 92, 246, 0.08) 60%, 
-                        transparent 100%
-                      ),
-                      linear-gradient(to right, 
-                        rgba(59, 130, 246, 0.2) 0%, 
-                        rgba(99, 102, 241, 0.15) 40%, 
-                        rgba(168, 85, 247, 0.18) 70%, 
-                        rgba(244, 114, 182, 0.12) 100%
-                      )
-                    `
-                  }}
-                ></div>
-                
-                {/* Bottom edge intensifier - bright blue glow */}
-                <div 
-                  className="absolute bottom-0 left-0 right-0 h-8 rounded-b-2xl"
-                  style={{
-                    background: 'linear-gradient(to right, rgba(59, 130, 246, 0.3) 0%, rgba(139, 92, 246, 0.25) 100%)'
-                  }}
-                ></div>
-                
-                {/* Left edge blue accent */}
-                <div 
-                  className="absolute bottom-0 left-0 w-24 h-32 rounded-bl-2xl"
-                  style={{
-                    background: 'radial-gradient(ellipse at bottom left, rgba(59, 130, 246, 0.2) 0%, transparent 70%)'
-                  }}
-                ></div>
-                
-                {/* Right edge purple accent */}
-                <div 
-                  className="absolute bottom-0 right-0 w-24 h-32 rounded-br-2xl"
-                  style={{
-                    background: 'radial-gradient(ellipse at bottom right, rgba(168, 85, 247, 0.18) 0%, transparent 70%)'
-                  }}
-                ></div>
+                {/* Gemini-style gradient overlay on bottom half */}
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/40 via-purple-500/30 via-pink-500/20 via-blue-400/25 to-transparent rounded-b-2xl blur-sm"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-cyan-400/20 via-blue-600/15 to-transparent rounded-b-2xl"></div>
                 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
