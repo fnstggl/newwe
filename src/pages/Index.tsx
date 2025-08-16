@@ -1027,25 +1027,27 @@ const DesktopIndex = () => {
           </div>
         </div>
           
-      {/* Hero Content - Always Visible */}
-<div className="relative z-10 min-h-screen flex items-center justify-center">
-  <div className="text-center px-4 py-20 max-w-6xl mx-auto">
-    <h1 className="text-6xl md:text-7xl lg:text-8xl font-inter font-bold mb-8 tracking-[-0.02em] text-white leading-[0.9]">
-      Find your dream home. And actually afford it.
-    </h1>
-    <p className="text-xl md:text-2xl mb-12 text-white/90 font-inter font-normal max-w-4xl mx-auto leading-relaxed">
-      Your unfair advantage in finding below-market & rent-stabilized homes.
-    </p>
-    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white text-black px-8 py-4 rounded-xl font-bold text-lg tracking-tight hover:bg-gray-100 transition-all duration-200 shadow-xl">
-        {user ? "See Deals" : "See Deals"}
-      </Link>
-      <Link to="/pricing" className="inline-block border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-white/10 transition-all duration-200">
-        Learn More
-      </Link>
-    </div>
-  </div>
-</div>
+       {/* Hero Section - Apple/Cursor Clean Style */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        {/* Clean Apple-style Hero Content */}
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-inter font-bold mb-6 tracking-[-0.02em] text-gray-900 leading-[0.95]">
+            Find your dream home.<br/>
+            And actually afford it.
+          </h1>
+          <p className="text-xl md:text-2xl mb-12 text-gray-600 font-inter font-normal max-w-3xl mx-auto leading-relaxed">
+            Your unfair advantage in finding below-market & rent-stabilized homes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-black text-white px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-gray-800 transition-all duration-200">
+              See Deals
+            </Link>
+            <Link to="/pricing" className="inline-block border border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-gray-50 transition-all duration-200">
+              Learn More
+            </Link>
+          </div>
+        </div>
+      </section>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
