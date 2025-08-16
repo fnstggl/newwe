@@ -1027,20 +1027,25 @@ const DesktopIndex = () => {
           </div>
         </div>
           
-        {/* Hero Content - Always Visible */}
-        <div className="relative z-10 min-h-[600px] flex items-center justify-center">
-          <div className="text-center px-4 py-20 max-w-none">
-            <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
-              Find your dream home. And actually afford it.
-            </h1>
-            <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
-              Your unfair advantage in finding below-market & rent-stabilized homes.
-            </p>
-            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
-              {user ? "See Deals" : "See Deals"}
-            </Link>
-          </div>
-        </div>
+      {/* Hero Content - Always Visible */}
+<div className="relative z-10 min-h-screen flex items-center justify-center">
+  <div className="text-center px-4 py-20 max-w-6xl mx-auto">
+    <h1 className="text-6xl md:text-7xl lg:text-8xl font-inter font-bold mb-8 tracking-[-0.02em] text-white leading-[0.9]">
+      Find your dream home. And actually afford it.
+    </h1>
+    <p className="text-xl md:text-2xl mb-12 text-white/90 font-inter font-normal max-w-4xl mx-auto leading-relaxed">
+      Your unfair advantage in finding below-market & rent-stabilized homes.
+    </p>
+    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white text-black px-8 py-4 rounded-xl font-bold text-lg tracking-tight hover:bg-gray-100 transition-all duration-200 shadow-xl">
+        {user ? "See Deals" : "See Deals"}
+      </Link>
+      <Link to="/pricing" className="inline-block border border-white/30 text-white px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-white/10 transition-all duration-200">
+        Learn More
+      </Link>
+    </div>
+  </div>
+</div>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
