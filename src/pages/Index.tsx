@@ -1009,7 +1009,7 @@ const DesktopIndex = () => {
 
   return (
     <div className="font-inter">
-     {/* Hero Section - Apple Style WITH Background */}
+           {/* Hero Section - Apple Style WITH Background */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image - Apple Treatment */}
         <div className="absolute inset-0 w-full h-full">
