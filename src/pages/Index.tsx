@@ -1009,43 +1009,33 @@ const DesktopIndex = () => {
 
   return (
     <div className="font-inter">
-      {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
-        {/* Background Image with Full Width */}
+     {/* Hero Section - Apple Style WITH Background */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image - Apple Treatment */}
         <div className="absolute inset-0 w-full h-full">
-          {/* Background Image with Fade-in Effect */}
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
+            className="bg-cover bg-center bg-no-repeat min-h-screen absolute inset-0 w-full h-full"
             style={{
               backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-              animationDuration: '3s',
-              animationDelay: '0s',
-              animationFillMode: 'both'
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/25"></div>
+            {/* Apple-style minimal overlay - just enough for text readability */}
+            <div className="absolute inset-0 bg-black/30"></div>
           </div>
         </div>
           
-       {/* Hero Section - Apple/Cursor Clean Style */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100">
-        {/* Clean Apple-style Hero Content */}
-        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-inter font-bold mb-6 tracking-[-0.02em] text-gray-900 leading-[0.95]">
+        {/* Apple Clean Hero Content */}
+        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-6 tracking-[-0.01em] text-white leading-[1.1]">
             Find your dream home.<br/>
             And actually afford it.
           </h1>
-          <p className="text-xl md:text-2xl mb-12 text-gray-600 font-inter font-normal max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl mb-10 text-white/90 font-inter font-normal max-w-2xl mx-auto leading-relaxed">
             Your unfair advantage in finding below-market & rent-stabilized homes.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-black text-white px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-gray-800 transition-all duration-200">
-              See Deals
-            </Link>
-            <Link to="/pricing" className="inline-block border border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg tracking-tight hover:bg-gray-50 transition-all duration-200">
-              Learn More
-            </Link>
-          </div>
+          <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white text-black px-10 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all duration-200 shadow-lg">
+            See Deals
+          </Link>
         </div>
       </section>
 
