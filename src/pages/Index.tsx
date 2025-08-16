@@ -1009,35 +1009,38 @@ const DesktopIndex = () => {
 
   return (
     <div className="font-inter">
-           {/* Hero Section - Apple Style WITH Background */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image - Apple Treatment */}
+      {/* Hero Section */}
+      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
+        {/* Background Image with Full Width */}
         <div className="absolute inset-0 w-full h-full">
+          {/* Background Image with Fade-in Effect */}
           <div 
-            className="bg-cover bg-center bg-no-repeat min-h-screen absolute inset-0 w-full h-full"
+            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
             style={{
               backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+              animationDuration: '3s',
+              animationDelay: '0s',
+              animationFillMode: 'both'
             }}
           >
-            {/* Apple-style minimal overlay - just enough for text readability */}
-            <div className="absolute inset-0 bg-black/30"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/30"></div>
           </div>
         </div>
           
-        {/* Apple Clean Hero Content */}
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-6 tracking-[-0.01em] text-white leading-[1.1]">
-            Find your dream home.<br/>
-            And actually afford it.
-          </h1>
-          <p className="text-lg md:text-xl mb-10 text-white/90 font-inter font-normal max-w-2xl mx-auto leading-relaxed">
-            Your unfair advantage in finding below-market & rent-stabilized homes.
-          </p>
-          <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white text-black px-10 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all duration-200 shadow-lg">
-            See Deals
-          </Link>
+        {/* Hero Content - Always Visible */}
+        <div className="relative z-10 min-h-[600px] flex items-center justify-center">
+          <div className="text-center px-4 py-20 max-w-none">
+            <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
+              Find your dream home. And actually afford it.
+            </h1>
+            <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
+              Your unfair advantage in finding below-market & rent-stabilized homes.
+            </p>
+            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+              {user ? "See Deals" : "See Deals"}
+            </Link>
+          </div>
         </div>
-      </section>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
