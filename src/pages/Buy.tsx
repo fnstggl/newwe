@@ -671,6 +671,18 @@ let query = supabase
       return;
     }
 
+      // 🔥 ADD THIS - tracks user behavior  
+  if (user?.id) {
+    supabase.from('user_clicks').insert({
+      user_id: user.id,
+      page_type: 'buy', // 🔥 For buy page
+      neighborhood: property.neighborhood,
+      bedrooms: property.bedrooms,
+      price: property.price, // Note: 'price' not 'monthly_rent' 
+      grade: property.grade
+    });
+  }
+
     // For logged out users clicking on blurred listings, show soft-gate modal
     if (!user && index >= 12) {
       setSoftGateModal({

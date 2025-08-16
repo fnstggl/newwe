@@ -963,6 +963,19 @@ const additionalNeighborhoods = [
       return;
     }
 
+     // 🔥 ADD THIS ONE LINE - tracks user behavior
+ if (user?.id) {
+  supabase.from('user_clicks').insert({
+    user_id: user.id,
+    page_type: 'rent', // 🔥 Add this
+    neighborhood: property.neighborhood,
+    bedrooms: property.bedrooms,
+    price: property.monthly_rent,
+    grade: property.grade
+  });
+}
+
+
     // For logged out users clicking on blurred listings, show soft-gate modal
     if (!user && index >= 12) {
       setSoftGateModal({
