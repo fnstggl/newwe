@@ -99,11 +99,19 @@ useEffect(() => {
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
-// TRUE SEQUENTIAL IMAGE LOADING - Replace the timer useEffect with this:
+// GRID-BASED SEQUENTIAL IMAGE LOADING:
 useEffect(() => {
   if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
     const nextIndex = loadedImageIndex + 1;
-    const nextProperty = properties[nextIndex];
+    
+    // Calculate grid position for next image to load
+    const columnsPerRow = isMobile ? 1 : 3; // 1 column on mobile, 3 on desktop
+    const row = Math.floor(nextIndex / columnsPerRow);
+    const col = nextIndex % columnsPerRow;
+    
+    // Find the actual property at this grid position
+    const gridIndex = row * columnsPerRow + col;
+    const nextProperty = properties[gridIndex];
     
     if (nextProperty?.images?.[0]) {
       setIsImageLoading(true);
@@ -117,7 +125,7 @@ useEffect(() => {
       
       img.onerror = () => {
         // If image fails to load, still move to next one
-        console.warn(`Failed to load image for property ${nextIndex}:`, nextProperty.images[0]);
+        console.warn(`Failed to load image for property at grid position ${nextIndex}:`, nextProperty.images[0]);
         setLoadedImageIndex(nextIndex);
         setIsImageLoading(false);
       };
@@ -129,7 +137,7 @@ useEffect(() => {
       setLoadedImageIndex(nextIndex);
     }
   }
-}, [properties, loadedImageIndex]);
+}, [properties, loadedImageIndex, isMobile]);
 
   // Track if any filters are active
   useEffect(() => {
