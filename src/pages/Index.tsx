@@ -992,29 +992,39 @@ const RotatingNeighborhoods = () => {
             key={`first-${index}`}
             className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
           >
-            {/* Exact same glassmorphic styling as testimonials */}
-            <div className="relative p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.02]">
-              {/* Discount Badge - Blue instead of Green */}
+            {/* Enhanced glassmorphic styling with better highlights */}
+            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-500 hover:scale-[1.05] hover:bg-white/12 hover:border-white/30">
+              
+              {/* Inner glow effect */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+              
+              {/* Top highlight line */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+              
+              {/* Discount Badge - Enhanced with glow */}
               <div className="absolute top-4 right-4">
-                <span className="bg-blue-500/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
+                <span className="bg-blue-500/30 text-blue-300 border border-blue-400/50 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
                   -{neighborhood.savings}
                 </span>
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16">
+              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16 drop-shadow-sm">
                 {neighborhood.name}
               </h3>
               
-              <div className="space-y-3">
+              <div className="space-y-3 relative z-10">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm tracking-tight">Market Avg:</span>
-                  <span className="text-gray-300 font-medium line-through">{neighborhood.avgPrice}</span>
+                  <span className="text-gray-300 text-sm tracking-tight">Market Avg:</span>
+                  <span className="text-gray-200 font-medium line-through">{neighborhood.avgPrice}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm tracking-tight">Our Deals:</span>
-                  <span className="text-blue-400 font-bold text-lg">{neighborhood.dealPrice}</span>
+                  <span className="text-gray-300 text-sm tracking-tight">Our Deals:</span>
+                  <span className="text-blue-300 font-bold text-lg drop-shadow-sm">{neighborhood.dealPrice}</span>
                 </div>
               </div>
+              
+              {/* Bottom highlight line */}
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             </div>
           </div>
         ))}
@@ -1024,29 +1034,39 @@ const RotatingNeighborhoods = () => {
             key={`second-${index}`}
             className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
           >
-            {/* Exact same glassmorphic styling as testimonials */}
-            <div className="relative p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.02]">
-              {/* Discount Badge - Blue instead of Green */}
+            {/* Enhanced glassmorphic styling with better highlights */}
+            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-500 hover:scale-[1.05] hover:bg-white/12 hover:border-white/30">
+              
+              {/* Inner glow effect */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+              
+              {/* Top highlight line */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+              
+              {/* Discount Badge - Enhanced with glow */}
               <div className="absolute top-4 right-4">
-                <span className="bg-blue-500/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
+                <span className="bg-blue-500/30 text-blue-300 border border-blue-400/50 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
                   -{neighborhood.savings}
                 </span>
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16">
+              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16 drop-shadow-sm">
                 {neighborhood.name}
               </h3>
               
-              <div className="space-y-3">
+              <div className="space-y-3 relative z-10">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm tracking-tight">Market Avg:</span>
-                  <span className="text-gray-300 font-medium line-through">{neighborhood.avgPrice}</span>
+                  <span className="text-gray-300 text-sm tracking-tight">Market Avg:</span>
+                  <span className="text-gray-200 font-medium line-through">{neighborhood.avgPrice}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm tracking-tight">Our Deals:</span>
-                  <span className="text-blue-400 font-bold text-lg">{neighborhood.dealPrice}</span>
+                  <span className="text-gray-300 text-sm tracking-tight">Our Deals:</span>
+                  <span className="text-blue-300 font-bold text-lg drop-shadow-sm">{neighborhood.dealPrice}</span>
                 </div>
               </div>
+              
+              {/* Bottom highlight line */}
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             </div>
           </div>
         ))}
@@ -1173,21 +1193,29 @@ const DesktopIndex = () => {
       {/* How It Works - Scroll Jacked Version */}
       <ScrollJackedSection />
 
-    {/* Featured Neighborhoods - Rotating Carousel */}
-<section className="py-20 px-4 w-full">
-  <div className="text-center mb-12">
-    <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+  {/* Featured Neighborhoods - Rotating Carousel */}
+<section className="py-20 px-4 w-full relative overflow-hidden">
+  {/* Background with gradient and glowing orbs - same as testimonials */}
+  <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
+  <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/15 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-tl from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
+  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-white/5 to-white/10 rounded-full blur-3xl"></div>
+  
+  <div className="text-center mb-12 relative z-10">
+    <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter text-white">
       Stop overpaying in every neighborhood.
     </h2>
-    <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto mb-8">
+    <p className="text-xl text-gray-300 tracking-tight max-w-3xl mx-auto mb-8">
       Our algorithms find below-market deals across all of NYC's top neighborhoods.
     </p>
   </div>
   
   {/* Rotating Neighborhoods */}
-  <RotatingNeighborhoods />
+  <div className="relative z-10">
+    <RotatingNeighborhoods />
+  </div>
   
-  <div className="text-center mt-12">
+  <div className="text-center mt-12 relative z-10">
     <Link to="/rent">
       <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
         Explore Homes
