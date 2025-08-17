@@ -24,6 +24,7 @@ import OpenDoor from "./pages/OpenDoor";
 import Navbar from "./components/Navbar";
 import MobileNavigation from "./components/MobileNavigation";
 import OnboardingPopup from "./components/OnboardingPopup";
+import ScrollToTop from "./components/ScrollToTop"; // Add this import
 import { useState } from "react";
 import Checkout from "./pages/Checkout";
 import ForYou from "./pages/ForYou";
@@ -33,9 +34,10 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
-
+  
   return (
     <div className="min-h-screen bg-black text-white font-inter">
+      <ScrollToTop /> {/* Add this line */}
       <Navbar />
       <Routes>
         <Route path="/" element={<Index />} />
