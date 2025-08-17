@@ -1407,7 +1407,7 @@ return (
                           Create free account to see more
                         </button>
                         <p className="text-xs text-gray-400 mt-3">
-                        6,000+ New Yorkers already beating the market
+                        10,000+ New Yorkers already beating the market
                         </p>
                       </div>
                     </div>
@@ -1454,7 +1454,7 @@ return (
                           Create free account to continue
                         </button>
                         <p className="text-xs text-gray-400">
-                          6,000+ New Yorkers already beating the market
+                          10,000+ New Yorkers already beating the market
                         </p>
                       </div>
                     </div>
@@ -1474,7 +1474,7 @@ return (
                           Try Unlimited Access for Free
                         </button>
                         <p className="text-xs text-gray-400">
-                          6,000+ New Yorkers already beating the market
+                          10,000+ New Yorkers already beating the market
                         </p>
                       </div>
                     </div>

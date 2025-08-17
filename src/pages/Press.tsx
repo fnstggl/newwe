@@ -90,7 +90,7 @@ const Press = () => {
               After seeing first-hand how we were losing our community to rising rents, and a background in real estate & software-dev we built something we wished had existed sooner.
             </p>
             <p>
-              Realer Estate is an AI-powered platform that scans NYC listings in real time to surface rent-stabilized and undervalued apartments—before they disappear. It's already helped over 6,000 New Yorkers search for more affordable homes, and we're just getting started.
+              Realer Estate is an AI-powered platform that scans NYC listings in real time to surface rent-stabilized and undervalued apartments—before they disappear. It's already helped over 10,000 New Yorkers search for more affordable homes, and we're just getting started.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ const Press = () => {
             <div className="text-gray-400 text-sm">Redefining the NYC real estate market</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">
-            <div className="text-2xl font-bold mb-2">6000+ New Yorkers</div>
+            <div className="text-2xl font-bold mb-2">10,000+ New Yorkers</div>
             <div className="text-gray-400 text-sm">Finding more affordable homes</div>
           </div>
           <div className="p-6 rounded-xl bg-black/50 border border-gray-800 hover:border-blue-500/40 transition-all">

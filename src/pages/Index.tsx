@@ -674,7 +674,7 @@ const getGradeColors = (grade) => {
         >
           Create free account to continue
         </button>
-        <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+        <p className="text-xs text-gray-400">10,000+ New Yorkers already beating the market</p>
       </div>
     </div>
   )}
@@ -692,7 +692,7 @@ const getGradeColors = (grade) => {
         >
           Try Unlimited Access for Free
         </button>
-        <p className="text-xs text-gray-400">6,000+ New Yorkers already beating the market</p>
+        <p className="text-xs text-gray-400">10,000+ New Yorkers already beating the market</p>
       </div>
     </div>
   )}
