@@ -1034,7 +1034,7 @@ const DesktopIndex = () => {
         Find your dream home. And actually afford it.
       </h1>
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
-        Your unfair advantage in finding below-market & rent-stabilized homes.
+        Your unfair advantage for finding below-market & rent-stabilized homes in the city.
       </p>
       <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
         {user ? "See Deals" : "See Deals"}
