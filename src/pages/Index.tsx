@@ -1026,7 +1026,17 @@ const DesktopIndex = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/30"></div>
           </div>
         </div>
-          
+
+  {/* Glassmorphic Pill - NEW ADDITION */}
+  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+    <div className="bg-black/20 backdrop-blur-md border border-white/20 rounded-full px-6 py-3">
+      <span className="text-white text-sm font-medium tracking-tight">
+        10,000+ New Yorkers already beating the market
+      </span>
+    </div>
+  </div>
+    
+        
         {/* Hero Content - Always Visible */}
         <div className="relative z-10 min-h-[600px] flex items-center justify-center">
           <div className="text-center px-4 py-20 max-w-none">
@@ -1066,7 +1076,7 @@ const DesktopIndex = () => {
             It shouldn't be this hard to find a home in the city.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using data-driven algorithms trained to analyze the NYC housing market and find the best undervalued & rent-stabilized deals in the city, statistically.
+          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals, saving you thousands.
           </p>
         </div>
         
