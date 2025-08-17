@@ -1067,7 +1067,7 @@ const DesktopIndex = () => {
       <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Finding a home in the city that's not wildly overpriced doesn't need to be impossible.
+            It doesn't need to be this hard to find a home you can afford.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
           11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals, first.
