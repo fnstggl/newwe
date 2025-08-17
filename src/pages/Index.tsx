@@ -1036,11 +1036,26 @@ const DesktopIndex = () => {
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
         Your unfair advantage for finding below-market & rent-stabilized homes in the city.
       </p>
-      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
-        {user ? "See Deals" : "See Deals"}
+       {/* Split CTAs */}
+    <div className="flex items-center justify-center gap-6 transform translate-y-[110px]">
+      {/* Rent Button */}
+      <Link
+        to="/rent"
+        className="inline-block bg-white text-black font-inter px-10 py-4 rounded-full font-bold text-xl tracking-tighter shadow-xl hover:shadow-[0_0_18px_rgba(255,255,255,0.8)] transition-all duration-300"
+      >
+        Rent
+      </Link>
+
+      {/* Buy Button */}
+      <Link
+        to="/buy"
+        className="inline-block bg-black text-white font-inter px-10 py-4 rounded-full font-bold text-xl tracking-tighter shadow-xl hover:shadow-[0_0_18px_rgba(0,0,0,0.8)] transition-all duration-300"
+      >
+        Buy
       </Link>
     </div>
   </div>
+</div>
   
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
