@@ -1029,8 +1029,8 @@ const DesktopIndex = () => {
 
 {/* Glassmorphic Trust Badge - IMPROVED */}
 <div className="absolute top-46 left-1/2 transform -translate-x-1/2 z-20">
-  <div className="bg-black/60 backdrop-blur-xl border border-white/40 rounded-full px-4 py-2 shadow-lg">
-    <span className="text-white text-xs font-semibold tracking-tight">
+  <div className="bg-black/60 backdrop-blur-xl border border-white/40 rounded-full px-3 py-1.5 shadow-lg">
+  <span className="text-white text-xs font-semibold tracking-tight">
       10,000+ New Yorkers already beating the market
     </span>
   </div>
