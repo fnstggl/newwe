@@ -876,6 +876,7 @@ if (reset) {
   } finally {
     setLoading(false);
   }
+}; // End of fetchProperties
 
 
   const loadMore = () => {
