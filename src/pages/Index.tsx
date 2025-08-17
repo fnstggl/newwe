@@ -1066,7 +1066,7 @@ const DesktopIndex = () => {
             It shouldn't be this hard to find a home in the city.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals, saving you thousands.
+          Using data-driven algorithms trained to analyze the NYC housing market and find the best undervalued & rent-stabilized deals in the city, statistically.
           </p>
         </div>
         
