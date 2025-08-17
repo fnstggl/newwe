@@ -1009,12 +1009,13 @@ const DesktopIndex = () => {
 
   return (
     <div className="font-inter">
-{/* Hero Section */}
-<section className="relative min-h-[680px] flex items-start justify-center overflow-hidden px-0 pt-0">
-  {/* Background Image */}
+      {/* Hero Section */}
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
+  {/* Background Image with Full Width */}
   <div className="absolute inset-0 w-full h-full">
-    <div
-      className="bg-cover bg-center bg-no-repeat absolute inset-0 w-full h-full animate-fade-in"
+    {/* Background Image with Fade-in Effect */}
+    <div 
+      className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
       style={{
         backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
         animationDuration: '3s',
@@ -1022,39 +1023,24 @@ const DesktopIndex = () => {
         animationFillMode: 'both'
       }}
     >
-      {/* darken top slightly so text pops; keep bottom readable */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/90"></div>
     </div>
   </div>
-
-  {/* Hero Content (lifted higher) */}
-  <div className="relative z-10 w-full">
-    <div className="mx-auto max-w-[1100px] px-4 pt-24 md:pt-36 text-center">
-      {/* bigger, bolder, no translate-y pushing it down */}
-      <h1 className="text-white font-inter font-semibold tracking-[-0.075em] text-[40px] md:text-[72px] leading-[1.05] mb-5">
+    
+  {/* Hero Content - Always Visible */}
+  <div className="relative z-10 min-h-[600px] flex items-center justify-center">
+    <div className="text-center px-4 py-20 max-w-none">
+      <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
         Find your dream home. And actually afford it.
       </h1>
-
-      <p className="text-white/85 font-inter font-medium tracking-[-0.02em] text-lg md:text-2xl mb-10">
-        Your unfair advantage in finding below-market & rent-stabilized homes.
+      <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
+        Your unfair advantage for finding below-market & rent-stabilized homes in the city.
       </p>
-
-      {/* Split CTAs */}
-      <div className="flex items-center justify-center gap-5">
-        <Link
-          to="/rent"
-          className="inline-flex items-center justify-center rounded-full px-10 md:px-12 py-4 md:py-5 text-lg md:text-xl font-bold bg-white text-black shadow-xl hover:shadow-[0_0_18px_rgba(255,255,255,0.7)] transition"
-        >
-          Rent
-        </Link>
-
-        <Link
-          to="/buy"
-          className="inline-flex items-center justify-center rounded-full px-10 md:px-12 py-4 md:py-5 text-lg md:text-xl font-bold bg-black/90 text-white hover:bg-black transition border border-white/15"
-        >
-          Buy
-        </Link>
-      </div>
+      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+        {user ? "See Deals" : "See Deals"}
+      </Link>
+    </div>
+  </div>
   
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
