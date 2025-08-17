@@ -990,24 +990,30 @@ const RotatingNeighborhoods = () => {
         {neighborhoods.map((neighborhood, index) => (
           <div
             key={`first-${index}`}
-            className="flex-shrink-0 w-80 mx-4 p-6 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
+            className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
           >
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xl font-bold text-white tracking-tight">
+            {/* Exact same glassmorphic styling as testimonials */}
+            <div className="relative p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.02]">
+              {/* Discount Badge - Blue instead of Green */}
+              <div className="absolute top-4 right-4">
+                <span className="bg-blue-500/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
+                  -{neighborhood.savings}
+                </span>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16">
                 {neighborhood.name}
               </h3>
-              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
-                -{neighborhood.savings}
-              </span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Market Avg:</span>
-                <span className="text-gray-300 line-through">{neighborhood.avgPrice}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Our Deals:</span>
-                <span className="text-white font-semibold">{neighborhood.dealPrice}</span>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm tracking-tight">Market Avg:</span>
+                  <span className="text-gray-300 font-medium line-through">{neighborhood.avgPrice}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm tracking-tight">Our Deals:</span>
+                  <span className="text-blue-400 font-bold text-lg">{neighborhood.dealPrice}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1016,24 +1022,30 @@ const RotatingNeighborhoods = () => {
         {neighborhoods.map((neighborhood, index) => (
           <div
             key={`second-${index}`}
-            className="flex-shrink-0 w-80 mx-4 p-6 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
+            className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
           >
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xl font-bold text-white tracking-tight">
+            {/* Exact same glassmorphic styling as testimonials */}
+            <div className="relative p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-500 hover:scale-[1.02]">
+              {/* Discount Badge - Blue instead of Green */}
+              <div className="absolute top-4 right-4">
+                <span className="bg-blue-500/20 text-blue-400 border border-blue-400/30 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
+                  -{neighborhood.savings}
+                </span>
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16">
                 {neighborhood.name}
               </h3>
-              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
-                -{neighborhood.savings}
-              </span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Market Avg:</span>
-                <span className="text-gray-300 line-through">{neighborhood.avgPrice}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Our Deals:</span>
-                <span className="text-white font-semibold">{neighborhood.dealPrice}</span>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm tracking-tight">Market Avg:</span>
+                  <span className="text-gray-300 font-medium line-through">{neighborhood.avgPrice}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm tracking-tight">Our Deals:</span>
+                  <span className="text-blue-400 font-bold text-lg">{neighborhood.dealPrice}</span>
+                </div>
               </div>
             </div>
           </div>
