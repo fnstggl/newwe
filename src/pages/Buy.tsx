@@ -47,6 +47,7 @@ const Buy = () => {
  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 const [loadedImageIndex, setLoadedImageIndex] = useState(-1);
 const [isImageLoading, setIsImageLoading] = useState(false);
+const [imageLoadQueue, setImageLoadQueue] = useState<string[]>([]);
 
 
 
@@ -94,17 +95,39 @@ const getVisibilityLimit = () => {
 useEffect(() => {
   if (properties.length > 0) {
     setLoadedImageIndex(-1); // Reset image loading
+    setIsImageLoading(false); // Reset loading state
   }
 }, [searchTerm, zipCode, maxPrice, bedrooms, minGrade, selectedNeighborhoods, selectedBoroughs, minSqft, addressSearch, minDiscount, sortBy]);
 
-// ADD THIS NEW useEffect FOR CASCADING IMAGE LOADING:
+// TRUE SEQUENTIAL IMAGE LOADING - Replace the timer useEffect with this:
 useEffect(() => {
   if (properties.length > 0 && loadedImageIndex < properties.length - 1) {
-    const timer = setTimeout(() => {
-      setLoadedImageIndex(prev => prev + 1);
-    }, 150); // 150ms delay between each image load
+    const nextIndex = loadedImageIndex + 1;
+    const nextProperty = properties[nextIndex];
     
-    return () => clearTimeout(timer);
+    if (nextProperty?.images?.[0]) {
+      setIsImageLoading(true);
+      
+      const img = new Image();
+      
+      img.onload = () => {
+        setLoadedImageIndex(nextIndex);
+        setIsImageLoading(false);
+      };
+      
+      img.onerror = () => {
+        // If image fails to load, still move to next one
+        console.warn(`Failed to load image for property ${nextIndex}:`, nextProperty.images[0]);
+        setLoadedImageIndex(nextIndex);
+        setIsImageLoading(false);
+      };
+      
+      // Start loading the image
+      img.src = nextProperty.images[0];
+    } else {
+      // No image to load, just increment the index
+      setLoadedImageIndex(nextIndex);
+    }
   }
 }, [properties, loadedImageIndex]);
 
@@ -579,10 +602,11 @@ let query = supabase
   setProperties(resultData);
   setOffset(ITEMS_PER_PAGE);
   setLoadedImageIndex(-1); // Reset image loading for new properties
+  setIsImageLoading(false); // Reset loading state
 } else {
   setProperties(prev => [...prev, ...resultData]);
   setOffset(prev => prev + ITEMS_PER_PAGE);
-  // Don't reset loadedImageIndex for load more - continue cascading
+  // Don't reset loadedImageIndex for load more - continue from where we left off
 }
 
   } catch (error) {
