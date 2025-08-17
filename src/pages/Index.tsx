@@ -970,6 +970,8 @@ const getGradeColors = (grade) => {
 
 // Rotating Neighborhoods Component
 const RotatingNeighborhoods = () => {
+  const navigate = useNavigate(); // Add this at the top of the component
+  
   const neighborhoods = [
     { name: "SoHo", avgPrice: "$2,100/sqft", dealPrice: "$1,350/sqft", savings: "36%" },
     { name: "Bushwick", avgPrice: "$930/sqft", dealPrice: "$690/sqft", savings: "26%" },
@@ -991,9 +993,10 @@ const RotatingNeighborhoods = () => {
           <div
             key={`first-${index}`}
             className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
+            onClick={() => navigate('/rent')} // Add click handler
           >
-            {/* Enhanced glassmorphic styling with better highlights */}
-            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-500 hover:scale-[1.05] hover:bg-white/12 hover:border-white/30">
+            {/* Enhanced glassmorphic styling with smoother, smaller scale */}
+            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-700 ease-out hover:scale-[1.03] hover:bg-white/12 hover:border-white/30">
               
               {/* Inner glow effect */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
@@ -1033,9 +1036,10 @@ const RotatingNeighborhoods = () => {
           <div
             key={`second-${index}`}
             className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
+            onClick={() => navigate('/rent')} // Add click handler
           >
-            {/* Enhanced glassmorphic styling with better highlights */}
-            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-500 hover:scale-[1.05] hover:bg-white/12 hover:border-white/30">
+            {/* Enhanced glassmorphic styling with smoother, smaller scale */}
+            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-700 ease-out hover:scale-[1.03] hover:bg-white/12 hover:border-white/30">
               
               {/* Inner glow effect */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
