@@ -133,7 +133,7 @@ const SoftGateModal: React.FC<SoftGateModalProps> = ({
 
         {/* Social proof */}
         <p className="text-gray-500 text-sm mb-4">
-          6000+ New Yorkers already searching
+          10,000+ New Yorkers already searching
         </p>
 
         {/* Dismiss link */}
