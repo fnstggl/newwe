@@ -1070,7 +1070,7 @@ const DesktopIndex = () => {
             It shouldn't be this hard to find a home in the city.
           </h2>
           <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          Using AI algorithms trained on market data to find you the best undervalued & rent-stabilized deals, saving you thousands.
+          The average rental has 11 renters competing for it. Get there first.
           </p>
         </div>
         
