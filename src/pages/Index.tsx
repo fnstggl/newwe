@@ -31,28 +31,25 @@ const ScrollJackedSection = () => {
   const text3Opacity = useTransform(scrollYProgress, [0.58, 0.75, 1], [0, 1, 1]);
 
   const textContent = [
-  {
-    title: "We scan 30,000+ listings a week",
-    subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
-    opacity: text1Opacity,
-    y: text1Y
-    // Remove: gradient: "from-blue-400 via-purple-400 to-pink-400"
-  },
-  {
-    title: "We flag listings up to 60% below-market", 
-    subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
-    opacity: text2Opacity,
-    y: text2Y
-    // Remove: gradient: "from-green-400 via-blue-400 to-purple-400"
-  },
-  {
-    title: "Save $925/mo on rent, $101k when buying",
-    subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
-    opacity: text3Opacity,
-    y: text3Y
-    // Remove: gradient: "from-yellow-400 via-orange-400 to-red-400"
-  }
-];
+    {
+      title: "We scan 30,000+ listings a week",
+      subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
+      opacity: text1Opacity,
+      y: text1Y
+    },
+    {
+      title: "We flag listings up to 60% below-market", 
+      subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
+      opacity: text2Opacity,
+      y: text2Y
+    },
+    {
+      title: "Save $925/mo on rent, $101k when buying",
+      subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
+      opacity: text3Opacity,
+      y: text3Y
+    }
+  ];
 
   return (
     <section ref={containerRef} className="relative h-[400vh] bg-black">
@@ -971,195 +968,9 @@ const getGradeColors = (grade) => {
   );
 };
 
-// Opal-Style Desktop Index Component
+// Desktop Index Component (COMPLETELY UNCHANGED)
 const DesktopIndex = () => {
   const { user } = useAuth();
-
-  // Problem Section with Scroll Animation
-  const ProblemSection = () => {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: ref,
-      offset: ["start 0.8", "end 0.2"]
-    });
-
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-    const titleY = useTransform(scrollYProgress, [0, 0.5], [50, 0]);
-
-    return (
-      <motion.section 
-        ref={ref}
-        className="pt-20 pb-32 px-4 max-w-6xl mx-auto"
-      >
-        <div className="text-center mb-16">
-          <motion.h2 
-            style={{ opacity: titleOpacity, y: titleY }}
-            className="text-5xl md:text-7xl font-bold mb-8 tracking-[-0.075em]"
-          >
-            <span className="bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-transparent">
-              It shouldn't be this hard to find a home in the city.
-            </span>
-          </motion.h2>
-          <motion.p 
-            style={{ opacity: titleOpacity, y: titleY }}
-            className="text-2xl text-gray-400 tracking-tight max-w-4xl mx-auto font-light"
-          >
-            The average rental has 11 renters competing for it. Get there first.
-          </motion.p>
-        </div>
-        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
-      </motion.section>
-    );
-  };
-
-  // Enhanced ScrollJackedSection with Gradient Text
-  const EnhancedScrollJackedSection = () => {
-    const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: containerRef,
-      offset: ["start end", "end start"]
-    });
-
-    const text1Y = useTransform(scrollYProgress, [0, 0.33], [0, -100]);
-    const text2Y = useTransform(scrollYProgress, [0, 0.33, 0.66], [100, 0, -100]);
-    const text3Y = useTransform(scrollYProgress, [0.33, 0.66, 1], [200, 100, 0]);
-
-    const text1Opacity = useTransform(scrollYProgress, [0, 0.25, 0.33], [1, 1, 0]);
-    const text2Opacity = useTransform(scrollYProgress, [0.25, 0.58, 0.66], [0, 1, 0]);
-    const text3Opacity = useTransform(scrollYProgress, [0.58, 0.75, 1], [0, 1, 1]);
-
-    const textContent = [
-      {
-        title: "We scan 30,000+ listings a week",
-        subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
-        opacity: text1Opacity,
-        y: text1Y,
-        gradient: "from-blue-400 via-purple-400 to-pink-400"
-      },
-      {
-        title: "We flag listings up to 60% below-market", 
-        subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
-        opacity: text2Opacity,
-        y: text2Y,
-        gradient: "from-green-400 via-blue-400 to-purple-400"
-      },
-      {
-        title: "Save $925/mo on rent, $101k when buying",
-        subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
-        opacity: text3Opacity,
-        y: text3Y,
-        gradient: "from-yellow-400 via-orange-400 to-red-400"
-      }
-    ];
-
-    return (
-      <section ref={containerRef} className="relative h-[400vh] bg-black">
-        <div className="sticky top-0 h-screen flex flex-col">
-          <div className="w-full text-center py-12 px-4">
-            <h2 className="text-5xl md:text-6xl font-bold tracking-[-0.075em] bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              The housing market in NYC is rigged. Now you can beat it.
-            </h2>
-          </div>
-
-          <div className="flex-1 flex items-center px-8">
-            <div className="w-full max-w-none mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center h-full">
-                
-                <div className="relative order-2 lg:order-1">
-                  <img 
-                    src="/lovable-uploads/desk5.png" 
-                    alt="Realer Estate desktop platform showing NYC property scan" 
-                    className="w-full rounded-2xl shadow-2xl"
-                  />
-                </div>
-
-                <div className="order-1 lg:order-2 relative min-h-[300px] overflow-hidden">
-                  {textContent.map((content, index) => (
-                    <motion.div
-                      key={index}
-                      className="absolute inset-0 flex flex-col justify-center"
-                      style={{ 
-                        opacity: content.opacity,
-                        y: content.y
-                      }}
-                    >
-                      <div className="space-y-8">
-                        <h3 className={`text-4xl md:text-6xl font-inter font-bold tracking-[-0.075em] bg-gradient-to-r ${content.gradient} bg-clip-text text-transparent`}>
-                          {content.title}
-                        </h3>
-                        <p className="text-xl md:text-2xl text-gray-300 font-inter tracking-tight leading-relaxed font-light">
-                          {content.subtitle}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  };
-
-  // Final CTA with Scroll Animation
-  const FinalCTASection = () => {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: ref,
-      offset: ["start 0.8", "end 0.2"]
-    });
-
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
-    const titleScale = useTransform(scrollYProgress, [0, 0.6], [0.8, 1]);
-
-    return (
-      <motion.section ref={ref} className="py-32 px-4 relative overflow-hidden">
-        {/* Enhanced Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-purple-600/40 to-blue-800/50"></div>
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[800px] bg-gradient-to-br from-blue-500/50 via-cyan-400/40 to-blue-600/60 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[800px] h-[600px] bg-gradient-to-tl from-purple-500/40 via-blue-400/30 to-cyan-500/50 rounded-full blur-2xl"></div>        
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.h2 
-            style={{ opacity: titleOpacity, scale: titleScale }}
-            className="text-6xl md:text-8xl font-bold mb-8 tracking-[-0.075em]"
-          >
-<span className="bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
-              Let the apartment hunt end here.
-            </span>
-          </motion.h2>
-          <motion.p 
-            style={{ opacity: titleOpacity }}
-            className="text-2xl text-gray-300 mb-16 tracking-tight font-light"
-          >
-            Join the platform actually built for renters & buyers.
-          </motion.p>
-          <motion.div style={{ opacity: titleOpacity }}>
-            <Link to="/join" className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-5 rounded-full font-bold text-xl tracking-tight hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all duration-300 shadow-2xl">
-              Join now.
-            </Link>
-          </motion.div>
-          
-          {/* Footer Links */}
-          <motion.div style={{ opacity: titleOpacity }} className="mt-20 mb-2">
-            <div className="flex justify-center space-x-8 text-sm text-gray-400">
-              <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-gray-300 transition-colors">
-                Terms of Service
-              </Link>
-              <Link to="/press" className="hover:text-gray-300 transition-colors">
-                Press
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-    );
-  };
 
   useEffect(() => {
     // Update meta tags for SEO - Home page
@@ -1198,90 +1009,100 @@ const DesktopIndex = () => {
 
   return (
     <div className="font-inter">
-      {/* Hero Section - Enhanced Opal Style */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-0 pt-0">
-        {/* Background Image with Full Width */}
-        <div className="absolute inset-0 w-full h-full">
-          {/* Background Image with Fade-in Effect */}
-          <div 
-            className="bg-cover bg-center bg-no-repeat min-h-screen absolute inset-0 animate-fade-in w-full h-full"
-            style={{
-              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-              animationDuration: '3s',
-              animationDelay: '0s',
-              animationFillMode: 'both'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/90"></div>
-          </div>
-        </div>
-        
-        {/* Hero Content - Opal Style */}
-        <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="text-center px-4 py-20 max-w-none">
-            <h1 className="text-6xl md:text-8xl font-inter font-bold mb-8 tracking-[-0.075em] transform translate-y-[60px]">
-              <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                Find your dream home.
-              </span>
-              <br />
-              <span className="bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
-                And actually afford it.
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl mb-16 text-gray-300 font-inter font-light transform translate-y-[60px] tracking-[-0.075em] max-w-4xl mx-auto">
-              Your unfair advantage for finding below-market & rent-stabilized homes in the city.
-            </p>
-            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-5 rounded-full font-bold text-xl tracking-tight transform translate-y-[40px] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all duration-300 shadow-2xl">
-              {user ? "See Deals" : "See Deals"}
-            </Link>
-          </div>
+      {/* Hero Section */}
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
+  {/* Background Image with Full Width */}
+  <div className="absolute inset-0 w-full h-full">
+    {/* Background Image with Fade-in Effect */}
+    <div 
+      className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
+      style={{
+        backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+        animationDuration: '3s',
+        animationDelay: '0s',
+        animationFillMode: 'both'
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/90"></div>
+    </div>
+  </div>
+    
+  {/* Hero Content - Always Visible */}
+  <div className="relative z-10 min-h-[600px] flex items-center justify-center">
+    <div className="text-center px-4 py-20 max-w-none">
+      <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
+        Find your dream home. And actually afford it.
+      </h1>
+      <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
+        Your unfair advantage for finding below-market & rent-stabilized homes in the city.
+      </p>
+      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+        {user ? "See Deals" : "See Deals"}
+      </Link>
+    </div>
+  </div>
+  
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          
         </div>
       </section>
 
-      {/* Testimonials Section */}
+            {/* Testimonials Section */}
       <TestimonialsSection />
 
-      {/* Product Mockup Section - Enhanced */}
-      <section className="pt-20 pb-32 px-4 max-w-6xl mx-auto">
+
+      {/* Product Mockup Section */}
+      <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center">
           <img 
             src="/lovable-uploads/rainbow-glow-mockup3.png" 
             alt="Realer Estate platform showing rental listings" 
-            className="w-full max-w-5xl mx-auto rounded-3xl shadow-2xl hover:shadow-[0_0_50px_rgba(99,102,241,0.3)] transition-all duration-500"
+            className="w-full max-w-5xl mx-auto rounded-2xl shadow-2xl"
           />
         </div>
       </section>
     
-      {/* Problem Section - With Scroll Animation */}
-      <ProblemSection />
+      {/* Problem Section */}
+      <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+            Finding a home in the city that's not wildly overpriced doesn't need to be impossible.
+          </h2>
+          <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
+          11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals, first.
+          </p>
+        </div>
+        
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
+      </section>
 
-      {/* How It Works - Enhanced Scroll Jacked Version */}
-      <EnhancedScrollJackedSection />
+      {/* How It Works - Scroll Jacked Version */}
+      <ScrollJackedSection />
 
-      {/* Featured Neighborhoods - Enhanced */}
-      <section className="py-32 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 tracking-[-0.075em] bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-transparent">
+      {/* Featured Neighborhoods */}
+      <section className="py-20 px-4 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Stop overpaying in every neighborhood.
           </h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-            <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">SoHo</h3>
-              <p className="text-gray-400 tracking-tight text-lg">Avg $2,100/sqft → Deals from $1,350/sqft</p>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
+            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all">
+              <h3 className="text-xl font-semibold mb-2 tracking-tight">SoHo</h3>
+              <p className="text-gray-400 tracking-tight">Avg $2,100/sqft → Deals from $1,350/sqft</p>
             </div>
-            <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">Bushwick</h3>
-              <p className="text-gray-400 tracking-tight text-lg">Avg $930/sqft → Deals from $690/sqft</p>
+            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all">
+              <h3 className="text-xl font-semibold mb-2 tracking-tight">Bushwick</h3>
+              <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690/sqft</p>
             </div>
           </div>
           <Link to="/rent">
-            <HoverButton className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold px-8 py-4 text-lg tracking-tight hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-300">
+            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
               Explore Homes
             </HoverButton>
           </Link>
         </div>
       </section>
-    
     
       {/* Final CTA */}
       <section className="py-20 pb-0 px-4 relative overflow-hidden">
@@ -1290,7 +1111,7 @@ const DesktopIndex = () => {
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-6xl md:text-8xl font-bold mb-8 tracking-[-0.075em] bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
             Let the apartment hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
