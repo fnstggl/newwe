@@ -1041,12 +1041,16 @@ const DesktopIndex = () => {
       </Link>
     </div>
   </div>
-
+  
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           
         </div>
       </section>
+
+            {/* Testimonials Section */}
+      <TestimonialsSection />
+
 
       {/* Product Mockup Section */}
       <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
@@ -1100,9 +1104,6 @@ const DesktopIndex = () => {
         </div>
       </section>
     
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-
       {/* Final CTA */}
       <section className="py-20 pb-0 px-4 relative overflow-hidden">
         {/* Blue Gradient Blob Background */}
