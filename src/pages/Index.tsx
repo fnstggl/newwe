@@ -1010,8 +1010,8 @@ const DesktopIndex = () => {
   return (
     <div className="font-inter">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-8 pt-8 bg-black">
-        <div className="relative w-full max-w-7xl h-[500px] rounded-3xl overflow-hidden">
+      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-4 pt-4 bg-black">
+        <div className="relative w-full max-w-7xl h-[500px] rounded-2xl overflow-hidden">
           <div 
             className="bg-cover bg-center bg-no-repeat h-full w-full animate-fade-in"
             style={{
@@ -1024,11 +1024,11 @@ const DesktopIndex = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20"></div>
           </div>
 
-          {/* Hero Content - Fixed positioning and sizing */}
+          {/* Hero Content - All Inter font */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center px-4 max-w-4xl transform translate-y-8">
               <h1 className="text-4xl md:text-5xl font-inter font-semibold mb-4 tracking-[-0.075em] text-white">
-                Find your dream home. And actually <span className="font-playfair italic font-normal">afford</span> it.
+                Find your dream home. And actually afford it.
               </h1>
               <p className="text-lg md:text-xl mb-10 text-white opacity-80 font-inter font-medium tracking-[-0.075em]">
                 Your unfair advantage in finding below-market & rent-stabilized homes.
@@ -1039,6 +1039,7 @@ const DesktopIndex = () => {
             </div>
           </div>
         </div>
+
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
