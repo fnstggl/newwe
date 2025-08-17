@@ -1026,31 +1026,22 @@ const DesktopIndex = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/30"></div>
           </div>
         </div>
-
-{/* Glassmorphic Trust Badge - TOP RIGHT */}
-<div className="absolute top-8 right-8 z-20">
-  <div className="bg-black/60 backdrop-blur-xl border border-white/40 rounded-full px-3 py-1.5 shadow-lg">
-    <span className="text-white text-xs font-semibold tracking-tight">
-      10,000+ New Yorkers already beating the market
-    </span>
-  </div>
-</div>
     
         
-        {/* Hero Content - Always Visible */}
-        <div className="relative z-10 min-h-[600px] flex items-center justify-center">
-          <div className="text-center px-4 py-20 max-w-none">
-            <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
-              Find your dream home. And actually afford it.
-            </h1>
-            <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
-              Your unfair advantage in finding below-market & rent-stabilized homes.
-            </p>
-            <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
-              {user ? "See Deals" : "See Deals"}
-            </Link>
-          </div>
-        </div>
+{/* Hero Content - Moved higher */}
+<div className="relative z-10 min-h-[600px] flex items-center justify-center">
+  <div className="text-center px-4 py-20 max-w-none">
+    <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[60px] text-white">
+      Find your dream home. And actually afford it.
+    </h1>
+    <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[60px] tracking-[-0.075em]">
+      Your unfair advantage in finding below-market & rent-stabilized homes.
+    </p>
+    <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[40px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+      {user ? "See Deals" : "See Deals"}
+    </Link>
+  </div>
+</div>
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
