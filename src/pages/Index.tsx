@@ -1063,19 +1063,25 @@ const DesktopIndex = () => {
         </div>
       </section>
     
-      {/* Problem Section */}
-      <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            It doesn't need to be this hard to find a home you can afford.
-          </h2>
-          <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals, first.
-          </p>
-        </div>
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
-      </section>
+      {/* Problem Section - With Scroll Animation */}
+<section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
+  <motion.div 
+    className="text-center mb-16"
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8, ease: "easeOut" }}
+    viewport={{ once: true, margin: "-100px" }}
+  >
+    <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+      It shouldn't be this hard to find a home you can afford.
+    </h2>
+    <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
+      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city sees them.
+    </p>
+  </motion.div>
+  
+  <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
+</section>
 
       {/* How It Works - Scroll Jacked Version */}
       <ScrollJackedSection />
