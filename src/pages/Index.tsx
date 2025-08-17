@@ -1023,7 +1023,7 @@ const DesktopIndex = () => {
         animationFillMode: 'both'
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/30"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/70"></div>
     </div>
   </div>
     
