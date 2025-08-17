@@ -83,9 +83,9 @@ const ScrollJackedSection = () => {
                     }}
                   >
                     <div className="space-y-6">
-                      <h3 className="text-3xl md:text-4xl font-inter font-semibold tracking-tighter text-white">
-                        {content.title}
-                      </h3>
+                     <h3 className="text-4xl md:text-6xl font-inter font-bold tracking-[-0.075em] bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+  {content.title}
+</h3>
                       <p className="text-xl text-gray-300 font-inter tracking-tight leading-relaxed">
                         {content.subtitle}
                       </p>
@@ -1030,12 +1030,18 @@ const DesktopIndex = () => {
   {/* Hero Content - Always Visible */}
   <div className="relative z-10 min-h-[600px] flex items-center justify-center">
     <div className="text-center px-4 py-20 max-w-none">
-      <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
-        Find your dream home. And actually afford it.
-      </h1>
-      <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
-        Your unfair advantage for finding below-market & rent-stabilized homes in the city.
-      </p>
+    <h1 className="text-6xl md:text-7xl font-inter font-bold mb-6 tracking-[-0.075em] transform translate-y-[130px]">
+  <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+    Find your dream home.
+  </span>
+  <br />
+  <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+    And actually afford it.
+  </span>
+</h1>
+<p className="text-xl md:text-2xl mb-16 text-gray-300 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em] max-w-3xl mx-auto">
+  Your unfair advantage for finding below-market & rent-stabilized homes in the city.
+</p>
       <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
         {user ? "See Deals" : "See Deals"}
       </Link>
@@ -1064,18 +1070,40 @@ const DesktopIndex = () => {
       </section>
     
       {/* Problem Section */}
-      <section className="pt-10 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Finding a home in the city that's not wildly overpriced doesn't need to be impossible.
-          </h2>
-          <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-          11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals, first.
-          </p>
-        </div>
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent my-8"></div>
-      </section>
+      const ProblemSection = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.8", "end 0.2"]
+  });
+
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [50, 0]);
+
+  return (
+    <motion.section 
+      ref={ref}
+      className="pt-20 pb-32 px-4 max-w-6xl mx-auto"
+    >
+      <div className="text-center mb-16">
+        <motion.h2 
+          style={{ opacity: titleOpacity, y: titleY }}
+          className="text-5xl md:text-7xl font-bold mb-8 tracking-[-0.075em]"
+        >
+          <span className="bg-gradient-to-r from-white via-gray-200 to-gray-500 bg-clip-text text-transparent">
+            It shouldn't be this hard to find a home in the city.
+          </span>
+        </motion.h2>
+        <motion.p 
+          style={{ opacity: titleOpacity, y: titleY }}
+          className="text-2xl text-gray-400 tracking-tight max-w-4xl mx-auto font-light"
+        >
+          The average rental has 11 renters competing for it. Get there first.
+        </motion.p>
+      </div>
+    </motion.section>
+  );
+};
 
       {/* How It Works - Scroll Jacked Version */}
       <ScrollJackedSection />
@@ -1111,9 +1139,42 @@ const DesktopIndex = () => {
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+         const FinalCTASection = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.8", "end 0.2"]
+  });
+
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [0, 1]);
+  const titleScale = useTransform(scrollYProgress, [0, 0.6], [0.8, 1]);
+
+  return (
+    <motion.section ref={ref} className="py-32 px-4 relative overflow-hidden">
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <motion.h2 
+          style={{ opacity: titleOpacity, scale: titleScale }}
+          className="text-6xl md:text-8xl font-bold mb-8 tracking-[-0.075em]"
+        >
+          <span className="bg-gradient-to-r from-white via-blue-200 to-purple-400 bg-clip-text text-transparent">
             Let the apartment hunt end here.
-          </h2>
+          </span>
+        </motion.h2>
+        <motion.p 
+          style={{ opacity: titleOpacity }}
+          className="text-2xl text-gray-300 mb-16 tracking-tight font-light"
+        >
+          Join the platform actually built for renters & buyers.
+        </motion.p>
+        <motion.div style={{ opacity: titleOpacity }}>
+          <Link to="/join" className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-5 rounded-full font-bold text-xl tracking-tight hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all duration-300 shadow-2xl">
+            Join now.
+          </Link>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+};
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
             Join the platform actually built for renters & buyers.
           </p>
