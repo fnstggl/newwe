@@ -56,7 +56,7 @@ const ScrollJackedSection = () => {
       <div className="sticky top-0 h-screen flex flex-col">
         <div className="w-full text-center py-8 px-4">
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white">
-            The housing market in NYC is rigged. Now you can beat it.
+            Find the best deals in NYC. Before the rest of the city does.
           </h2>
         </div>
 
@@ -1076,7 +1076,7 @@ const DesktopIndex = () => {
       It shouldn't be this hard to find a home you can afford.
     </h2>
     <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city sees them.
+      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. 46% of New Yorkers are rent-burdened.
     </p>
   </motion.div>
   
