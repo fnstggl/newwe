@@ -56,7 +56,7 @@ const ScrollJackedSection = () => {
       <div className="sticky top-0 h-screen flex flex-col">
         <div className="w-full text-center py-8 px-4">
           <h2 className="text-4xl md:text-5xl font-semibold tracking-tighter text-white">
-            Find the best deals in NYC. Before the rest of the city does.
+            The housing market in NYC is rigged. Now you can beat it.
           </h2>
         </div>
 
@@ -968,6 +968,81 @@ const getGradeColors = (grade) => {
   );
 };
 
+// Rotating Neighborhoods Component
+const RotatingNeighborhoods = () => {
+  const neighborhoods = [
+    { name: "SoHo", avgPrice: "$2,100/sqft", dealPrice: "$1,350/sqft", savings: "36%" },
+    { name: "Bushwick", avgPrice: "$930/sqft", dealPrice: "$690/sqft", savings: "26%" },
+    { name: "Williamsburg", avgPrice: "$1,200/sqft", dealPrice: "$850/sqft", savings: "29%" },
+    { name: "Park Slope", avgPrice: "$1,150/sqft", dealPrice: "$820/sqft", savings: "29%" },
+    { name: "Chelsea", avgPrice: "$1,800/sqft", dealPrice: "$1,200/sqft", savings: "33%" },
+    { name: "East Village", avgPrice: "$1,100/sqft", dealPrice: "$780/sqft", savings: "29%" },
+    { name: "Upper West Side", avgPrice: "$1,300/sqft", dealPrice: "$950/sqft", savings: "27%" },
+    { name: "Tribeca", avgPrice: "$2,500/sqft", dealPrice: "$1,700/sqft", savings: "32%" },
+    { name: "Greenwich Village", avgPrice: "$1,600/sqft", dealPrice: "$1,100/sqft", savings: "31%" },
+    { name: "Lower East Side", avgPrice: "$1,050/sqft", dealPrice: "$750/sqft", savings: "29%" }
+  ];
+
+  return (
+    <div className="relative w-full overflow-hidden py-8">
+      <div className="flex animate-scroll-horizontal">
+        {/* First set */}
+        {neighborhoods.map((neighborhood, index) => (
+          <div
+            key={`first-${index}`}
+            className="flex-shrink-0 w-80 mx-4 p-6 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                {neighborhood.name}
+              </h3>
+              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                -{neighborhood.savings}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Market Avg:</span>
+                <span className="text-gray-300 line-through">{neighborhood.avgPrice}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Our Deals:</span>
+                <span className="text-white font-semibold">{neighborhood.dealPrice}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+        {/* Duplicate set for seamless loop */}
+        {neighborhoods.map((neighborhood, index) => (
+          <div
+            key={`second-${index}`}
+            className="flex-shrink-0 w-80 mx-4 p-6 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xl font-bold text-white tracking-tight">
+                {neighborhood.name}
+              </h3>
+              <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-semibold">
+                -{neighborhood.savings}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Market Avg:</span>
+                <span className="text-gray-300 line-through">{neighborhood.avgPrice}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Our Deals:</span>
+                <span className="text-white font-semibold">{neighborhood.dealPrice}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Desktop Index Component (COMPLETELY UNCHANGED)
 const DesktopIndex = () => {
   const { user } = useAuth();
@@ -1076,7 +1151,7 @@ const DesktopIndex = () => {
       It shouldn't be this hard to find a home you can afford.
     </h2>
     <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. 46% of New Yorkers are rent-burdened.
+      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city sees them.
     </p>
   </motion.div>
   
@@ -1086,29 +1161,28 @@ const DesktopIndex = () => {
       {/* How It Works - Scroll Jacked Version */}
       <ScrollJackedSection />
 
-      {/* Featured Neighborhoods */}
-      <section className="py-20 px-4 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Stop overpaying in every neighborhood.
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
-            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all">
-              <h3 className="text-xl font-semibold mb-2 tracking-tight">SoHo</h3>
-              <p className="text-gray-400 tracking-tight">Avg $2,100/sqft → Deals from $1,350/sqft</p>
-            </div>
-            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-600/10 to-purple-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all">
-              <h3 className="text-xl font-semibold mb-2 tracking-tight">Bushwick</h3>
-              <p className="text-gray-400 tracking-tight">Avg $930/sqft → Deals from $690/sqft</p>
-            </div>
-          </div>
-          <Link to="/rent">
-            <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
-              Explore Homes
-            </HoverButton>
-          </Link>
-        </div>
-      </section>
+    {/* Featured Neighborhoods - Rotating Carousel */}
+<section className="py-20 px-4 w-full">
+  <div className="text-center mb-12">
+    <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+      Stop overpaying in every neighborhood.
+    </h2>
+    <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto mb-8">
+      Our algorithms find below-market deals across all of NYC's top neighborhoods.
+    </p>
+  </div>
+  
+  {/* Rotating Neighborhoods */}
+  <RotatingNeighborhoods />
+  
+  <div className="text-center mt-12">
+    <Link to="/rent">
+      <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
+        Explore Homes
+      </HoverButton>
+    </Link>
+  </div>
+</section>
     
       {/* Final CTA */}
       <section className="py-20 pb-0 px-4 relative overflow-hidden">
