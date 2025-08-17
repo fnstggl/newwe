@@ -1010,10 +1010,12 @@ const DesktopIndex = () => {
   return (
     <div className="font-inter">
       {/* Hero Section */}
-  <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-8 pt-8 bg-black">
-  <div className="relative w-full max-w-7xl h-[500px] rounded-3xl overflow-hidden">
+<section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
+  {/* Background Image with Full Width */}
+  <div className="absolute inset-0 w-full h-full">
+    {/* Background Image with Fade-in Effect */}
     <div 
-      className="bg-cover bg-center bg-no-repeat h-full w-full animate-fade-in"
+      className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
       style={{
         backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
         animationDuration: '3s',
@@ -1021,35 +1023,31 @@ const DesktopIndex = () => {
         animationFillMode: 'both'
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/30"></div>
     </div>
-    
-        
-{/* Hero Content - Moved higher */}
-<div className="relative z-10 min-h-[600px] flex items-center justify-center">
-  <div className="text-center px-4 py-20 max-w-none">
-    <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[60px] text-white">
-  Find your dream home. And actually <span className="font-playfair italic">afford</span> it.
-</h1>
-    <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[60px] tracking-[-0.075em]">
-      Your unfair advantage in finding below-market & rent-stabilized homes.
-    </p>
-    <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[40px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
-      {user ? "See Deals" : "See Deals"}
-    </Link>
   </div>
-</div>
     
+  {/* Hero Content - Always Visible */}
+  <div className="relative z-10 min-h-[600px] flex items-center justify-center">
+    <div className="text-center px-4 py-20 max-w-none">
+      <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white">
+        Find your dream home. And actually afford it.
+      </h1>
+      <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
+        Your unfair advantage in finding below-market & rent-stabilized homes.
+      </p>
+      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+        {user ? "See Deals" : "See Deals"}
+      </Link>
+    </div>
+  </div>
+
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-
-    
       {/* Product Mockup Section */}
       <section className="pt-6 pb-20 px-4 max-w-6xl mx-auto">
         <div className="text-center">
@@ -1102,6 +1100,9 @@ const DesktopIndex = () => {
         </div>
       </section>
     
+      {/* Testimonials Section */}
+      <TestimonialsSection />
+
       {/* Final CTA */}
       <section className="py-20 pb-0 px-4 relative overflow-hidden">
         {/* Blue Gradient Blob Background */}
