@@ -31,25 +31,28 @@ const ScrollJackedSection = () => {
   const text3Opacity = useTransform(scrollYProgress, [0.58, 0.75, 1], [0, 1, 1]);
 
   const textContent = [
-    {
-      title: "We scan 30,000+ listings a week",
-      subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
-      opacity: text1Opacity,
-      y: text1Y
-    },
-    {
-      title: "We flag listings up to 60% below-market", 
-      subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
-      opacity: text2Opacity,
-      y: text2Y
-    },
-    {
-      title: "Save $925/mo on rent, $101k when buying",
-      subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
-      opacity: text3Opacity,
-      y: text3Y
-    }
-  ];
+  {
+    title: "We scan 30,000+ listings a week",
+    subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
+    opacity: text1Opacity,
+    y: text1Y
+    // Remove: gradient: "from-blue-400 via-purple-400 to-pink-400"
+  },
+  {
+    title: "We flag listings up to 60% below-market", 
+    subtitle: "We only show you the best below-market & rent-stabilized listings, so you never overpay again.",
+    opacity: text2Opacity,
+    y: text2Y
+    // Remove: gradient: "from-green-400 via-blue-400 to-purple-400"
+  },
+  {
+    title: "Save $925/mo on rent, $101k when buying",
+    subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
+    opacity: text3Opacity,
+    y: text3Y
+    // Remove: gradient: "from-yellow-400 via-orange-400 to-red-400"
+  }
+];
 
   return (
     <section ref={containerRef} className="relative h-[400vh] bg-black">
@@ -1123,7 +1126,7 @@ const DesktopIndex = () => {
             style={{ opacity: titleOpacity, scale: titleScale }}
             className="text-6xl md:text-8xl font-bold mb-8 tracking-[-0.075em]"
           >
-            <span className="bg-gradient-to-r from-white via-blue-200 to-purple-400 bg-clip-text text-transparent">
+<span className="bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
               Let the apartment hunt end here.
             </span>
           </motion.h2>
@@ -1221,7 +1224,7 @@ const DesktopIndex = () => {
                 Find your dream home.
               </span>
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
                 And actually afford it.
               </span>
             </h1>
@@ -1263,11 +1266,11 @@ const DesktopIndex = () => {
           </h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
             <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">SoHo</h3>
+              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">SoHo</h3>
               <p className="text-gray-400 tracking-tight text-lg">Avg $2,100/sqft → Deals from $1,350/sqft</p>
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 hover:border-blue-500/50 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.2)]">
-              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Bushwick</h3>
+              <h3 className="text-2xl font-bold mb-3 tracking-tight bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">Bushwick</h3>
               <p className="text-gray-400 tracking-tight text-lg">Avg $930/sqft → Deals from $690/sqft</p>
             </div>
           </div>
@@ -1287,7 +1290,7 @@ const DesktopIndex = () => {
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+          <h2 className="text-6xl md:text-8xl font-bold mb-8 tracking-[-0.075em] bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
             Let the apartment hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
