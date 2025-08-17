@@ -1010,30 +1010,27 @@ const DesktopIndex = () => {
   return (
     <div className="font-inter">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
-        {/* Background Image with Full Width */}
-        <div className="absolute inset-0 w-full h-full">
-          {/* Background Image with Fade-in Effect */}
-          <div 
-            className="bg-cover bg-center bg-no-repeat min-h-[600px] absolute inset-0 animate-fade-in w-full h-full"
-            style={{
-              backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
-              animationDuration: '3s',
-              animationDelay: '0s',
-              animationFillMode: 'both'
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/5 to-black/30"></div>
-          </div>
-        </div>
+  <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-8 pt-8 bg-black">
+  <div className="relative w-full max-w-7xl h-[500px] rounded-3xl overflow-hidden">
+    <div 
+      className="bg-cover bg-center bg-no-repeat h-full w-full animate-fade-in"
+      style={{
+        backgroundImage: `url('/lovable-uploads/2ff24928-306a-4305-9c27-9594098a543d.png')`,
+        animationDuration: '3s',
+        animationDelay: '0s',
+        animationFillMode: 'both'
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20"></div>
+    </div>
     
         
 {/* Hero Content - Moved higher */}
 <div className="relative z-10 min-h-[600px] flex items-center justify-center">
   <div className="text-center px-4 py-20 max-w-none">
     <h1 className="text-5xl md:text-6xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[60px] text-white">
-      Find your dream home. And actually afford it.
-    </h1>
+  Find your dream home. And actually <span className="font-playfair italic">afford</span> it.
+</h1>
     <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[60px] tracking-[-0.075em]">
       Your unfair advantage in finding below-market & rent-stabilized homes.
     </p>
