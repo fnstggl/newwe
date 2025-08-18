@@ -1198,7 +1198,7 @@ return (
                           onClick={() => navigate('/pricing')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-3"
                         >
-                          Try Unlimited Access for Free
+                          Find the Best Deal in NYC
                         </button>
                         <p className="text-xs text-gray-400">
                           10,000+ New Yorkers already beating the market
