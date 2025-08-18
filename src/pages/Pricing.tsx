@@ -224,7 +224,7 @@ return (
 {/* Unlimited Plan - Mobile responsive */}
 <div className="relative flex flex-col h-full">
   {/* Rotating gradient border */}
-  <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-transparent via-blue-500 via-purple-500 to-transparent bg-[length:200%_100%] animate-[gradient-snake_3s_linear_infinite]">
+   <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-transparent via-blue-500 via-purple-500 to-transparent bg-[length:200%_100%] animate-[gradient_2s_linear_infinite]">
     
     <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
       {/* Background gradient image */}
