@@ -1,21 +1,23 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { ArrowLeft } from 'lucide-react';
+import CheckoutForm from '@/components/CheckoutForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import CheckoutForm from '@/components/CheckoutForm';
+
+// Use your live Stripe publishable key
+const stripePromise = loadStripe('pk_live_51QO1RdEoqR7PBYumz4GJuWl4cAuKUd1S8FJdvGdqAhg8KGDr3AO0BYcG8V5zNOHUdlNj08J5xYO2OYmH3VwSwJyP00D7PVhzqT');
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
   const [clientSecret, setClientSecret] = useState('');
-  const [stripePromise, setStripePromise] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // Get billing cycle from URL params
   const urlParams = new URLSearchParams(window.location.search);
@@ -23,8 +25,8 @@ const Checkout = () => {
   
   const price = billingCycle === 'monthly' ? '$9/month' : '$18/year';
   const subtitle = billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually';
-  const amount = billingCycle === 'monthly' ? 900 : 1800; // in cents
-  
+  const amount = billingCycle === 'monthly' ? 9 : 18;
+
   useEffect(() => {
     if (!user) {
       toast({
@@ -36,14 +38,15 @@ const Checkout = () => {
       return;
     }
 
-    const initializeCheckout = async () => {
+    // Create payment intent using Supabase edge function
+    const createPaymentIntent = async () => {
       try {
         console.log(`Creating payment intent for ${billingCycle} plan`);
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
             billing_cycle: billingCycle,
-            amount: amount
+            amount: billingCycle === 'monthly' ? 900 : 1800, // $9 or $18 in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -59,11 +62,6 @@ const Checkout = () => {
         
         if (data?.client_secret) {
           setClientSecret(data.client_secret);
-          
-          // Initialize Stripe with publishable key
-          const publishableKey = 'pk_live_51QO1RdEoqR7PBYumz4GJuWl4cAuKUd1S8FJdvGdqAhg8KGDr3AO0BYcG8V5zNOHUdlNj08J5xYO2OYmH3VwSwJyP00D7PVhzqT';
-          const stripe = await loadStripe(publishableKey);
-          setStripePromise(stripe);
         } else {
           throw new Error('No client secret returned from payment intent');
         }
@@ -74,27 +72,57 @@ const Checkout = () => {
           description: "Failed to initialize checkout. Please try again.",
           variant: "destructive",
         });
-        navigate('/pricing');
       } finally {
         setLoading(false);
       }
     };
 
-    initializeCheckout();
-  }, [user, session, billingCycle, amount, navigate, toast]);
+    if (session) {
+      createPaymentIntent();
+    }
+  }, [user, session, billingCycle, navigate, toast]);
+
+  const appearance = {
+    theme: 'night' as const,
+    variables: {
+      colorPrimary: '#3b82f6',
+      colorBackground: '#000000',
+      colorText: '#ffffff',
+      colorDanger: '#ef4444',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      spacingUnit: '4px',
+      borderRadius: '8px',
+    },
+    rules: {
+      '.Input': {
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '12px',
+        fontSize: '16px',
+        letterSpacing: '-0.025em',
+      },
+      '.Input:focus': {
+        border: '1px solid #3b82f6',
+        boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.1)',
+      },
+      '.Label': {
+        color: '#ffffff',
+        fontSize: '14px',
+        fontWeight: '500',
+        letterSpacing: '-0.025em',
+      },
+    },
+  };
+
+  const options = {
+    clientSecret,
+    appearance,
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
         <div className="text-xl tracking-tight">Loading checkout...</div>
-      </div>
-    );
-  }
-
-  if (!clientSecret || !stripePromise) {
-    return (
-      <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
-        <div className="text-xl tracking-tight">Failed to load checkout</div>
       </div>
     );
   }
@@ -121,7 +149,7 @@ const Checkout = () => {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Start saving today. Cancel anytime.
+                {billingCycle === 'monthly' ? 'Start saving today. Cancel anytime.' : 'Thousands of New Yorkers already saving. For $1.50/mo'}
               </p>
             </div>
 
@@ -158,25 +186,27 @@ const Checkout = () => {
                 </li>
               </ul>
               
-              {/* Billing info */}
+              {/* Recurring subscription text at bottom of plan box */}
               <p className="text-xs text-gray-500 tracking-tight">
-                {billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually'} • Cancel anytime
+                {billingCycle === 'monthly' ? 'Monthly recurring subscription, cancel any time.' : 'Annual recurring subscription, cancel any time.'}
               </p>
             </div>
           </div>
 
-          {/* Right side - Embedded checkout form */}
+          {/* Right side - Checkout form */}
           <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete Your Subscription</h2>
+              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete your subscription</h2>
               <p className="text-gray-400 tracking-tight">
-                Secure payment • Cancel anytime
+                Secure payment powered by Stripe
               </p>
             </div>
 
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm billingCycle={billingCycle as 'monthly' | 'annual'} amount={amount} />
-            </Elements>
+            {clientSecret && (
+              <Elements options={options} stripe={stripePromise}>
+                <CheckoutForm billingCycle={billingCycle as 'monthly' | 'annual'} amount={amount} />
+              </Elements>
+            )}
           </div>
         </div>
       </div>
