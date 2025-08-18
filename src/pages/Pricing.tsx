@@ -287,7 +287,7 @@ return (
         </div>
 
         <p className={`text-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 ${isMobile ? 'mt-2' : 'mt-4'} tracking-tight`}>
-          Find the best deal in the city • Cancel anytime
+          Save thousands on your apartment • Cancel anytime
         </p>
         
         {/* Subscription status display */}
