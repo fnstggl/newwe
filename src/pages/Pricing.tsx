@@ -289,6 +289,17 @@ return (
         <p className={`text-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 ${isMobile ? 'mt-2' : 'mt-4'} tracking-tight`}>
           Save thousands on your apartment • Cancel anytime
         </p>
+
+{/* Why we charge card */}
+<div className="max-w-3xl mx-auto mt-8">
+  <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-lg px-5 py-4 text-center">
+    <p className="text-sm text-gray-300 tracking-tight">
+      <span className="text-white font-medium">Why $18/year?</span> 
+      &nbsp;It costs real money to scan, analyze, and verify thousands of NYC listings daily. 
+      We price at $1.50/month so this service can exist — not to profit off renters.
+    </p>
+  </div>
+</div>
         
         {/* Subscription status display */}
         {isOnUnlimitedPlan && (
