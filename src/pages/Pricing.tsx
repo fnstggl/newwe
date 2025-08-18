@@ -296,7 +296,7 @@ return (
     <p className="text-sm text-gray-300 tracking-tight">
       <span className="text-white font-medium">Why $18/year?</span> 
       &nbsp;It costs real money to scan, analyze, and verify thousands of NYC listings daily. 
-      We price at $1.50/month so this service can exist — not to profit off renters.
+      We price at $1.50/month so we can continue helping New Yorkers save on their apartments.
     </p>
   </div>
 </div>
