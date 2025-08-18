@@ -12,9 +12,12 @@ const Checkout = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // Always use annual pricing at $18/year with 3-day free trial
-  const price = 'Try Free for 3 Days';
-  const subtitle = 'Then $18/year';
+  // Use URL params to determine billing cycle, default to annual
+  const urlParams = new URLSearchParams(window.location.search);
+  const billingCycle = urlParams.get('billing') === 'monthly' ? 'monthly' : 'annual';
+  
+  const price = billingCycle === 'monthly' ? '$9/month' : '$18/year';
+  const subtitle = billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually';
   
   useEffect(() => {
     if (!user) {
@@ -42,11 +45,11 @@ const Checkout = () => {
     setLoading(true);
 
     try {
-      console.log('Creating checkout session for annual $18/year plan with 3-day trial');
+      console.log(`Creating checkout session for ${billingCycle} plan`);
       
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          billing_cycle: 'annual'
+          billing_cycle: billingCycle
         },
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -60,22 +63,12 @@ const Checkout = () => {
 
       console.log('Checkout session response:', data);
       
-if (data?.url) {
-  // Test version - track conversion but don't change redirect behavior
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'conversion', {
-      'send_to': 'AW-17439586946/XQoxCP-nnIAbEIL16_tA',
-      'value': 1.0,
-      'currency': 'USD',
-      'transaction_id': ''
-      // No callback - let normal redirect handle it
-    });
-  }
-  // Keep your existing redirect
-  window.location.href = data.url;
-} else {
-  throw new Error('No checkout URL returned from payment intent');
-}
+      if (data?.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned from payment intent');
+      }
     } catch (error) {
       console.error('Error creating checkout session:', error);
       toast({
@@ -118,7 +111,7 @@ if (data?.url) {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Start your free trial today. No commitment for 3 days.
+                Start saving today. Cancel anytime.
               </p>
             </div>
 
@@ -155,9 +148,9 @@ if (data?.url) {
                 </li>
               </ul>
               
-              {/* Free trial info */}
+              {/* Billing info */}
               <p className="text-xs text-gray-500 tracking-tight">
-                3-day free trial, then $18/year • Cancel anytime during trial
+                {billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually'} • Cancel anytime
               </p>
             </div>
           </div>
@@ -165,9 +158,9 @@ if (data?.url) {
           {/* Right side - Subscribe button */}
           <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Start Your Free Trial</h2>
+              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Subscribe Now</h2>
               <p className="text-gray-400 tracking-tight">
-                3 days free, no commitment. Cancel anytime.
+                Get instant access. Cancel anytime.
               </p>
             </div>
 
@@ -179,16 +172,16 @@ if (data?.url) {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-                  Starting Trial...
+                  Processing...
                 </>
               ) : (
-                'Try for Free'
+                `Subscribe for ${price}`
               )}
             </button>
 
             {/* Security notice */}
             <p className="text-xs text-gray-500 text-center mt-4 tracking-tight">
-              Secure payment powered by Stripe. No charge for 3 days.
+              Secure payment powered by Stripe. Billed {billingCycle === 'monthly' ? 'monthly' : 'annually'}.
             </p>
           </div>
         </div>

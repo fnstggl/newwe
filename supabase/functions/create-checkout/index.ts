@@ -55,20 +55,18 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    let priceAmount, interval, trialPeriodDays = undefined;
+    let priceAmount, interval;
 
     if (billing_cycle === 'monthly') {
       priceAmount = 900; // $9.00
       interval = 'month';
-      // No trial for monthly
     } else {
-      // Default to annual with 3-day free trial
+      // Default to annual
       priceAmount = 1800; // $18.00
       interval = 'year';
-      trialPeriodDays = 3;
     }
 
-    logStep("Pricing configured", { priceAmount, interval, trialPeriodDays });
+    logStep("Pricing configured", { priceAmount, interval });
 
     const sessionConfig: any = {
       customer: customerId,
@@ -92,20 +90,12 @@ serve(async (req) => {
       cancel_url: `${req.headers.get("origin")}/pricing?canceled=true`,
     };
 
-    // Add trial only for annual plans
-    if (trialPeriodDays) {
-      sessionConfig.subscription_data = {
-        trial_period_days: trialPeriodDays,
-      };
-    }
-
     const session = await stripe.checkout.sessions.create(sessionConfig);
     
     logStep("Checkout session created", { 
       sessionId: session.id, 
       url: session.url, 
-      billingCycle: billing_cycle,
-      trialDays: trialPeriodDays 
+      billingCycle: billing_cycle
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

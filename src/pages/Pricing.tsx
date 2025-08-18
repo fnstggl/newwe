@@ -23,7 +23,6 @@ const [refinedDiscountThreshold, setRefinedDiscountThreshold] = useState<number 
 const [showRefineFilters, setShowRefineFilters] = useState(false);
   const isMobile = useIsMobile();
 
-
   useEffect(() => {
     // Update meta tags for SEO
     document.title = "Pricing - Realer Estate | Find NYC Real Estate Deals Early";
@@ -79,40 +78,8 @@ if (urlParams.get('success') === 'true') {
       return;
     }
 
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          billing_cycle: billingCycle
-        },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Checkout error:', error);
-        toast({
-          title: "Error",
-          description: "Failed to create checkout session. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (data?.url) {
-        // Open Stripe hosted checkout in same tab
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned');
-      }
-    } catch (error) {
-      console.error('Subscription error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start subscription. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // Navigate to checkout page with billing cycle parameter
+    navigate(`/checkout?billing=${billingCycle}`);
   };
 
   const handleManageSubscription = () => {
@@ -301,7 +268,7 @@ return (
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
                       className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200`}
                     >
-                      {isAnnual ? 'Try for Free' : 'Subscribe Now'}
+                      Subscribe Now
                     </button>
                   )}
                 </div>
@@ -311,10 +278,7 @@ return (
         </div>
 
         <p className={`text-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500 ${isMobile ? 'mt-2' : 'mt-4'} tracking-tight`}>
-          {isAnnual 
-            ? "3-day free trial • Cancel anytime"
-            : "Find the best deal in the city • Cancel anytime"
-          }
+          Find the best deal in the city • Cancel anytime
         </p>
         
         {/* Subscription status display */}
@@ -366,7 +330,7 @@ return (
             onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
             className={`bg-white text-black ${isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'} rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200`}
           >
-            {isAnnual ? 'Try for Free' : 'Subscribe Now'}
+            Subscribe Now
           </button>
         ) : (
           <div className={`text-blue-400 font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>
