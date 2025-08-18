@@ -43,10 +43,20 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle, amount } = await req.json();
-    // Force annual billing at $18/year regardless of what's passed
-    const forcedAmount = 1800; // $18.00 in cents
-    const forcedBillingCycle = 'annual';
-    logStep("Forced pricing", { originalAmount: amount, originalBillingCycle: billing_cycle, forcedAmount, forcedBillingCycle });
+    
+    // Set pricing based on billing cycle
+    let priceAmount: number;
+    let interval: 'month' | 'year';
+    
+    if (billing_cycle === 'monthly') {
+      priceAmount = 900; // $9.00 in cents
+      interval = 'month';
+    } else {
+      priceAmount = 1800; // $18.00 in cents
+      interval = 'year';
+    }
+    
+    logStep("Pricing determined", { billing_cycle, priceAmount, interval });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -67,18 +77,18 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create price for the annual $18/year subscription
+    // Create price for the subscription
     const price = await stripe.prices.create({
-      unit_amount: forcedAmount,
+      unit_amount: priceAmount,
       currency: 'usd',
       recurring: {
-        interval: 'year',
+        interval: interval,
       },
       product_data: {
         name: 'Realer Estate Unlimited Plan',
       },
     });
-    logStep("Price created", { priceId: price.id });
+    logStep("Price created", { priceId: price.id, interval, amount: priceAmount });
 
     // Create subscription without payment method restrictions
     const subscription = await stripe.subscriptions.create({
@@ -95,7 +105,7 @@ serve(async (req) => {
       expand: ['latest_invoice.payment_intent'],
       metadata: {
         user_id: user.id,
-        billing_cycle: forcedBillingCycle,
+        billing_cycle: billing_cycle,
       },
     });
 

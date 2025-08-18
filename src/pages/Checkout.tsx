@@ -16,12 +16,14 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Always use annual pricing at $18/year
-  const price = '$18/year';
-  const amount = 18;
+  // Get billing cycle from URL params, default to annual
+  const billingCycle = searchParams.get('billing') === 'monthly' ? 'monthly' : 'annual';
+  const price = billingCycle === 'monthly' ? '$9/month' : '$18/year';
+  const amount = billingCycle === 'monthly' ? 9 : 18;
 
   useEffect(() => {
     if (!user) {
@@ -34,15 +36,15 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent for annual subscription at $18/year using Supabase edge function
+    // Create payment intent using Supabase edge function
     const createPaymentIntent = async () => {
       try {
-        console.log('Creating payment intent for annual $18/year plan');
+        console.log(`Creating payment intent for ${billingCycle} plan`);
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
-            billing_cycle: 'annual',
-            amount: 1800, // $18.00 in cents
+            billing_cycle: billingCycle,
+            amount: billingCycle === 'monthly' ? 900 : 1800, // in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -76,7 +78,7 @@ const Checkout = () => {
     if (session) {
       createPaymentIntent();
     }
-  }, [user, session, navigate, toast]);
+  }, [user, session, navigate, toast, billingCycle]);
 
   const appearance = {
     theme: 'night' as const,
@@ -145,7 +147,7 @@ const Checkout = () => {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                Thousands of New Yorkers already saving. For $1.50/mo
+                Thousands of New Yorkers already saving. For {billingCycle === 'monthly' ? '$9/mo' : '$1.50/mo'}
               </p>
             </div>
 
@@ -183,7 +185,7 @@ const Checkout = () => {
               
               {/* Recurring subscription text at bottom of plan box */}
               <p className="text-xs text-gray-500 tracking-tight">
-                Annual recurring subscription, cancel any time.
+                {billingCycle === 'monthly' ? 'Monthly' : 'Annual'} recurring subscription, cancel any time.
               </p>
             </div>
           </div>
@@ -199,7 +201,7 @@ const Checkout = () => {
 
             {clientSecret && (
               <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm billingCycle="annual" amount={amount} />
+                <CheckoutForm billingCycle={billingCycle} amount={amount} />
               </Elements>
             )}
           </div>

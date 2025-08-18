@@ -67,11 +67,11 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         // Handle different payment intent statuses
         if (paymentIntent.status === 'succeeded') {
            // ✅ Google Ads Conversion Tracking
-  window.gtag?.('event', 'conversion', {
-    send_to: 'AW-17439586946/XQoxCP-nnIAbEIL16_tA', // ← Replace with your actual conversion label
-    value: 18.00,
-    currency: 'USD',
-  });
+          (window as any).gtag?.('event', 'conversion', {
+            send_to: 'AW-17439586946/XQoxCP-nnIAbEIL16_tA', // ← Replace with your actual conversion label
+            value: amount,
+            currency: 'USD',
+          });
           // Immediate success - activate subscription
           await activateSubscription(paymentIntent.id);
         } else if (paymentIntent.status === 'processing') {
@@ -250,7 +250,7 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
             Processing...
           </>
         ) : (
-          `Subscribe for $18/year`
+          `Subscribe for ${billingCycle === 'monthly' ? '$9/month' : '$18/year'}`
         )}
       </button>
 
