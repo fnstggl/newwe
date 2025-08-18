@@ -235,9 +235,7 @@ return (
           backgroundRepeat: 'no-repeat'
         }}
       ></div>
-      
-      {/* Optional: Dark overlay to ensure text readability */}
-      <div className="absolute inset-0 bg-black/20 rounded-2xl"></div>
+    
       
       <div className="relative z-10 flex flex-col h-full">
                   <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
