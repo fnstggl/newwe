@@ -1247,7 +1247,7 @@ if (showOnboarding) {
                           </motion.button>
                           
                           <p className="text-sm text-gray-400 tracking-tight">
-                            Try for free<br />
+                            Unlock everything<br />
                             Cancel anytime • $18/yr
                           </p>
                           
