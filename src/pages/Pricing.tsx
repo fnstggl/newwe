@@ -226,7 +226,7 @@ return (
   {/* Rotating gradient border */}
 <div className="relative overflow-hidden rounded-2xl border-2 border-blue-500/50 h-full shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-all duration-500">
     
-    <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
+    <div className={`relative bg-black rounded-[calc(1rem-2px)] ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
       {/* Background gradient image */}
       <div 
         className="absolute inset-0 rounded-2xl opacity-80"
