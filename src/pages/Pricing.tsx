@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useState, useEffect } from "react";
@@ -21,6 +22,7 @@ const [refinedBedrooms, setRefinedBedrooms] = useState<number | undefined>();
 const [refinedMaxBudget, setRefinedMaxBudget] = useState<number | undefined>();
 const [refinedDiscountThreshold, setRefinedDiscountThreshold] = useState<number | undefined>();
 const [showRefineFilters, setShowRefineFilters] = useState(false);
+  const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -78,8 +80,43 @@ if (urlParams.get('success') === 'true') {
       return;
     }
 
-    // Navigate to checkout page with billing cycle parameter
-    navigate(`/checkout?billing=${billingCycle}`);
+    setLoading(true);
+
+    try {
+      console.log(`Creating checkout session for ${billingCycle} plan`);
+      
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          billing_cycle: billingCycle
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      console.log('Checkout session response:', data);
+      
+      if (data?.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned from payment intent');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleManageSubscription = () => {
@@ -266,9 +303,17 @@ return (
                   ) : (
                     <button
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200`}
+                      disabled={loading}
+                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                     >
-                      Subscribe Now
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                          Processing...
+                        </>
+                      ) : (
+                        'Subscribe Now'
+                      )}
                     </button>
                   )}
                 </div>
@@ -328,9 +373,17 @@ return (
         ) : !isOnUnlimitedPlan ? (
           <button
             onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
-            className={`bg-white text-black ${isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'} rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200`}
+            disabled={loading}
+            className={`bg-white text-black ${isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'} rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mx-auto`}
           >
-            Subscribe Now
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                Processing...
+              </>
+            ) : (
+              'Subscribe Now'
+            )}
           </button>
         ) : (
           <div className={`text-blue-400 font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>
@@ -492,7 +545,7 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   }, [showSuccessPopup, successStep]);
 
   const handleNeighborhoodToggle = (neighborhood: string) => {
-    setSelectedNeighborhoods(prev => 
+    setSelectedNeighborhoods((prev: string[]) => 
       prev.includes(neighborhood) 
         ? prev.filter(n => n !== neighborhood)
         : [...prev, neighborhood]
