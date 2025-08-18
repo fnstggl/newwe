@@ -186,3 +186,21 @@
 .animate-scroll-horizontal:hover {
   animation-play-state: paused;
 }
+
+@keyframes gradient-snake {
+  0% {
+    background: conic-gradient(from 0deg, transparent, transparent, #3b82f6, #8b5cf6, transparent, transparent);
+  }
+  25% {
+    background: conic-gradient(from 90deg, transparent, transparent, #3b82f6, #8b5cf6, transparent, transparent);
+  }
+  50% {
+    background: conic-gradient(from 180deg, transparent, transparent, #3b82f6, #8b5cf6, transparent, transparent);
+  }
+  75% {
+    background: conic-gradient(from 270deg, transparent, transparent, #3b82f6, #8b5cf6, transparent, transparent);
+  }
+  100% {
+    background: conic-gradient(from 360deg, transparent, transparent, #3b82f6, #8b5cf6, transparent, transparent);
+  }
+}
