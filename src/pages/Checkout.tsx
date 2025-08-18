@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { ArrowLeft } from 'lucide-react';
@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 // Use your live Stripe publishable key
-const stripePromise = loadStripe('pk_live_51QO1RdEoqR7PBYumz4GJuWl4cAuKUd1S8FJdvGdqAhg8KGDr3AO0BYcG8V5zNOHUdlNj08J5xYO2OYmH3VwSwJyP00D7PVhzqT');
+const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6pyWWeH61H5VPMRW9d37HVi2F1VIzRuUElclZVkRlHJh9O8iHhaGgr00D1tOSeNi');
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -19,13 +19,9 @@ const Checkout = () => {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Get billing cycle from URL params
-  const urlParams = new URLSearchParams(window.location.search);
-  const billingCycle = urlParams.get('billing') === 'monthly' ? 'monthly' : 'annual';
-  
-  const price = billingCycle === 'monthly' ? '$9/month' : '$18/year';
-  const subtitle = billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually';
-  const amount = billingCycle === 'monthly' ? 9 : 18;
+  // Always use annual pricing at $18/year
+  const price = '$18/year';
+  const amount = 18;
 
   useEffect(() => {
     if (!user) {
@@ -38,15 +34,15 @@ const Checkout = () => {
       return;
     }
 
-    // Create payment intent using Supabase edge function
+    // Create payment intent for annual subscription at $18/year using Supabase edge function
     const createPaymentIntent = async () => {
       try {
-        console.log(`Creating payment intent for ${billingCycle} plan`);
+        console.log('Creating payment intent for annual $18/year plan');
         
         const { data, error } = await supabase.functions.invoke('create-payment-intent', {
           body: {
-            billing_cycle: billingCycle,
-            amount: billingCycle === 'monthly' ? 900 : 1800, // $9 or $18 in cents
+            billing_cycle: 'annual',
+            amount: 1800, // $18.00 in cents
           },
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -80,7 +76,7 @@ const Checkout = () => {
     if (session) {
       createPaymentIntent();
     }
-  }, [user, session, billingCycle, navigate, toast]);
+  }, [user, session, navigate, toast]);
 
   const appearance = {
     theme: 'night' as const,
@@ -149,7 +145,7 @@ const Checkout = () => {
                 Find the best deal in the city. Save thousands.
               </h1>
               <p className="text-xl text-gray-400 tracking-tight">
-                {billingCycle === 'monthly' ? 'Start saving today. Cancel anytime.' : 'Thousands of New Yorkers already saving. For $1.50/mo'}
+                Thousands of New Yorkers already saving. For $1.50/mo
               </p>
             </div>
 
@@ -165,8 +161,7 @@ const Checkout = () => {
             {/* Plan details */}
             <div className="bg-gray-900/50 rounded-2xl p-6 border border-gray-800">
               <h3 className="text-xl font-semibold mb-3 tracking-tight">Unlimited Plan</h3>
-              <div className="text-3xl font-semibold mb-2 tracking-tight">{price}</div>
-              <div className="text-lg text-gray-400 mb-4 tracking-tight">{subtitle}</div>
+              <div className="text-3xl font-semibold mb-4 tracking-tight">{price}</div>
               <ul className="space-y-2 text-gray-300 mb-4">
                 <li className="flex items-center tracking-tight">
                   <span className="text-blue-400 mr-3">•</span>
@@ -188,7 +183,7 @@ const Checkout = () => {
               
               {/* Recurring subscription text at bottom of plan box */}
               <p className="text-xs text-gray-500 tracking-tight">
-                {billingCycle === 'monthly' ? 'Monthly recurring subscription, cancel any time.' : 'Annual recurring subscription, cancel any time.'}
+                Annual recurring subscription, cancel any time.
               </p>
             </div>
           </div>
@@ -204,7 +199,7 @@ const Checkout = () => {
 
             {clientSecret && (
               <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm billingCycle={billingCycle as 'monthly' | 'annual'} amount={amount} />
+                <CheckoutForm billingCycle="annual" amount={amount} />
               </Elements>
             )}
           </div>

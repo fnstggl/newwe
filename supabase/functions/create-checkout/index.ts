@@ -42,7 +42,9 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const { billing_cycle } = await req.json();
-    logStep("Billing cycle received", { billing_cycle });
+    // Force annual billing at $18/year regardless of what's passed
+    const forcedBillingCycle = 'annual';
+    logStep("Forced billing cycle to annual", { original: billing_cycle, forced: forcedBillingCycle });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -55,20 +57,11 @@ serve(async (req) => {
       logStep("No existing customer found");
     }
 
-    let priceAmount, interval;
+    // Always use $18/year pricing
+    const priceAmount = 1800; // $18.00
+    const interval = 'year';
 
-    if (billing_cycle === 'monthly') {
-      priceAmount = 900; // $9.00
-      interval = 'month';
-    } else {
-      // Default to annual
-      priceAmount = 1800; // $18.00
-      interval = 'year';
-    }
-
-    logStep("Pricing configured", { priceAmount, interval });
-
-    const sessionConfig: any = {
+    const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [
@@ -77,7 +70,7 @@ serve(async (req) => {
             currency: "usd",
             product_data: { 
               name: "Unlimited Plan",
-              description: "Unlock the best deals in NYC. Save thousands. Cancel anytime."
+              description: "Annual subscription to access all deals"
             },
             unit_amount: priceAmount,
             recurring: { interval },
@@ -88,15 +81,8 @@ serve(async (req) => {
       mode: "subscription",
       success_url: `${req.headers.get("origin")}/pricing?success=true`,
       cancel_url: `${req.headers.get("origin")}/pricing?canceled=true`,
-    };
-
-    const session = await stripe.checkout.sessions.create(sessionConfig);
-    
-    logStep("Checkout session created", { 
-      sessionId: session.id, 
-      url: session.url, 
-      billingCycle: billing_cycle
     });
+    logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
