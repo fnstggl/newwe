@@ -32,7 +32,7 @@ const ScrollJackedSection = () => {
 
   const textContent = [
     {
-      title: "We scan 30,000+ listings a week",
+      title: "We scan 33,000+ listings a week",
       subtitle: "Real-time analysis of thousands of data points to identify true value of each listing.",
       opacity: text1Opacity,
       y: text1Y

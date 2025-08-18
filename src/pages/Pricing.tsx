@@ -295,7 +295,7 @@ return (
   <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-lg px-5 py-4 text-center">
     <p className="text-sm text-gray-300 tracking-tight">
       <span className="text-white font-medium">Why $18/year?</span> 
-      &nbsp;It costs real money to scan, analyze, and verify thousands of NYC listings daily. 
+      &nbsp;It costs real money to scan, analyze, and verify over 30,000 NYC listings daily. 
       We price at $1.50/month so we can continue helping New Yorkers save on their apartments.
     </p>
   </div>
