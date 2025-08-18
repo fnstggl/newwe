@@ -1420,7 +1420,7 @@ return (
                           <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
                             🔥
                           </span>
-                          Try Unlimited Access for Free
+                          Don't Miss Your Deal
                         </button>
                               <p className="text-xs text-gray-400 mt-3">
                           Save an avg of $925 every month • Just $1.50/mo • Billed annually
