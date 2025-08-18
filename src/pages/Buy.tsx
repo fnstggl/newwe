@@ -1181,7 +1181,7 @@ return (
                           Create free account to continue
                         </button>
                         <p className="text-xs text-gray-400">
-                          10,000+ New Yorkers already beating the market
+                          10,000+ New Yorkers already ahead of the market
                         </p>
                       </div>
                     </div>
@@ -1192,16 +1192,16 @@ return (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                       <div className="bg-black/60 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto">
                         <h3 className="text-2xl font-bold text-white mb-4">
-                          The only tool that helps you find your dream home. And afford it.
+                          Overpriced listings wasting your time?
                         </h3>
                         <button
                           onClick={() => navigate('/pricing')}
                           className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors mb-3"
                         >
-                          Find the Best Deal in NYC
+                          Unlock NYC's Hidden Deals
                         </button>
                         <p className="text-xs text-gray-400">
-                          10,000+ New Yorkers already beating the market
+                          10,000+ New Yorkers already ahead of the market
                         </p>
                       </div>
                     </div>
