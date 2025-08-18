@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { HoverButton } from "@/components/ui/hover-button";
 import { useState, useEffect } from "react";
@@ -80,43 +79,8 @@ if (urlParams.get('success') === 'true') {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      console.log(`Creating checkout session for ${billingCycle} plan`);
-      
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          billing_cycle: billingCycle
-        },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw error;
-      }
-
-      console.log('Checkout session response:', data);
-      
-      if (data?.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned from payment intent');
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      toast({
-        title: "Error",
-        description: "Failed to initialize checkout. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Navigate to checkout page with billing cycle parameter
+    navigate(`/checkout?billing=${billingCycle}`);
   };
 
   const handleManageSubscription = () => {

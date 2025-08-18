@@ -5,19 +5,25 @@ import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from '@/components/CheckoutForm';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [clientSecret, setClientSecret] = useState('');
+  const [stripePromise, setStripePromise] = useState<any>(null);
 
-  // Use URL params to determine billing cycle, default to annual
+  // Get billing cycle from URL params
   const urlParams = new URLSearchParams(window.location.search);
   const billingCycle = urlParams.get('billing') === 'monthly' ? 'monthly' : 'annual';
   
   const price = billingCycle === 'monthly' ? '$9/month' : '$18/year';
   const subtitle = billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually';
+  const amount = billingCycle === 'monthly' ? 900 : 1800; // in cents
   
   useEffect(() => {
     if (!user) {
@@ -29,62 +35,66 @@ const Checkout = () => {
       navigate('/pricing');
       return;
     }
-  }, [user, navigate, toast]);
 
-  const handleSubscribe = async () => {
-    if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to subscribe.",
-        variant: "destructive",
-      });
-      navigate('/pricing');
-      return;
-    }
+    const initializeCheckout = async () => {
+      try {
+        console.log(`Creating payment intent for ${billingCycle} plan`);
+        
+        const { data, error } = await supabase.functions.invoke('create-payment-intent', {
+          body: {
+            billing_cycle: billingCycle,
+            amount: amount
+          },
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        });
 
-    setLoading(true);
+        if (error) {
+          console.error('Supabase function error:', error);
+          throw error;
+        }
 
-    try {
-      console.log(`Creating checkout session for ${billingCycle} plan`);
-      
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          billing_cycle: billingCycle
-        },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw error;
+        console.log('Payment intent response:', data);
+        
+        if (data?.client_secret) {
+          setClientSecret(data.client_secret);
+          
+          // Initialize Stripe with publishable key
+          const publishableKey = 'pk_live_51QO1RdEoqR7PBYumz4GJuWl4cAuKUd1S8FJdvGdqAhg8KGDr3AO0BYcG8V5zNOHUdlNj08J5xYO2OYmH3VwSwJyP00D7PVhzqT';
+          const stripe = await loadStripe(publishableKey);
+          setStripePromise(stripe);
+        } else {
+          throw new Error('No client secret returned from payment intent');
+        }
+      } catch (error) {
+        console.error('Error creating payment intent:', error);
+        toast({
+          title: "Error",
+          description: "Failed to initialize checkout. Please try again.",
+          variant: "destructive",
+        });
+        navigate('/pricing');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      console.log('Checkout session response:', data);
-      
-      if (data?.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned from payment intent');
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      toast({
-        title: "Error",
-        description: "Failed to initialize checkout. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    initializeCheckout();
+  }, [user, session, billingCycle, amount, navigate, toast]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
-        <div className="text-xl tracking-tight">Redirecting to checkout...</div>
+        <div className="text-xl tracking-tight">Loading checkout...</div>
+      </div>
+    );
+  }
+
+  if (!clientSecret || !stripePromise) {
+    return (
+      <div className="min-h-screen bg-black text-white font-inter flex items-center justify-center">
+        <div className="text-xl tracking-tight">Failed to load checkout</div>
       </div>
     );
   }
@@ -155,34 +165,18 @@ const Checkout = () => {
             </div>
           </div>
 
-          {/* Right side - Subscribe button */}
+          {/* Right side - Embedded checkout form */}
           <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Subscribe Now</h2>
+              <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete Your Subscription</h2>
               <p className="text-gray-400 tracking-tight">
-                Get instant access. Cancel anytime.
+                Secure payment • Cancel anytime
               </p>
             </div>
 
-            <button
-              onClick={handleSubscribe}
-              disabled={loading}
-              className="w-full bg-white text-black py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-                  Processing...
-                </>
-              ) : (
-                `Subscribe for ${price}`
-              )}
-            </button>
-
-            {/* Security notice */}
-            <p className="text-xs text-gray-500 text-center mt-4 tracking-tight">
-              Secure payment powered by Stripe. Billed {billingCycle === 'monthly' ? 'monthly' : 'annually'}.
-            </p>
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <CheckoutForm billingCycle={billingCycle as 'monthly' | 'annual'} amount={amount} />
+            </Elements>
           </div>
         </div>
       </div>
