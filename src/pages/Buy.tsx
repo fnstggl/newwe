@@ -1135,32 +1135,37 @@ return (
                     </div>
                   )}
 
-{/* Overlay CTA for free plan users - positioned over the 10th property (index 9) */}
-                  {isFreeUser && index === 25 && properties.length > 25 && (
-                    <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-                        <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
-                        <h3 className="text-2xl font-bold text-white mb-2">
-                          Your next home could be just past this point.
-                        </h3>
-                        <p className="text-white font-bold mb-4">
-                          You're only seeing 24 of 4,193 deals.
-                        </p>
-                     <button
-  onClick={() => navigate('/pricing')}
-  className="relative group bg-white text-black px-8 py-3 rounded-full font-semibold transition-all duration-300
-             hover:shadow-[0_0_12px_rgba(255,255,255,0.4)]"
->
-  <span className="inline-block mr-2 transition-transform duration-200 group-hover:scale-110">
-    🔥
-  </span>
-  Don't Miss Your Deal
-</button>
-                          <p className="text-xs text-gray-400 mt-3">
-  Save an avg of $236,000 • Just $1.50/mo • Billed annually
-</p>
-                      </div>
-                    </div>
-                  )}
+{/* Overlay CTA for free plan users (note: your comment says 10th but code checks index === 25) */}
+{isFreeUser && index === 25 && properties.length > 25 && (
+  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div className="pointer-events-auto max-w-xl w-full rounded-2xl bg-black/35 backdrop-blur-md
+                    ring-1 ring-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] px-6 py-7 text-center">
+      <h3 className="text-white text-2xl md:text-[28px] leading-tight font-semibold tracking-tight">
+        Your next home could be just past this point.
+      </h3>
+
+      <p className="mt-2 text-white/90 font-medium">
+        You’re only seeing 24 of {properties.length.toLocaleString()} deals.
+      </p>
+
+      <button
+        onClick={() => navigate('/pricing')}
+        aria-label="Unlock access to all deals"
+        className="mt-5 inline-flex items-center justify-center rounded-full
+                   bg-white text-black px-7 py-3 font-semibold
+                   shadow-[0_8px_20px_rgba(0,0,0,0.25)]
+                   hover:shadow-[0_12px_28px_rgba(0,0,0,0.35)]
+                   transition-shadow duration-200"
+      >
+        Don’t Miss Your Deal
+      </button>
+
+      <p className="mt-3 text-[12px] text-white/70">
+        Save an avg of $236,000 • Just $1.50/mo • Cancel anytime • Billed annually
+      </p>
+    </div>
+  </div>
+)}
 
                   {/* NEW: Filter-based CTA for signed out users - positioned over the 2nd property (index 1) */}
                   {!user && hasActiveFilters && index === 1 && (
