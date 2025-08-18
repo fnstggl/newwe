@@ -221,10 +221,12 @@ return (
             )}
           </div>
 
-      {/* Unlimited Plan - Mobile responsive */}
+{/* Unlimited Plan - Mobile responsive */}
 <div className="relative flex flex-col h-full">
-  {/* This div IS the animated border */}
-  <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 via-blue-500 to-purple-500 bg-[length:400%_400%] animate-pulse">
+  {/* Rotating gradient border */}
+  <div className="relative overflow-hidden rounded-2xl p-[3px] h-full bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:300%_300%] animate-spin-slow">
+    
+    <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
     
     <div className={`relative bg-black rounded-2xl ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
       {/* Background gradient image */}
