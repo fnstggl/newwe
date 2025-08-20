@@ -201,57 +201,67 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
     setTimeout(checkSubscription, 10000); // Start checking after 10 seconds
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Payment Element */}
-      <div>
-        <PaymentElement 
-  options={{
-    layout: 'tabs',
-    defaultValues: {
-      billingDetails: {
-        email: user?.email || '',
-      },
-    },
-    paymentMethodOrder: ['card', 'google_pay', 'apple_pay', 'cashapp', 'amazon_pay'],
-    wallets: {
-      applePay: 'auto',
-      googlePay: 'auto', // Add this line
-    },
-  }}
-/>
+return (
+  <form onSubmit={handleSubmit} className="space-y-4">  {/* tighter vertical spacing */}
+    {/* Payment Element */}
+    <div className="-mt-1">
+      <PaymentElement
+        options={{
+          layout: 'tabs',
+          defaultValues: {
+            billingDetails: { email: user?.email || '' },
+          },
+          paymentMethodOrder: ['google_pay', 'apple_pay', 'card', 'cashapp', 'amazon_pay'], // wallets first
+          wallets: { applePay: 'auto', googlePay: 'auto' },
+        }}
+      />
+    </div>
+
+    {/* Error message */}
+    {message && (
+      <div className="text-red-400 text-sm tracking-tight p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+        {message}
       </div>
+    )}
 
-      {/* Error message */}
-      {message && (
-        <div className="text-red-400 text-sm tracking-tight p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          {message}
-        </div>
+    {/* Submit button */}
+    <button
+      type="submit"
+      disabled={loading || !stripe || !elements}
+      className="w-full bg-white text-black py-3.5 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      aria-label={billingCycle === 'monthly' ? 'Subscribe for $9 today' : 'Subscribe for $18 today'}
+    >
+      {loading ? (
+        <>
+          <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+          Processing...
+        </>
+      ) : (
+        `Subscribe for ${billingCycle === 'monthly' ? '$9 today' : '$18 today'}`
       )}
+    </button>
 
-      {/* Submit button */}
-      <button
-        type="submit"
-        disabled={loading || !stripe || !elements}
-        className="w-full bg-white text-black py-4 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-            Processing...
-          </>
-        ) : (
-          `Subscribe for ${billingCycle === 'monthly' ? '$9/month' : '$18/year'}`
-        )}
-      </button>
+    {/* Urgency line */}
+    <p className="text-[11px] text-gray-400 text-center leading-tight -mt-1">
+      Deals move fast—get alerts today. Don’t risk missing tomorrow’s deals.
+    </p>
 
-      {/* Security notice only */}
-      <p className="text-xs text-gray-500 text-center tracking-tight">
-       One-time charge of {billingCycle === 'monthly' ? '$9 today, billed monthly' : '$18 today, billed annually'}. 
-  Cancel anytime in your account. 100% secure payment powered by Stripe.
-      </p>
-    </form>
-  );
+    {/* Extra trust line */}
+    <p className="text-[11px] text-gray-500 text-center tracking-tight leading-tight flex items-center justify-center gap-1">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
+        <path d="M12 1a5 5 0 00-5 5v3H5a1 1 0 00-1 1v11a1 1 0 001 1h14a1 1 0 001-1V10a1 1 0 00-1-1h-2V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9z"/>
+      </svg>
+      100% secure, encrypted payment • Powered by Stripe
+    </p>
+
+    {/* Legal/clarity (kept tiny) */}
+    <p className="text-[11px] text-gray-500 text-center tracking-tight leading-tight">
+      {billingCycle === 'monthly'
+        ? 'You’ll be charged $9 today and then $9/month. Cancel anytime.'
+        : 'You’ll be charged $18 today (just $1.50/mo), billed annually. Cancel anytime.'}
+    </p>
+  </form>
+);
 };
 
 export default CheckoutForm;
