@@ -237,7 +237,7 @@ return (
           Processing...
         </>
       ) : (
-        `Subscribe for ${billingCycle === 'monthly' ? '$9 today' : '$18 today'}`
+        `Save thousands for ${billingCycle === 'monthly' ? '$9/month' : '$18/year'}`
       )}
     </button>
 
@@ -257,8 +257,8 @@ return (
     {/* Legal/clarity (kept tiny) */}
     <p className="text-[11px] text-gray-500 text-center tracking-tight leading-tight">
       {billingCycle === 'monthly'
-        ? 'You’ll be charged $9 today and then $9/month. Cancel anytime.'
-        : 'You’ll be charged $18 today (just $1.50/mo), billed annually. Cancel anytime.'}
+        ? 'You’ll be charged $9 per month for unlimited access. Cancel anytime.'
+        : 'You’ll be charged $18 once a year (just $1.50/mo) for unlimited access. Cancel anytime.'}
     </p>
   </form>
 );
