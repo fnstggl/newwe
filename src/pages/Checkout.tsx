@@ -125,13 +125,13 @@ const Checkout = () => {
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-semibold mb-2 tracking-tighter">
-                Find the best deal in the city. Save thousands.
+                Find the best deal in the city. Unlock your unfair advantage.
               </h1>
               <p className="text-lg text-gray-400 tracking-tight">
-                Thousands of New Yorkers already saving.{' '}
+                Most New Yorkers overpay on their apartment. You don't have to be most New Yorkers.{' '}
                 {billingCycle === 'monthly'
-                  ? 'Just $9 today, billed monthly.'
-                  : 'Just $18 today (only $1.50/mo, billed annually).'}
+                  ? ' '
+                  : ' '}
               </p>
             </div>
 
