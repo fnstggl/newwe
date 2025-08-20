@@ -1184,10 +1184,10 @@ const DesktopIndex = () => {
     viewport={{ once: true, margin: "-100px" }}
   >
     <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-       NYC housing is rigged. Welcome to your unfair advantage.
+       Finding a home in NYC shouldn't feel impossible.
     </h2>
     <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
-      11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city sees them.
+      Average of 11 renters competing for per rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city even knows they exist.
     </p>
   </motion.div>
   
