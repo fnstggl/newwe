@@ -125,7 +125,7 @@ return (
           <div className={`${isMobile ? 'mt-6' : 'mt-10'} flex justify-center`}>
             <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-5 max-w-xl'} shadow-xl`}>
               <p className={`text-gray-100 ${isMobile ? 'text-xs' : 'text-sm md:text-base'} leading-snug tracking-tight`}>
-                "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+                "I almost signed a $4,200 lease in Dumbo when I found a stabilized one on the same block for $2,550. No broker fee too. Couldn't believe it."
               </p>
               <p className={`${isMobile ? 'mt-2 text-xs' : 'mt-3 text-sm'} text-blue-400 font-medium`}>– Sasha, Brooklyn renter</p>
             </div>
