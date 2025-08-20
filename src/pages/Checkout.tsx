@@ -194,9 +194,10 @@ const Checkout = () => {
           <div className="bg-gray-900/30 rounded-2xl p-8 border border-gray-800">
             <div className="mb-6">
               <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete your subscription</h2>
-              <p className="text-gray-400 tracking-tight">
-                Secure payment powered by Stripe
-              </p>
+              <p className="text-gray-400 tracking-tight text-center">
+  Secure payment powered by Stripe <br />
+  <span className="text-white">Risk-free: try it for 30 days — love it or we’ll refund you.</span>
+</p>
             </div>
 
             {clientSecret && (
