@@ -76,6 +76,24 @@ const Terms = () => {
             </ul>
           </section>
 
+<section>
+  <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Refund Policy</h2>
+  <p className="mb-6">
+    We want you to feel confident using Realer Estate. If you are not satisfied with your paid subscription, you may
+    request a refund within 30 days of your initial purchase by emailing us at 
+    <a href="mailto:info@realerestate.org" className="text-white underline"> info@realerestate.org</a>.  
+  </p>
+  <p className="mb-6">
+    Refunds are subject to the following conditions:
+  </p>
+  <ul className="list-disc pl-6 mb-6 space-y-2">
+    <li>Refunds apply only to first-time subscription purchases, not renewals or upgrades.</li>
+    <li>Refund requests must be made within 30 calendar days of your original purchase date.</li>
+    <li>We reserve the right to deny refunds in cases of suspected abuse, misuse of the Service, or violation of these Terms.</li>
+    <li>Approved refunds will be credited to your original payment method within a reasonable timeframe.</li>
+  </ul>
+</section>
+          
           <section>
             <h2 className="text-2xl font-semibold mb-4 tracking-tight text-white">Acceptable Use</h2>
             <p className="mb-4">You agree not to use our Service to:</p>
