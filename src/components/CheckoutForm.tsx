@@ -221,16 +221,6 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
         />
       </div>
 
-      {/* Address Element */}
-      <div>
-        <AddressElement 
-          options={{
-            mode: 'billing',
-            allowedCountries: ['US'],
-          }}
-        />
-      </div>
-
       {/* Error message */}
       {message && (
         <div className="text-red-400 text-sm tracking-tight p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
