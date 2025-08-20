@@ -196,7 +196,7 @@ const Checkout = () => {
               <h2 className="text-2xl font-semibold mb-2 tracking-tight">Complete your subscription</h2>
               <p className="text-gray-400 tracking-tight text-center">
   Secure payment powered by Stripe <br />
-  <span className="text-white">Risk-free: try it for 30 days — love it or we’ll refund you.</span>
+  <span className="text-white">Risk-free: try it for 30 days—love it or we’ll refund you.</span>
 </p>
             </div>
 
