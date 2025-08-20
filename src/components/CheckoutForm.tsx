@@ -243,7 +243,7 @@ return (
 
     {/* Urgency line */}
     <p className="text-[11px] text-gray-400 text-center leading-tight -mt-1">
-      The best deals are gone in hours—unlock alerts so you don't miss the next one.
+      Deals move fast—get alerts today. Don’t risk missing tomorrow’s deals.
     </p>
 
     {/* Extra trust line */}

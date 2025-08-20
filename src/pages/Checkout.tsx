@@ -119,19 +119,21 @@ const Checkout = () => {
           </button>
         </div>
 
-  {/* Two-column layout: fixed compact checkout width */}
-<div className="grid lg:grid-cols-[1fr_420px] gap-8 items-start">
-  {/* Left: value proof (trimmed) */}
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-3xl font-semibold mb-2 tracking-tighter">
-        Find the best deal in the city. Save thousands.
-      </h1>
-      <p className="text-lg text-gray-400 tracking-tight">
-        Thousands of New Yorkers already finding better deals.
-      </p>
-    </div>
-  </div>
+        {/* Two-column layout: fixed compact checkout width */}
+        <div className="grid lg:grid-cols-[1fr_420px] gap-8 items-start">
+          {/* Left: value proof (trimmed) */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-semibold mb-2 tracking-tighter">
+                Find the best deal in the city. Save thousands.
+              </h1>
+              <p className="text-lg text-gray-400 tracking-tight">
+                Thousands of New Yorkers already saving.{' '}
+                {billingCycle === 'monthly'
+                  ? 'Just $9 today, billed monthly.'
+                  : 'Just $18 today (only $1.50/mo, billed annually).'}
+              </p>
+            </div>
 
             <div className="relative">
               <img
