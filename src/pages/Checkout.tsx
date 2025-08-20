@@ -132,7 +132,6 @@ const Checkout = () => {
       </p>
     </div>
   </div>
-</div>
 
             <div className="relative">
               <img
