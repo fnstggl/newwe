@@ -1145,7 +1145,7 @@ const DesktopIndex = () => {
         The only platform built to find you the best deal in the city. Actually.
       </h1>
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
-        Your unfair advantage for finding below-market & rent-stabilized homes in the city.
+        Stop overpaying. Save thousands on rent-stabilized and below-market apartments in NYC.
       </p>
       <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
         {user ? "See Deals" : "See Deals"}
@@ -1184,7 +1184,7 @@ const DesktopIndex = () => {
     viewport={{ once: true, margin: "-100px" }}
   >
     <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-      It shouldn't be this hard to find a home you can afford.
+       NYC housing is rigged. Welcome to your unfair advantage.
     </h2>
     <p className="text-xl text-gray-400 tracking-tight max-w-3xl mx-auto">
       11 renters competing for the average NYC rental. 3M New Yorkers facing housing insecurity. Realer Estate finds you the best deals—before the rest of the city sees them.
