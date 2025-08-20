@@ -202,17 +202,48 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
   };
 
 return (
-  <form onSubmit={handleSubmit} className="space-y-4">  {/* tighter vertical spacing */}
+  <form onSubmit={handleSubmit} className="space-y-3"> {/* tighter */}
     {/* Payment Element */}
     <div className="-mt-1">
       <PaymentElement
         options={{
-          layout: 'tabs',
+          // 'accordion' removes the tall tab row; usually shorter than 'tabs'
+          layout: 'accordion',
+
+          // Hide unneeded billing details (this removes Country/ZIP)
+          fields: {
+            billingDetails: {
+              address: 'never',  // ⟵ hides Country + ZIP
+              name: 'auto',      // collect only if Stripe needs it
+              email: 'auto',     // prefilled via defaultValues, shown if needed
+            },
+          },
+
+          // Wallets first (and fewer methods = shorter UI)
+          paymentMethodOrder: ['google_pay', 'apple_pay', 'card'],
+
+          wallets: { applePay: 'auto', googlePay: 'auto' },
+
+          // Make the iframe content denser
+          appearance: {
+            variables: {
+              // smaller base font and spacing inside the PaymentElement
+              fontSizeBase: '14px',
+              spacingUnit: '3px',
+              borderRadius: '8px',
+            },
+            rules: {
+              '.Input': { padding: '10px', fontSize: '14px' },
+              '.Label': { fontSize: '12px' },
+              '.Tab, .AccordionTrigger': { padding: '8px 10px' },
+              '.TabLabel': { fontSize: '13px' },
+              '.Error': { fontSize: '12px' },
+            },
+          },
+          // Pre-fill email so Stripe can hide it if not required
           defaultValues: {
             billingDetails: { email: user?.email || '' },
           },
-          paymentMethodOrder: ['google_pay', 'apple_pay', 'card', 'cashapp', 'amazon_pay'], // wallets first
-          wallets: { applePay: 'auto', googlePay: 'auto' },
         }}
       />
     </div>
@@ -228,7 +259,7 @@ return (
     <button
       type="submit"
       disabled={loading || !stripe || !elements}
-      className="w-full bg-white text-black py-3.5 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className="w-full bg-white text-black py-3 rounded-full font-semibold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       aria-label={billingCycle === 'monthly' ? 'Subscribe for $9 today' : 'Subscribe for $18 today'}
     >
       {loading ? (
@@ -241,21 +272,14 @@ return (
       )}
     </button>
 
-    {/* Urgency line */}
-    <p className="text-[11px] text-gray-400 text-center leading-tight -mt-1">
+    {/* Urgency + trust lines (kept tiny) */}
+    <p className="text-[11px] text-gray-400 text-center leading-tight -mt-0.5">
       Deals move fast—get alerts today. Don’t risk missing tomorrow’s deals.
     </p>
-
-    {/* Extra trust line */}
-    <p className="text-[11px] text-gray-500 text-center tracking-tight leading-tight flex items-center justify-center gap-1">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
-        <path d="M12 1a5 5 0 00-5 5v3H5a1 1 0 00-1 1v11a1 1 0 001 1h14a1 1 0 001-1V10a1 1 0 00-1-1h-2V6a5 5 0 00-5-5zm-3 8V6a3 3 0 116 0v3H9z"/>
-      </svg>
+    <p className="text-[11px] text-gray-500 text-center leading-tight">
       100% secure, encrypted payment • Powered by Stripe
     </p>
-
-    {/* Legal/clarity (kept tiny) */}
-    <p className="text-[11px] text-gray-500 text-center tracking-tight leading-tight">
+    <p className="text-[11px] text-gray-500 text-center leading-tight">
       {billingCycle === 'monthly'
         ? 'You’ll be charged $9 today and then $9/month. Cancel anytime.'
         : 'You’ll be charged $18 today (just $1.50/mo), billed annually. Cancel anytime.'}
