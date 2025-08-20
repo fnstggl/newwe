@@ -247,7 +247,8 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
 
       {/* Security notice only */}
       <p className="text-xs text-gray-500 text-center tracking-tight">
-        Your payment information is secure and encrypted. Powered by Stripe.
+       One-time charge of {billingCycle === 'monthly' ? '$9 today, billed monthly' : '$18 today, billed annually'}. 
+  Cancel anytime in your account. 100% secure payment powered by Stripe.
       </p>
     </form>
   );
