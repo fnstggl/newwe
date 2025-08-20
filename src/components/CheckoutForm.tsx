@@ -206,19 +206,20 @@ const CheckoutForm = ({ billingCycle, amount }: CheckoutFormProps) => {
       {/* Payment Element */}
       <div>
         <PaymentElement 
-          options={{
-            layout: 'tabs',
-            defaultValues: {
-              billingDetails: {
-                email: user?.email || '',
-              },
-            },
-            paymentMethodOrder: ['card', 'apple_pay', 'cashapp', 'amazon_pay'],
-            wallets: {
-              applePay: 'auto',
-            },
-          }}
-        />
+  options={{
+    layout: 'tabs',
+    defaultValues: {
+      billingDetails: {
+        email: user?.email || '',
+      },
+    },
+    paymentMethodOrder: ['card', 'google_pay', 'apple_pay', 'cashapp', 'amazon_pay'],
+    wallets: {
+      applePay: 'auto',
+      googlePay: 'auto', // Add this line
+    },
+  }}
+/>
       </div>
 
       {/* Error message */}
