@@ -16,19 +16,19 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
     {
       quote: "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too.",
       author: "Sasha K.",
-      detail: "Brooklyn resident since March 2024",
+      detail: "Brooklyn resident since June 2025",
       highlight: "$1,650"
     },
     {
-      quote: "Found my dream 1BR in Williamsburg through this. Saved me $925/month compared to what I was looking at on StreetEasy.",
+      quote: "Found my dream apartment in Williamsburg through this. It's been saving me $800/month compared to what I was looking at on StreetEasy.",
       author: "Mike T.", 
-      detail: "Williamsburg resident since August 2024",
+      detail: "Williamsburg resident since August 2025",
       highlight: "$925"
     },
     {
-      quote: "Almost paid $3,800 for a studio in Manhattan. Got alerts for a $2,400 one-bedroom in the same area. Life-changing.",
+      quote: "Almost paid $3,800 for a studio in Manhattan until I got an alert for a $2,400 one literally around the corner. Glad I got to it first",
       author: "Jessica L.",
-      detail: "Manhattan resident since July 2024", 
+      detail: "Manhattan resident since July 2025", 
       highlight: "$1,400"
     }
   ];
