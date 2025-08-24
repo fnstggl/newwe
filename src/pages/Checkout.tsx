@@ -255,7 +255,7 @@ const Checkout = () => {
  {/* Social proof number */}
             <div className="text-center mb-4">
               <p className="text-gray-400 text-sm">
-                Join <span className="text-white font-semibold">10,247 New Yorkers</span> already saving thousands
+                Join <span className="text-white font-semibold">10,257 New Yorkers</span> already saving thousands
               </p>
             </div>
             
@@ -263,7 +263,7 @@ const Checkout = () => {
 
 {/* Scarcity element */}
 <p className="text-yellow-400 text-xs text-center mb-3">
-  ⚡ 39 people upgraded in the last 6 hours
+  48 people upgraded in the last 6 hours
 </p>
             <p className="text-gray-400 tracking-tight text-sm flex items-center gap-1.5 mb-2">
               <Lock className="w-4 h-4 text-gray-500" />
