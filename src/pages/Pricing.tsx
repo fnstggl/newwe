@@ -44,9 +44,9 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
   const current = successTestimonials[currentIndex];
 
   return (
-    <div className="relative text-center">
-      {/* Savings badge - top right corner, Apple-style */}
-      <div className="absolute top-0 right-0 -mt-3 -mr-3">
+    <div className="relative text-center h-full flex flex-col">
+      {/* Savings badge - better positioned with more breathing room */}
+      <div className="absolute top-2 right-2">
         <div className="bg-blue-500/15 border border-blue-500/30 rounded-full px-4 py-2 backdrop-blur-sm">
           <span className="text-blue-400 font-semibold text-sm">
             {current.highlight}/mo saved
@@ -54,25 +54,29 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
         </div>
       </div>
 
-      {/* Main testimonial content - moved down and tighter spacing */}
-      <div className="transition-all duration-500 ease-in-out px-2 pt-8">
-        <p className={`text-white ${isMobile ? 'text-base' : 'text-lg md:text-xl'} leading-relaxed tracking-tight mb-4 font-normal pr-16`}>
-          "{current.quote}"
-        </p>
+      {/* Main testimonial content - better spacing and less horizontal padding */}
+      <div className="transition-all duration-500 ease-in-out flex-1 flex flex-col justify-center pt-6">
         
-        {/* Author info - clean Apple style with tighter spacing */}
-        <div className="space-y-1 mb-2">
-          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-blue-400 font-medium`}>
+        {/* Quote with less horizontal padding and better line height */}
+        <div className="px-1">
+          <p className={`text-white ${isMobile ? 'text-base' : 'text-lg md:text-xl'} leading-relaxed tracking-tighter mb-6 font-semibold`}>
+            "{current.quote}"
+          </p>
+        </div>
+        
+        {/* Author info section */}
+        <div className="space-y-2 mt-auto mb-2">
+          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-blue-400 font-semibold tracking-tight`}>
             {current.author}
           </p>
           
-          <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400 font-normal`}>
+          <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400 font-normal tracking-tight`}>
             {current.detail}
           </p>
         </div>
       </div>
 
-      {/* Apple-style liquid pagination dots - closer to content */}
+      {/* Apple-style liquid pagination dots - proper spacing from content */}
       <div className="flex justify-center mt-4 space-x-2">
         {successTestimonials.map((_, index) => (
           <button
@@ -204,7 +208,7 @@ return (
           
             {/* Rotating Success Testimonials */}
           <div className={`${isMobile ? 'mt-6' : 'mt-10'} flex justify-center`}>
-            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-3 max-w-xl'} shadow-xl relative min-h-[140px] flex items-start`}>
+            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-3 py-4 max-w-sm' : 'px-4 py-5 max-w-xl'} shadow-xl relative min-h-[180px] flex items-start`}>
               <div className="w-full">
                 <PricingTestimonials isMobile={isMobile} />
               </div>
