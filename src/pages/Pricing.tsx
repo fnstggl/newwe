@@ -9,6 +9,83 @@ import { X, Check, Star, Unlock, Home } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+// Add this component after your imports
+const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const successTestimonials = [
+    {
+      quote: "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too.",
+      author: "Sasha K.",
+      detail: "Saved $1,650/month in Brooklyn",
+      highlight: "$1,650/month saved"
+    },
+    {
+      quote: "Found my dream 1BR in Williamsburg through this. Saved me $925/month compared to what I was looking at on StreetEasy.",
+      author: "Mike T.",
+      detail: "Moved in within 2 weeks",
+      highlight: "$925/month saved"
+    },
+    {
+      quote: "Almost paid $3,800 for a studio in Manhattan. Got alerts for a $2,400 one-bedroom in the same area. Life-changing.",
+      author: "Jessica L.",
+      detail: "Upgraded to 1BR for less money",
+      highlight: "$1,400/month saved"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % successTestimonials.length);
+    }, 4000); // 4 seconds per testimonial
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = successTestimonials[currentIndex];
+
+  return (
+    <div className="relative">
+      {/* Main testimonial content */}
+      <div className="transition-all duration-500 ease-in-out">
+        <p className={`text-gray-100 ${isMobile ? 'text-xs' : 'text-sm md:text-base'} leading-snug tracking-tight mb-3`}>
+          "{current.quote}"
+        </p>
+        
+        <div className="flex items-center justify-between">
+          <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-blue-400 font-medium`}>
+            – {current.author}
+          </p>
+          
+          {/* Highlight savings amount */}
+          <div className={`bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+            <span className="text-green-400 font-semibold">{current.highlight}</span>
+          </div>
+        </div>
+        
+        <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400 mt-1`}>
+          {current.detail}
+        </p>
+      </div>
+
+      {/* Pagination dots */}
+      <div className="flex justify-center mt-4 space-x-1">
+        {successTestimonials.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+              index === currentIndex 
+                ? 'bg-blue-400 w-4' 
+                : 'bg-gray-600 hover:bg-gray-500'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Pricing = () => {
   const navigate = useNavigate();
   const { user, userProfile, session } = useAuth();
@@ -121,13 +198,12 @@ return (
             These deals don't wait. People grab them before you even know they exist.
           </p>
           
-          {/* Testimonial - Mobile responsive */}
+            {/* Rotating Success Testimonials */}
           <div className={`${isMobile ? 'mt-6' : 'mt-10'} flex justify-center`}>
-            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-5 max-w-xl'} shadow-xl`}>
-              <p className={`text-gray-100 ${isMobile ? 'text-xs' : 'text-sm md:text-base'} leading-snug tracking-tight`}>
-                "I almost signed a $4,200 lease in Dumbo when I found a stabilized one on the same block for $2,550. No broker fee too. Couldn't believe it."
-              </p>
-              <p className={`${isMobile ? 'mt-2 text-xs' : 'mt-3 text-sm'} text-blue-400 font-medium`}>– Sasha, Brooklyn renter</p>
+            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-5 max-w-xl'} shadow-xl relative min-h-[120px] flex items-center`}>
+              <div className="w-full">
+                <PricingTestimonials isMobile={isMobile} />
+              </div>
             </div>
           </div>
 
