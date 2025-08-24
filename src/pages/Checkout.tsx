@@ -8,6 +8,85 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Add this component after your imports, before const Checkout = () => {
+const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const successTestimonials = [
+    {
+      quote: "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too.",
+      author: "Sasha K.",
+      detail: "Brooklyn resident since March 2024",
+      highlight: "$1,650"
+    },
+    {
+      quote: "Found my dream 1BR in Williamsburg through this. Saved me $925/month compared to what I was looking at on StreetEasy.",
+      author: "Mike T.", 
+      detail: "Williamsburg resident since August 2024",
+      highlight: "$925"
+    },
+    {
+      quote: "Almost paid $3,800 for a studio in Manhattan. Got alerts for a $2,400 one-bedroom in the same area. Life-changing.",
+      author: "Jessica L.",
+      detail: "Manhattan resident since July 2024", 
+      highlight: "$1,400"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % successTestimonials.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = successTestimonials[currentIndex];
+
+  return (
+    <div className="relative text-center h-full flex flex-col w-full">
+      <div className="absolute top-1 right-3">
+        <div className="bg-blue-500/15 border border-blue-500/30 rounded-full px-3 py-1.5 backdrop-blur-sm">
+          <span className="text-blue-400 font-semibold text-sm">
+            {current.highlight}/mo saved
+          </span>
+        </div>
+      </div>
+
+      <div className="transition-all duration-500 ease-in-out flex-1 flex flex-col justify-center pt-10">
+        <div className="px-4">
+          <p className="text-white text-base leading-relaxed tracking-tighter mb-4 font-semibold">
+            "{current.quote}"
+          </p>
+        </div>
+        
+        <div className="space-y-1 mt-auto mb-2">
+          <p className="text-base text-blue-400 font-semibold tracking-tight">
+            {current.author}
+          </p>
+          <p className="text-xs text-gray-400 font-normal tracking-tight">
+            {current.detail}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex justify-center mt-3 space-x-2">
+        {successTestimonials.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`rounded-full transition-all duration-700 ease-out ${
+              index === currentIndex 
+                ? 'bg-white w-6 h-1.5 shadow-sm' 
+                : 'bg-gray-600 hover:bg-gray-500 w-1.5 h-1.5'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Use your live Stripe publishable key
 const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6pyWWeH61H5VPMRW9d37HVi2F1VIzRuUElclZVkRlHJh9O8iHhaGgr00D1tOSeNi');
 
@@ -143,7 +222,7 @@ const Checkout = () => {
               />
             </div>
 
-            <div className="bg-gray-900/50 rounded-xl p-5 border border-gray-800 max-w-md">
+         <div className="bg-gray-900/50 rounded-xl p-5 border border-gray-800 max-w-md">
               <h3 className="text-lg font-semibold mb-2 tracking-tight">Unlimited Plan</h3>
               <div className="text-2xl font-semibold mb-3 tracking-tight">
                 {billingCycle === 'monthly' ? '$9 today' : '$18 today'}
@@ -169,10 +248,23 @@ const Checkout = () => {
                 {billingCycle === 'monthly' ? 'Monthly' : 'Annual'} subscription • Cancel anytime
               </p>
             </div>
-          </div>
+
+            {/* Add social proof testimonials below the plan card */}
+            <div className="mt-6">
+              <div className="bg-white/5 border border-white/10 backdrop-blur-lg rounded-xl px-4 py-4 shadow-xl relative min-h-[140px] flex items-start max-w-md">
+                <PricingTestimonials isMobile={false} />
+              </div>
+            </div>
 
           {/* Right: Checkout card — compact */}
           <div className="bg-gray-900/30 rounded-xl p-6 border border-gray-800">
+ {/* Social proof number */}
+            <div className="text-center mb-4">
+              <p className="text-gray-400 text-sm">
+                Join <span className="text-white font-semibold">10,247 New Yorkers</span> already saving thousands
+              </p>
+            </div>
+            
             <h2 className="text-xl font-semibold tracking-tight mb-1">Complete your subscription</h2>
             <p className="text-gray-400 tracking-tight text-sm flex items-center gap-1.5 mb-2">
               <Lock className="w-4 h-4 text-gray-500" />
