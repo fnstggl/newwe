@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const SavingsCounter = () => {
-  const [totalSaved, setTotalSaved] = useState(39281021);
+  const [totalSaved, setTotalSaved] = useState(98351021);
   const [isMobile, setIsMobile] = useState(false);
 
   // Mobile detection
@@ -25,10 +25,10 @@ const SavingsCounter = () => {
   }, []);
 
   if (isMobile) {
-    // Mobile version - use bottom-28 to clear mobile nav
+    // Mobile version - use bottom-28 to clear mobile nav + much wider for single line
     return (
-      <div className="fixed bottom-28 left-1/2 transform -translate-x-1/2 z-40">
-        <div className="bg-black/60 backdrop-blur-md border border-gray-700/50 rounded-full px-6 py-3 shadow-lg">
+      <div className="fixed bottom-28 left-1/2 transform -translate-x-1/2 z-40 px-2">
+        <div className="bg-black/60 backdrop-blur-md border border-gray-700/50 rounded-full px-12 py-3 shadow-lg whitespace-nowrap max-w-none">
           <p className="text-white text-sm font-medium tracking-tight">
             ${totalSaved.toLocaleString()} savings found this month
           </p>
