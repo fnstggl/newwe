@@ -256,6 +256,8 @@ const Checkout = () => {
               </div>
             </div>
 
+          </div>
+
           {/* Right: Checkout card — compact */}
           <div className="bg-gray-900/30 rounded-xl p-6 border border-gray-800">
  {/* Social proof number */}
