@@ -54,14 +54,14 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
         </div>
       </div>
 
-      {/* Main testimonial content - Apple-style layout */}
-      <div className="transition-all duration-500 ease-in-out px-2">
-        <p className={`text-white ${isMobile ? 'text-base' : 'text-lg md:text-xl'} leading-relaxed tracking-tight mb-6 font-normal pr-16`}>
+      {/* Main testimonial content - moved down and tighter spacing */}
+      <div className="transition-all duration-500 ease-in-out px-2 pt-8">
+        <p className={`text-white ${isMobile ? 'text-base' : 'text-lg md:text-xl'} leading-relaxed tracking-tight mb-4 font-normal pr-16`}>
           "{current.quote}"
         </p>
         
-        {/* Author info - clean Apple style */}
-        <div className="space-y-1">
+        {/* Author info - clean Apple style with tighter spacing */}
+        <div className="space-y-1 mb-2">
           <p className={`${isMobile ? 'text-base' : 'text-lg'} text-blue-400 font-medium`}>
             {current.author}
           </p>
@@ -72,8 +72,8 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
         </div>
       </div>
 
-      {/* Apple-style liquid pagination dots */}
-      <div className="flex justify-center mt-8 space-x-2">
+      {/* Apple-style liquid pagination dots - closer to content */}
+      <div className="flex justify-center mt-4 space-x-2">
         {successTestimonials.map((_, index) => (
           <button
             key={index}
@@ -204,7 +204,7 @@ return (
           
             {/* Rotating Success Testimonials */}
           <div className={`${isMobile ? 'mt-6' : 'mt-10'} flex justify-center`}>
-            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-5 max-w-xl'} shadow-xl relative min-h-[120px] flex items-center`}>
+            <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-3 max-w-xl'} shadow-xl relative min-h-[140px] flex items-start`}>
               <div className="w-full">
                 <PricingTestimonials isMobile={isMobile} />
               </div>
