@@ -145,7 +145,7 @@ const Checkout = () => {
   const appearance = {
     theme: 'night' as const,
     variables: {
-      colorPrimary: '#3b82f6',
+      colorPrimary: '#ffffff',
       colorBackground: '#000000',
       colorText: '#ffffff',
       colorDanger: '#ef4444',
@@ -162,7 +162,7 @@ const Checkout = () => {
         letterSpacing: '-0.025em',
       },
       '.Input:focus': {
-        border: '1px solid #3b82f6',
+        border: '1px solid #ffffff',
         boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.1)',
       },
       '.Label': {
