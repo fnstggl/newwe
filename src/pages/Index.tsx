@@ -13,6 +13,7 @@ import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import SoftGateModal from "@/components/SoftGateModal";
 import AISearch from "@/components/AISearch";
+import SavingsCounter from "@/components/SavingsCounter";
 
 
 const ScrollJackedSection = () => {
@@ -1258,6 +1259,10 @@ const DesktopIndex = () => {
           </div>
         </div>
       </section>
+
+      
+      {/* Savings Counter */}
+      <SavingsCounter />
     </div>
   );
 };
