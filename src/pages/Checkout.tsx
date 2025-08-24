@@ -214,14 +214,6 @@ const Checkout = () => {
               </p>
             </div>
 
-            <div className="relative">
-              <img
-                src="/lovable-uploads/447e6b63-12c7-4df7-80df-9b403b88b587.png"
-                alt="NYC Real Estate Platform"
-                className="w-full max-w-[260px] rounded-xl"
-              />
-            </div>
-
          <div className="bg-gray-900/50 rounded-xl p-5 border border-gray-800 max-w-md">
               <h3 className="text-lg font-semibold mb-2 tracking-tight">Unlimited Plan</h3>
               <div className="text-2xl font-semibold mb-3 tracking-tight">
