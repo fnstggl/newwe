@@ -90,7 +90,16 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
 // Use your live Stripe publishable key
 const stripePromise = loadStripe('pk_live_51QiJekP1c6FHzSEkDcrfm4WjGhxpqkZK8T6pyWWeH61H5VPMRW9d37HVi2F1VIzRuUElclZVkRlHJh9O8iHhaGgr00D1tOSeNi');
 
+// Add this in Checkout.tsx after imports
+const getScarcityNumber = () => {
+  const currentHour = new Date().getHours();
+  const seed = currentHour + new Date().getDate();
+  const pseudoRandom = (seed * 9301 + 49297) % 233280;
+  return Math.floor((pseudoRandom / 233280) * 17) + 35;
+};
+
 const Checkout = () => {
+    const [scarcityNumber] = useState(() => getScarcityNumber());
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const { toast } = useToast();
@@ -263,7 +272,7 @@ const Checkout = () => {
 
 {/* Scarcity element */}
 <p className="text-yellow-400 text-xs text-center mb-3">
-  48 people upgraded in the last 6 hours
+{scarcityNumber} people upgraded in the last 6 hours
 </p>
             <p className="text-gray-400 tracking-tight text-sm flex items-center gap-1.5 mb-2">
               <Lock className="w-4 h-4 text-gray-500" />
