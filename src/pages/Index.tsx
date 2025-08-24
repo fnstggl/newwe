@@ -970,7 +970,7 @@ const getGradeColors = (grade) => {
 
 // Rotating Neighborhoods Component
 const RotatingNeighborhoods = () => {
-  const navigate = useNavigate(); // Add this at the top of the component
+  const navigate = useNavigate();
   
   const neighborhoods = [
     { name: "SoHo", avgPrice: "$2,100/sqft", dealPrice: "$1,350/sqft", savings: "36%" },
@@ -992,85 +992,70 @@ const RotatingNeighborhoods = () => {
         {neighborhoods.map((neighborhood, index) => (
           <div
             key={`first-${index}`}
-            className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
-            onClick={() => navigate('/rent')} // Add click handler
+            className="flex-shrink-0 w-80 mx-3 cursor-pointer group"
+            onClick={() => navigate('/rent')}
           >
-            {/* Enhanced glassmorphic styling with smoother, smaller scale */}
-            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-700 ease-out hover:scale-[1.03] hover:bg-white/12 hover:border-white/30">
+            <div className="relative p-8 rounded-2xl bg-gray-900/60 border border-gray-800/80 shadow-xl hover:shadow-2xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-gray-900/80 hover:border-gray-700/60">
               
-              {/* Inner glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
-              
-              {/* Top highlight line */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-              
-              {/* Discount Badge - Enhanced with glow */}
-              <div className="absolute top-4 right-4">
-                <span className="bg-blue-500/30 text-blue-300 border border-blue-400/50 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+              <div className="absolute top-6 right-6">
+                <span className="bg-blue-500/15 text-blue-400 border border-blue-500/25 px-3 py-1.5 rounded-full text-sm font-semibold backdrop-blur-sm">
                   -{neighborhood.savings}
                 </span>
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16 drop-shadow-sm">
+              <h3 className="text-2xl font-semibold mb-8 tracking-[-0.01em] text-white pr-16 font-inter">
                 {neighborhood.name}
               </h3>
               
-              <div className="space-y-3 relative z-10">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300 text-sm tracking-tight">Market Avg:</span>
-                  <span className="text-gray-200 font-medium line-through">{neighborhood.avgPrice}</span>
+                  <span className="text-gray-400 text-sm font-medium">Market Avg</span>
+                  <span className="text-gray-300 font-medium line-through decoration-gray-500/60">{neighborhood.avgPrice}</span>
                 </div>
+                
+                <div className="h-px bg-gray-800/60"></div>
+                
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300 text-sm tracking-tight">Our Deals:</span>
-                  <span className="text-blue-300 font-bold text-lg drop-shadow-sm">{neighborhood.dealPrice}</span>
+                  <span className="text-gray-400 text-sm font-medium">Our Deals</span>
+                  <span className="text-white font-semibold text-lg">{neighborhood.dealPrice}</span>
                 </div>
               </div>
-              
-              {/* Bottom highlight line */}
-              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             </div>
           </div>
         ))}
+        
         {/* Duplicate set for seamless loop */}
         {neighborhoods.map((neighborhood, index) => (
           <div
             key={`second-${index}`}
-            className="flex-shrink-0 w-80 mx-4 group cursor-pointer"
-            onClick={() => navigate('/rent')} // Add click handler
+            className="flex-shrink-0 w-80 mx-3 cursor-pointer group"
+            onClick={() => navigate('/rent')}
           >
-            {/* Enhanced glassmorphic styling with smoother, smaller scale */}
-            <div className="relative p-6 rounded-2xl bg-white/8 backdrop-blur-md border border-white/20 shadow-2xl hover:shadow-[0_0_40px_rgba(59,130,246,0.2),0_0_80px_rgba(147,51,234,0.1)] transition-all duration-700 ease-out hover:scale-[1.03] hover:bg-white/12 hover:border-white/30">
+            <div className="relative p-8 rounded-2xl bg-gray-900/60 border border-gray-800/80 shadow-xl hover:shadow-2xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-gray-900/80 hover:border-gray-700/60">
               
-              {/* Inner glow effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
-              
-              {/* Top highlight line */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-              
-              {/* Discount Badge - Enhanced with glow */}
-              <div className="absolute top-4 right-4">
-                <span className="bg-blue-500/30 text-blue-300 border border-blue-400/50 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+              <div className="absolute top-6 right-6">
+                <span className="bg-blue-500/15 text-blue-400 border border-blue-500/25 px-3 py-1.5 rounded-full text-sm font-semibold backdrop-blur-sm">
                   -{neighborhood.savings}
                 </span>
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 tracking-tight text-white pr-16 drop-shadow-sm">
+              <h3 className="text-2xl font-semibold mb-8 tracking-[-0.01em] text-white pr-16 font-inter">
                 {neighborhood.name}
               </h3>
               
-              <div className="space-y-3 relative z-10">
+              <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300 text-sm tracking-tight">Market Avg:</span>
-                  <span className="text-gray-200 font-medium line-through">{neighborhood.avgPrice}</span>
+                  <span className="text-gray-400 text-sm font-medium">Market Avg</span>
+                  <span className="text-gray-300 font-medium line-through decoration-gray-500/60">{neighborhood.avgPrice}</span>
                 </div>
+                
+                <div className="h-px bg-gray-800/60"></div>
+                
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300 text-sm tracking-tight">Our Deals:</span>
-                  <span className="text-blue-300 font-bold text-lg drop-shadow-sm">{neighborhood.dealPrice}</span>
+                  <span className="text-gray-400 text-sm font-medium">Our Deals</span>
+                  <span className="text-white font-semibold text-lg">{neighborhood.dealPrice}</span>
                 </div>
               </div>
-              
-              {/* Bottom highlight line */}
-              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             </div>
           </div>
         ))}
