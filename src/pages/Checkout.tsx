@@ -45,7 +45,7 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
 
   return (
     <div className="relative text-center h-full flex flex-col w-full">
-      <div className="absolute top-1 right-3">
+  <div className="absolute -top-2 right-3">
         <div className="bg-blue-500/15 border border-blue-500/30 rounded-full px-3 py-1.5 backdrop-blur-sm">
           <span className="text-blue-400 font-semibold text-sm">
             {current.highlight}/mo saved

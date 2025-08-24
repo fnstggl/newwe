@@ -352,7 +352,7 @@ return (
                     <button
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
                       disabled={loading}
-                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
+                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-bold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                     >
                       {loading ? (
                         <>
