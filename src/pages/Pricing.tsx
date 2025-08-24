@@ -9,7 +9,6 @@ import { X, Check, Star, Unlock, Home } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Add this component after your imports
 const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -17,27 +16,27 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
     {
       quote: "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too.",
       author: "Sasha K.",
-      detail: "Saved $1,650/month in Brooklyn",
-      highlight: "$1,650/month saved"
+      detail: "Moved in within 3 weeks",
+      highlight: "$1,650"
     },
     {
       quote: "Found my dream 1BR in Williamsburg through this. Saved me $925/month compared to what I was looking at on StreetEasy.",
       author: "Mike T.",
-      detail: "Moved in within 2 weeks",
-      highlight: "$925/month saved"
+      detail: "Williamsburg resident since Aug 2024",
+      highlight: "$925"
     },
     {
       quote: "Almost paid $3,800 for a studio in Manhattan. Got alerts for a $2,400 one-bedroom in the same area. Life-changing.",
       author: "Jessica L.",
       detail: "Upgraded to 1BR for less money",
-      highlight: "$1,400/month saved"
+      highlight: "$1,400"
     }
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % successTestimonials.length);
-    }, 4000); // 4 seconds per testimonial
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -46,38 +45,54 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
 
   return (
     <div className="relative">
+      {/* Savings badge - top right corner */}
+      <div className="absolute top-0 right-0 -mt-2 -mr-2">
+        <div className="bg-blue-500/20 border border-blue-500/40 rounded-full px-3 py-1.5 backdrop-blur-sm shadow-lg">
+          <span className="text-blue-400 font-bold text-sm">
+            {current.highlight}/mo saved
+          </span>
+        </div>
+      </div>
+
       {/* Main testimonial content */}
-      <div className="transition-all duration-500 ease-in-out">
-        <p className={`text-gray-100 ${isMobile ? 'text-xs' : 'text-sm md:text-base'} leading-snug tracking-tight mb-3`}>
+      <div className="transition-all duration-500 ease-in-out pr-20">
+        <p className={`text-white ${isMobile ? 'text-sm' : 'text-base md:text-lg'} leading-relaxed tracking-tight mb-4 font-medium`}>
           "{current.quote}"
         </p>
         
         <div className="flex items-center justify-between">
-          <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-blue-400 font-medium`}>
-            – {current.author}
-          </p>
-          
-          {/* Highlight savings amount */}
-          <div className={`bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>
-            <span className="text-green-400 font-semibold">{current.highlight}</span>
+          <div>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-blue-400 font-semibold mb-1`}>
+              – {current.author}
+            </p>
+            
+            {/* Verified user badge */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-green-400 font-medium`}>
+                  Verified User
+                </span>
+              </div>
+              <span className="text-gray-500">•</span>
+              <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400`}>
+                {current.detail}
+              </p>
+            </div>
           </div>
         </div>
-        
-        <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400 mt-1`}>
-          {current.detail}
-        </p>
       </div>
 
-      {/* Pagination dots */}
-      <div className="flex justify-center mt-4 space-x-1">
+      {/* Liquid pagination dots */}
+      <div className="flex justify-center mt-6 space-x-1">
         {successTestimonials.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+            className={`rounded-full transition-all duration-500 ease-out ${
               index === currentIndex 
-                ? 'bg-blue-400 w-4' 
-                : 'bg-gray-600 hover:bg-gray-500'
+                ? 'bg-blue-400 w-8 h-2' 
+                : 'bg-gray-600 hover:bg-gray-500 w-2 h-2'
             }`}
           />
         ))}
