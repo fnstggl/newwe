@@ -891,6 +891,11 @@ const getGradeColors = (grade) => {
         isLoggedOut={softGateModal.isLoggedOut}
       />
 
+  {/* ✅ ADD THIS: SavingsCounter for Mobile - positioned above footer */}
+      <div className="pb-20">
+        <SavingsCounter />
+      </div>
+      
 {/* Apple-Style Footer - Landing Page (No Active State) */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-3xl">
         <div className="flex items-center justify-around py-3 px-6">
