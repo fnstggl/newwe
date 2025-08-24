@@ -265,7 +265,7 @@ return (
               </button>
             ) : (
               <button 
-                className={`w-full bg-gray-800 text-white ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-medium tracking-tight cursor-not-allowed`}
+                className={`w-full bg-gray-800 text-white ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-bold tracking-tight cursor-not-allowed`}
                 disabled
               >
                 Current Plan

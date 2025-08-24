@@ -123,7 +123,7 @@ const Manifesto = () => {
 
           <div className="text-center bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl p-8 border border-blue-500/20 mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tighter">
-              It's time buyers had the edge.
+              It's time everyday New Yorkers had the edge.
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-6 tracking-tight">
               Stop playing a rigged game. Start living affordably with data.
