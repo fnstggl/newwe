@@ -16,19 +16,19 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
     {
       quote: "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too.",
       author: "Sasha K.",
-      detail: "Moved in within 3 weeks",
+      detail: "Brooklyn resident since March 2024",
       highlight: "$1,650"
     },
     {
       quote: "Found my dream 1BR in Williamsburg through this. Saved me $925/month compared to what I was looking at on StreetEasy.",
-      author: "Mike T.",
-      detail: "Williamsburg resident since Aug 2024",
+      author: "Mike T.", 
+      detail: "Williamsburg resident since August 2024",
       highlight: "$925"
     },
     {
       quote: "Almost paid $3,800 for a studio in Manhattan. Got alerts for a $2,400 one-bedroom in the same area. Life-changing.",
       author: "Jessica L.",
-      detail: "Upgraded to 1BR for less money",
+      detail: "Manhattan resident since July 2024", 
       highlight: "$1,400"
     }
   ];
@@ -44,54 +44,43 @@ const PricingTestimonials = ({ isMobile }: { isMobile: boolean }) => {
   const current = successTestimonials[currentIndex];
 
   return (
-    <div className="relative">
-      {/* Savings badge - top right corner */}
-      <div className="absolute top-0 right-0 -mt-2 -mr-2">
-        <div className="bg-blue-500/20 border border-blue-500/40 rounded-full px-3 py-1.5 backdrop-blur-sm shadow-lg">
-          <span className="text-blue-400 font-bold text-sm">
+    <div className="relative text-center">
+      {/* Savings badge - top right corner, Apple-style */}
+      <div className="absolute top-0 right-0 -mt-3 -mr-3">
+        <div className="bg-blue-500/15 border border-blue-500/30 rounded-full px-4 py-2 backdrop-blur-sm">
+          <span className="text-blue-400 font-semibold text-sm">
             {current.highlight}/mo saved
           </span>
         </div>
       </div>
 
-      {/* Main testimonial content */}
-      <div className="transition-all duration-500 ease-in-out pr-20">
-        <p className={`text-white ${isMobile ? 'text-sm' : 'text-base md:text-lg'} leading-relaxed tracking-tight mb-4 font-medium`}>
+      {/* Main testimonial content - Apple-style layout */}
+      <div className="transition-all duration-500 ease-in-out px-2">
+        <p className={`text-white ${isMobile ? 'text-base' : 'text-lg md:text-xl'} leading-relaxed tracking-tight mb-6 font-normal pr-16`}>
           "{current.quote}"
         </p>
         
-        <div className="flex items-center justify-between">
-          <div>
-            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-blue-400 font-semibold mb-1`}>
-              – {current.author}
-            </p>
-            
-            {/* Verified user badge */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-green-400 font-medium`}>
-                  Verified User
-                </span>
-              </div>
-              <span className="text-gray-500">•</span>
-              <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400`}>
-                {current.detail}
-              </p>
-            </div>
-          </div>
+        {/* Author info - clean Apple style */}
+        <div className="space-y-1">
+          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-blue-400 font-medium`}>
+            {current.author}
+          </p>
+          
+          <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-400 font-normal`}>
+            {current.detail}
+          </p>
         </div>
       </div>
 
-      {/* Liquid pagination dots */}
-      <div className="flex justify-center mt-6 space-x-1">
+      {/* Apple-style liquid pagination dots */}
+      <div className="flex justify-center mt-8 space-x-2">
         {successTestimonials.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`rounded-full transition-all duration-500 ease-out ${
+            className={`rounded-full transition-all duration-700 ease-out ${
               index === currentIndex 
-                ? 'bg-blue-400 w-8 h-2' 
+                ? 'bg-white w-8 h-2 shadow-sm' 
                 : 'bg-gray-600 hover:bg-gray-500 w-2 h-2'
             }`}
           />
