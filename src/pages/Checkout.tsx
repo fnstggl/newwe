@@ -259,16 +259,31 @@ const Checkout = () => {
               </p>
             </div>
             
-            <h2 className="text-xl font-semibold tracking-tight mb-1">Complete your subscription</h2>
+<h2 className="text-xl font-semibold tracking-tight mb-1">Complete your subscription</h2>
+
+{/* Scarcity element */}
+<p className="text-yellow-400 text-xs text-center mb-3">
+  ⚡ 47 people upgraded in the last 6 hours
+</p>
             <p className="text-gray-400 tracking-tight text-sm flex items-center gap-1.5 mb-2">
               <Lock className="w-4 h-4 text-gray-500" />
               Secure payment powered by Stripe
             </p>
-            <p className="text-sm text-white tracking-tight mb-4">
-              {billingCycle === 'monthly'
-                ? ' $9 today. 30-day money-back guarantee. Cancel anytime.'
-                : ' $18 today (just $1.50/mo, billed annually). 30-day money-back guarantee. Cancel anytime.'}
-            </p>
+        {/* Prominent guarantee display */}
+<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4">
+  <p className="text-blue-400 text-sm font-semibold">
+    🛡️ 30-Day Money-Back Guarantee
+  </p>
+  <p className="text-blue-300 text-xs">
+    If you don't save money, full refund. No questions asked.
+  </p>
+</div>
+
+<p className="text-sm text-white tracking-tight mb-4">
+  {billingCycle === 'monthly'
+    ? '$9 today, billed monthly. Cancel anytime.'
+    : '$18 today (just $1.50/mo, billed annually). Cancel anytime.'}
+</p>
 
             {clientSecret && (
               <Elements options={options} stripe={stripePromise}>
