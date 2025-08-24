@@ -1222,7 +1222,7 @@ const DesktopIndex = () => {
   <div className="text-center mt-12 relative z-10">
     <Link to="/rent">
       <HoverButton className="text-white font-semibold tracking-tight hover:shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-300">
-        Explore Homes
+        Explore Deals
       </HoverButton>
     </Link>
   </div>
@@ -1239,7 +1239,7 @@ const DesktopIndex = () => {
             Let the apartment hunt end here.
           </h2>
           <p className="text-xl text-gray-300 mb-12 tracking-tight">
-            Join the platform actually built for renters & buyers.
+            Join the platform built to save buyers & renters thousands.
           </p>
           <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
             Join now.
