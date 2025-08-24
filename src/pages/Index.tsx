@@ -892,7 +892,7 @@ const getGradeColors = (grade) => {
       />
 
   {/* ✅ ADD THIS: SavingsCounter for Mobile - positioned above footer */}
-      <div className="pb-20">
+      <div className="pb-40">
         <SavingsCounter />
       </div>
       
