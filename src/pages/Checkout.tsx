@@ -263,18 +263,18 @@ const Checkout = () => {
 
 {/* Scarcity element */}
 <p className="text-yellow-400 text-xs text-center mb-3">
-  ⚡ 47 people upgraded in the last 6 hours
+  ⚡ 39 people upgraded in the last 6 hours
 </p>
             <p className="text-gray-400 tracking-tight text-sm flex items-center gap-1.5 mb-2">
               <Lock className="w-4 h-4 text-gray-500" />
               Secure payment powered by Stripe
             </p>
-        {/* Prominent guarantee display */}
-<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4">
-  <p className="text-blue-400 text-sm font-semibold">
-    🛡️ 30-Day Money-Back Guarantee
+       {/* Apple-style guarantee display */}
+<div className="bg-gray-800/40 border border-gray-700/60 rounded-xl p-4 mb-4">
+  <p className="text-white text-sm font-semibold tracking-tight">
+    30-Day Money-Back Guarantee
   </p>
-  <p className="text-blue-300 text-xs">
+  <p className="text-gray-300 text-xs tracking-tight mt-1">
     If you don't save money, full refund. No questions asked.
   </p>
 </div>
