@@ -233,7 +233,7 @@ return (
         </div>
         
      {/* Pricing Cards - Mobile: side by side, Desktop: unchanged */}
-<div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'grid md:grid-cols-2 gap-6'} max-w-3xl mx-auto`}>
+<div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'grid md:grid-cols-2 gap-6'} max-w-4xl mx-auto`}>
           {/* Free Plan - Mobile responsive */}
   <div className={`bg-black/50 rounded-2xl ${isMobile ? 'p-4' : 'p-6'} border border-gray-800 flex flex-col h-full`}>
             <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold ${isMobile ? 'mb-2' : 'mb-4'} tracking-tight`}>Free</h3>
