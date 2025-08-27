@@ -205,10 +205,11 @@ return (
           <p className={`${isMobile ? 'text-base' : 'text-xl'} text-gray-400 tracking-tight`}>
             These deals don't wait. People grab them before you even know they exist.
           </p>
-          
-{/* Rotating Success Testimonials - perfectly sized */}
-<div className={`${isMobile ? 'mt-6' : 'mt-10'} flex justify-center`}>
-  <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-4 max-w-sm' : 'px-8 py-5 max-w-3xl'} shadow-xl relative min-h-[180px] flex items-start w-full`}>
+        
+
+{/* Rotating Success Testimonials - COMPACT */}
+<div className={`${isMobile ? 'mt-6' : 'mt-8'} flex justify-center`}>
+  <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-4 max-w-2xl'} shadow-xl relative min-h-[140px] flex items-start w-full`}>
     <div className="w-full">
       <PricingTestimonials isMobile={isMobile} />
     </div>
@@ -232,9 +233,9 @@ return (
         </div>
         
      {/* Pricing Cards - Mobile: side by side, Desktop: unchanged */}
-        <div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'grid md:grid-cols-2 gap-8'} max-w-4xl mx-auto`}>
+<div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'grid md:grid-cols-2 gap-6'} max-w-3xl mx-auto`}>
           {/* Free Plan - Mobile responsive */}
-          <div className={`bg-black/50 rounded-2xl ${isMobile ? 'p-4' : 'p-8'} border border-gray-800 flex flex-col h-full`}>
+  <div className={`bg-black/50 rounded-2xl ${isMobile ? 'p-4' : 'p-6'} border border-gray-800 flex flex-col h-full`}>
             <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold ${isMobile ? 'mb-2' : 'mb-4'} tracking-tight`}>Free</h3>
             <p className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-semibold ${isMobile ? 'mb-3' : 'mb-6'} tracking-tight`}>$0</p>
             <p className="text-gray-400 mb-4 tracking-tight"> </p>
@@ -265,7 +266,7 @@ return (
               </button>
             ) : (
               <button 
-                className={`w-full bg-gray-800 text-white ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-bold tracking-tight cursor-not-allowed`}
+      className={`w-full bg-gray-800 text-white ${isMobile ? 'py-2 text-xs' : 'py-2.5'} rounded-full font-medium tracking-tight cursor-not-allowed`}
                 disabled
               >
                 Current Plan
@@ -273,12 +274,10 @@ return (
             )}
           </div>
 
-{/* Unlimited Plan - Mobile responsive */}
-<div className="relative flex flex-col h-full">
-  {/* Rotating gradient border */}
-<div className="relative overflow-hidden rounded-2xl border-2 border-blue-500/50 h-full shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-all duration-500">
-    
-    <div className={`relative bg-black rounded-[calc(1rem-2px)] ${isMobile ? 'p-4' : 'p-8'} flex flex-col h-full overflow-hidden`}>
+  {/* Unlimited Plan - COMPACT */}
+  <div className="relative flex flex-col h-full">
+    <div className="relative overflow-hidden rounded-2xl border-2 border-blue-500/50 h-full shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transition-all duration-500">
+      <div className={`relative bg-black rounded-[calc(1rem-2px)] ${isMobile ? 'p-4' : 'p-6'} flex flex-col h-full overflow-hidden`}>
       {/* Background gradient image */}
       <div 
         className="absolute inset-0 rounded-2xl opacity-80"
@@ -352,7 +351,7 @@ return (
                     <button
                       onClick={() => handleSubscribe(isAnnual ? 'annual' : 'monthly')}
                       disabled={loading}
-                      className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-3'} rounded-full font-bold tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
+          className={`w-full bg-white text-black ${isMobile ? 'py-2 text-xs' : 'py-2.5'} rounded-full font-medium tracking-tight transition-all hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                     >
                       {loading ? (
                         <>
