@@ -283,7 +283,7 @@ const OpenDoor = () => {
         {/* Final Footer */}
         <div className="text-center">
           <h3 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-white">
-            Only below-market & rent-stabilized apartments.
+            Every New Yorker should be able to find a home.
           </h3>
           <div className="w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-full"></div>
         </div>
