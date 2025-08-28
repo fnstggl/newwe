@@ -256,7 +256,7 @@ const OpenDoor = () => {
         <div className="text-center mb-16">
           <div className="max-w-3xl mx-auto p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-sm">
             <p className="text-gray-300 text-lg leading-relaxed mb-6">
-              Realer Estate usually only offers 9 free listings per day to help us stay independent—but we created the Housing Access Plan to make sure that all New Yorkers have unrestricted access to affordable homes.
+              Realer Estate usually only offers 24 free listings per day to help us stay independent—but we created the Housing Access Plan to make sure that all New Yorkers have unrestricted access to affordable homes.
             </p>
             
             <p className="text-white text-lg font-medium">
@@ -283,7 +283,7 @@ const OpenDoor = () => {
         {/* Final Footer */}
         <div className="text-center">
           <h3 className="text-4xl md:text-5xl font-playfair font-bold mb-8 text-white">
-            You found the free way in.
+            Only below-market & rent-stabilized apartments.
           </h3>
           <div className="w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-full"></div>
         </div>
