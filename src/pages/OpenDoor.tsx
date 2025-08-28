@@ -188,7 +188,7 @@ const OpenDoor = () => {
           <div className="flex items-start gap-6 mb-16">
             <div className="flex-1">
               <blockquote className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-4 font-playfair italic">
-                "I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee. Insane."
+                ""I was about to sign a lease in Dumbo for $4,200. Found a stabilized one here for $2,550. Same block. No broker fee too."
               </blockquote>
               <cite className="text-sm text-gray-400 not-italic">
                 — Sasha, Brooklyn renter
