@@ -1379,8 +1379,8 @@ return (
                     />
                   )}
 
-                  {/* Overlay CTA for signed out users - positioned over the 4th property (index 3) */}
-                  {!user && index === 13 && properties.length > 13 && (
+                  {/* Overlay CTA for signed out users - positioned over the 13th property (index 3) */}
+                  {!user && index === 9000 && properties.length > 9000 && (
                     <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
                       <div className="bg-black/30 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto px-[3px]">
                         <h3 className="text-2xl font-bold text-white mb-4">
@@ -1402,8 +1402,8 @@ return (
                     </div>
                   )}
 
-                 {/* Overlay CTA for free plan users (rent page) */}
-{isFreeUser && index === 25 && properties.length > 25 && (
+                 {/* Overlay CTA for free plan users (rent page) 25 */}
+{isFreeUser && index === 9000 && properties.length > 9000 && (
   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
     <div className="pointer-events-auto max-w-xl w-full rounded-2xl bg-black/35 backdrop-blur-md
                     ring-1 ring-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] px-6 py-7 text-center">
