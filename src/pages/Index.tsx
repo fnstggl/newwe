@@ -1145,9 +1145,17 @@ const DesktopIndex = () => {
   {/* Hero Content - Always Visible */}
   <div className="relative z-10 min-h-[600px] flex items-center justify-center">
     <div className="text-center px-4 py-20 max-w-none">
-<h1 className="text-3xl md:text-4xl lg:text-5xl font-inter font-semibold mb-4 tracking-[-0.075em] transform translate-y-[130px] text-white whitespace-nowrap">
-        The only platform built to find you the best deal in the city. Actually.
-      </h1>
+<h1
+  className="
+    font-inter font-semibold mb-4 text-white
+    tracking-[-0.04em] leading-tight
+    text-[clamp(1.75rem,4vw,3.25rem)] md:text-[clamp(2.25rem,3vw,3.75rem)]
+    translate-y-[130px]
+    [text-wrap:balance]
+  "
+>
+  The only platform built to find you the best deal in the city. Actually.
+</h1>
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
         Stop overpaying. Save thousands on rent-stabilized and below-market apartments in NYC.
       </p>
