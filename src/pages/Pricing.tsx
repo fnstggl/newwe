@@ -242,7 +242,7 @@ return (
             <ul className={`space-y-2 ${isMobile ? 'mb-8 text-xs' : 'mb-24'} text-gray-300 flex-grow`}>
               <li className="flex items-center tracking-tight">
                 <span className="text-blue-400 mr-2">•</span>
-                {isMobile ? '24 deals/day' : '24 deals per day'}
+                {isMobile ? 'See ALL deals' : 'See ALL deals'}
               </li>
               <li className="flex items-center tracking-tight">
                 <span className="text-blue-400 mr-2">•</span>
@@ -292,7 +292,7 @@ return (
       
       <div className="relative z-10 flex flex-col h-full">
                   <div className={`${isMobile ? 'mb-2' : 'mb-4'} flex items-center justify-between`}>
-                    <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold tracking-tight`}>Unlimited</h3>
+                    <h3 className={`${isMobile ? 'text-lg' : 'text-2xl'} font-semibold tracking-tight`}>Early Access</h3>
                   </div>
                   <div className={`${isMobile ? 'mb-3' : 'mb-6'} flex items-center justify-between`}>
                     <div>
@@ -324,19 +324,19 @@ return (
                   <ul className={`space-y-2 ${isMobile ? 'mb-8 text-xs' : 'mb-24'} text-gray-300 flex-grow`}>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
-                      <strong className="text-white">{isMobile ? 'ALL deals' : 'Unlock ALL rental & sale deals'}</strong>
+                      <strong className="text-white">{isMobile ? 'Instant alerts' : 'Get notified first for new deals'}</strong>
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
-                      {isMobile ? 'Personal deals' : 'Personalized deals found for you'}
+                      {isMobile ? 'Personal deals' : 'Personalized deals alert filters'}
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
-                      {isMobile ? 'Instant alerts' : 'Instant alerts on new deals'}
+                      {isMobile ? 'Instant alerts' : 'Never miss a deal again'}
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
-                      {isMobile ? '6000+ users' : 'Thousands of New Yorkers already saving'}
+                      {isMobile ? '6000+ users' : 'Save more, faster'}
                     </li>
                   </ul>
                   

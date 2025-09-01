@@ -82,12 +82,12 @@ const Rent = () => {
 
   const getVisibilityLimit = () => {
     if (!user) {
-      return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 3
+      return hasActiveFilters ? 0 : 9000; // Blur all when filters active, otherwise show 12
     }
     if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
       return Infinity; // Unlimited users see all
     }
-    return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 9
+    return hasActiveFilters ? 0 : 9000; // Free plan: blur all when filters active, otherwise show 24
   };
 
 useEffect(() => {
@@ -970,8 +970,8 @@ if (reset) {
 }
 
 
-    // For logged out users clicking on blurred listings, show soft-gate modal
-    if (!user && index >= 12) {
+    // For logged out users clicking on blurred listings, show soft-gate modal after 12
+    if (!user && index >= 9000) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -980,8 +980,8 @@ if (reset) {
       return;
     }
 
-    // For free plan users clicking on blurred listings, show soft-gate modal
-    if (isFreeUser && index >= 24) {
+    // For free plan users clicking on blurred listings, show soft-gate modal after 24
+    if (isFreeUser && index >= 9000) {
       setSoftGateModal({
         isOpen: true,
         property: property,

@@ -84,12 +84,12 @@ const [imageLoadQueue, setImageLoadQueue] = useState<string[]>([]);
   // Determine visibility limits based on user status
 const getVisibilityLimit = () => {
   if (!user) {
-    return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 3
+    return hasActiveFilters ? 0 : 9000; // Blur all when filters active, otherwise show 12
   }
   if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
     return Infinity; // Unlimited users see all
   }
-  return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 9
+  return hasActiveFilters ? 0 : 9000; // Free plan: blur all when filters active, otherwise show 24
 };
 
 useEffect(() => {
@@ -716,7 +716,7 @@ let query = supabase
   }
 
     // For logged out users clicking on blurred listings, show soft-gate modal
-    if (!user && index >= 12) {
+    if (!user && index >= 9000) {
       setSoftGateModal({
         isOpen: true,
         property: property,
@@ -726,7 +726,7 @@ let query = supabase
     }
 
     // For free plan users clicking on blurred listings, show soft-gate modal
-    if (isFreeUser && index >= 24) {
+    if (isFreeUser && index >= 9000) {
       setSoftGateModal({
         isOpen: true,
         property: property,

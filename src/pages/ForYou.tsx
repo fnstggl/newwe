@@ -377,7 +377,7 @@ useEffect(() => {
         
         // Show paywall for free users after loading
         if (userProfile?.subscription_plan === 'free') {
-          setShowPaywall(true);
+          setShowPaywall(false);
         }
       }, 11000);
       
