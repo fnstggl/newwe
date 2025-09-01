@@ -1148,7 +1148,7 @@ const DesktopIndex = () => {
 <h1
   className="
     font-inter font-semibold mb-4 text-white
-    tracking-[-0.04em] leading-tight
+    tracking-[-0.075em] leading-tight
     text-[clamp(1.75rem,4vw,3.25rem)] md:text-[clamp(2.25rem,3vw,3.75rem)]
     translate-y-[130px]
     [text-wrap:balance]
