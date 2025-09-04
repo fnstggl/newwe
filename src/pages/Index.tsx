@@ -46,7 +46,7 @@ const ScrollJackedSection = () => {
     },
     {
       title: "Save $925/mo on rent, $101k when buying",
-      subtitle: "Based on average savings data. Join 10,000+ New Yorkers finding the best deals in the city.",
+      subtitle: "Based on average savings data. Join 21,000+ New Yorkers finding the best deals in the city.",
       opacity: text3Opacity,
       y: text3Y
     }
@@ -693,7 +693,7 @@ const getGradeColors = (grade) => {
         >
           Try Unlimited Access for Free
         </button>
-        <p className="text-xs text-gray-400">10,000+ New Yorkers already beating the market</p>
+        <p className="text-xs text-gray-400">21,000+ New Yorkers already beating the market</p>
       </div>
     </div>
   )}
