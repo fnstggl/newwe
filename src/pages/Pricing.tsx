@@ -328,7 +328,7 @@ return (
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
-                      {isMobile ? 'Personal deals' : 'Personalized deals alert filters'}
+                      {isMobile ? 'Personal deals' : 'Personalized deal alert filters'}
                     </li>
                     <li className="flex items-center tracking-tight">
                       <span className="text-blue-400 mr-2">•</span>
@@ -359,7 +359,7 @@ return (
                           Processing...
                         </>
                       ) : (
-                        'Get Alerts'
+                        'Get Instant Alerts'
                       )}
                     </button>
                   )}

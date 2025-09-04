@@ -233,16 +233,16 @@ const Checkout = () => {
               </div>
               <ul className="space-y-1.5 text-gray-300 mb-3 text-[15px]">
                 <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-2">•</span>Access to ALL deals
+                  <span className="text-blue-400 mr-2">•</span>Get notified first
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-2">•</span>Your dream home, found for you
+                  <span className="text-blue-400 mr-2">•</span>Personalized deal alert filters
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-2">•</span>Instant alerts for new deals
+                  <span className="text-blue-400 mr-2">•</span>Don't miss your dream apartment
                 </li>
                 <li className="flex items-center tracking-tight">
-                  <span className="text-blue-400 mr-2">•</span>Be first to the best deals
+                  <span className="text-blue-400 mr-2">•</span>Save more, faster
                 </li>
               </ul>
               <p className="text-xs text-gray-500 tracking-tight">
