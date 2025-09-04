@@ -359,7 +359,7 @@ return (
                           Processing...
                         </>
                       ) : (
-                        'Get Instant Alerts'
+                        'Get Alerts'
                       )}
                     </button>
                   )}
