@@ -80,7 +80,7 @@ const Partners: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-4 mb-4">
                     <img 
-                      src="/lovable-uploads/projectrenewal1.png" 
+                      src="/lovable-uploads/projectrenewal2.png" 
                       alt="Project Renewal Logo" 
                       className="h-16 w-auto"
                     />
