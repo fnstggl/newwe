@@ -1270,6 +1270,7 @@ const DesktopIndex = () => {
       Partners
     </Link>
   </div>
+          </div>  {/* ADD THIS MISSING CLOSING DIV */}
 </div>
       </section>
 
