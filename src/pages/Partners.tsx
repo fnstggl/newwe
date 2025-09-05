@@ -229,7 +229,7 @@ const Partners: React.FC = () => {
           </p>
           
           <a 
-            href="mailto:partners@realerestate.org" 
+            href="mailto:info@realerestate.org" 
             className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-105 group"
           >
             Suggest a Partner
