@@ -29,6 +29,7 @@ import { useState } from "react";
 import Checkout from "./pages/Checkout";
 import ForYou from "./pages/ForYou";
 import NewJoin from "./pages/NewJoin";
+import Partners from "./pages/Partners";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const AppContent = () => {
         <Route path="/press" element={<Press />} />
         <Route path="/housingaccess" element={<OpenDoor />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/partners" element={<Partners />} />
       </Routes>
       
       <OnboardingPopup 
