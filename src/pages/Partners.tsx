@@ -67,7 +67,7 @@ const Partners: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Partner: Project Renewal */}
+ {/* Featured Partner: Project Renewal */}
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="bg-gradient-to-br from-gray-900/40 to-black/40 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm">
@@ -78,14 +78,21 @@ const Partners: React.FC = () => {
                   <div className="inline-block border border-orange-500/30 bg-orange-500/10 px-4 py-2 rounded-full text-sm font-medium text-orange-400 tracking-wide uppercase mb-6">
                     Featured Partner
                   </div>
-                  <h2 className="text-5xl md:text-7xl font-serif mb-4 tracking-tight text-white" style={{fontFamily: 'Playfair Display, serif'}}>
-                    Project Renewal
-                  </h2>
+                  <div className="flex items-center gap-4 mb-4">
+                    <img 
+                      src="/lovable-uploads/projectrenewal.png" 
+                      alt="Project Renewal Logo" 
+                      className="h-16 w-auto"
+                    />
+                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+                      Project Renewal
+                    </h2>
+                  </div>
                   <p className="text-2xl text-gray-400 italic font-light" style={{fontFamily: 'Georgia, serif'}}>
                     Renewing lives. Reclaiming hope.
                   </p>
                 </div>
-                <a 
+                <a  
                   href="https://www.projectrenewal.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
