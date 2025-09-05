@@ -1254,21 +1254,23 @@ const DesktopIndex = () => {
             Join now.
           </Link>
           
-          {/* Footer Links */}
-          <div className="mt-16 mb-2">
-            <div className="flex justify-center space-x-8 text-xs text-gray-400">
-              <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className="hover:text-gray-300 transition-colors">
-                Terms of Service
-              </Link>
-              <Link to="/press" className="hover:text-gray-300 transition-colors">
-                Press
-              </Link>
-            </div>
-          </div>
-        </div>
+         {/* Footer Links */}
+<div className="mt-16 mb-2">
+  <div className="flex justify-center space-x-8 text-xs text-gray-400">
+    <Link to="/privacy" className="hover:text-gray-300 transition-colors">
+      Privacy Policy
+    </Link>
+    <Link to="/terms" className="hover:text-gray-300 transition-colors">
+      Terms of Service
+    </Link>
+    <Link to="/press" className="hover:text-gray-300 transition-colors">
+      Press
+    </Link>
+    <Link to="/partners" className="hover:text-gray-300 transition-colors">
+      Partners
+    </Link>
+  </div>
+</div>
       </section>
 
       
