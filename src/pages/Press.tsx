@@ -228,7 +228,7 @@ const Press = () => {
           
           <button 
             onClick={downloadMediaKit}
-            className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-sm font-medium text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-medium text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors"
           >
             <Download size={16} />
             Download Media Kit
