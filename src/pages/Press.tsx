@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Download, Mail, Calendar, Users, DollarSign, MapPin, Clock, TrendingUp } from "lucide-react";
+import { Download, Mail, Calendar, Phone, MapPin, ExternalLink } from "lucide-react";
 import JSZip from "jszip";
 
 const Press = () => {
@@ -58,256 +58,265 @@ const Press = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-black/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-6 py-8">
-          <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-light mb-4 tracking-tight">
-              Press &amp; Media Kit
+      <header className="pt-32 pb-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="border-b border-gray-800 pb-8">
+            <div className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-6 font-medium">
+              Press & Media
+            </div>
+            <h1 className="text-5xl md:text-7xl font-serif mb-8 tracking-tight leading-none text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+              Media Kit
             </h1>
-            <div className="w-24 h-px bg-blue-500 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-300 font-light leading-relaxed max-w-3xl mx-auto">
-              AI-powered platform helping New Yorkers find rent-stabilized and undervalued homes
+            <p className="text-2xl text-gray-300 leading-relaxed max-w-4xl font-light" style={{fontFamily: 'Georgia, serif'}}>
+              Comprehensive resources for reporting on AI-powered affordable housing discovery in New York City
             </p>
           </div>
         </div>
       </header>
 
-      {/* Quick Facts */}
-      <section className="py-16 px-6 bg-gray-900/30">
+      {/* Key Information */}
+      <section className="py-16 px-4 border-b border-gray-800">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-light mb-12 text-center tracking-wide text-gray-200">
-            QUICK FACTS
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-8 font-medium">
+            Key Information
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 mb-4">
-                <Users className="w-6 h-6 text-blue-400" />
-              </div>
-              <div className="text-3xl font-light mb-2">21,000+</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Active Users</div>
+          <div className="grid md:grid-cols-4 gap-12">
+            <div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>21,000+</div>
+              <div className="text-sm text-gray-400 leading-relaxed">Active users searching for affordable housing</div>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/20 mb-4">
-                <DollarSign className="w-6 h-6 text-green-400" />
-              </div>
-              <div className="text-3xl font-light mb-2">$500K+</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Rent Savings Surfaced</div>
+            <div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$500K+</div>
+              <div className="text-sm text-gray-400 leading-relaxed">In rent savings identified for users</div>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 mb-4">
-                <MapPin className="w-6 h-6 text-purple-400" />
-              </div>
-              <div className="text-3xl font-light mb-2">170+</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">NYC Zip Codes</div>
+            <div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>170+</div>
+              <div className="text-sm text-gray-400 leading-relaxed">NYC zip codes covered by platform</div>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-500/20 mb-4">
-                <Clock className="w-6 h-6 text-orange-400" />
-              </div>
-              <div className="text-3xl font-light mb-2">Real-time</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">AI Detection</div>
+            <div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>Real-time</div>
+              <div className="text-sm text-gray-400 leading-relaxed">AI-powered listing analysis</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Company Overview */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-light mb-12 text-center tracking-wide">
-            COMPANY OVERVIEW
-          </h2>
-          <div className="space-y-8 text-lg leading-relaxed text-gray-300">
-            <p className="text-xl font-light text-white first-letter:text-6xl first-letter:font-thin first-letter:text-blue-400 first-letter:mr-3 first-letter:float-left first-letter:leading-none">
-              ounded by two Brooklyn natives, Realer Estate emerged from a personal mission to combat NYC's housing affordability crisis. After witnessing friends, family, and neighbors systematically priced out of their communities, the founders leveraged their backgrounds in real estate and software development to create a solution.
-            </p>
-            <p>
-              The platform employs advanced AI algorithms to scan New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties before they disappear from the market. This technology-driven approach has already facilitated over $500,000 in rent savings for New Yorkers.
-            </p>
-            <p>
-              With comprehensive coverage across 170+ NYC zip codes and a growing user base of 21,000+ New Yorkers, Realer Estate represents a new paradigm in affordable housing discovery—one that puts sophisticated market analysis tools directly in the hands of everyday renters.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Leadership Section */}
-      <section className="py-20 px-6 bg-gray-900/30">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-light mb-12 text-center tracking-wide">
-            LEADERSHIP
-          </h2>
-          <div className="text-center">
-            <div className="inline-block p-8 rounded-2xl bg-black/50 border border-gray-800">
-              <div className="text-2xl font-light mb-2">Two Young Founders</div>
-              <div className="text-gray-400 font-light">Brooklyn natives with backgrounds in real estate and software development</div>
-              <div className="mt-4 text-sm text-gray-500">Available for interviews and commentary</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Media Assets */}
-      <section className="py-20 px-6">
+      {/* Company Profile */}
+      <section className="py-20 px-4 border-b border-gray-800">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-light mb-12 text-center tracking-wide">
-            MEDIA ASSETS
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
+            Company Profile
+          </h2>
+          <div className="space-y-8">
+            <p className="text-xl leading-relaxed text-gray-200 font-light first-letter:text-7xl first-letter:font-serif first-letter:text-white first-letter:mr-4 first-letter:float-left first-letter:leading-none first-letter:mt-2" style={{fontFamily: 'Georgia, serif'}}>
+              Realer Estate was founded by two Brooklyn natives who witnessed firsthand the systematic displacement of working families from their communities. Combining expertise in real estate and software development, they created an AI-powered platform that democratizes access to affordable housing information.
+            </p>
+            <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
+              The platform employs machine learning algorithms to analyze New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties that traditional search methods often miss. This technology-driven approach has facilitated over $500,000 in rent savings for New Yorkers across 170+ zip codes.
+            </p>
+            <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
+              Beyond individual savings, Realer Estate represents a fundamental shift in how housing information is accessed and distributed—placing sophisticated market analysis tools directly in the hands of renters who need them most.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Leadership */}
+      <section className="py-20 px-4 border-b border-gray-800">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
+            Leadership
+          </h2>
+          <div className="bg-gray-900/30 border border-gray-800 p-12 rounded-sm">
+            <h3 className="text-3xl font-serif mb-4 text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+              Founding Team
+            </h3>
+            <p className="text-lg text-gray-300 mb-6 font-light leading-relaxed" style={{fontFamily: 'Georgia, serif'}}>
+              Two young entrepreneurs from Brooklyn with complementary backgrounds in real estate and software development. Both founders are available for interviews and expert commentary on housing affordability, technology in real estate, and urban displacement.
+            </p>
+            <div className="text-sm text-gray-400">
+              Media availability: Typically respond within 24 hours
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Assets */}
+      <section className="py-20 px-4 border-b border-gray-800">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
+            Visual Assets
           </h2>
           
-          {/* High-res Images */}
-          <div className="mb-12">
-            <h3 className="text-xl font-light mb-6 text-gray-300 uppercase tracking-wider">High-Resolution Images</h3>
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="relative group">
-                <div className="aspect-[16/10] rounded-lg overflow-hidden border border-gray-800 bg-gray-900">
+          {/* Photography */}
+          <div className="mb-16">
+            <h3 className="text-lg font-serif mb-8 text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+              Photography
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <figure className="group">
+                <div className="aspect-[4/3] bg-gray-900 border border-gray-800 rounded-sm overflow-hidden mb-3">
                   <img 
                     src="/lovable-uploads/3accba2a-bd3d-4027-9758-2462e4b30865.png" 
                     alt="Realer Estate Founders" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
                 </div>
-                <p className="text-sm text-gray-400 mt-2">Company Founders</p>
-              </div>
-              <div className="relative group">
-                <div className="aspect-[16/10] rounded-lg overflow-hidden border border-gray-800 bg-gray-900">
+                <figcaption className="text-sm text-gray-400">Company founders</figcaption>
+              </figure>
+              <figure className="group">
+                <div className="aspect-[4/3] bg-gray-900 border border-gray-800 rounded-sm overflow-hidden mb-3">
                   <img 
                     src="/lovable-uploads/84439388-74a7-4c6d-8fe8-d5cb5f0108e0.png" 
                     alt="Realer Estate Platform" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
                 </div>
-                <p className="text-sm text-gray-400 mt-2">Platform Interface</p>
-              </div>
-              <div className="relative group">
-                <div className="aspect-[16/10] rounded-lg overflow-hidden border border-gray-800 bg-gray-900">
+                <figcaption className="text-sm text-gray-400">Platform interface</figcaption>
+              </figure>
+              <figure className="group">
+                <div className="aspect-[4/3] bg-gray-900 border border-gray-800 rounded-sm overflow-hidden mb-3">
                   <img 
                     src="/lovable-uploads/e0856c30-f6b7-49d8-a596-88bdb09cc616.png" 
-                    alt="NYC Housing Market Analysis" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    alt="NYC Housing Market" 
+                    className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                   />
                 </div>
-                <p className="text-sm text-gray-400 mt-2">Market Analysis</p>
-              </div>
+                <figcaption className="text-sm text-gray-400">Market analysis visualization</figcaption>
+              </figure>
             </div>
           </div>
 
-          {/* Brand Assets */}
+          {/* Brand Elements */}
           <div className="mb-12">
-            <h3 className="text-xl font-light mb-6 text-gray-300 uppercase tracking-wider">Brand Assets</h3>
-            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
-              <div className="aspect-square rounded-lg overflow-hidden border border-gray-800 bg-white p-4">
-                <img 
-                  src="/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png" 
-                  alt="Logo - Black" 
-                  className="w-full h-full object-contain"
-                />
-                <p className="text-xs text-gray-600 mt-2 text-center">Black Logo</p>
-              </div>
-              <div className="aspect-square rounded-lg overflow-hidden border border-gray-800 bg-black p-4">
-                <img 
-                  src="/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png" 
-                  alt="Logo - White" 
-                  className="w-full h-full object-contain"
-                />
-                <p className="text-xs text-gray-400 mt-2 text-center">White Logo</p>
-              </div>
-              <div className="aspect-square">
-                <img 
-                  src="/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png" 
-                  alt="Logo - Gradient" 
-                  className="w-full h-full object-contain rounded-lg"
-                />
-                <p className="text-xs text-gray-400 mt-2 text-center">Gradient Logo</p>
-              </div>
+            <h3 className="text-lg font-serif mb-8 text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+              Brand Elements
+            </h3>
+            <div className="grid grid-cols-3 gap-6 max-w-2xl">
+              <figure>
+                <div className="aspect-square bg-white border border-gray-800 rounded-sm p-6">
+                  <img 
+                    src="/lovable-uploads/a16979a1-3495-4871-ae83-39233e3ff855.png" 
+                    alt="Logo - Black" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <figcaption className="text-xs text-gray-400 mt-2 text-center">Logo - Black</figcaption>
+              </figure>
+              <figure>
+                <div className="aspect-square bg-black border border-gray-800 rounded-sm p-6">
+                  <img 
+                    src="/lovable-uploads/af9d7567-403c-454c-b80e-18f8ac3dcd74.png" 
+                    alt="Logo - White" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <figcaption className="text-xs text-gray-400 mt-2 text-center">Logo - White</figcaption>
+              </figure>
+              <figure>
+                <div className="aspect-square border border-gray-800 rounded-sm">
+                  <img 
+                    src="/lovable-uploads/7a974d99-4ed9-4a37-a0b2-fb6e93c98b41.png" 
+                    alt="Logo - Gradient" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <figcaption className="text-xs text-gray-400 mt-2 text-center">Logo - Gradient</figcaption>
+              </figure>
             </div>
           </div>
           
-          <div className="text-center">
-            <button 
-              onClick={downloadMediaKit}
-              className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-light tracking-wide transition-all uppercase text-sm"
-            >
-              <Download size={18} />
-              Download Complete Media Kit
-            </button>
-            <p className="text-xs text-gray-500 mt-3">ZIP file includes all logos, images, and brand assets in high resolution</p>
-          </div>
+          <button 
+            onClick={downloadMediaKit}
+            className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 rounded-sm font-medium text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors"
+          >
+            <Download size={16} />
+            Download Media Kit
+          </button>
+          <p className="text-xs text-gray-500 mt-3">High-resolution assets in ZIP format</p>
         </div>
       </section>
 
-      {/* User Testimonials */}
-      <section className="py-20 px-6 bg-gray-900/30">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-light mb-12 text-center tracking-wide">
-            USER TESTIMONIALS
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <blockquote className="p-6 border-l-4 border-blue-500 bg-black/30">
-              <p className="text-lg font-light italic text-gray-300 mb-4">
-                "This is great. In my dreams I am able to move back to NYC and keep checking all the time as rents keep hiking in Philly."
-              </p>
-              <cite className="text-sm text-gray-500">— Reddit User</cite>
-            </blockquote>
-            <blockquote className="p-6 border-l-4 border-blue-500 bg-black/30">
-              <p className="text-lg font-light italic text-gray-300 mb-4">
-                "I love this tool &amp; what you're doing to help bc it's a real struggle out here"
-              </p>
-              <cite className="text-sm text-gray-500">— Reddit User</cite>
-            </blockquote>
-            <blockquote className="p-6 border-l-4 border-blue-500 bg-black/30">
-              <p className="text-lg font-light italic text-gray-300 mb-4">
-                "I will definitely be using this as I plan my move in the future."
-              </p>
-              <cite className="text-sm text-gray-500">— Reddit User</cite>
-            </blockquote>
-            <blockquote className="p-6 border-l-4 border-blue-500 bg-black/30">
-              <p className="text-lg font-light italic text-gray-300 mb-4">
-                "Hi! This is a really great tool, thanks for sharing and creating this."
-              </p>
-              <cite className="text-sm text-gray-500">— Reddit User</cite>
-            </blockquote>
-          </div>
-        </div>
-      </section>
-
-      {/* Press Contact */}
-      <section className="py-20 px-6 border-t border-gray-800">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-light mb-12 text-center tracking-wide">
-            PRESS CONTACT
+      {/* User Perspectives */}
+      <section className="py-20 px-4 border-b border-gray-800">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
+            User Perspectives
           </h2>
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-6">
-                <Mail className="w-8 h-8 text-blue-400" />
-              </div>
-              <h3 className="text-xl font-light mb-2">Media Inquiries</h3>
-              <p className="text-gray-400 mb-4">For interviews, quotes, and story development</p>
-              <a 
-                href="mailto:info@realerestate.org" 
-                className="inline-block text-blue-400 hover:text-blue-300 font-light tracking-wide"
-              >
-                info@realerestate.org
-              </a>
+            <div className="space-y-8">
+              <blockquote className="border-l border-gray-600 pl-6">
+                <p className="text-lg font-light italic text-gray-300 mb-4" style={{fontFamily: 'Georgia, serif'}}>
+                  "This is great. In my dreams I am able to move back to NYC and keep checking all the time as rents keep hiking in Philly."
+                </p>
+                <cite className="text-sm text-gray-500">Reddit user</cite>
+              </blockquote>
+              <blockquote className="border-l border-gray-600 pl-6">
+                <p className="text-lg font-light italic text-gray-300 mb-4" style={{fontFamily: 'Georgia, serif'}}>
+                  "I will definitely be using this as I plan my move in the future."
+                </p>
+                <cite className="text-sm text-gray-500">Reddit user</cite>
+              </blockquote>
             </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 mb-6">
-                <Calendar className="w-8 h-8 text-green-400" />
-              </div>
-              <h3 className="text-xl font-light mb-2">Interview Availability</h3>
-              <p className="text-gray-400 mb-4">Founders available for interviews and expert commentary</p>
-              <p className="text-green-400 font-light">Usually respond within 24 hours</p>
+            <div className="space-y-8">
+              <blockquote className="border-l border-gray-600 pl-6">
+                <p className="text-lg font-light italic text-gray-300 mb-4" style={{fontFamily: 'Georgia, serif'}}>
+                  "I love this tool & what you're doing to help bc it's a real struggle out here"
+                </p>
+                <cite className="text-sm text-gray-500">Reddit user</cite>
+              </blockquote>
+              <blockquote className="border-l border-gray-600 pl-6">
+                <p className="text-lg font-light italic text-gray-300 mb-4" style={{fontFamily: 'Georgia, serif'}}>
+                  "Hi! This is a really great tool, thanks for sharing and creating this."
+                </p>
+                <cite className="text-sm text-gray-500">Reddit user</cite>
+              </blockquote>
             </div>
           </div>
-          
-          <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-gray-800">
-            <div className="text-center">
-              <TrendingUp className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-2xl font-light mb-4">Breaking News Opportunity</h3>
-              <p className="text-lg text-gray-300 font-light leading-relaxed">
-                Be the first to cover how AI is revolutionizing affordable housing discovery in NYC. 
-                We're ready to provide exclusive access, data insights, and founder interviews.
+        </div>
+      </section>
+
+      {/* Contact Information */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
+            Press Contact
+          </h2>
+          <div className="grid md:grid-cols-2 gap-16">
+            <div>
+              <h3 className="text-2xl font-serif mb-6 text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+                Media Inquiries
+              </h3>
+              <p className="text-lg text-gray-300 mb-8 font-light leading-relaxed" style={{fontFamily: 'Georgia, serif'}}>
+                For interviews, expert commentary, data analysis, or story development assistance.
               </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Mail className="w-4 h-4 text-gray-400" />
+                  <a 
+                    href="mailto:info@realerestate.org" 
+                    className="text-white hover:text-gray-300 transition-colors"
+                  >
+                    info@realerestate.org
+                  </a>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 text-sm">Response time: Within 24 hours</span>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-900/30 border border-gray-800 p-8 rounded-sm">
+              <h3 className="text-2xl font-serif mb-4 text-white" style={{fontFamily: 'Playfair Display, serif'}}>
+                Story Angles
+              </h3>
+              <ul className="space-y-3 text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
+                <li>• AI applications in affordable housing</li>
+                <li>• NYC housing affordability crisis</li>
+                <li>• Technology democratizing market access</li>
+                <li>• Young entrepreneurs tackling urban displacement</li>
+                <li>• Data-driven approaches to rent stabilization</li>
+              </ul>
             </div>
           </div>
         </div>
