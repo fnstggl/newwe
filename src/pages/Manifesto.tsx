@@ -53,7 +53,7 @@ const Manifesto = () => {
         {/* Hero */}
         <div className="text-center mb-16">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 tracking-tighter">
-            Finding a home is rigged.
+            Finding an apartment is rigged.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
               Now you can win.
