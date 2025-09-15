@@ -86,8 +86,8 @@ const Press = () => {
               <div className="text-sm text-gray-400 leading-relaxed">Active users searching for affordable housing</div>
             </div>
             <div>
-              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$500K+</div>
-              <div className="text-sm text-gray-400 leading-relaxed">In rent savings identified for users</div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$98M+</div>
+              <div className="text-sm text-gray-400 leading-relaxed">In total savings calculated for users</div>
             </div>
             <div>
               <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>170+</div>
