@@ -68,7 +68,7 @@ const Press = () => {
               Media Kit
             </h1>
             <p className="text-2xl text-gray-300 leading-relaxed max-w-4xl font-light" style={{fontFamily: 'Georgia, serif'}}>
-              Comprehensive resources for reporting on AI-powered affordable housing discovery in New York City
+              Comprehensive resources for reporting on the teen-built affordable housing discovery tool reshaping how New Yorkers find housing
             </p>
           </div>
         </div>
@@ -112,7 +112,7 @@ const Press = () => {
               Realer Estate was founded by two Brooklyn natives who witnessed firsthand the systematic displacement of working families from their communities. Combining expertise in real estate and software development, they created an AI-powered platform that democratizes access to affordable housing information.
             </p>
             <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
-              The platform employs machine learning algorithms to analyze New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties that traditional search methods often miss. This technology-driven approach has facilitated over $500,000 in rent savings for New Yorkers across 170+ zip codes.
+              The platform employs machine learning algorithms to analyze New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties that traditional search methods often miss. This technology-driven approach has surfaced over $98,000,000 in total calculated savings for New Yorkers across 170+ zip codes.
             </p>
             <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
               Beyond individual savings, Realer Estate represents a fundamental shift in how housing information is accessed and distributed—placing sophisticated market analysis tools directly in the hands of renters who need them most.
@@ -237,7 +237,7 @@ const Press = () => {
         </div>
       </section>
 
-      {/* User Perspectives */}
+      {/* User Quotes */}
       <section className="py-20 px-4 border-b border-gray-800">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-sm text-gray-400 uppercase tracking-[0.2em] mb-12 font-medium">
