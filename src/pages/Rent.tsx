@@ -1435,7 +1435,7 @@ return (
 )}
 
                   {/* NEW: Filter-based CTA for signed out users - positioned over the 2nd property (index 1) */}
-                  {!user && hasActiveFilters && index === 1 && (
+                  {!user && hasActiveFilters && index === 9000 && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                       <div className="bg-black/60 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto">
                         <h3 className="text-2xl font-bold text-white mb-4">
@@ -1455,7 +1455,7 @@ return (
                   )}
 
                   {/* NEW: Filter-based CTA for free plan users - positioned over the 2nd property (index 1) */}
-                  {isFreeUser && hasActiveFilters && index === 1 && (
+                  {isFreeUser && hasActiveFilters && index === 9000 && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                       <div className="bg-black/60 backdrop-blur-sm rounded-xl p-6 text-center max-w-xl w-full pointer-events-auto">
                         <h3 className="text-2xl font-bold text-white mb-4">
