@@ -82,12 +82,12 @@ const Rent = () => {
 
   const getVisibilityLimit = () => {
     if (!user) {
-      return hasActiveFilters ? 0 : 9000; // Blur all when filters active, otherwise show 12
+      return hasActiveFilters ? 9000 : 9000; // Blur all when filters active, otherwise show 12
     }
     if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
       return Infinity; // Unlimited users see all
     }
-    return hasActiveFilters ? 0 : 9000; // Free plan: blur all when filters active, otherwise show 24
+    return hasActiveFilters ? 9000 : 9000; // Free plan: blur all when filters active, otherwise show 24
   };
 
 useEffect(() => {
