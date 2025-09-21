@@ -60,7 +60,7 @@ const Manifesto = () => {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-gray-400 tracking-tight">
-            Find below-market & rent stabilized apartments. Afford the city.
+            Find below-market & rent stabilized apartments that actually help you afford the city.
           </p>
         </div>
 
