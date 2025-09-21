@@ -264,7 +264,7 @@ const Checkout = () => {
  {/* Social proof number */}
             <div className="text-center mb-4">
               <p className="text-gray-400 text-sm">
-                Join <span className="text-white font-semibold">21,911 New Yorkers</span> already saving thousands
+                Join <span className="text-white font-semibold">25,411 New Yorkers</span> already saving thousands
               </p>
             </div>
             
