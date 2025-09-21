@@ -144,7 +144,7 @@ const Join = () => {
             You’re seconds away from NYC’s hidden deals.
           </h1>
           <p className="text-gray-400 text-lg tracking-tight">
-            Up to 60% below-market. 6,000+ New Yorkers already inside.
+            Up to 60% below-market. 25,000+ New Yorkers already inside.
           </p>
         </div>
 
