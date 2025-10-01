@@ -474,7 +474,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                         </>
                       ) : (
                         <div className="relative">
-                          <div className="blur-none">
+                          <div className="blur-small">
                             <div className="text-center">
                               <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
                                 {Math.round(discountPercent)}%
