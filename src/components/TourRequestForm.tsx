@@ -270,7 +270,7 @@ const TourRequestForm: React.FC<TourRequestFormProps> = ({ propertyId, propertyA
                       <h3 className="text-white font-semibold text-sm">Tiger Liu</h3>
                       <p className="text-gray-300 text-xs">Licensed Real Estate Salesperson</p>
                       <p className="text-gray-400 text-xs">Compass</p>
-                      <p className="text-blue-400 text-xs font-medium">(917) 227-9987</p>
+                      <p className="text-blue-400 text-xs font-medium"> </p>
                     </div>
                   </div>
                 </div>
