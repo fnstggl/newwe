@@ -747,24 +747,26 @@ const [hasAnimated, setHasAnimated] = useState(false);
                   )}
                   
                   {/* Request Tour Button for Sales Properties Only */}
-                  {!isRental && (
-                    <Button
-                      onClick={() => setShowTourRequest(true)}
-                      className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3"
-                    >
-                      Request Tour
-                    </Button>
-                  )}
+                 {!isRental && (
+  <Button
+    onClick={() => window.open(`https://www.streeteasy.com/sale/${(property as any).listing_id}`, '_blank')}
+    className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3 flex items-center justify-center"
+  >
+    Request Tour
+    <ExternalLink className="h-4 w-4 ml-2 text-black" />
+  </Button>
+)}
 
-                  {/* Ask a Question Button for Sales Properties Only */}
-                  {!isRental && (
-                    <Button
-                      onClick={() => setShowQuestionForm(true)}
-                      className="w-full bg-[#494e52] text-white hover:bg-[#3a3f42] rounded-full font-semibold px-6 py-3 border border-white"
-                    >
-                      Ask a Question
-                    </Button>
-                  )}
+                  {/*
+  {!isRental && (
+    <Button
+      onClick={() => setShowQuestionForm(true)}
+      className="w-full bg-[#494e52] text-white hover:bg-[#3a3f42] rounded-full font-semibold px-6 py-3 border border-white"
+    >
+      Ask a Question
+    </Button>
+  )}
+*/}
 
                   {/* Early Access CTA Box for Sales - positioned below Ask a Question */}
                   {!isRental && userProfile?.subscription_plan !== 'unlimited' && (
@@ -796,7 +798,8 @@ const [hasAnimated, setHasAnimated] = useState(false);
         </div>
       </div>
 
-      {/* Tour Request Form Modal */}
+       {/* Tour Request Form Modal */}
+    {/*
       {showTourRequest && (
         <TourRequestForm
           propertyId={property.id}
@@ -805,8 +808,10 @@ const [hasAnimated, setHasAnimated] = useState(false);
           onClose={() => setShowTourRequest(false)}
         />
       )}
+    */}
 
-      {/* Question Form Modal */}
+    {/* Question Form Modal */}
+    {/*
       {showQuestionForm && (
         <QuestionForm
           propertyId={property.id}
@@ -815,6 +820,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
           onClose={() => setShowQuestionForm(false)}
         />
       )}
+    */}
     </>
   );
 };
