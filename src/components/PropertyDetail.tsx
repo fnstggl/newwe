@@ -474,7 +474,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                         </>
                       ) : (
                         <div className="relative">
-                          <div className="blur-small">
+                             {/* <div className="blur-small"> */}
                             <div className="text-center">
                               <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
                                 {Math.round(discountPercent)}%
@@ -489,21 +489,21 @@ const [hasAnimated, setHasAnimated] = useState(false);
                             )}
                           </div>
                           
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-lg">
-                            <div className="text-center">
-                              <p className="text-white text-sm mb-3 font-medium">
-                                 
-                              </p>
                           {/* 
+<div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-lg">
+  <div className="text-center">
+    <p className="text-white text-sm mb-3 font-medium">
+       
+    </p>
     <Button
       onClick={() => navigate('/join')}
       className="bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-2 text-sm"
     >
       Create free account
     </Button>
-    */}
-                            </div>
-                          </div>
+  </div>
+</div>
+*/}
                         </div>
                       )}
                     </CardContent>
