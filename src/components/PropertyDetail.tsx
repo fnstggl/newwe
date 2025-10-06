@@ -264,7 +264,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
 
             <div className="p-6">
               {hasImages && (
-  <div className="relative mb-8">
+  <div className="relative mb-8 group">
     <div className="aspect-video rounded-2xl lg:rounded-2xl sm:rounded-xl overflow-hidden bg-gray-800">
                     <img
                       src={currentImageUrl}
@@ -275,10 +275,10 @@ const [hasAnimated, setHasAnimated] = useState(false);
                       }}
                     />
 
-      {/* Attribution watermark - only in detail view */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-[10px] px-2 py-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 pointer-events-none">
-        Image courtesy of StreetEasy / Zillow Group
-      </div>
+{/* Attribution watermark - only in detail view */}
+<div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 pointer-events-none">
+  Image courtesy of StreetEasy / Zillow Group
+</div>
 
       {/* Add touch support for mobile swiping */}
 <div 
