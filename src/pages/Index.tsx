@@ -1123,7 +1123,7 @@ const DesktopIndex = () => {
   }, []);
 
   return (
-    <div className="font-inter">
+       <div className="font-inter bg-black">
       {/* Hero Section */}
 <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
   {/* Background Image with Full Width */}
@@ -1240,7 +1240,7 @@ const DesktopIndex = () => {
     {/* Final CTA */}
 <section className="py-20 pb-0 px-4 relative overflow-hidden">
   {/* Gradient Blobs */}
-  <div className="absolute inset-x-[20px] inset-y-0 rounded-3xl overflow-hidden">
+<div className="absolute inset-x-[80px] inset-y-0 overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
     <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>
