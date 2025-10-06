@@ -551,37 +551,39 @@ const [hasAnimated, setHasAnimated] = useState(false);
                     </Card>
                   )}
 
-                  {/* Description with collapsible */}
-                  {property.description && (
-                    <Card className="bg-black border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white">Description</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {shouldShowReadMore ? (
-                          <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
-                            <div className="text-gray-300 leading-relaxed">
-                              {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
-                            </div>
-                            <CollapsibleTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
-                              >
-                                <span className="flex items-center">
-                                  {isDescriptionExpanded ? 'Show less' : 'Show more'}
-                                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
-                                </span>
-                              </Button>
-                            </CollapsibleTrigger>
-                          </Collapsible>
-                        ) : (
-                          <p className="text-gray-300 leading-relaxed">{property.description}</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
+          {/*
+  Description with collapsible (commented out for compliance)
+  {property.description && (
+    <Card className="bg-black border-gray-700">
+      <CardHeader>
+        <CardTitle className="text-white">Description</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {shouldShowReadMore ? (
+          <Collapsible open={isDescriptionExpanded} onOpenChange={setIsDescriptionExpanded}>
+            <div className="text-gray-300 leading-relaxed">
+              {isDescriptionExpanded ? property.description : truncateDescription(property.description)}
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-3 text-blue-400 hover:text-blue-300 p-0 h-auto font-normal"
+              >
+                <span className="flex items-center">
+                  {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isDescriptionExpanded ? 'rotate-180' : ''}`} />
+                </span>
+              </Button>
+            </CollapsibleTrigger>
+          </Collapsible>
+        ) : (
+          <p className="text-gray-300 leading-relaxed">{property.description}</p>
+        )}
+      </CardContent>
+    </Card>
+  )}
+*/}
 
                   {/* Amenities */}
                   {property.amenities && property.amenities.length > 0 && (
