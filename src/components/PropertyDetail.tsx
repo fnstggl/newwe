@@ -703,8 +703,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                       onClick={() => window.open(`https://www.streeteasy.com/rental/${(property as any).listing_id}`, '_blank')}
                       className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3 flex items-center justify-center"
                     >
-                      Request Tour
-                      <ExternalLink className="h-4 w-4 ml-2 text-black" />
+                      See on StreetEasy
                     </Button>
                   )}
                   
