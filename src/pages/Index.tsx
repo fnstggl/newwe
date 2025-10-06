@@ -1237,47 +1237,52 @@ const DesktopIndex = () => {
   </div>
 </section>
     
-      {/* Final CTA */}
-      <section className="py-20 pb-0 px-4 relative overflow-hidden">
-        {/* Blue Gradient Blob Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
-            Let the apartment hunt end here.
-          </h2>
-          <p className="text-xl text-gray-300 mb-12 tracking-tight">
-            Join the platform built to save buyers & renters thousands.
-          </p>
-          <Link to="/join" className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
-            Join now.
-          </Link>
-          
-{/* Footer Links - end of gradient */}
-<div className="mt-16 mb-2">
-  <div className="flex justify-center space-x-8 text-sm text-gray-400">
-    <Link to="/privacy" className="hover:text-gray-300 transition-colors">
-      Privacy Policy
-    </Link>
-    <Link to="/terms" className="hover:text-gray-300 transition-colors">
-      Terms of Service
-    </Link>
-    <Link to="/press" className="hover:text-gray-300 transition-colors">
-      Press
-    </Link>
-    <Link to="/partners" className="hover:text-gray-300 transition-colors">
-      Partners
-    </Link>
+    {/* Final CTA */}
+<section className="py-20 pb-0 px-4 relative overflow-hidden">
+  {/* Gradient Blobs */}
+  <div className="absolute inset-x-[20px] inset-y-0 rounded-3xl overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-purple-600/30 to-blue-800/40"></div>
+    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-blue-500/40 via-cyan-400/30 to-blue-600/50 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 w-[600px] h-[400px] bg-gradient-to-tl from-purple-500/30 via-blue-400/20 to-cyan-500/40 rounded-full blur-2xl"></div>
   </div>
-</div>
 
-</div>
-      </section>
+  <div className="max-w-4xl mx-auto text-center relative z-10">
+    <h2 className="text-4xl md:text-5xl font-semibold mb-6 tracking-tighter">
+      Let the apartment hunt end here.
+    </h2>
+    <p className="text-xl text-gray-300 mb-12 tracking-tight">
+      Join the platform built to save buyers & renters thousands.
+    </p>
+    <Link
+      to="/join"
+      className="inline-block bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
+    >
+      Join now.
+    </Link>
 
-{/* Solid black disclaimer section with extra padding to avoid counter overlap */}
-<div className="bg-black py-12 pb-32">
-  <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500 leading-relaxed">
+    {/* Footer Links */}
+    <div className="mt-14 mb-3">
+      <div className="flex justify-center space-x-8 text-xs text-gray-400">
+        <Link to="/privacy" className="hover:text-gray-300 transition-colors">
+          Privacy Policy
+        </Link>
+        <Link to="/terms" className="hover:text-gray-300 transition-colors">
+          Terms of Service
+        </Link>
+        <Link to="/press" className="hover:text-gray-300 transition-colors">
+          Press
+        </Link>
+        <Link to="/partners" className="hover:text-gray-300 transition-colors">
+          Partners
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* Solid black disclaimer section with reduced spacing */}
+<div className="bg-black py-8 pb-24">
+  <div className="max-w-4xl mx-auto px-4 text-center text-[11px] text-gray-500 leading-relaxed">
     Realer Estate aggregates publicly available housing data for informational purposes only. 
     Listing information and images belong to their respective owners (e.g., StreetEasy, Zillow Group, or affiliated MLS providers). 
     Realer Estate is not affiliated with, endorsed by, or sponsored by these entities. 
