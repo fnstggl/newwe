@@ -1271,6 +1271,15 @@ const DesktopIndex = () => {
     </Link>
   </div>
           </div>  {/* ADD THIS MISSING CLOSING DIV */}
+
+{/* Global Legal Disclaimer */}
+<div className="text-center text-[11px] text-gray-500 max-w-3xl mx-auto px-4 mt-6 mb-10 leading-snug">
+  Realer Estate aggregates publicly available housing data for informational purposes only. 
+  Listing information and images belong to their respective owners (e.g., StreetEasy, Zillow Group, or affiliated MLS providers). 
+  Realer Estate is not affiliated with, endorsed by, or sponsored by these entities. 
+  Users are redirected to original listing sources for complete details.
+</div>
+
 </div>
       </section>
 
