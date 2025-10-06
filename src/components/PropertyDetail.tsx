@@ -761,10 +761,10 @@ const [hasAnimated, setHasAnimated] = useState(false);
                   {/* Ask a Question Button for Sales Properties Only */}
                   {!isRental && (
                     <Button
-                      onClick={() => setShowQuestionForm(true)}
+                       onClick={() => window.open(`https://www.streeteasy.com/sale/${(property as any).listing_id}`, '_blank')}
                       className="w-full bg-[#494e52] text-white hover:bg-[#3a3f42] rounded-full font-semibold px-6 py-3 border border-white"
                     >
-                      Ask a Question
+                      See on StreetEasy
                     </Button>
                   )}
 
