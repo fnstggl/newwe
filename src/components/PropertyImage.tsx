@@ -113,12 +113,6 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
   />
 )}
 </div>
-
-{/* Attribution caption - moved outside the image container */}
-<div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-[10px] px-2 py-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 pointer-events-none">
-  Image courtesy of StreetEasy / Zillow Group
-</div>
-  
       
       {/* Navigation arrows */}
       {hasMultipleImages && isHovered && (
