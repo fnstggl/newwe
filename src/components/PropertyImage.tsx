@@ -98,21 +98,28 @@ const PropertyImage: React.FC<PropertyImageProps> = ({ images, address, classNam
         <div className="absolute inset-0 bg-gray-700" />
         
         {/* Main image */}
-        {currentImageUrl && (
-          <img
-            src={currentImageUrl}
-            alt={address}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-              isImageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            loading="eager"
-            decoding="async"
-            onLoad={() => {
-              setLoadedImages(prev => new Set(prev).add(currentImageUrl));
-            }}
-          />
-        )}
-      </div>
+     {currentImageUrl && (
+  <>
+    <img
+      src={currentImageUrl}
+      alt={address}
+      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+        isImageLoaded ? 'opacity-100' : 'opacity-0'
+      }`}
+      loading="eager"
+      decoding="async"
+      onLoad={() => {
+        setLoadedImages(prev => new Set(prev).add(currentImageUrl));
+      }}
+    />
+
+    {/* Attribution caption */}
+    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-[10px] px-2 py-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+      Image courtesy of StreetEasy / Zillow Group
+    </div>
+  </>
+)}
+    </div>
       
       {/* Navigation arrows */}
       {hasMultipleImages && isHovered && (
