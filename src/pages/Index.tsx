@@ -1290,6 +1290,10 @@ const DesktopIndex = () => {
   </div>
 </div>
       
+
+{/* ✅ Fix for white scroll background */}
+<div className="bg-black h-24 w-full"></div>
+
       {/* Savings Counter */}
       <SavingsCounter />
     </div>
