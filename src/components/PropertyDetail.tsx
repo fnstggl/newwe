@@ -274,6 +274,12 @@ const [hasAnimated, setHasAnimated] = useState(false);
                         e.currentTarget.src = '/placeholder.svg';
                       }}
                     />
+
+      {/* Attribution watermark - only in detail view */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black/60 text-white text-[10px] px-2 py-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 pointer-events-none">
+        Image courtesy of StreetEasy / Zillow Group
+      </div>
+
       {/* Add touch support for mobile swiping */}
 <div 
   className="absolute inset-0 lg:hidden"
