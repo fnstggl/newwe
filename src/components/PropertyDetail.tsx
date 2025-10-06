@@ -490,8 +490,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                           </div>
 
       {/* Blur overlay removed */}
-
-                        </div>
+                      
                       )}
                     </CardContent>
                   </Card>
