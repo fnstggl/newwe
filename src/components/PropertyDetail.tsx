@@ -704,6 +704,7 @@ const [hasAnimated, setHasAnimated] = useState(false);
                       className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3 flex items-center justify-center"
                     >
                       See on StreetEasy
+<ExternalLink className="h-4 w-4 ml-2 text-black" />
                     </Button>
                   )}
                   
