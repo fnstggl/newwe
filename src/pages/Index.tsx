@@ -1281,7 +1281,7 @@ const DesktopIndex = () => {
 </section>
 
 {/* Solid black disclaimer section with reduced spacing */}
-<div className="bg-black py-8 pb-24">
+<div className="bg-black py-8 pb-12">
   <div className="max-w-4xl mx-auto px-4 text-center text-[11px] text-gray-500 leading-relaxed">
     Realer Estate aggregates publicly available housing data for informational purposes only. 
     Listing information and images belong to their respective owners (e.g., StreetEasy, Zillow Group, or affiliated MLS providers). 
