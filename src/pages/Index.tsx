@@ -1154,7 +1154,7 @@ const DesktopIndex = () => {
     [text-wrap:balance]
   "
 >
-  The only platform built to find you the best deal in the city. Actually.
+  The only platform built to find you the best deal in the city.
 </h1>
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
         Save thousands on rent-stabilized and below-market apartments in NYC.
