@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const SavingsCounter = () => {
-  const [totalSaved, setTotalSaved] = useState(48351021);
+  const [totalSaved, setTotalSaved] = useState(51751021);
   const [isMobile, setIsMobile] = useState(false);
 
   // Mobile detection
