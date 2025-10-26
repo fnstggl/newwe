@@ -83,7 +83,7 @@ const Press = () => {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>26,000+</div>
-              <div className="text-sm text-gray-400 leading-relaxed">Active users searching for affordable housing</div>
+              <div className="text-sm text-gray-400 leading-relaxed">Active users searching for more affordable apartments</div>
             </div>
             <div>
               <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$98M+</div>
