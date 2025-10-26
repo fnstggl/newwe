@@ -64,7 +64,7 @@ const TestimonialsSection = () => {
       
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <h2 className="text-4xl md:text-5xl font-semibold mb-16 tracking-tighter text-white">
-          25,000+ New Yorkers finding better deals.
+          26,000+ New Yorkers finding better deals.
         </h2>
         
         <div className="relative min-h-[300px] flex items-center justify-center">
