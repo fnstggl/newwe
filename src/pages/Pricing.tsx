@@ -208,13 +208,13 @@ return (
         
 
 {/* Rotating Success Testimonials - COMPACT */}
-<div className={`${isMobile ? 'mt-6' : 'mt-8'} flex justify-center`}>
+{/* <div className={`${isMobile ? 'mt-6' : 'mt-8'} flex justify-center`}>
   <div className={`bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl ${isMobile ? 'px-4 py-3 max-w-sm' : 'px-6 py-4 max-w-2xl'} shadow-xl relative min-h-[140px] flex items-start w-full`}>
     <div className="w-full">
       <PricingTestimonials isMobile={isMobile} />
     </div>
   </div>
-</div>
+</div> */}
 
           {/* Billing Toggle - Mobile responsive */}
           <div className={`${isMobile ? 'mt-6' : 'mt-10'} flex items-center justify-center gap-4`}>
