@@ -200,7 +200,7 @@ return (
       <div className="max-w-6xl mx-auto">
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h1 className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-semibold ${isMobile ? 'mb-3' : 'mb-6'} tracking-tighter`}>
-            Ready to finally find a home you can afford?
+            Ready to find a home you can better afford?
           </h1>
           <p className={`${isMobile ? 'text-base' : 'text-xl'} text-gray-400 tracking-tight`}>
             These deals don't wait. People grab them before you even know they exist.
