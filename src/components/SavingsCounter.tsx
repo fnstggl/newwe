@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const SavingsCounter = () => {
-  const [totalSaved, setTotalSaved] = useState(46494391);
+  const [totalSaved, setTotalSaved] = useState(47494391);
   const [isMobile, setIsMobile] = useState(false);
 
   // Mobile detection
@@ -18,7 +18,7 @@ const SavingsCounter = () => {
   // Savings counter logic
   useEffect(() => {
     const interval = setInterval(() => {
-      const increment = Math.floor(Math.random() * 400) + 200;
+      const increment = Math.floor(Math.random() * 800) + 500;
       setTotalSaved(prev => prev + increment);
     }, 8000);
     return () => clearInterval(interval);
