@@ -86,11 +86,11 @@ const Press = () => {
               <div className="text-sm text-gray-400 leading-relaxed">Active users searching for more affordable housing</div>
             </div>
             <div>
-              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$98M+</div>
-              <div className="text-sm text-gray-400 leading-relaxed">In total savings calculated for users (across all months)</div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>$40M+</div>
+              <div className="text-sm text-gray-400 leading-relaxed">Average savings calculated per month</div>
             </div>
             <div>
-              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>170+</div>
+              <div className="text-4xl font-serif mb-3 text-white" style={{fontFamily: 'Playfair Display, serif'}}>130+</div>
               <div className="text-sm text-gray-400 leading-relaxed">NYC zip codes covered by platform</div>
             </div>
             <div>
@@ -109,10 +109,10 @@ const Press = () => {
           </h2>
           <div className="space-y-8">
             <p className="text-xl leading-relaxed text-gray-200 font-light first-letter:text-7xl first-letter:font-serif first-letter:text-white first-letter:mr-4 first-letter:float-left first-letter:leading-none first-letter:mt-2" style={{fontFamily: 'Georgia, serif'}}>
-              Realer Estate was founded by two Brooklyn natives who witnessed firsthand the systematic displacement of working families from their communities. Combining expertise in real estate and software development, they created an AI-powered platform that democratizes access to affordable housing information.
+              Realer Estate was founded by Beckett Zahedi who was soon joined by co-founder, Derrick Webster. They're two young Brooklynites who witnessed firsthand the systematic displacement of working families from their communities. Combining expertise in real estate and software development, they created an AI-powered platform that democratizes access to affordable housing information.
             </p>
             <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
-              The platform employs machine learning algorithms to analyze New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties that traditional search methods often miss. This technology-driven approach has surfaced over $98,000,000 in total calculated savings for New Yorkers across 170+ zip codes.
+              The platform employs machine learning algorithms to analyze New York City rental listings in real-time, identifying rent-stabilized apartments and undervalued properties that traditional search methods often miss. This technology-driven approach has surfaced around ~$45,000,000 in potential calculated savings per month for New Yorkers across 130+ zip codes.
             </p>
             <p className="text-xl leading-relaxed text-gray-300 font-light" style={{fontFamily: 'Georgia, serif'}}>
               Beyond individual savings, Realer Estate represents a fundamental shift in how housing information is accessed and distributed—placing sophisticated market analysis tools directly in the hands of renters who need them most.
