@@ -393,45 +393,16 @@ useEffect(() => {
     return () => clearTimeout(debounceTimer);
   }, [maxPrice, bedrooms, selectedNeighborhoods, minGrade]);
 
-  // Visibility limits
- const getVisibilityLimit = () => {
-  if (!user) {
-    return hasActiveFilters ? 0 : 12; // Blur all when filters active, otherwise show 12
-  }
-  if (userProfile?.subscription_plan === 'unlimited' || userProfile?.subscription_plan === 'open_door_plan') {
-    return Infinity; // Unlimited users see all
-  }
-  return hasActiveFilters ? 0 : 24; // Free plan: blur all when filters active, otherwise show 24
+// No visibility limits on mobile
+const visibilityLimit = Infinity;
+const isFreeUser = false;
+
+const handlePropertyClick = (property) => {
+  const route = isRentMode ? `/rent/${property.listing_id}` : `/buy/${property.listing_id}`;
+  navigate(route);
+  setSelectedProperty(property);
 };
 
-  const visibilityLimit = getVisibilityLimit();
-  const isFreeUser = user && userProfile?.subscription_plan !== 'unlimited' && userProfile?.subscription_plan !== 'open_door_plan';
-
-  const handlePropertyClick = (property, index) => {
-    if (index >= visibilityLimit) return;
-
-    if (!user && index >= 12) {
-      setSoftGateModal({
-        isOpen: true,
-        property: property,
-        isLoggedOut: true
-      });
-      return;
-    }
-
-    if (isFreeUser && index >= 24) {
-      setSoftGateModal({
-        isOpen: true,
-        property: property,
-        isLoggedOut: false
-      });
-      return;
-    }
-
-    const route = isRentMode ? `/rent/${property.listing_id}` : `/buy/${property.listing_id}`;
-    navigate(route);
-    setSelectedProperty(property);
-  };
 
 const getGradeColors = (grade) => {
   if (grade === 'A+') {
@@ -662,87 +633,14 @@ const getGradeColors = (grade) => {
       {/* Properties Grid - 2 per row */}
     {/* Properties Grid - 2 per row */}
 <div className="px-4">
-  {/* Filter-based CTA for signed out users - centered at top when filters active */}
-  {!user && hasActiveFilters && properties.length > 0 && (
-    <div className="flex justify-center mb-4">
-      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-        <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-          Want to see more of the best deals in NYC?
-        </h3>
-        <button
-          onClick={() => navigate('/join')}
-          className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
-        >
-          Create free account to continue
-        </button>
-        <p className="text-xs text-gray-400">27,000+ New Yorkers already beating the market</p>
-      </div>
-    </div>
-  )}
 
-  {/* Filter-based CTA for free plan users - centered at top when filters active */}
-  {isFreeUser && hasActiveFilters && properties.length > 0 && (
-    <div className="flex justify-center mb-4">
-      <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-        <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-          The only tool that helps you find your dream home. And afford it.
-        </h3>
-        <button
-          onClick={() => navigate('/pricing')}
-          className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight mb-2"
-        >
-          Try Unlimited Access for Free
-        </button>
-        <p className="text-xs text-gray-400">27,000+ New Yorkers already beating the market</p>
-      </div>
-    </div>
-  )}
 
  <div className="grid grid-cols-2 gap-3 mb-8">
     {properties.map((property, index) => {
       const gradeColors = getGradeColors(property.grade);
-      const isBlurred = index >= visibilityLimit;
       
       return (
         <React.Fragment key={`fragment-${index}`}>
-           {/* CTA at first blurred listing for non-filter cases */}
-      {!hasActiveFilters && index === visibilityLimit && (
-        <div className="col-span-2 flex justify-center my-4">
-          <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 text-center max-w-xs">
-            <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
-              {!user ? "See all the best deals" : "Unlock all deals"}
-            </h3>
-            <p className="text-sm text-gray-300 mb-3">
-              Only {visibilityLimit} of 4,193 deals shown
-            </p>
-            <button
-              onClick={() => navigate(!user ? '/join' : '/pricing')}
-              className="bg-white text-black px-6 py-2 rounded-full font-semibold text-sm tracking-tight"
-            >
-              {!user ? "Join Free" : "Try Free"}
-            </button>
-          </div>
-        </div>
-      )}
-          {/* Social Proof Card - appears at index 8 */}
-          {index === 8 && (
-            <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
-              <div className="text-center">
-                <p className="text-sm text-white font-semibold mb-1">💬 "Found my dream 1BR in Williamsburg"</p>
-                <p className="text-xs text-gray-400">- Sarah K., saved $1,200/mo</p>
-              </div>
-            </div>
-          )}
-
-          {/* Social Proof Card - appears at index 16 */}
-          {index === 16 && (
-            <div className="col-span-2 bg-gray-900/40 rounded-xl p-4 my-2 border border-gray-700/30">
-              <div className="text-center">
-                <p className="text-sm text-white font-semibold mb-1">🏠 "Saved $800/mo on a Park Slope studio"</p>
-                <p className="text-xs text-gray-400">- Mike T., moved in early August</p>
-              </div>
-            </div>
-          )}
 
           <div 
             key={`${property.id}-${index}`} 
@@ -753,11 +651,11 @@ const getGradeColors = (grade) => {
               transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
             }}
           >
-            <div className={isBlurred ? 'filter blur-sm' : ''}>
+          <div>
               <div
-                onClick={() => handlePropertyClick(property, index)}
-                className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
-              >
+  onClick={() => handlePropertyClick(property)}
+  className={`bg-gray-900/60 border border-gray-700/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${gradeColors.hover}`}
+>
                 <div className="aspect-square bg-gray-800 relative overflow-hidden">
                   {property.images?.[0] && index <= loadedImageIndex ? (
                     <img 
@@ -826,26 +724,7 @@ const getGradeColors = (grade) => {
               </div>
             </div>
 
-            {isBlurred && (
-              <div 
-                className="absolute inset-0 cursor-pointer"
-                onClick={() => {
-                  if (!user) {
-                    setSoftGateModal({
-                      isOpen: true,
-                      property: property,
-                      isLoggedOut: true
-                    });
-                  } else if (isFreeUser) {
-                    setSoftGateModal({
-                      isOpen: true,
-                      property: property,
-                      isLoggedOut: false
-                    });
-                  }
-                }}
-              />
-            )}
+      
           </div>
         </React.Fragment>
       );
