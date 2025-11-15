@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyDetail from "@/components/PropertyDetail";
 import SoftGateModal from "@/components/SoftGateModal";
-import AISearch from "@/components/AISearch";
 import SavingsCounter from "@/components/SavingsCounter";
 
 
@@ -508,30 +507,9 @@ const getGradeColors = (grade) => {
   </button>
 </div>
 
-{/* AI Search Bar - Full Width Below Toggle */}
+{/* Spacer where AI Search bar used to be */}
 <div className="mb-0">
-  <AISearch 
-   onResults={(results, interpretation) => {
-  if (results.length > 0) {
-    const mappedResults = results.map(property => ({
-      ...property,
-      images: Array.isArray(property.images) ? property.images : 
-             typeof property.images === 'string' ? JSON.parse(property.images || '[]') : [],
-      property_type: property.property_type || (isRentMode ? 'rent' : 'buy'),
-      table_source: property.table_source || (isRentMode ? 'undervalued_rentals' : 'undervalued_sales')
-    }));
-    
-    setProperties(mappedResults);
-    setOffset(mappedResults.length);
-    setHasMore(false);
-    setHasActiveFilters(true); // Mark as filtered search
-  }
-}}
-    placeholder="Describe your dream home..."
-    className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-sm tracking-tight"
-    showSuggestions={false}
-    hideInterpretation={true}
-  />
+  <div className="w-full py-4" />
 </div>
 
         </div>
