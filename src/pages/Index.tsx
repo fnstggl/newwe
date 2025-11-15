@@ -527,7 +527,7 @@ const getGradeColors = (grade) => {
     setHasActiveFilters(true); // Mark as filtered search
   }
 }}
-    placeholder="Describe your dream home. We'll find it for you"
+    placeholder="Describe your dream home..."
     className="w-full bg-gray-900/80 border border-gray-700/50 rounded-2xl pl-4 pr-12 py-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none text-sm tracking-tight"
     showSuggestions={false}
     hideInterpretation={true}
