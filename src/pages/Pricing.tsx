@@ -445,7 +445,7 @@ return (
           </button>
         ) : (
           <div className={`text-blue-400 font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>
-            You're all set! Enjoy unlimited access to all deals.
+            You're all set! Enjoy being notified for all deals in your selected areas. Alert preferences can be adjusted in your profile.
           </div>
         )}
       </div>
