@@ -446,7 +446,7 @@ const Profile = () => {
                 onClick={handleUpgradeClick}
                 className="w-full bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all transform hover:scale-105"
               >
-                Try Unlimited For Free
+                Get Alerts Today
               </button>
             </div>
           </div>
