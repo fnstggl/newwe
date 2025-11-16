@@ -1030,23 +1030,19 @@ const DesktopIndex = () => {
   </div>
 </section>
 
-{/* NYT Featured Badge */}
+{/* NYT Logo Badge */}
 <section className="bg-black">
-  <div className="max-w-6xl mx-auto px-4 pt-3 pb-2">
+  <div className="max-w-6xl mx-auto px-4 pt-3 pb-3">
     <div className="flex justify-center">
       <a
         href="https://www.nytimes.com/2025/11/14/realestate/affordable-housing-rent-stabilized-website.html"
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-3"
       >
-        <span className="text-[10px] md:text-xs uppercase tracking-[0.25em] text-gray-400">
-          As featured in
-        </span>
         <img
           src="/lovable-uploads/nyt_logo.png"
           alt="The New York Times"
-          className="h-6 md:h-7 object-contain"
+          className="h-7 md:h-8 object-contain"
         />
       </a>
     </div>
