@@ -109,53 +109,77 @@ const [showRefineFilters, setShowRefineFilters] = useState(false);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
 
-  useEffect(() => {
+useEffect(() => {
     // Update meta tags for SEO
     document.title = "Pricing - Realer Estate | Find NYC Real Estate Deals Early";
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access to undervalued properties starting at $3/month.');
+      metaDescription.setAttribute(
+        'content',
+        'Get early access to the best NYC real estate deals. Free plan available. Unlimited access to undervalued properties starting at $3/month.'
+      );
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.';
+      meta.content =
+        'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.';
       document.head.appendChild(meta);
     }
 
     const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', 'Pricing - Realer Estate | Find NYC Real Estate Deals Early');
-    
+    if (ogTitle)
+      ogTitle.setAttribute(
+        'content',
+        'Pricing - Realer Estate | Find NYC Real Estate Deals Early'
+      );
+
     const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) ogDescription.setAttribute('content', 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.');
-    
+    if (ogDescription)
+      ogDescription.setAttribute(
+        'content',
+        'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.'
+      );
+
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', 'https://realerestate.org/pricing');
 
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) twitterTitle.setAttribute('content', 'Pricing - Realer Estate | Find NYC Real Estate Deals Early');
-    
+    if (twitterTitle)
+      twitterTitle.setAttribute(
+        'content',
+        'Pricing - Realer Estate | Find NYC Real Estate Deals Early'
+      );
+
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) twitterDescription.setAttribute('content', 'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.');
-    
+    if (twitterDescription)
+      twitterDescription.setAttribute(
+        'content',
+        'Get early access to the best NYC real estate deals. Free plan available. Unlimited access starting at $3/month.'
+      );
+
     const twitterUrl = document.querySelector('meta[name="twitter:url"]');
     if (twitterUrl) twitterUrl.setAttribute('content', 'https://realerestate.org/pricing');
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', 'https://realerestate.org/pricing');
 
-   const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('success') === 'true') {
-  setShowSuccessPopup(true);
-  window.history.replaceState({}, document.title, '/pricing');
-} else if (urlParams.get('canceled') === 'true') {
-  toast({
-    title: "Subscription canceled",
-    description: "No worries! You can subscribe anytime.",
-    variant: "destructive",
-  });
-  window.history.replaceState({}, document.title, '/pricing');
-}
+    // ✅ URL-driven success/canceled handling
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get('success') === 'true') {
+      // Do NOT clear the URL here – we want ?success=true to survive the reload
+      setShowSuccessPopup(true);
+    } else if (urlParams.get('canceled') === 'true') {
+      toast({
+        title: "Subscription canceled",
+        description: "No worries! You can subscribe anytime.",
+        variant: "destructive",
+      });
+
+      // It's safe to clear "canceled" immediately
+      window.history.replaceState({}, document.title, '/pricing');
+    }
   }, [toast]);
 
   const handleSubscribe = async (billingCycle: 'annual' | 'monthly' = 'annual') => {
@@ -664,11 +688,18 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({
   }
 };
 
-  const handleClose = () => {
+   const handleClose = () => {
     setShowSuccessPopup(false);
     setSuccessStep(1);
     setSelectedNeighborhoods([]);
     setShowRefineFilters(false);
+
+    // ✅ Now that the user has closed the popup, clean the URL
+    try {
+      window.history.replaceState({}, document.title, '/pricing');
+    } catch (e) {
+      console.error('Failed to update URL after closing success popup', e);
+    }
   };
 
   if (!showSuccessPopup) return null;
