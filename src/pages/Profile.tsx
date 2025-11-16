@@ -19,7 +19,7 @@ const Profile = () => {
   const [isSavingPreferences, setIsSavingPreferences] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
 
-  // Upgrade modal
+  // Upgrade prompt modal
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedNeighborhoodForUpgrade, setSelectedNeighborhoodForUpgrade] = useState("");
 
@@ -56,8 +56,9 @@ const Profile = () => {
 
         if (data) {
           setProfileData(data);
+
           if (data.neighborhood_preferences) {
-            // Normalize whatever is in DB into slugs
+            // Normalize whatever is stored into slugs
             const normalized = data.neighborhood_preferences.map((n: string) =>
               slugifyNeighborhood(n)
             );
@@ -148,6 +149,15 @@ const Profile = () => {
     navigate("/");
   };
 
+  // Check if user is on free plan
+  const isFreePlan =
+    !profileData?.subscription_plan ||
+    profileData.subscription_plan === "free" ||
+    (profileData.subscription_plan !== "unlimited" &&
+      profileData.subscription_plan !== "open_door_plan" &&
+      !profileData.manual_unlimited &&
+      profileData.subscription_plan !== "staff");
+
   const saveNeighborhoodPreferences = async (preferences: string[]) => {
     if (!user) return;
 
@@ -155,14 +165,18 @@ const Profile = () => {
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({ neighborhood_preferences: preferences })
+        .update({
+          neighborhood_preferences: preferences,
+          preferred_neighborhoods: preferences, // ✅ keep both in sync
+        })
         .eq("id", user.id);
 
       if (error) {
         console.error("Error saving neighborhood preferences:", error);
         toast({
           title: "Error",
-          description: "Failed to save neighborhood preferences. Please try again.",
+          description:
+            "Failed to save neighborhood preferences. Please try again.",
           variant: "destructive",
         });
       } else {
@@ -184,17 +198,7 @@ const Profile = () => {
   };
 
   const toggleNeighborhood = async (neighborhood: string) => {
-    if (!profileData) return;
-
-    // Check if user is on free plan
-    const isFreePlan =
-      !profileData.subscription_plan ||
-      profileData.subscription_plan === "free" ||
-      (profileData.subscription_plan !== "unlimited" &&
-        profileData.subscription_plan !== "open_door_plan" &&
-        !profileData.manual_unlimited &&
-        profileData.subscription_plan !== "staff");
-
+    // Gate free plan
     if (isFreePlan) {
       setSelectedNeighborhoodForUpgrade(neighborhood);
       setShowUpgradeModal(true);
@@ -214,7 +218,12 @@ const Profile = () => {
   const handleManageSubscription = async () => {
     if (!user) return;
 
-    if (profileData?.subscription_plan !== "unlimited") {
+    if (
+      profileData?.subscription_plan !== "unlimited" &&
+      !profileData.manual_unlimited &&
+      profileData?.subscription_plan !== "open_door_plan" &&
+      profileData?.subscription_plan !== "staff"
+    ) {
       navigate("/checkout");
       return;
     }
@@ -249,7 +258,6 @@ const Profile = () => {
     }
   };
 
-  // Upgrade modal actions
   const handleUpgradeClick = () => {
     setShowUpgradeModal(false);
     navigate("/checkout");
@@ -264,24 +272,9 @@ const Profile = () => {
     neighborhood.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const isFreePlan =
-    !profileData?.subscription_plan ||
-    profileData.subscription_plan === "free" ||
-    (profileData.subscription_plan !== "unlimited" &&
-      profileData.subscription_plan !== "open_door_plan" &&
-      !profileData.manual_unlimited &&
-      profileData.subscription_plan !== "staff");
-
   if (!user || !userProfile || !profileData) {
     return null;
   }
-
-  const isUnlimitedLike =
-    profileData.subscription_plan === "unlimited" ||
-    profileData.subscription_plan === "open_door_plan" ||
-    profileData.subscription_plan === "manual_unlimited" ||
-    profileData.subscription_plan === "staff" ||
-    profileData.manual_unlimited;
 
   return (
     <div className="min-h-screen bg-black text-white font-inter">
@@ -346,7 +339,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Email Preferences + Refine Filters */}
+          {/* Email Preferences */}
           <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -358,20 +351,23 @@ const Profile = () => {
                 </p>
               </div>
 
-              {isUnlimitedLike && (
+              {/* Refine filters button – Unlimited / Open Door / manual_unlimited / staff */}
+              {profileData.subscription_plan === "unlimited" ||
+              profileData.subscription_plan === "open_door_plan" ||
+              profileData.subscription_plan === "manual_unlimited" ||
+              profileData.subscription_plan === "staff" ||
+              profileData.manual_unlimited ? (
                 <button
                   onClick={() => setShowRefineFiltersModal(true)}
-                  className="
-                    px-4 py-2 rounded-full text-xs font-medium tracking-tight
+                  className="px-4 py-2 rounded-full text-xs font-medium tracking-tight
                     bg-white/5 border border-white/20 text-white
                     hover:bg-white/10 hover:border-white/40
                     backdrop-blur-md transition-all duration-200
-                    shadow-[0_0_15px_rgba(0,0,0,0.5)]
-                  "
+                    shadow-[0_0_15px_rgba(0,0,0,0.5)]"
                 >
                   Refine filters
                 </button>
-              )}
+              ) : null}
             </div>
 
             <div className="mb-6">
@@ -387,32 +383,28 @@ const Profile = () => {
 
             <div className="max-h-60 overflow-y-auto">
               <div className="flex flex-wrap gap-2">
-                {filteredNeighborhoods.map((neighborhood) => {
-                  const slug = slugifyNeighborhood(neighborhood);
-                  const active =
-                    selectedNeighborhoods.includes(slug) && !isFreePlan;
-
-                  return (
-                    <button
-                      key={neighborhood}
-                      onClick={() => toggleNeighborhood(neighborhood)}
-                      disabled={isSavingPreferences}
-                      className={`px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
-                        active
-                          ? "bg-blue-500 text-white"
-                          : isFreePlan
-                          ? "bg-gray-800 text-gray-300 hover:bg-gray-700 cursor-pointer"
-                          : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                      } ${
-                        isSavingPreferences
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      {neighborhood}
-                    </button>
-                  );
-                })}
+                {filteredNeighborhoods.map((neighborhood) => (
+                  <button
+                    key={neighborhood}
+                    onClick={() => toggleNeighborhood(neighborhood)}
+                    disabled={isSavingPreferences}
+                    className={`px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
+                      selectedNeighborhoods.includes(
+                        slugifyNeighborhood(neighborhood)
+                      ) && !isFreePlan
+                        ? "bg-blue-500 text-white"
+                        : isFreePlan
+                        ? "bg-gray-800 text-gray-300 hover:bg-gray-700 cursor-pointer"
+                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    } ${
+                      isSavingPreferences
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                  >
+                    {neighborhood}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -441,7 +433,8 @@ const Profile = () => {
                     : (profileData.subscription_plan || "Free") + " Plan"}
                 </p>
                 <p className="text-gray-400 text-sm tracking-tight">
-                  {profileData.subscription_plan === "unlimited"
+                  {profileData.subscription_plan === "unlimited" ||
+                  profileData.manual_unlimited
                     ? `Access to all deals and features (${
                         profileData.subscription_renewal || "monthly"
                       } billing)`
@@ -551,8 +544,7 @@ const RefineFiltersModal: React.FC<RefineFiltersModalProps> = ({
 
   useEffect(() => {
     if (!open) return;
-
-    // Reset when opened – you can later preload from profile if you want
+    // Reset when opened – you can preload from profile later if you want
     setPropertyType("rent");
     setBedrooms(null);
     setMaxBudget(null);
@@ -617,7 +609,8 @@ const RefineFiltersModal: React.FC<RefineFiltersModalProps> = ({
                 Refine email filters
               </h2>
               <p className="text-xs md:text-sm text-gray-400 tracking-tight mt-1">
-                We’ll only send alerts for deals that match what you choose here.
+                We’ll only send alerts for deals that match what you choose
+                here.
               </p>
             </div>
             <button
@@ -690,7 +683,9 @@ const RefineFiltersModal: React.FC<RefineFiltersModalProps> = ({
                   type="number"
                   className="bg-transparent flex-1 text-white text-sm md:text-base outline-none placeholder:text-gray-500"
                   placeholder={
-                    propertyType === "rent" ? "e.g. 3200 / month" : "e.g. 900000"
+                    propertyType === "rent"
+                      ? "e.g. 3200 / month"
+                      : "e.g. 900000"
                   }
                   value={maxBudget ?? ""}
                   onChange={(e) => {
@@ -729,7 +724,7 @@ const RefineFiltersModal: React.FC<RefineFiltersModalProps> = ({
                       className={`px-3 py-2 rounded-full text-xs text-left border transition-all tracking-tight ${
                         active
                           ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-                          : "bg-white/3 border-white/20 text-gray-200 hover:border-white/60"
+                          : "bg-white/5 border-white/20 text-gray-200 hover:border-white/60"
                       }`}
                     >
                       {n}
