@@ -756,5 +756,3 @@ const RefineFiltersModal: React.FC<RefineFiltersModalProps> = ({
     </div>
   );
 };
-
-export default Profile;
