@@ -173,7 +173,7 @@ const SavedProperties = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            Find the best deals you've saved. Actually.
+            Find the best deals you've saved.
           </h1>
           <p className="text-xl text-gray-400 tracking-tight">
             {savedProperties.length} {savedProperties.length === 1 ? 'property' : 'properties'} saved
