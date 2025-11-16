@@ -981,7 +981,7 @@ const DesktopIndex = () => {
 
   return (
        <div className="font-inter bg-black">
-      {/* Hero Section */}
+           {/* Hero Section */}
 <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden px-0 pt-0">
   {/* Background Image with Full Width */}
   <div className="absolute inset-0 w-full h-full">
@@ -1002,34 +1002,59 @@ const DesktopIndex = () => {
   {/* Hero Content - Always Visible */}
   <div className="relative z-10 min-h-[600px] flex items-center justify-center">
     <div className="text-center px-4 py-20 max-w-none">
-<h1
-  className="
-    font-inter font-semibold mb-4 text-white
-    tracking-[-0.075em] leading-tight
-    text-[clamp(1.75rem,4vw,3.25rem)] md:text-[clamp(2.25rem,3vw,3.75rem)]
-    translate-y-[130px]
-    [text-wrap:balance]
-  "
->
-  The only platform built to find you the best deal in the city.
-</h1>
+      <h1
+        className="
+          font-inter font-semibold mb-4 text-white
+          tracking-[-0.075em] leading-tight
+          text-[clamp(1.75rem,4vw,3.25rem)] md:text-[clamp(2.25rem,3vw,3.75rem)]
+          translate-y-[130px]
+          [text-wrap:balance]
+        "
+      >
+        The only platform built to find you the best deal in the city.
+      </h1>
       <p className="text-lg md:text-xl mb-16 text-white opacity-80 font-inter font-medium transform translate-y-[130px] tracking-[-0.075em]">
         Save thousands on rent-stabilized and below-market apartments in NYC.
       </p>
-      <Link to={user ? "/rent" : "/rent"} className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl">
+      <Link
+        to={user ? "/rent" : "/rent"}
+        className="inline-block bg-white font-inter text-black px-10 py-4 rounded-full font-bold text-xl tracking-tighter transform translate-y-[110px] hover:shadow-[0_0_15px_rgba(255,255,255,0.8)] transition-all duration-300 shadow-xl"
+      >
         {user ? "See Deals" : "See Deals"}
       </Link>
     </div>
   </div>
-  
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          
-        </div>
-      </section>
 
-            {/* Testimonials Section */}
-      <TestimonialsSection />
+  {/* Scroll Indicator */}
+  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+  </div>
+</section>
+
+{/* NYT Featured Badge */}
+<section className="bg-black">
+  <div className="max-w-6xl mx-auto px-4 pt-3 pb-2">
+    <div className="flex justify-center">
+      <a
+        href="https://www.nytimes.com/2025/11/14/realestate/affordable-housing-rent-stabilized-website.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-3"
+      >
+        <span className="text-[10px] md:text-xs uppercase tracking-[0.25em] text-gray-400">
+          As featured in
+        </span>
+        <img
+          src="/lovable-uploads/nyt_logo.png"
+          alt="The New York Times"
+          className="h-6 md:h-7 object-contain"
+        />
+      </a>
+    </div>
+  </div>
+</section>
+
+{/* Testimonials Section */}
+<TestimonialsSection />
 
 
       {/* Product Mockup Section */}
