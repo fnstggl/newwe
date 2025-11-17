@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, X } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,11 +16,18 @@ const Profile = () => {
   const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isResettingPassword, setIsResettingPassword] = useState(false);
-  const [isSavingPreferences, setIsSavingPreferences] = useState(false);
+ const [isSavingPreferences, setIsSavingPreferences] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   
   // NEW: Modal state for upgrade prompt
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  
+  // NEW: Refine Filters modal state
+  const [showRefineFilters, setShowRefineFilters] = useState(false);
+  const [refinedPropertyType, setRefinedPropertyType] = useState<string>('');
+  const [refinedBedrooms, setRefinedBedrooms] = useState<number | undefined>(undefined);
+  const [refinedMaxBudget, setRefinedMaxBudget] = useState<number | undefined>(undefined);
+  const [refinedNeighborhoods, setRefinedNeighborhoods] = useState<string[]>([]);
   const [selectedNeighborhoodForUpgrade, setSelectedNeighborhoodForUpgrade] = useState("");
 
   // Redirect if not logged in
@@ -46,11 +54,16 @@ const Profile = () => {
           return;
         }
         
-        if (data) {
+       if (data) {
           setProfileData(data);
           if (data.neighborhood_preferences) {
             setSelectedNeighborhoods(data.neighborhood_preferences);
           }
+          // Load refined filter preferences
+          if (data.property_type) setRefinedPropertyType(data.property_type);
+          if (data.bedrooms) setRefinedBedrooms(data.bedrooms);
+          if (data.max_budget) setRefinedMaxBudget(data.max_budget);
+          if (data.preferred_neighborhoods) setRefinedNeighborhoods(data.preferred_neighborhoods);
         }
       } catch (error) {
         console.error('Error loading user profile:', error);
@@ -196,8 +209,56 @@ const Profile = () => {
     }
   };
 
+  const saveRefinedFilters = async () => {
+    if (!user) return;
+    
+    setIsSavingPreferences(true);
+    try {
+      const updateData: any = {};
+      
+      if (refinedPropertyType) updateData.property_type = refinedPropertyType;
+      if (refinedBedrooms !== undefined) updateData.bedrooms = refinedBedrooms;
+      if (refinedMaxBudget !== undefined) updateData.max_budget = refinedMaxBudget;
+      
+      // Update both preferred_neighborhoods and neighborhood_preferences
+      if (refinedNeighborhoods.length > 0) {
+        const normalizedNeighborhoods = refinedNeighborhoods.map(n => 
+          n.toLowerCase().replace(/\s+/g, '-')
+        );
+        updateData.preferred_neighborhoods = normalizedNeighborhoods;
+        updateData.neighborhood_preferences = normalizedNeighborhoods;
+      }
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', user.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Filters saved!",
+        description: "Your refined email filters have been updated.",
+      });
+      
+      setShowRefineFilters(false);
+    } catch (error) {
+      console.error('Error saving refined filters:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save filters. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingPreferences(false);
+    }
+  };
+
   const handleManageSubscription = async () => {
     if (!user) return;
+
     
     // Check if user is on free plan - redirect to checkout
     if (profileData?.subscription_plan !== 'unlimited') {
@@ -322,9 +383,19 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Email Preferences */}
+       {/* Email Preferences */}
           <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">
-            <h2 className="text-2xl font-semibold mb-6 tracking-tight">Email Preferences</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold tracking-tight">Email Preferences</h2>
+              {!isFreePlan && (
+                <button
+                  onClick={() => setShowRefineFilters(true)}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-sm font-medium tracking-tight transition-all border border-white/20"
+                >
+                  Refine Filters
+                </button>
+              )}
+            </div>
             <p className="text-gray-400 mb-6 tracking-tight">
               Select the neighborhoods you want to receive deal alerts for:
             </p>
@@ -413,7 +484,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* NEW: Glassmorphic Upgrade Modal */}
+           {/* NEW: Glassmorphic Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
@@ -446,7 +517,143 @@ const Profile = () => {
                 onClick={handleUpgradeClick}
                 className="w-full bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all transform hover:scale-105"
               >
-                Try Unlimited For Free
+                Get Alerts Today
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Refine Filters Modal */}
+      {showRefineFilters && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowRefineFilters(false)}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-black/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-white tracking-tighter">
+                Refine Email Filters
+              </h2>
+              <button
+                onClick={() => setShowRefineFilters(false)}
+                className="text-white/70 hover:text-white transition-colors p-2"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {/* Property Type */}
+              <div className="space-y-3">
+                <label className="text-sm text-white/80 font-medium tracking-tight">
+                  Looking to buy or rent?
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setRefinedPropertyType('buy')}
+                    className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
+                      refinedPropertyType === 'buy'
+                        ? 'border-white bg-white text-black'
+                        : 'border-white/30 text-white hover:border-white/60'
+                    }`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => setRefinedPropertyType('rent')}
+                    className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
+                      refinedPropertyType === 'rent'
+                        ? 'border-white bg-white text-black'
+                        : 'border-white/30 text-white hover:border-white/60'
+                    }`}
+                  >
+                    Rent
+                  </button>
+                </div>
+              </div>
+
+              {/* Bedrooms */}
+              <div className="space-y-3">
+                <label className="text-sm text-white/80 font-medium tracking-tight">
+                  Bedrooms
+                </label>
+                <div className="flex gap-2">
+                  {[0, 1, 2, 3, 4, '5+'].map((bed) => (
+                    <button
+                      key={bed}
+                      onClick={() => setRefinedBedrooms(bed === '5+' ? 5 : bed as number)}
+                      className={`px-4 py-2 rounded-full border text-sm font-medium tracking-tight transition-all ${
+                        refinedBedrooms === (bed === '5+' ? 5 : bed)
+                          ? 'border-white bg-white text-black'
+                          : 'border-white/30 text-white hover:border-white/60'
+                      }`}
+                    >
+                      {bed}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Max Budget */}
+              <div className="space-y-3">
+                <label className="text-sm text-white/80 font-medium tracking-tight">
+                  Max Budget: ${refinedMaxBudget?.toLocaleString() || '3,000'}
+                </label>
+                <Slider
+                  value={[refinedMaxBudget || 3000]}
+                  onValueChange={(value) => setRefinedMaxBudget(value[0])}
+                  max={8000}
+                  min={1000}
+                  step={100}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-white/60">
+                  <span>$1,000</span>
+                  <span>$8,000</span>
+                </div>
+              </div>
+
+              {/* Neighborhoods */}
+              <div className="space-y-3">
+                <label className="text-sm text-white/80 font-medium tracking-tight">
+                  Neighborhoods
+                </label>
+                <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto p-2">
+                  {neighborhoods.map((neighborhood) => (
+                    <button
+                      key={neighborhood}
+                      onClick={() => {
+                        setRefinedNeighborhoods(prev =>
+                          prev.includes(neighborhood)
+                            ? prev.filter(n => n !== neighborhood)
+                            : [...prev, neighborhood]
+                        );
+                      }}
+                      className={`p-3 rounded-full border transition-all text-sm tracking-tight ${
+                        refinedNeighborhoods.includes(neighborhood)
+                          ? 'border-white bg-white text-black'
+                          : 'border-white/30 text-white hover:border-white/60'
+                      }`}
+                    >
+                      {neighborhood}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <button
+                onClick={saveRefinedFilters}
+                disabled={isSavingPreferences}
+                className="w-full bg-white text-black px-8 py-4 rounded-full font-semibold text-lg tracking-tight hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSavingPreferences ? 'Saving...' : 'Save Filters'}
               </button>
             </div>
           </div>
