@@ -1042,7 +1042,7 @@ const DesktopIndex = () => {
         <img
           src="/lovable-uploads/nyt_logo.png"
           alt="The New York Times"
-          className="h-7 md:h-8 object-contain"
+className="h-8 md:h-10 lg:h-12 object-contain"
         />
       </a>
     </div>
