@@ -600,24 +600,25 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Max Budget */}
-              <div className="space-y-3">
-                <label className="text-sm text-white/80 font-medium tracking-tight">
-                  Max Budget: ${refinedMaxBudget?.toLocaleString() || '3,000'}
-                </label>
-                <Slider
-                  value={[refinedMaxBudget || 3000]}
-                  onValueChange={(value) => setRefinedMaxBudget(value[0])}
-                  max={8000}
-                  min={1000}
-                  step={100}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-white/60">
-                  <span>$1,000</span>
-                  <span>$8,000</span>
-                </div>
-              </div>
+             {/* Max Budget */}
+<div className="space-y-3">
+  <label className="text-sm text-white/80 font-medium tracking-tight">
+    Max Budget: ${refinedMaxBudget?.toLocaleString() || (refinedPropertyType === 'buy' ? '500,000' : '3,000')}
+  </label>
+  <Slider
+    value={[refinedMaxBudget || (refinedPropertyType === 'buy' ? 500000 : 3000)]}
+    onValueChange={(value) => setRefinedMaxBudget(value[0])}
+    max={refinedPropertyType === 'buy' ? 8000000 : 8000}
+    min={refinedPropertyType === 'buy' ? 200000 : 1000}
+    step={refinedPropertyType === 'buy' ? 50000 : 100}
+    className="w-full"
+  />
+  <div className="flex justify-between text-xs text-white/60">
+    <span>${refinedPropertyType === 'buy' ? '200,000' : '1,000'}</span>
+    <span>${refinedPropertyType === 'buy' ? '8,000,000' : '8,000'}</span>
+  </div>
+</div>
+
 
               {/* Neighborhoods */}
               <div className="space-y-3">
