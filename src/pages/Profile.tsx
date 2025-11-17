@@ -550,33 +550,40 @@ const Profile = () => {
 
             <div className="space-y-6">
               {/* Property Type */}
-              <div className="space-y-3">
-                <label className="text-sm text-white/80 font-medium tracking-tight">
-                  Looking to buy or rent?
-                </label>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setRefinedPropertyType('buy')}
-                    className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
-                      refinedPropertyType === 'buy'
-                        ? 'border-white bg-white text-black'
-                        : 'border-white/30 text-white hover:border-white/60'
-                    }`}
-                  >
-                    Buy
-                  </button>
-                  <button
-                    onClick={() => setRefinedPropertyType('rent')}
-                    className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
-                      refinedPropertyType === 'rent'
-                        ? 'border-white bg-white text-black'
-                        : 'border-white/30 text-white hover:border-white/60'
-                    }`}
-                  >
-                    Rent
-                  </button>
-                </div>
-              </div>
+<div className="space-y-3">
+  <label className="text-sm text-white/80 font-medium tracking-tight">
+    Looking to buy or rent?
+  </label>
+  <div className="flex gap-3">
+    <button
+      onClick={() => {
+        setRefinedPropertyType('buy');
+        setRefinedMaxBudget(8000000);
+      }}
+      className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
+        refinedPropertyType === 'buy'
+          ? 'border-white bg-white text-black'
+          : 'border-white/30 text-white hover:border-white/60'
+      }`}
+    >
+      Buy
+    </button>
+    <button
+      onClick={() => {
+        setRefinedPropertyType('rent');
+        setRefinedMaxBudget(8000);
+      }}
+      className={`flex-1 px-6 py-3 rounded-full border text-sm font-medium tracking-tight transition-all ${
+        refinedPropertyType === 'rent'
+          ? 'border-white bg-white text-black'
+          : 'border-white/30 text-white hover:border-white/60'
+      }`}
+    >
+      Rent
+    </button>
+  </div>
+</div>
+
 
               {/* Bedrooms */}
               <div className="space-y-3">
