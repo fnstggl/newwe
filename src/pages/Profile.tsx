@@ -105,7 +105,7 @@ const Profile = () => {
     setIsResettingPassword(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-        redirectTo: ${window.location.origin}/,
+        redirectTo: `${window.location.origin}/`,
       });
       
       if (error) {
@@ -347,13 +347,13 @@ const Profile = () => {
                     key={neighborhood}
                     onClick={() => toggleNeighborhood(neighborhood)}
                     disabled={isSavingPreferences}
-                    className={px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
+                    className={`px-4 py-2 rounded-full text-sm tracking-tight transition-all ${
                       selectedNeighborhoods.includes(neighborhood) && !isFreePlan
                         ? 'bg-blue-500 text-white'
                         : isFreePlan
                         ? 'bg-gray-800 text-gray-300 hover:bg-gray-700 cursor-pointer'
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    } ${isSavingPreferences ? 'opacity-50 cursor-not-allowed' : ''}}
+                    } ${isSavingPreferences ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {neighborhood}
                   </button>
@@ -384,7 +384,7 @@ const Profile = () => {
                 </p>
                 <p className="text-gray-400 text-sm tracking-tight">
                   {profileData.subscription_plan === 'unlimited' 
-                    ? Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing) 
+                    ? `Access to all deals and features (${profileData.subscription_renewal || 'monthly'} billing)` 
                     : profileData.subscription_plan === 'open_door_plan'
                     ? 'Free unlimited access'
                     : 'Unlimited deals per day'
