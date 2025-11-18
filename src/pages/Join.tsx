@@ -141,7 +141,7 @@ const Join = () => {
       <div className="max-w-md w-full mx-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tighter">
-            You’re seconds away from NYC’s hidden deals.
+            You’re seconds away from NYC’s best deals.
           </h1>
           <p className="text-gray-400 text-lg tracking-tight">
             Up to 60% below-market. 36,000+ New Yorkers already inside.
