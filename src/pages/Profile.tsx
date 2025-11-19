@@ -472,6 +472,19 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* Support / Contact Text */}
+          <div className="pt-4">
+            <p className="text-center text-gray-400 text-sm tracking-tight">
+              Any questions about your account? Reach out at{" "}
+              <a
+                href="mailto:info@realerestate.org"
+                className="text-blue-400 hover:text-blue-300 underline underline-offset-4"
+              >
+                info@realerestate.org
+              </a>
+            </p>
+          </div>
+
           {/* Sign Out */}
           <div className="flex justify-center pt-8">
             <button
