@@ -45,7 +45,7 @@ const ScrollJackedSection = () => {
     },
     {
       title: "Save $925/mo on rent, $101k when buying",
-      subtitle: "Based on average savings data. Join 36,000+ New Yorkers finding the best deals in the city.",
+      subtitle: "Based on average savings data. Join 55,000+ New Yorkers finding the best deals in the city.",
       opacity: text3Opacity,
       y: text3Y
     }
